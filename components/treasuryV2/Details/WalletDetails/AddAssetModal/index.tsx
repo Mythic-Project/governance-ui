@@ -73,7 +73,8 @@ export default function AddAssetModal(props: Props) {
           'gap-x-8',
           'grid',
           'justify-center',
-          isWallet(props.wallet) && 'grid-cols-[repeat(3,max-content)]'
+          'grid-cols-1',
+          isWallet(props.wallet) && 'sm:grid-cols-[repeat(3,max-content)]'
         )}
       >
         <div className="flex flex-col items-center space-y-2">
@@ -102,7 +103,7 @@ export default function AddAssetModal(props: Props) {
         </div>
         {isWallet(props.wallet) && (
           <div className="flex items-center justify-center">
-            <div className="text-lg text-fgd-1">OR</div>
+            <div className="text-lg text-fgd-1 m-5 sm:m-0">OR</div>
           </div>
         )}
         {isWallet(props.wallet) && (

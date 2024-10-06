@@ -27,7 +27,7 @@ export const StrategyCard = ({
     currentDeposits.toFixed(2)
   ).toFormat()
   return (
-    <div className="flex items-center justify-between p-4 mt-2 border rounded-md border-fgd-4">
+    <div className="flex flex-col sm:flex-row items-center justify-between p-4 mt-2 border rounded-md border-fgd-4">
       <div className="flex items-center">
         {strat.protocolLogoSrc ? (
           <img
@@ -55,7 +55,7 @@ export const StrategyCard = ({
           )}
         </div>
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 mt-5 sm:mt-0">
         <div className="text-right">
           {apy && <p className="text-xs">{apyHeader ?? 'Interest Rate'}</p>}
           <p className="font-bold text-green">{apy}</p>
