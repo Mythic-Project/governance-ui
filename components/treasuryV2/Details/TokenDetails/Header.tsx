@@ -65,7 +65,8 @@ export default function Header(props: Props) {
         'py-4',
         'gap-x-4',
         'grid',
-        'grid-cols-[1fr_max-content]',
+        'grid-cols-1',
+        'sm:grid-cols-[1fr_max-content]',
         'items-center'
       )}
     >
@@ -127,7 +128,7 @@ export default function Header(props: Props) {
         </div>
         <Address address={props.asset.address} className="ml-14 text-xs" />
       </div>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 my-auto mx-auto sm:mt-0 mt-5">
         {props.asset.raw.extensions.transferAddress ? (
           <SecondaryButton
             className="w-48"

@@ -53,7 +53,12 @@ export default function Header(props: Props) {
         'py-4',
         'flex',
         'items-center',
-        'justify-between'
+        'justify-between',
+        'flex-col',
+        'space-y-4',
+        'sm:flex-row',
+        'sm:space-y-0',
+        'sm:space-x-4'
       )}
     >
       <div>
