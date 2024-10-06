@@ -281,6 +281,10 @@ export const useCanCreateProposal = (
   const connected = !!wallet?.connected
 
   const realm = useRealmQuery().data?.result
+  const {
+    toManyCommunityOutstandingProposalsForUser,
+    toManyCouncilOutstandingProposalsForUse,
+  } = useRealm()
 
   const {
     power: communityPower,
@@ -294,44 +298,38 @@ export const useCanCreateProposal = (
     isReady: councilReady
   } = useProposeAs('council')
 
-  const power = communityPower || councilPower
-  const proposer = communityPower ? communityProposer : councilProposer
+  const hasCouncilPower = councilPower && !councilPower.isZero()
+  const hasCommunityPower = councilPower && !councilPower.isZero()
+
   const isReady = communityReady && councilReady
 
-  const {
-    toManyCommunityOutstandingProposalsForUser,
-    toManyCouncilOutstandingProposalsForUse,
-  } = useRealm()
+  const hasEnoughCouncilPower = hasCouncilPower &&
+    councilPower.gte(governance?.account.config.minCouncilTokensToCreateProposal || new BN(1))
 
+  const hasEnoughCommunityPower = hasCommunityPower &&
+    councilPower.gte(governance?.account.config.minCommunityTokensToCreateProposal || new BN(1))
 
-  const minWeightToCreateProposal = (governance?.pubkey == realm?.account.communityMint ?
-    governance?.account.config.minCommunityTokensToCreateProposal :
-    governance?.account.config.minCouncilTokensToCreateProposal) || undefined
-
-  const hasEnoughVotingPower = power?.gt(minWeightToCreateProposal || new BN(1))
+  const hasEnoughPower = hasEnoughCouncilPower || hasEnoughCommunityPower
 
   const canCreateProposal =
     realm &&
-    hasEnoughVotingPower &&
+    hasEnoughPower &&
     !toManyCommunityOutstandingProposalsForUser &&
     !toManyCouncilOutstandingProposalsForUse
-
-  const minWeightToCreateProposalS = minWeightToCreateProposal
-    ? new BigNumber(minWeightToCreateProposal.toString()).toString()
-    : "1"
 
   const error = !connected
     ? 'Connect your wallet to create new proposal'
     : isReady && !communityPower && !councilPower
     ? 'There is no governance configuration to create a new proposal'
-    : !hasEnoughVotingPower
-    ? `Please select only one account with at least ${minWeightToCreateProposalS} governance power to create a new proposal.`
+    : !hasEnoughPower
+    ? `Please select only one account with at either council or community governance power to create a new proposal.`
     : toManyCommunityOutstandingProposalsForUser
     ? 'Too many community outstanding proposals. You need to finalize them before creating a new one.'
     : toManyCouncilOutstandingProposalsForUse
     ? 'Too many council outstanding proposals. You need to finalize them before creating a new one.'
     : ''
 
+  const proposer = hasEnoughCouncilPower ? councilProposer : communityProposer
   const warning = proposer
     ? `Add a proposal as: ${shortenAddress(proposer.toString())}.`
     : ''
