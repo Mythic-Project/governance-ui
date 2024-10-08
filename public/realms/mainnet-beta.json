@@ -3695,5 +3695,16 @@
     "ogImage": "/realms/PibbleDAO/logo.png",
     "website": "https://pibble.xyz",
     "twitter": "@PibbleSolana"
+  },
+  {
+    "symbol": "SATR",
+    "bannerImage": "/realms/artradeDao/artrade-dao-banner.png",
+    "displayName": "Artrade DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "4RaA3cPnHeoV3m2Z7JmMjhPaRM8ycWBDiFcGJSXPXYmE",
+    "communityMint": "AeKwC1GhEQJiBGtrynzzPAqQoJ6UKFj3qxqBDTc8oXYj",
+    "ogImage": "/realms/artradeDAO/artrade-dao-logo.png",
+    "website": "https://artrade.app",
+    "twitter": "@ArtradeApp"
   }
   ]
