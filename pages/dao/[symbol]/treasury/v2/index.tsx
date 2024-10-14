@@ -76,7 +76,7 @@ export default function Treasury() {
           )}
         />
       </header>
-      <article className="grid grid-cols-[458px_1fr] flex-grow gap-x-4">
+      <article className="grid grid-cols-1 sm:grid-cols-[458px_1fr] flex-grow gap-x-4">
         <WalletList
           className="w-full pt-9"
           data={pipe(
@@ -100,7 +100,8 @@ export default function Treasury() {
           }}
         />
         <div>
-          <div className="text-lg pb-10">&nbsp;</div>
+          <div className="text-lg border-b border-gray-500 mb-2 mt-6 sm:hidden">Details</div>
+          <div className="text-lg pb-10 hidden sm:block">&nbsp;</div>
           <div className="sticky top-0">
             <div
               className="h-[1px] top-[-1px] relative mb-[-1px]"

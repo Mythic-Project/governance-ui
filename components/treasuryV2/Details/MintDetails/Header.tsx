@@ -120,7 +120,8 @@ export default function Header(props: Props) {
         props.className,
         'bg-bkg-1',
         'gap-x-4',
-        'grid-cols-[1fr_max-content]',
+        'grid-cols-1',
+        'sm:grid-cols-[1fr_max-content]',
         'grid',
         'min-h-[128px]',
         'px-8',
@@ -176,7 +177,7 @@ export default function Header(props: Props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col space-y-2 max-h-[128px] justify-center">
+      <div className="flex flex-col space-y-2 max-h-[128px] justify-center my-auto mx-auto mt-5">
         <SecondaryButton
           small={membership}
           className="w-48"
