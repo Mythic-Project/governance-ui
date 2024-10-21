@@ -3706,5 +3706,13 @@
     "ogImage": "/realms/artradeDAO/artrade-dao-logo.png",
     "website": "https://artrade.app",
     "twitter": "@ArtradeApp"
+  },
+  {
+   "symbol": "kekeDAO",
+   "displayName": "kekeDAO",
+   "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+   "realmId": "D8XKqBv4hbYHrc2fQ91H9U16WXLJogVSWfZNMyWFyhY9",
+   "ogImage": "/realms/kekeDAO/kekeDAO_logo.jpg", 
+   "bannerImage": "/realms/kekeDAO/kekeDAO_banner.png"
   }
   ]
