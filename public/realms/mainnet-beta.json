@@ -3706,5 +3706,14 @@
     "ogImage": "/realms/artradeDAO/artrade-dao-logo.png",
     "website": "https://artrade.app",
     "twitter": "@ArtradeApp"
+  },
+  {
+    "symbol": "TTDAO",
+    "bannerImage": "/realms/TTDAO/TT-Banner.png",
+    "ogImage": "/realms/TTDAO/TT-Logo.png",
+    "displayName": "TreeTherium DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "Em9VDexjhxy35KRCtJGUus47LyfewK8rCx2Efc48BgbZ",
+    "website": "https://treetherium.io"
   }
   ]
