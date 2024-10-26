@@ -3728,5 +3728,18 @@
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "Em9VDexjhxy35KRCtJGUus47LyfewK8rCx2Efc48BgbZ",
     "website": "https://treetherium.io"
-  }
+  },
+   {
+    "symbol": "OGLG",
+    "displayName": "OGLONG DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "29aHFaV12kCDK9tQWmccpTkjrCoRvEyYUnkEtjhPBpE5",
+    "communityMint": "D4R5MEE6eAywxURZJzwyVPcKxrzsSCgHV3VN667LLLv4",
+    "ogImage": "/realms/Oglong/oglong_logo.png",
+    "bannerImage": "/realms/Oglong/oglg_banner.jpg",
+    "shortDescription": "1st Community Owned BTC-FI launchpad backed by OGs.",
+    "website": "https://oglong.com",
+    "keywords": "BTC, Launchpad, BTC-FI",
+    "twitter": "@OGLong_official"
+  },
   ]
