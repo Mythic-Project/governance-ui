@@ -3728,5 +3728,18 @@
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "Em9VDexjhxy35KRCtJGUus47LyfewK8rCx2Efc48BgbZ",
     "website": "https://treetherium.io"
+  },
+  {
+    "symbol": "CBZ",
+    "bannerImage": "/realms/CybearzDAO/cybearz_banner.png",
+    "ogImage": "/realms/CybearzDAO/cybearz_logo.png",
+    "displayName": "CybearzDAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "communityMint": "C5YWaChCB1FsrpCo6BTbx75yK5p9udTPJaAEcvxuFMAt",
+    "shortDescription": "Join the revolution with Cybearz DAO - the ultimate cross-chain memecoin powering a world of fun, staking, and NFT adventures.",
+    "realmId": "5YMXXFeZNL3naPN3ddvw4qtU3McurcppEE8Ciwy3sWhM",
+    "website": "https://cybearz.com",
+    "twitter": "@Cybearzz",
+    "telegram": "https://t.me/Cybearzz"
   }
   ]
