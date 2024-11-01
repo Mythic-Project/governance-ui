@@ -32,9 +32,11 @@ import { useBatchedVoteDelegators } from '@components/VotePanel/useDelegators'
 import { useVotingClients } from '@hooks/useVotingClients'
 import { useNftClient } from '../VoterWeightPlugins/useNftClient'
 import { useRealmVoterWeightPlugins } from './useRealmVoterWeightPlugins'
+import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 
 export const useSubmitVote = () => {
   const wallet = useWalletOnePointOh()
+  const walletContext = useWallet()
   const connection = useLegacyConnectionContext()
   const realm = useRealmQuery().data?.result
   const proposal = useRouteProposalQuery().data?.result
@@ -146,6 +148,7 @@ export const useSubmitVote = () => {
       try {
         await castVote(
           rpcContext,
+          walletContext.wallet as Wallet,
           realm,
           proposal,
           tokenOwnerRecordPk,

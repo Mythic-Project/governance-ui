@@ -22,9 +22,13 @@ import {
   txBatchesToInstructionSetWithSigners,
 } from '@utils/sendTransactions'
 import { sendSignAndConfirmTransactionsProps } from '@blockworks-foundation/mangolana/lib/transactions'
+import { withPostChatMessageEphSigner } from '@utils/ephemeral-signers/postMessageWithEphSigner'
+import { getEphemeralSigners } from '@utils/ephemeral-signers'
+import { Wallet } from '@solana/wallet-adapter-react'
 
 export async function postChatMessage(
   { connection, wallet, programId, walletPubkey }: RpcContext,
+  walletContext: Wallet,
   realm: ProgramAccount<Realm>,
   proposal: ProgramAccount<Proposal>,
   tokeOwnerRecord: ProgramAccount<TokenOwnerRecord>,
@@ -45,21 +49,42 @@ export async function postChatMessage(
     createNftTicketsIxs
   )
 
-  await withPostChatMessage(
-    instructions,
-    signers,
-    GOVERNANCE_CHAT_PROGRAM_ID,
-    programId,
-    realm.pubkey,
-    proposal.account.governance,
-    proposal.pubkey,
-    tokeOwnerRecord.pubkey,
-    governanceAuthority,
-    payer,
-    replyTo,
-    body,
-    plugin?.voterWeightPk
-  )
+  // Check if the connected wallet is not SquadsX
+  if (walletContext.adapter.name !== 'SquadsX') {
+    await withPostChatMessage(
+      instructions,
+      signers,
+      GOVERNANCE_CHAT_PROGRAM_ID,
+      programId,
+      realm.pubkey,
+      proposal.account.governance,
+      proposal.pubkey,
+      tokeOwnerRecord.pubkey,
+      governanceAuthority,
+      payer,
+      replyTo,
+      body,
+      plugin?.voterWeightPk
+    )
+  } else {
+    const chatMessage = await getEphemeralSigners(walletContext, 1)
+    await withPostChatMessageEphSigner(
+      instructions,
+      signers,
+      GOVERNANCE_CHAT_PROGRAM_ID,
+      programId,
+      realm.pubkey,
+      proposal.account.governance,
+      proposal.pubkey,
+      tokeOwnerRecord.pubkey,
+      governanceAuthority,
+      payer,
+      replyTo,
+      body,
+      chatMessage[0], // Executing a chat message ix in Squads requires subbing in a custom ephemeral signer
+      plugin?.voterWeightPk
+    )
+  }
 
   // createTicketIxs is a list of instructions that create nftActionTicket only for nft-voter-v2 plugin
   // so it will be empty for other plugins or just spl-governance
@@ -102,7 +127,8 @@ export async function postComment(
   transactionProps: sendSignAndConfirmTransactionsProps & {
     lookupTableAccounts?: any
     autoFee?: boolean
-}) {
+  }
+) {
   try {
     await sendTransactionsV3(transactionProps)
   } catch (e) {
@@ -110,7 +136,9 @@ export async function postComment(
       const numbers = e.message.match(/\d+/g)
       const [size, maxSize] = numbers ? numbers.map(Number) : [0, 0]
       if (size > maxSize) {
-        throw new Error(`You must reduce your comment by ${size - maxSize} character(s).`)
+        throw new Error(
+          `You must reduce your comment by ${size - maxSize} character(s).`
+        )
       }
     }
     throw e

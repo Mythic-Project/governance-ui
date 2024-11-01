@@ -43,6 +43,9 @@ import { fetchVoteRecordByPubkey } from '@hooks/queries/voteRecord'
 import { findPluginName } from '@constants/plugins'
 import { BN } from '@coral-xyz/anchor'
 import { postComment } from './chat/postMessage'
+import { withPostChatMessageEphSigner } from '@utils/ephemeral-signers/postMessageWithEphSigner'
+import { getEphemeralSigners } from '@utils/ephemeral-signers'
+import { Wallet } from '@solana/wallet-adapter-react'
 
 const getVetoTokenMint = (
   proposal: ProgramAccount<Proposal>,
@@ -158,6 +161,7 @@ const createTokenOwnerRecordIfNeeded = async ({
 
 export async function castVote(
   { connection, wallet, programId, walletPubkey }: RpcContext,
+  walletContext: Wallet,
   realm: ProgramAccount<Realm>,
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
@@ -309,21 +313,43 @@ export async function castVote(
       createPostMessageTicketIxs
     )
 
-    await withPostChatMessage(
-      postMessageIxs,
-      chatMessageSigners,
-      GOVERNANCE_CHAT_PROGRAM_ID,
-      programId,
-      realm.pubkey,
-      proposal.account.governance,
-      proposal.pubkey,
-      tokenOwnerRecord,
-      governanceAuthority,
-      payer,
-      undefined,
-      message,
-      plugin?.voterWeightPk
-    )
+    // Check if the connected wallet is not SquadsX
+    if (walletContext.adapter.name !== 'SquadsX') {
+      await withPostChatMessage(
+        postMessageIxs,
+        chatMessageSigners,
+        GOVERNANCE_CHAT_PROGRAM_ID,
+        programId,
+        realm.pubkey,
+        proposal.account.governance,
+        proposal.pubkey,
+        tokenOwnerRecord,
+        governanceAuthority,
+        payer,
+        undefined,
+        message,
+        plugin?.voterWeightPk
+      )
+    } else {
+      const chatMessage = await getEphemeralSigners(walletContext, 1)
+
+      await withPostChatMessageEphSigner(
+        postMessageIxs,
+        chatMessageSigners,
+        GOVERNANCE_CHAT_PROGRAM_ID,
+        programId,
+        realm.pubkey,
+        proposal.account.governance,
+        proposal.pubkey,
+        tokenOwnerRecord,
+        governanceAuthority,
+        payer,
+        undefined,
+        message,
+        chatMessage[0], // Executing a chat message ix in Squads requires subbing in a custom ephemeral signer
+        plugin?.voterWeightPk
+      )
+    }
   }
 
   const isNftVoter = votingPlugin?.client instanceof NftVoterClient
