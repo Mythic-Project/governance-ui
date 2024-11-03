@@ -18,7 +18,8 @@ import { useRouteProposalQuery } from '@hooks/queries/proposal'
 import { useVotingPop } from '@components/VotePanel/hooks'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
-import {useVotingClients} from "@hooks/useVotingClients";
+import { useVotingClients } from '@hooks/useVotingClients'
+import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 
 const DiscussionForm = () => {
   const [comment, setComment] = useState('')
@@ -27,21 +28,22 @@ const DiscussionForm = () => {
   const realm = useRealmQuery().data?.result
   const { result: ownVoterWeight } = useLegacyVoterWeight()
   const { realmInfo } = useRealm()
-  const votingClients = useVotingClients();
+  const votingClients = useVotingClients()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
   const wallet = useWalletOnePointOh()
+  const walletContext = useWallet()
   const connected = !!wallet?.connected
   const connection = useLegacyConnectionContext()
   const proposal = useRouteProposalQuery().data?.result
   const tokenRole = useVotingPop()
   const commenterVoterTokenRecord =
-    tokenRole === 'community' ? 
-      ownTokenRecord ?? ownCouncilTokenRecord : 
-      ownCouncilTokenRecord
+    tokenRole === 'community'
+      ? ownTokenRecord ?? ownCouncilTokenRecord
+      : ownCouncilTokenRecord
 
-  const votingClient = votingClients(tokenRole ?? 'community');// default to community if no role is provided
+  const votingClient = votingClients(tokenRole ?? 'community') // default to community if no role is provided
   const submitComment = async () => {
     setSubmitting(true)
     setError('')
@@ -70,6 +72,7 @@ const DiscussionForm = () => {
     try {
       await postChatMessage(
         rpcContext,
+        walletContext.wallet as Wallet,
         realm,
         proposal,
         commenterVoterTokenRecord,
@@ -81,7 +84,7 @@ const DiscussionForm = () => {
       setComment('')
     } catch (ex) {
       console.error("Can't post chat message", ex)
-      setError(ex.message);
+      setError(ex.message)
       //TODO: How do we present transaction errors to users? Just the notification?
     } finally {
       setSubmitting(false)
