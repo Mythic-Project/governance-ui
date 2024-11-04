@@ -3743,6 +3743,20 @@
     "twitter": "@OGLong_official"
   },
   {
+    "symbol": "AdrenaDAO",
+    "displayName": "Adrena DAO",
+    "category": "defi",
+    "bannerImage": "/realms/Adrena/banner.png",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "GWe1VYTRMujAtGVhSLwSn4YPsXBLe5qfkzNAYAKD44Nk",
+    "ogImage": "/realms/Adrena/logo.png",
+    "shortDescription": "Perpetuals DEX for the Solana community.",
+    "website": "https://app.adrena.xyz/",
+    "twitter": "@AdrenaProtocol",
+    "discord": "https://discord.gg/adrena",
+    "github": "https://github.com/AdrenaFoundation"
+  },
+  {
     "symbol": "Depai",
     "category": "DePIN",
     "bannerImage": "https://i.imgur.com/unFb60y.png",
