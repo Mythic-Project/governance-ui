@@ -3770,9 +3770,9 @@
     "github": "https://github.com/Depai-DAO"
   },
   {
-    "symbol": "LEARN",
+    "symbol": "DigiMentorDAO",
     "category": "Education",
-    "bannerImage": "/realms/Digi:Mentor:DAO/digi_mentor_banner.png",
+    "bannerImage": "/realms/digi/mentor/banner.png",
     "displayName": "Digi Mentor DAO",
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "ApMSZpRfDryd39P3thnpn3DRWeWyGkvgniKuMjeFpcob",
