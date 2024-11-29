@@ -61,6 +61,7 @@ const Rules = IT.type({
   vetoQuorumPercent: IT.number,
   voteTipping: GovernanceVoteTipping,
   votingPowerToCreateProposals: BigNumber,
+  tokenMintAddress: PublicKey
 });
 
 export const getGovernanceRulesResp = IT.type({
