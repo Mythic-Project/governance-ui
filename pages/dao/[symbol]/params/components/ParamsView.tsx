@@ -48,7 +48,7 @@ const ParamsView = ({ activeGovernance }) => {
       )
       ? 'Disabled'
       : fmtMintAmount(
-          mint,
+          councilMint,
           activeGovernance?.account?.config?.minCouncilTokensToCreateProposal
         )
     : 'calculating...'
