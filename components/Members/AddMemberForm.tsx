@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import useRealm from 'hooks/useRealm'
 import Input from 'components/inputs/Input'
 import Button, { SecondaryButton } from '@components/Button'
@@ -32,7 +32,8 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { DEFAULT_GOVERNANCE_PROGRAM_VERSION } from '@components/instructions/tools'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from "@hooks/useVoteByCouncilToggle";
+import { TldParser } from '@onsol/tldparser'
 
 interface AddMemberForm extends Omit<MintForm, 'mintAccount'> {
   description: string
@@ -52,7 +53,9 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
   const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
-
+  const [domain, setDomain] = useState("");
+  const [resolvedAddress, setResolvedAddress] = useState("");
+  const [domainError, setDomainError] = useState("");
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
 
@@ -84,8 +87,8 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
       ? 'community '
       : realm.account.config.councilMint &&
         mintAccount.pubkey.equals(realm.account.config.councilMint)
-      ? 'council '
-      : '')
+        ? 'council '
+        : '')
   let abbrevAddress: string
   try {
     abbrevAddress = abbreviateAddress(new PublicKey(form.destinationAccount))
@@ -203,6 +206,34 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
     }
   }
 
+  const resolveDomain = async () => {
+    setDomainError(""); // Reset previous errors
+    setResolvedAddress(""); // Reset resolved address
+    if (!domain) {
+      setDomainError("Domain cannot be empty.");
+      return;
+    }
+    try {
+      const RPC_URL = 'https://api.mainnet-beta.solana.com';
+      const connection = new Connection(RPC_URL);
+      const parser = new TldParser(connection);
+      const nameRecord = await parser.getNameRecordFromDomainTld(domain);
+      const address =  (await parser.getOwnerFromDomainTld(domain) ?? "").toString();
+
+      if (address) {
+        setResolvedAddress(address);
+        handleSetForm({
+          value: address,
+          propertyName: 'destinationAccount',
+        })
+      } else {
+        setDomainError("Could not resolve the domain to a valid address.");
+      }
+    } catch (error) {
+      setDomainError("Failed to resolve domain. Please try again.");
+    }
+  };
+
   //TODO common handle propose
   const handlePropose = async () => {
     setIsLoading(true)
@@ -282,6 +313,32 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         error={formErrors['destinationAccount']}
       />
 
+          {/* Domain input */}
+          <div className="mt-4">
+            <Input
+              id="domain"
+              type="text"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              placeholder="e.g., example.sol"
+            />
+            <button
+              type="button"
+              onClick={resolveDomain}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Resolve
+            </button>
+            {resolvedAddress && (
+              <p className="mt-2 text-green-500">
+                Resolved Wallet Address: {resolvedAddress}
+              </p>
+            )}
+            {domainError && (
+              <p className="mt-2 text-red-500">{domainError}</p>
+            )}
+          </div>
+
       <div
         className={'flex items-center hover:cursor-pointer w-24 my-3'}
         onClick={() => setShowOptions(!showOptions)}
@@ -346,12 +403,12 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
           />
 
           {shouldShowVoteByCouncilToggle && (
-              <VoteBySwitch
-                  checked={voteByCouncil}
-                  onChange={() => {
-                    setVoteByCouncil(!voteByCouncil)
-                  }}
-              ></VoteBySwitch>
+            <VoteBySwitch
+              checked={voteByCouncil}
+              onChange={() => {
+                setVoteByCouncil(!voteByCouncil)
+              }}
+            ></VoteBySwitch>
           )}
         </>
       )}
