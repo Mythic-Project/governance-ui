@@ -27,7 +27,7 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
   activeTab,
   onChange,
   tabs,
-  vsrMode
+  vsrMode,
 }) => {
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
@@ -42,7 +42,7 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
 
   const tokenName = realm
     ? tokenPriceService.getTokenInfo(realm?.account.communityMint.toBase58())
-      ?.symbol
+        ?.symbol
     : ''
 
   const nftName = isNftMode ? 'NFT' : undefined
@@ -54,10 +54,11 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
       <div
         className={`absolute bg-primary-light h-24 top-0 default-transition left-0 w-1 z-10`}
         style={{
-          transform: `translateY(${tabs.findIndex(
-            (t) => t.walletAddress === activeTab?.walletAddress
-          ) * 100
-            }%)`,
+          transform: `translateY(${
+            tabs.findIndex(
+              (t) => t.walletAddress === activeTab?.walletAddress
+            ) * 100
+          }%)`,
         }}
       />
       {tabs.map((x) => {
@@ -89,14 +90,14 @@ const MemberItems = ({
   activeTab,
   tokenName,
   onChange,
-  vsrMode
+  vsrMode,
 }: {
   member: Member
   mint?: MintInfo
   councilMint?: MintInfo
   activeTab: Member
   tokenName: string
-  onChange: (member: Member) => void,
+  onChange: (member: Member) => void
   vsrMode?: boolean
 }) => {
   const {
@@ -152,10 +153,11 @@ const MemberItems = ({
     <button
       key={walletAddress}
       onClick={() => onChange(member)}
-      className={`cursor-pointer default-transition flex items-center h-24 px-4 relative w-full hover:bg-bkg-3 hover:rounded-md ${activeTab?.walletAddress === walletAddress
+      className={`cursor-pointer default-transition flex items-center h-24 px-4 relative w-full hover:bg-bkg-3 hover:rounded-md ${
+        activeTab?.walletAddress === walletAddress
           ? `bg-bkg-3 rounded-md rounded-l-none text-primary-light`
           : `text-fgd-2 hover:text-primary-light`
-        }
+      }
           `}
     >
       <div className="flex items-center text-left">
@@ -164,8 +166,9 @@ const MemberItems = ({
         </div>
         <div>
           <h3 className="flex mb-1 text-base font-bold">{renderAddressName}</h3>
-          {vsrMode ?
-            '' :
+          {vsrMode ? (
+            ''
+          ) : (
             <span className="text-xs text-fgd-3">
               {(communityAmount || !councilAmount) && (
                 <span className="flex items-center">
@@ -183,11 +186,9 @@ const MemberItems = ({
                   )}
                 </span>
               )}
-              {
-
-              }
+              {}
             </span>
-          }
+          )}
         </div>
         <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 rounded-full bg-bkg-4">
           {renderDomains}

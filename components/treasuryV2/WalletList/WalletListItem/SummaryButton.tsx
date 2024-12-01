@@ -10,8 +10,9 @@ import SelectedWalletIcon from '../../icons/SelectedWalletIcon'
 import UnselectedWalletIcon from '../../icons/UnselectedWalletIcon'
 import AssetsPreviewIconList from './AssetsPreviewIconList'
 import { useTreasurySelectState } from '@components/treasuryV2/Details/treasurySelectStore'
-import { PublicKey } from '@solana/web3.js'
-import { useMemo } from 'react'
+import { Connection, PublicKey } from '@solana/web3.js'
+import { useEffect, useMemo, useState } from 'react'
+import { TldParser } from '@onsol/tldparser'
 
 interface Props {
   className?: string
@@ -29,6 +30,7 @@ export default function SummaryButton(props: Props) {
   )
 
   const [treasurySelect] = useTreasurySelectState()
+  const [domains, setDomains] = useState<string[]>()
   const selected =
     treasurySelect === undefined || treasurySelect._kind === 'Legacy'
       ? props.selected
@@ -41,6 +43,17 @@ export default function SummaryButton(props: Props) {
         : undefined,
     [props.wallet.governanceAddress]
   )
+
+  useEffect(() => {
+    const connection = new Connection('https://api.mainnet-beta.solana.com')
+    const parser = new TldParser(connection)
+    parser.getParsedAllUserDomains(props.wallet.address).then((res) => {
+      const mappedDomains = res.map((nameAccountAndDomain) => {
+        return nameAccountAndDomain.domain
+      })
+      setDomains(mappedDomains)
+    })
+  }, [props.wallet.address])
 
   return (
     <button
@@ -111,6 +124,11 @@ export default function SummaryButton(props: Props) {
           </div>
           <div className="font-bold text-left whitespace-nowrap text-ellipsis overflow-hidden">
             {props.wallet.name || abbreviateAddress(props.wallet.address)}
+          </div>
+          <div className="font-bold text-left whitespace-nowrap text-ellipsis overflow-hidden">
+            {domains?.map((domain) => {
+              return <div className="font-bold text-white">${domain}</div>
+            })}
           </div>
         </div>
       </div>
