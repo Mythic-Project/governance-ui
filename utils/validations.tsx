@@ -35,7 +35,8 @@ const supportedPlugins = [
   ...VSR_PLUGIN_PKS,
   ...HELIUM_VSR_PLUGINS_PKS,
   ...GATEWAY_PLUGINS_PKS,
-  ...QV_PLUGINS_PKS
+  ...QV_PLUGINS_PKS,
+  "EoKpGErCsD4UEbbY6LX4MLWBUjmoAxqKdU4fdtLuzK6M"
 ]
 
 const getValidateAccount = async (
