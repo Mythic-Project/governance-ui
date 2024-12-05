@@ -165,6 +165,9 @@ export default function useGovernanceAssets() {
       name: 'Mango Market v4',
       image: '/img/mango.png',
     },
+    [PackageEnum.Manifest]: {
+      name: 'Manifest',
+    },
     [PackageEnum.MeanFinance]: {
       name: 'Mean Finance',
       image: '/img/meanfinance.png',
@@ -590,7 +593,11 @@ export default function useGovernanceAssets() {
       ██  ██  ██ ██      ██   ██ ██  ██ ██     ██      ██ ██  ██ ██ ██   ██ ██  ██ ██ ██      ██
       ██      ██ ███████ ██   ██ ██   ████     ██      ██ ██   ████ ██   ██ ██   ████  ██████ ███████
     */
-
+    [Instructions.PlaceLimitOrder]: {
+      name: 'Place limit order',
+      packageId: PackageEnum.Manifest,
+      isVisible: canUseAnyInstruction,
+    },
     [Instructions.MeanCreateAccount]: {
       name: 'Payment Stream: New account',
       packageId: PackageEnum.MeanFinance,

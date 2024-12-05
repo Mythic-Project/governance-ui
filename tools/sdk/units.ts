@@ -17,6 +17,11 @@ export function getTimestampFromDays(days: number) {
   return days * SECONDS_PER_DAY
 }
 
+export function getTimestampFromMinutes(minutes: number) {
+  //seconds in minute
+  return minutes * 60
+}
+
 export function getTimestampFromHours(hours: number) {
   return hours * 60 * 60
 }
