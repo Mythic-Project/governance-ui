@@ -1,4 +1,4 @@
-import { getTreasuryAccountItemInfoV2Async } from '@utils/treasuryTools'
+import { getTreasuryAccountItemInfoV2 } from '@utils/treasuryTools'
 import { AccountType } from '@utils/uiTypes/assets'
 import { AddressField } from '../index'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
@@ -20,8 +20,8 @@ const AccountsView = ({
               activeGovernance.pubkey.toBase58()
             : auxiliaryMode
         )
-        .map(async (x) => {
-          const info = await getTreasuryAccountItemInfoV2Async(x)
+        .map((x) => {
+          const info = getTreasuryAccountItemInfoV2(x)
           if (x.isToken || x.isSol || x.type === AccountType.AUXILIARY_TOKEN) {
             return (
               <div

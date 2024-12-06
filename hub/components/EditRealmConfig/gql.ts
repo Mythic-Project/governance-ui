@@ -102,7 +102,7 @@ export const getGovernanceResp = IT.type({
       maxVoteDays: IT.number,
       minInstructionHoldupDays: IT.number,
       version: IT.number,
-      walletAddress: PublicKey,
+      walletAddress: PublicKey
     }),
   }),
 });

@@ -4,8 +4,6 @@ import React from 'react';
 import cx from '@hub/lib/cx';
 
 import { ClusterProvider } from './Cluster';
-import { GraphQLProvider } from './GraphQL';
-import { JWTProvider } from './JWT';
 import { ToastProvider } from './Toast';
 import { UserPrefsProvider } from './UserPrefs';
 import { WalletProvider } from './Wallet';
@@ -28,17 +26,13 @@ export function RootProvider(props: Props) {
         'px-4',
       )}
     >
-      <JWTProvider>
         <ClusterProvider>
           <WalletProvider>
-            <GraphQLProvider>
               <UserPrefsProvider>
                 <Tooltip.Provider>{props.children}</Tooltip.Provider>
               </UserPrefsProvider>
-            </GraphQLProvider>
           </WalletProvider>
         </ClusterProvider>
-      </JWTProvider>
     </ToastProvider>
   );
 }

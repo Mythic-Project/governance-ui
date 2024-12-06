@@ -84,3 +84,11 @@ h4.heading-sm {
 .input-sm {
   font-size: 20px;
 }
+
+.neon-text {
+  text-shadow: 0 0 20px #4deeea, 0 0 30px #4deeea, 0 0 40px #4deeea;
+}
+
+.neon-box {
+  box-shadow: 0 0 20px #df1fff;
+}

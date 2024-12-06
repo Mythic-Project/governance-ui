@@ -45,6 +45,7 @@ const configs2defaults = (configs: GovernanceConfig[]) => {
 
   const x: Omit<Rules, 'governanceAddress' | 'walletAddress'> = {
     communityTokenRules: {
+      tokenMintAddress: PublicKey.default,
       canCreateProposal:
         enableCommunityVote &&
         !highestMinCommunityTokensToCreateProposal.eq(DISABLED_VOTER_WEIGHT),
@@ -59,6 +60,7 @@ const configs2defaults = (configs: GovernanceConfig[]) => {
       voteTipping: GovernanceVoteTipping.Disabled,
     },
     councilTokenRules: {
+      tokenMintAddress: PublicKey.default,
       canCreateProposal:
         enableCouncilVote &&
         !highestMinCouncilTokensToCreateProposal.eq(DISABLED_VOTER_WEIGHT),

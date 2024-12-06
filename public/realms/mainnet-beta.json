@@ -3786,4 +3786,18 @@
     "github": "https://github.com/FreecoDAO"
     "donation address": "freeco.sol, 9wX9CfEtos31kTBAK9HpEmaWo7vM7bfLsyvXWoUcavvd"
   }
+  {
+    "symbol": "DigiMentorDAO",
+    "category": "Education",
+    "bannerImage": "/realms/Digi:Mentor:DAO/banner.png",
+    "displayName": "Digi Mentor DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "ApMSZpRfDryd39P3thnpn3DRWeWyGkvgniKuMjeFpcob",
+    "ogImage": "/realms/Digi:Mentor:DAO/digi_mentor_logo.png",
+    "shortDescription": "A decentralized hub where $LEARN token holders shape the future of the Digi Mentor ecosystem.",
+    "website": "https://digimentor.io/",
+    "twitter": "@DigiMentor_Earn",
+    "discord": "https://discord.gg/GfVDQkYQty",
+    "github": "https://github.com/digimentor"
+}
 ]
