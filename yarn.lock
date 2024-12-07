@@ -2759,6 +2759,14 @@
     node-gyp "^7.1.0"
     read-package-json-fast "^2.0.1"
 
+"@onsol/tldparser@0.6.6":
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/@onsol/tldparser/-/tldparser-0.6.6.tgz#e88f38e9bfa6058d0eacf18ad606f463f3760597"
+  integrity sha512-ArVxgBV4+9j1U8ja3JRogzFpOsVpFITV3DwN3lcwpbBt00NpmMIcMTdiR6swkfQLthDE3dI19tKmQBuKrN4wyA==
+  dependencies:
+    "@ethersproject/sha2" "^5.7.0"
+    "@metaplex-foundation/beet-solana" "^0.4.0"
+
 "@parcel/watcher-android-arm64@2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.4.0.tgz#9c93763794153e4f76920994a423b6ea3257059d"
@@ -7468,6 +7476,15 @@ axios@0.26.1:
   integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
   dependencies:
     follow-redirects "^1.14.8"
+
+axios@1.7.8:
+  version "1.7.8"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.8.tgz#1997b1496b394c21953e68c14aaa51b7b5de3d6e"
+  integrity sha512-Uu0wb7KNqK2t5K+YQyVCLM76prD5sRFjKHbJYCP1J7JFGEQ6nN7HWn9+04LAeiJ3ji54lgS/gZCH1oxyrf1SPw==
+  dependencies:
+    follow-redirects "^1.15.6"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
 
 axios@^0.21.0, axios@^0.21.3:
   version "0.21.4"

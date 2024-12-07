@@ -2,7 +2,7 @@ import { FunctionComponent, useMemo } from 'react'
 import { LogoutIcon } from '@heroicons/react/outline'
 import tokenPriceService from '@utils/services/tokenPrice'
 import { fmtMintAmount } from '@tools/sdk/units'
-import { PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import { Member } from '@utils/uiTypes/members'
 import { MintInfo } from '@solana/spl-token'
 import { useRealmQuery } from '@hooks/queries/realm'
@@ -14,6 +14,7 @@ import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import { NFT_PLUGINS_PKS } from '@constants/plugins'
 import { ProfileName } from '@components/Profile/ProfileName'
 import { ProfileImage } from '@components/Profile'
+import { ProfileDomains } from '@components/Profile/ProfileDomains'
 
 interface MembersTabsProps {
   activeTab: Member
@@ -26,7 +27,7 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
   activeTab,
   onChange,
   tabs,
-  vsrMode
+  vsrMode,
 }) => {
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
@@ -89,14 +90,14 @@ const MemberItems = ({
   activeTab,
   tokenName,
   onChange,
-  vsrMode
+  vsrMode,
 }: {
   member: Member
   mint?: MintInfo
   councilMint?: MintInfo
   activeTab: Member
   tokenName: string
-  onChange: (member: Member) => void,
+  onChange: (member: Member) => void
   vsrMode?: boolean
 }) => {
   const {
@@ -137,6 +138,17 @@ const MemberItems = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
     [walletAddress]
   )
+  const renderDomains = useMemo(
+    () => (
+      <ProfileDomains
+        publicKey={new PublicKey(walletAddress)}
+        height="12px"
+        width="100px"
+        dark={true}
+      />
+    ),
+    [walletAddress]
+  )
   return (
     <button
       key={walletAddress}
@@ -154,8 +166,9 @@ const MemberItems = ({
         </div>
         <div>
           <h3 className="flex mb-1 text-base font-bold">{renderAddressName}</h3>
-          {vsrMode ?
-            '' :
+          {vsrMode ? (
+            ''
+          ) : (
             <span className="text-xs text-fgd-3">
               {(communityAmount || !councilAmount) && (
                 <span className="flex items-center">
@@ -173,8 +186,12 @@ const MemberItems = ({
                   )}
                 </span>
               )}
+              {}
             </span>
-          }
+          )}
+        </div>
+        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 rounded-full bg-bkg-4">
+          {renderDomains}
         </div>
       </div>
     </button>

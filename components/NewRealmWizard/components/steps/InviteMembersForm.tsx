@@ -14,6 +14,8 @@ import { updateUserInput, validateSolAddress } from '@utils/formValidation'
 import { FORM_NAME as MULTISIG_FORM } from 'pages/realms/new/multisig'
 import { textToAddressList } from '@utils/textToAddressList'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
+import { TldParser } from '@onsol/tldparser'
+import { Connection } from '@solana/web3.js'
 
 /**
  * Convert a list of addresses into a list of uniques and duplicates
@@ -145,6 +147,9 @@ export default function InviteMembersForm({
   const inputElement = useRef<HTMLInputElement>(null)
   const [inviteList, setInviteList] = useState<string[]>([])
   const [invalidAddresses, setInvalidAddresses] = useState<string[]>([])
+  const [domain, setDomain] = useState('')
+  const [resolvedAddress, setResolvedAddress] = useState('')
+  const [domainError, setDomainError] = useState('')
   const [lacksMintAuthority, setLackMintAuthority] = useState(false)
 
   const schema = yup.object(InviteMembersSchema)
@@ -157,6 +162,33 @@ export default function InviteMembersForm({
     resolver: yupResolver(schema),
     context: formData,
   })
+
+  const resolveDomain = async () => {
+    setDomainError('') // Reset previous errors
+    setResolvedAddress('') // Reset resolved address
+    if (!domain) {
+      setDomainError('Domain cannot be empty.')
+      return
+    }
+    try {
+      const RPC_URL = 'https://api.mainnet-beta.solana.com'
+      const connection = new Connection(RPC_URL)
+      const parser = new TldParser(connection)
+      const nameRecord = await parser.getNameRecordFromDomainTld(domain)
+      const address = (
+        (await parser.getOwnerFromDomainTld(domain)) ?? ''
+      ).toString()
+
+      if (address) {
+        setResolvedAddress(address)
+        setInviteList((prevList) => [...prevList, address])
+      } else {
+        setDomainError('Could not resolve the domain to a valid address.')
+      }
+    } catch (error) {
+      setDomainError('Failed to resolve domain. Please try again.')
+    }
+  }
 
   useEffect(() => {
     if (typeof formData.addCouncil === 'undefined' || formData?.addCouncil) {
@@ -337,6 +369,30 @@ export default function InviteMembersForm({
             onPaste={handlePaste}
             onKeyDown={handleKeyDown}
           />
+
+          {/* Domain input */}
+          <div className="mt-4">
+            <Input
+              id="domain"
+              type="text"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              placeholder="e.g., example.sol"
+            />
+            <button
+              type="button"
+              onClick={resolveDomain}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Resolve
+            </button>
+            {resolvedAddress && (
+              <p className="mt-2 text-green-500">
+                Resolved Wallet Address: {resolvedAddress}
+              </p>
+            )}
+            {domainError && <p className="mt-2 text-red-500">{domainError}</p>}
+          </div>
         </FormField>
       </div>
       <FormFooter
