@@ -26,6 +26,10 @@ import { NewProposalContext } from '../../../new'
 import useMembershipTypes from './useMembershipTypes'
 import { useRealmQuery } from '@hooks/queries/realm'
 import Tooltip from '@components/Tooltip'
+import { resolveDomain } from '@utils/domains'
+import { RefreshIcon } from '@heroicons/react/outline'
+import debounce from 'lodash/debounce'
+import { useConnection } from '@solana/wallet-adapter-react'
 
 type Form = {
   memberKey?: string
@@ -196,6 +200,34 @@ const RevokeGoverningTokens: FC<{
     governance,
   ])
 
+  // Add state for domain resolution
+  const [isResolvingDomain, setIsResolvingDomain] = useState(false)
+  const {connection} = useConnection()
+
+  // Add the debounced resolve function
+  const resolveDomainDebounced = useMemo(
+    () =>
+      debounce(async (domain: string) => {
+        try {
+          console.log('Attempting to resolve domain:', domain)
+          const resolved = await resolveDomain(connection, domain)
+          console.log('Domain resolved to:', resolved?.toBase58() || 'null')
+          
+          if (resolved) {
+            setForm((prevForm) => ({
+              ...prevForm,
+              memberKey: resolved.toBase58(),
+            }))
+          }
+        } catch (error) {
+          console.error('Error resolving domain:', error)
+        } finally {
+          setIsResolvingDomain(false)
+        }
+      }, 500),
+    [connection]
+  )
+
   return (
     <>
       <Tooltip
@@ -218,13 +250,29 @@ const RevokeGoverningTokens: FC<{
           ))}
         </Select>
       </Tooltip>
-      <Input
-        label="Member Public Key"
-        value={form.memberKey}
-        type="text"
-        onChange={(e) => setForm((p) => ({ ...p, memberKey: e.target.value }))}
-        error={formErrors.memberKey}
-      />
+      <div className="relative">
+        <Input
+          label="Member Public Key"
+          value={form.memberKey}
+          type="text"
+          placeholder="Member wallet or domain name (e.g. domain.sol)"
+          onChange={(e) => {
+            const value = e.target.value
+            setForm((p) => ({ ...p, memberKey: value }))
+            
+            if (value.includes('.')) {
+              setIsResolvingDomain(true)
+              resolveDomainDebounced(value)
+            }
+          }}
+          error={formErrors.memberKey}
+        />
+        {isResolvingDomain && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <RefreshIcon className="h-4 w-4 animate-spin text-primary-light" />
+          </div>
+        )}
+      </div>
       <TokenAmountInput
         mint={selectedMint}
         label="Amount of weight to revoke"

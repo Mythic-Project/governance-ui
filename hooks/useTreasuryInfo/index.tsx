@@ -9,7 +9,7 @@ import useRealm from '@hooks/useRealm'
 
 import { assembleWallets } from './assembleWallets'
 import { calculateTokenCountAndValue } from './calculateTokenCountAndValue'
-import { getDomains } from './getDomains'
+import { fetchDomainsByPubkey } from '@utils/domains'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import {
@@ -67,18 +67,27 @@ export default function useTreasuryInfo(
     if (!loadingGovernedAccounts && accounts.length && getNftsAndDomains) {
       setDomainsLoading(true)
       setBuildingWallets(true)
-      getDomains(
-        accounts.filter((acc) => acc.isSol),
-        connection.current
-      ).then((domainNames) => {
-        setDomains(domainNames)
-        setDomainsLoading(false)
-      })
+      
+      Promise.all(
+        accounts
+          .filter((acc) => acc.isSol)
+          .map((account) => 
+            fetchDomainsByPubkey(connection.current, account.pubkey)
+          )
+      ).then((domainResults) => {
+        const allDomains = domainResults.flat().map(domain => ({
+          name: domain.domainName?.replace('.sol', ''),
+          address: domain.domainAddress,
+          owner: accounts[0].pubkey.toBase58(),
+          type: domain.type
+        }));
+        
+        setDomains(allDomains);
+        setDomainsLoading(false);
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
     loadingGovernedAccounts,
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
     accounts.map((account) => account.pubkey.toBase58()).join('-'),
   ])
 
