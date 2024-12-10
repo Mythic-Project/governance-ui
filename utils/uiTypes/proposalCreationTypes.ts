@@ -25,6 +25,7 @@ export enum PackageEnum {
   Serum,
   Solend,
   Symmetry,
+  Manifest,
   Squads,
   Switchboard,
   VsrPlugin,
@@ -32,7 +33,13 @@ export enum PackageEnum {
 
 export interface UiInstruction {
   serializedInstruction: string
-  additionalSerializedInstructions?: string[]
+  additionalSerializedInstructions?: (
+    | string
+    | {
+        serializedInstruction: string
+        holdUpTime: number
+      }
+  )[]
   isValid: boolean
   governance: ProgramAccount<Governance> | undefined
   customHoldUpTime?: number
@@ -121,7 +128,8 @@ export interface ClawbackForm {
   holdupTime: number
 }
 
-export interface SendTokenCompactViewForm extends Omit<SplTokenTransferForm, 'amount' | 'destinationAccount'> {
+export interface SendTokenCompactViewForm
+  extends Omit<SplTokenTransferForm, 'amount' | 'destinationAccount'> {
   destinationAccount: string[]
   amount: (number | undefined)[]
   txDollarAmount: (string | undefined)[]
@@ -329,6 +337,7 @@ export enum Instructions {
   DistributionFillVaults,
   DelegateStake,
   RemoveStakeLock,
+  PlaceLimitOrder,
   Grant,
   InitSolendObligationAccount,
   JoinDAO,
@@ -397,7 +406,7 @@ export enum Instructions {
   SymmetryCreateBasket,
   SymmetryEditBasket,
   SymmetryDeposit,
-  SymmetryWithdraw
+  SymmetryWithdraw,
 }
 
 export interface ComponentInstructionData {
@@ -556,57 +565,56 @@ export interface DualFinanceVoteDepositForm {
 }
 
 export interface SymmetryCreateBasketForm {
-  governedAccount?: AssetAccount,
-  basketType: number,
-  basketName: string,
-  basketSymbol: string,
-  basketMetadataUrl: string,
+  governedAccount?: AssetAccount
+  basketType: number
+  basketName: string
+  basketSymbol: string
+  basketMetadataUrl: string
   basketComposition: {
-    name: string,
-    symbol: string,
-    token: PublicKey;
-    weight: number;
-  }[],
-  rebalanceThreshold: number,
-  rebalanceSlippageTolerance: number,
-  depositFee: number,
-  feeCollectorAddress:string,
-  liquidityProvision: boolean,
-  liquidityProvisionRange: number,
+    name: string
+    symbol: string
+    token: PublicKey
+    weight: number
+  }[]
+  rebalanceThreshold: number
+  rebalanceSlippageTolerance: number
+  depositFee: number
+  feeCollectorAddress: string
+  liquidityProvision: boolean
+  liquidityProvisionRange: number
 }
 
-
 export interface SymmetryEditBasketForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  basketType: number,
-  basketName: string,
-  basketSymbol: string,
-  basketMetadataUrl: string,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  basketType: number
+  basketName: string
+  basketSymbol: string
+  basketMetadataUrl: string
   basketComposition: {
-    name: string,
-    symbol: string,
-    token: PublicKey;
-    weight: number;
-  }[],
-  rebalanceThreshold: number,
-  rebalanceSlippageTolerance: number,
-  depositFee: number,
-  feeCollectorAddress:string,
-  liquidityProvision: boolean,
-  liquidityProvisionRange: number,
+    name: string
+    symbol: string
+    token: PublicKey
+    weight: number
+  }[]
+  rebalanceThreshold: number
+  rebalanceSlippageTolerance: number
+  depositFee: number
+  feeCollectorAddress: string
+  liquidityProvision: boolean
+  liquidityProvisionRange: number
 }
 
 export interface SymmetryDepositForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  depositToken?: PublicKey,
-  depositAmount: number,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  depositToken?: PublicKey
+  depositAmount: number
 }
 
 export interface SymmetryWithdrawForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  withdrawAmount: number,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  withdrawAmount: number
   withdrawType: number
 }
