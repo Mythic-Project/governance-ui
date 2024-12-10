@@ -3772,11 +3772,11 @@
   {
     "symbol": "DigiMentorDAO",
     "category": "Education",
-    "bannerImage": "/realms/Digi:Mentor:DAO/banner.png",
+    "bannerImage": "/realms/DigiMentorDAO/banner.png",
     "displayName": "Digi Mentor DAO",
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "ApMSZpRfDryd39P3thnpn3DRWeWyGkvgniKuMjeFpcob",
-    "ogImage": "/realms/Digi:Mentor:DAO/digi_mentor_logo.png",
+    "ogImage": "/realms/DigiMentorDAO/digi_mentor_logo.png",
     "shortDescription": "A decentralized hub where $LEARN token holders shape the future of the Digi Mentor ecosystem.",
     "website": "https://digimentor.io/",
     "twitter": "@DigiMentor_Earn",
