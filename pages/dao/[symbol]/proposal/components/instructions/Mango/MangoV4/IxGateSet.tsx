@@ -17,6 +17,9 @@ import { IxGateParams } from '@blockworks-foundation/mango-v4/dist/types/src/cli
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import useProgramSelector from '@components/Mango/useProgramSelector'
 import ProgramSelector from '@components/Mango/ProgramSelector'
+import ForwarderProgram, {
+  useForwarderProgramHelpers,
+} from '@components/ForwarderProgram/ForwarderProgram'
 
 type IxGateSetForm = IxGateParams & {
   governedAccount: AssetAccount | null
@@ -31,6 +34,7 @@ const IxGateSet = ({
   governance: ProgramAccount<Governance> | null
 }) => {
   const wallet = useWalletOnePointOh()
+  const forwarderProgramHelpers = useForwarderProgramHelpers()
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
@@ -153,7 +157,9 @@ const IxGateSet = ({
         })
         .instruction()
 
-      serializedInstruction = serializeInstructionToBase64(ix)
+      serializedInstruction = serializeInstructionToBase64(
+        forwarderProgramHelpers.withForwarderWrapper(ix)
+      )
     }
     const obj: UiInstruction = {
       serializedInstruction: serializedInstruction,
@@ -170,7 +176,11 @@ const IxGateSet = ({
       index
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  }, [form])
+  }, [
+    form,
+    forwarderProgramHelpers.form,
+    forwarderProgramHelpers.withForwarderWrapper,
+  ])
   const schema = yup.object().shape({
     governedAccount: yup
       .object()
@@ -684,6 +694,7 @@ const IxGateSet = ({
           formErrors={formErrors}
         ></InstructionForm>
       )}
+      <ForwarderProgram {...forwarderProgramHelpers}></ForwarderProgram>
     </>
   )
 }

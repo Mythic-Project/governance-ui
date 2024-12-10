@@ -49,7 +49,9 @@ const useSignersNeeded = (
 
       //we need to remove the governance and its treasury from the signers
       const signers = propInstructions
-        .map((x) => x.account.instructions.flatMap((inst) => inst.accounts))
+        .map(
+          (x) => x.account.instructions?.flatMap((inst) => inst.accounts) || []
+        )
         .filter((x) => x)
         .flatMap((x) => x)
         .filter((x) => x.isSigner)

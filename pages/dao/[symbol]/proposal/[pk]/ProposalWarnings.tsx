@@ -28,10 +28,11 @@ const SetRealmConfigWarning = () => (
         </h3>
         <div className="mt-2">
           <p className="text-sm text-yellow-700">
-            This proposal writes to your realm configuration, which could affect how 
-            votes are counted. Both the instruction data AND accounts list contain parameters. 
-            Before you vote, make sure you review the proposal&apos;s instructions and the concerned 
-            accounts, and understand the implications of passing this proposal.
+            This proposal writes to your realm configuration, which could affect
+            how votes are counted. Both the instruction data AND accounts list
+            contain parameters. Before you vote, make sure you review the
+            proposal&apos;s instructions and the concerned accounts, and
+            understand the implications of passing this proposal.
           </p>
         </div>
       </div>
@@ -79,10 +80,11 @@ const SetGovernanceConfig = () => (
         </h3>
         <div className="mt-2">
           <p className="text-sm text-yellow-700">
-            This proposal writes to your governance configuration, which could affect how 
-            votes are counted. Both the instruction data AND accounts list contain parameters. 
-            Before you vote, make sure you review the proposal&apos;s instructions and the concerned 
-            accounts, and understand the implications of passing this proposal.
+            This proposal writes to your governance configuration, which could
+            affect how votes are counted. Both the instruction data AND accounts
+            list contain parameters. Before you vote, make sure you review the
+            proposal&apos;s instructions and the concerned accounts, and
+            understand the implications of passing this proposal.
           </p>
         </div>
       </div>
@@ -190,8 +192,10 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
     ?.result
 
   const isUsingForwardProgram = transactions
-    ?.flatMap((tx) =>
-      tx.account.instructions.flatMap((ins) => ins.programId.toBase58())
+    ?.flatMap(
+      (tx) =>
+        tx.account.instructions?.flatMap((ins) => ins.programId.toBase58()) ||
+        []
     )
     .filter((x) => x === MANGO_INSTRUCTION_FORWARDER).length
 
