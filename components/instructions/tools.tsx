@@ -142,6 +142,21 @@ export const ACCOUNT_NAMES = {
   bDgqY2Qt4y2jSsRNvD7FETkRJJNiYZT1Q3UnAYYzUCo: 'DAO: (DEAN) Community Reserve',
   BtJaNZrZZmagHGzCU2VazSJWzBS9KY7tG41enBrT2NtU: 'DAO: (DEAN) Liquidity Reserve',
 
+  // EpicentralDAO
+  'LABSh5DTebUcUbEoLzXKCiXFJLecDFiDWiBGUU1GpxR': 'LABS Token Mint',
+
+  'Crn54GhCKYkpoy1Mp1qZWJrzsaSbJQDR46uF5Rn4gRot': 'Main DAO Treasury',
+  'Gh2MXR1b4CM3M5nnkoPE8Y1fpQ1H7Ujg4m8rAU2N9cCJ': 'LABS Main Vault',
+
+  '5jagwdtwXufeiqn6XLxWaeCRPYT924Axyzo9ZDLAxPFC': 'Community Treasury',
+  '5hYmaq1Su7fJLPAS4mKMiUq3tirR72duGGMRU2ejFMaQ': 'LABS Contributor Bonus Vault',
+
+  '24Z8YUVPBSP6JHfrsy8wkGXXf1JpuA7JGfmrk2frE1zL': 'Marketing Treasury',
+  'BHjWxsNEwMCwtPWoJMsjFzjXCTgr6kbHKprGrNgLfW81': 'LABS Marketing Vault',
+  
+  '9zUzsav4JcUHnmzsT9YFkbk2YvjxEf9MosVTKYDDnnnW': 'Rewards Allocation Vault',
+  '6PPtCuNPxipkwATrXorGNMFsEiJK2WNwNRVdgzTJZfU8': 'LABS Rewards Vault',
+  
   // Physis DAO
   '29epeLvAMyRXtpA1HaoKB1hGcAnrc1NvMCbaZ8AVRwEi': 'Physis DAO Treasury',
   '4i2Yjk5bUiLeVNwqBpkRdFSECSCvMgKoeCSdRSx1TPcz': 'DAO: Rewards (PHY)',
