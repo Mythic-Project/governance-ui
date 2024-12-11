@@ -62,6 +62,7 @@ import SanctumWithdrawStake from './components/instructions/Validators/SanctumWi
 import DeactivateValidatorStake from './components/instructions/Validators/DeactivateStake'
 import WithdrawValidatorStake from './components/instructions/Validators/WithdrawStake'
 import DelegateStake from './components/instructions/Validators/DelegateStake'
+import WithdrawFromVoteAccount from './components/instructions/Validators/WithdrawFromVoteAccount'
 import SplitStake from './components/instructions/Validators/SplitStake'
 import useCreateProposal from '@hooks/useCreateProposal'
 import RealmConfig from './components/instructions/RealmConfig'
@@ -550,6 +551,7 @@ const New = () => {
       [Instructions.DeactivateValidatorStake]: DeactivateValidatorStake,
       [Instructions.WithdrawValidatorStake]: WithdrawValidatorStake,
       [Instructions.DelegateStake]: DelegateStake,
+      [Instructions.WithdrawFromVoteAccount]: WithdrawFromVoteAccount,
       [Instructions.RemoveStakeLock]: RemoveLockup,
       [Instructions.SplitStake]: SplitStake,
       [Instructions.DifferValidatorStake]: null,
