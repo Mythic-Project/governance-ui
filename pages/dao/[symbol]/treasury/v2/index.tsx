@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { pipe } from 'fp-ts/function'
 
 import PreviousRouteBtn from '@components/PreviousRouteBtn'
@@ -10,9 +10,6 @@ import useTreasuryInfo from '@hooks/useTreasuryInfo'
 import { AuxiliaryWallet, Wallet } from '@models/treasury/Wallet'
 import { Asset } from '@models/treasury/Asset'
 import { useTreasurySelectState } from '@components/treasuryV2/Details/treasurySelectStore'
-import { GlobeIcon } from '@heroicons/react/outline'
-import { Domain } from '@models/treasury/Domain'
-import { AssetType, Domains } from '@models/treasury/Asset'
 
 export default function Treasury() {
   const data = useTreasuryInfo()
@@ -62,32 +59,6 @@ export default function Treasury() {
       ? selectedAsset
       : ('USE NON-LEGACY STATE' as const)
 
-  // Extract domains from wallets when data is available
-  const allDomains = useMemo(() => {
-    if (data._tag === Status.Ok) {
-      return data.data.wallets.reduce((domains, wallet) => {
-        const walletDomains = wallet.assets.find(asset => 
-          asset.type === AssetType.Domain
-        ) as Domains | undefined;
-        
-        return walletDomains ? domains.concat(walletDomains.list) : domains;
-      }, [] as Domain[]);
-    }
-    return [];
-  }, [data]);
-
-  // Group domains by type
-  const groupedDomains = useMemo(() => {
-    return allDomains.reduce((acc, domain) => {
-      const type = (domain as any).type || 'sns';
-      if (!acc[type]) {
-        acc[type] = [];
-      }
-      acc[type].push(domain);
-      return acc;
-    }, {} as { [key: string]: Domain[] });
-  }, [allDomains]);
-
   return (
     <div className="rounded-lg bg-bkg-2 p-6 min-h-full flex flex-col">
       <header className="space-y-6 border-b border-white/10 pb-4">
@@ -104,54 +75,6 @@ export default function Treasury() {
             }))
           )}
         />
-        {/* Modified Domains Section */}
-        {allDomains.length > 0 && (
-          <div className="bg-bkg-3 p-4 rounded-lg">
-            <div className="text-base font-bold mb-2">DAO Domains</div>
-            
-            {/* SNS Domains */}
-            {groupedDomains['sns']?.length > 0 && (
-              <>
-                <div className="text-sm text-fgd-2 mb-2">Solana Name Service Domains</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                  {groupedDomains['sns'].map((domain) => (
-                    <div 
-                      key={domain.address}
-                      className="flex items-center space-x-2 bg-bkg-1 p-3 rounded-lg"
-                    >
-                      <GlobeIcon className="h-5 w-5 text-fgd-1" />
-                      <div>
-                        <div className="text-sm font-medium">{domain.name}.sol</div>
-                        <div className="text-xs text-fgd-3">{domain.address}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* AllDomains */}
-            {groupedDomains['alldomains']?.length > 0 && (
-              <>
-                <div className="text-sm text-fgd-2 mb-2">AllDomains</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {groupedDomains['alldomains'].map((domain) => (
-                    <div 
-                      key={domain.address}
-                      className="flex items-center space-x-2 bg-bkg-1 p-3 rounded-lg"
-                    >
-                      <GlobeIcon className="h-5 w-5 text-fgd-1" />
-                      <div>
-                        <div className="text-sm font-medium">{domain.name}</div>
-                        <div className="text-xs text-fgd-3">{domain.address}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
       </header>
       <article className="grid grid-cols-[458px_1fr] flex-grow gap-x-4">
         <WalletList
