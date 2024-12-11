@@ -345,7 +345,10 @@ export const ACCOUNT_NAMES = {
   AWVUWfRnHCTgo123mRXB9BRWaxt6JdZXXKhFMQ5mryKJ: 'AllDomains DAO Governance',
   
   // Parcl
-  "9Waj7NNTzEhyHf1j1F36xgtnXaLoAxVBFhf6VxE9fgaf": 'Parcl DAO'
+  "9Waj7NNTzEhyHf1j1F36xgtnXaLoAxVBFhf6VxE9fgaf": 'Parcl DAO',
+
+  //ITTY DAO
+  '4xu2tV97C2PmpyyjpUf26r3aapn22cqeZ7uXvwtNuEXN': 'ITTY DAO'
 }
 
 // TODO: Add this to on-chain metadata to Governance account
