@@ -3,6 +3,9 @@ import { useProfile } from '@components/Profile/useProfile';
 import { PublicKey } from '@solana/web3.js';
 import ContentLoader from "react-content-loader";
 import {ShortAddress} from "@components/Profile/ShortAddress";
+import { fetchDomainsByPubkey } from '@utils/domains'
+import { useConnection } from '@solana/wallet-adapter-react'
+import { useEffect, useState } from 'react'
 
 type Props = { publicKey?: PublicKey, height?: string;
   width?: string;
@@ -13,6 +16,13 @@ export const ProfileName: FC<Props> = ({ publicKey, height = "13",
                                          dark = false,
                                          style, }) => {
   const { profile, loading } = useProfile(publicKey)
+  const { connection } = useConnection()
+  const [domains, setDomains] = useState<any[]>([])
+  useEffect(() => {
+    if (publicKey) {
+      fetchDomainsByPubkey(connection, publicKey).then(setDomains)
+    }
+  }, [publicKey, connection])
 
 
   if (!publicKey) return <></>;
@@ -34,7 +44,7 @@ export const ProfileName: FC<Props> = ({ publicKey, height = "13",
       </div>
   ) : (
       <div style={{ display: "flex", gap: "5px", ...style }}>
-        {profile?.name?.value || <ShortAddress address={publicKey} />}
+        {domains.length > 0 ? domains[0].domainName : profile?.name?.value || <ShortAddress address={publicKey} />}
       </div>
   );
 }
