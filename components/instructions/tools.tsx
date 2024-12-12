@@ -159,7 +159,7 @@ export const ACCOUNT_NAMES = {
   
   '9zUzsav4JcUHnmzsT9YFkbk2YvjxEf9MosVTKYDDnnnW': 'Rewards Treasury',
   '6yuntQAS5gSwhhKaXG3QYbcwXPxhsbULu9Tzv9mizUUm': 'SOL Rewards Reserve',
-  '6PPtCuNPxipkwATrXorGNMFsEiJK2WNwNRVdgzTJZfU8': 'LABS Rewards Vault',
+  '6PPtCuNPxipkwATrXorGNMFsEiJK2WNwNRVdgzTJZfU8': 'LABS DeFi Rewards Vault',
   
   // Physis DAO
   '29epeLvAMyRXtpA1HaoKB1hGcAnrc1NvMCbaZ8AVRwEi': 'Physis DAO Treasury',
