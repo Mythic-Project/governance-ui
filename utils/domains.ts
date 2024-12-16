@@ -82,22 +82,9 @@ export const fetchDomainsByPubkey = async (
   pubkey: PublicKey | undefined
 ) => {
   if (!pubkey) return []
-  const parser = new TldParser(connection)
   const sns_domains = await getAllDomains(connection, pubkey)
-  const tld_domains = await parser.getParsedAllUserDomains(pubkey)
   const results: Domain[] = []
   
-  if (tld_domains.length > 0) {
-    for (let i = 0; i < tld_domains.length; i++) {
-      results.push({
-        domainAddress: tld_domains[i].domain,
-        domainName: tld_domains[i].nameAccount.toBase58(),
-        domainOwner: pubkey.toBase58(),
-        type: 'alldomains',
-      })
-    }
-  }
-
   if (sns_domains.length > 0) {
     const reverse = await performReverseLookupBatch(connection, sns_domains)
 
