@@ -82,23 +82,8 @@ const RevokeGoverningTokens: FC<{
     }
   }, [query])
 
-  // If there's only one membership type, we can just select that for the user.
-  // @asktree style note: I create a new variable rather than using `setForm` here because I don't like side effects
-  const selectedMembershipType = useMemo(
-    () =>
-      form.membershipPopulation ?? Object.keys(membershipTypes).length === 1
-        ? Object.keys(membershipTypes)[0]
-        : undefined,
-    [form.membershipPopulation, membershipTypes]
-  )
-
-  const selectedMint = useMemo(
-    () =>
-      selectedMembershipType === undefined
-        ? undefined
-        : (membershipTypes[selectedMembershipType] as PublicKey | undefined),
-    [membershipTypes, selectedMembershipType]
-  )
+  const [selectedMint, setSelectedMint] = useState<PublicKey | undefined>(undefined)
+  const [selectedMembershipType, setSelectedMembershipType] = useState<string | undefined>(undefined)
 
   const { data: mintInfo } = useMintInfoByPubkeyQuery(selectedMint)
   const governance = useGovernanceForGovernedAddress(selectedMint)
@@ -228,6 +213,14 @@ const RevokeGoverningTokens: FC<{
     [connection]
   )
 
+  const updateMembershipType = (x: "council" | "community" | undefined) => {
+    setForm((p) => ({ ...p, membershipPopulation: x }))
+    setSelectedMembershipType(x)
+    if (x) {
+      setSelectedMint(membershipTypes[x])
+    }
+  }
+
   return (
     <>
       <Tooltip
@@ -241,7 +234,7 @@ const RevokeGoverningTokens: FC<{
           label="Membership Token"
           disabled={Object.keys(membershipTypes).length === 0}
           value={selectedMembershipType}
-          onChange={(x) => setForm((p) => ({ ...p, membershipPopulation: x }))}
+          onChange={(x) => updateMembershipType(x)}
         >
           {Object.keys(membershipTypes).map((x) => (
             <Select.Option key={x} value={x}>
