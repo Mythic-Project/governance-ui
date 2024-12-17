@@ -3794,5 +3794,17 @@
     "website": "https://deanslist.services/",
     "twitter": "@deanslistng",
     "discord": "http://discord.gg/deanslist"
+  },
+  {
+    "symbol": "LATE",
+    "displayName": "Late Capitalism",
+    "bannerImage": "/realms/LateCapDAO/banner.jpeg",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "8WUw4y7v8mmrfz7jopi1zYfnvMQkEjKG24gGvcozZNuT",
+    "ogImage": "/realms/LateCapDAO/logo.jpg",
+    "shortDescription": "DAO of the LATE Rebellion",
+    "website": "https://late.fun/",
+    "twitter": "@LateCapDAO",
+    "telegram": "https://t.me/LateCapDAO"
   }
 ]
