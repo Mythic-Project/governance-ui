@@ -168,13 +168,17 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
 
   useEffect(() => {
     const getMangoAccounts = async () => {
-      const accounts = await mangoClient?.getMangoAccountsForOwner(
-        mangoGroup!,
-        account.extensions.token!.account.owner!
-      )
+      try {
+        const accounts = await mangoClient?.getMangoAccountsForOwner(
+          mangoGroup!,
+          account.extensions.token!.account.owner!
+        )
 
-      if (accounts) {
-        setMangoAccounts(accounts)
+        if (accounts) {
+          setMangoAccounts(accounts)
+        }
+      } catch (e) {
+        console.log(e)
       }
     }
     if (mangoClient && mangoGroup) {
@@ -741,17 +745,21 @@ const MangoAccountItem = ({
   account: MangoAccount | null
   group: Group | null
 }) => {
-  return account && group ? (
-    <div>
-      <div>Name: {account.name}</div>
-      <div>{account.publicKey.toBase58()}</div>
+  try {
+    return account && group ? (
       <div>
-        Account Value: ${toUiDecimals(account.getAssetsValue(group), 6)}
+        <div>Name: {account.name}</div>
+        <div>{account.publicKey.toBase58()}</div>
+        <div>
+          Account Value: ${toUiDecimals(account.getAssetsValue(group), 6)}
+        </div>
       </div>
-    </div>
-  ) : (
-    <div>Create new account</div>
-  )
+    ) : (
+      <div>Create new account</div>
+    )
+  } catch (e) {
+    return null
+  }
 }
 
 const getNextAccountNumber = (accounts: MangoAccount[]): number => {

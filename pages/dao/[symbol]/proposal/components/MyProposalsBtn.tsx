@@ -51,8 +51,8 @@ import {
 import queryClient from '@hooks/queries/queryClient'
 import { getFeeEstimate } from '@tools/feeEstimate'
 import { createComputeBudgetIx } from '@blockworks-foundation/mango-v4'
-import {useVotingClients} from "@hooks/useVotingClients";
-import {useNftClient} from "../../../../../VoterWeightPlugins/useNftClient";
+import { useVotingClients } from '@hooks/useVotingClients'
+import { useNftClient } from '../../../../../VoterWeightPlugins/useNftClient'
 
 const MyProposalsBn = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -85,8 +85,8 @@ const MyProposalsBn = () => {
   const programVersion =
     useProgramVersion() ?? DEFAULT_GOVERNANCE_PROGRAM_VERSION
 
-  const votingClients = useVotingClients();
-  const { nftClient } = useNftClient();
+  const votingClients = useVotingClients()
+  const { nftClient } = useNftClient()
 
   const [
     proposalsWithDepositedTokens,
@@ -242,10 +242,11 @@ const MyProposalsBn = () => {
         realm?.account.communityMint.toBase58()
           ? ownTokenRecord
           : ownCouncilTokenRecord
-      const role = proposal.account.governingTokenMint.toBase58() ===
+      const role =
+        proposal.account.governingTokenMint.toBase58() ===
         realm?.account.communityMint.toBase58()
-        ? 'community'
-        : 'council'
+          ? 'community'
+          : 'council'
       const governanceAuthority = wallet!.publicKey!
       const beneficiary = wallet!.publicKey!
 
@@ -254,15 +255,14 @@ const MyProposalsBn = () => {
         proposal.pubkey,
         voterTokenRecord!.pubkey
       )
-      
+
       let governingTokenMint = proposal.account.governingTokenMint
 
       try {
         await getVoteRecord(connection, voteRecordPk)
       } catch {
-        voterTokenRecord = role === "community" ?
-          ownCouncilTokenRecord :
-          ownTokenRecord
+        voterTokenRecord =
+          role === 'community' ? ownCouncilTokenRecord : ownTokenRecord
 
         voteRecordPk = await getVoteRecordAddress(
           realm!.owner,
@@ -270,11 +270,12 @@ const MyProposalsBn = () => {
           voterTokenRecord!.pubkey
         )
 
-        governingTokenMint = role === "community" && realm?.account.config.councilMint ?
-          realm.account.config.councilMint :
-          realm?.account.communityMint!
+        governingTokenMint =
+          role === 'community' && realm?.account.config.councilMint
+            ? realm.account.config.councilMint
+            : realm?.account.communityMint!
       }
-      
+
       const inst = await withRelinquishVote(
         instructions,
         realm!.owner,
@@ -333,8 +334,15 @@ const MyProposalsBn = () => {
 
     setIsLoading(true)
     const instructions: TransactionInstruction[] = []
-    const { registrar } = nftClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint);
-    const { voterWeightPk } = await nftClient.getVoterWeightRecordPDA(realm.pubkey, realm.account.communityMint, wallet.publicKey);
+    const { registrar } = nftClient.getRegistrarPDA(
+      realm.pubkey,
+      realm.account.communityMint
+    )
+    const { voterWeightPk } = await nftClient.getVoterWeightRecordPDA(
+      realm.pubkey,
+      realm.account.communityMint,
+      wallet.publicKey
+    )
 
     const nfts = ownNftVoteRecordsFilterd.slice(
       0,
@@ -387,7 +395,7 @@ const MyProposalsBn = () => {
   }
 
   const getNftsVoteRecord = useCallback(async () => {
-    if (!nftClient) throw new Error('no nft client');
+    if (!nftClient) throw new Error('no nft client')
     const nftVoteRecords = await nftClient.program.account.nftVoteRecord.all([
       {
         memcmp: {
@@ -473,13 +481,7 @@ const MyProposalsBn = () => {
     if (wallet?.publicKey && isNftMode && nftClient && modalIsOpen) {
       getNftsVoteRecord()
     }
-  }, [
-    nftClient,
-    getNftsVoteRecord,
-    isNftMode,
-    modalIsOpen,
-    wallet?.publicKey,
-  ])
+  }, [nftClient, getNftsVoteRecord, isNftMode, modalIsOpen, wallet?.publicKey])
 
   return (
     <>
@@ -594,10 +596,10 @@ const ProposalList = ({
               small
               isLoading={isLoading}
               className="mr-3"
-              onClick={() => fcn(5)}
+              onClick={() => fcn(50)}
               disabled={isLoading}
             >
-              {btnName} first 5
+              {btnName} first 50
             </Button>
             <Button
               small

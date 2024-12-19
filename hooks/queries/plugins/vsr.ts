@@ -1,5 +1,5 @@
 import { BN, EventParser, Program } from '@coral-xyz/anchor'
-import { PublicKey, Transaction, Connection } from '@solana/web3.js'
+import { PublicKey, Transaction, Connection, ComputeBudgetProgram } from '@solana/web3.js'
 import { SIMULATION_WALLET } from '@tools/constants'
 import { getRegistrarPDA, getVoterPDA } from 'VoteStakeRegistry/sdk/accounts'
 import { fetchRealmByPubkey, useRealmQuery } from '../realm'
@@ -202,13 +202,17 @@ const voterPowerLogQueryFn = async (
   depositEntryBegin = 0,
   depositEntryCount = 0
 ) => {
+  const increaseCuIx = ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1_400_000,
+  });
+  
   const ix = await program.methods
     .logVoterInfo(depositEntryBegin, depositEntryCount)
     .accounts({ registrar, voter })
     .instruction()
   const transaction = new Transaction({
     feePayer: new PublicKey(SIMULATION_WALLET),
-  }).add(ix)
+  }).add(increaseCuIx, ix)
   const sim = await connection.simulateTransaction(transaction)
   const parser = new EventParser(program.programId, program.coder)
   if (sim.value.logs === null) {
