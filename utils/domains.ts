@@ -6,7 +6,7 @@ import {
   NAME_TOKENIZER_ID,
   performReverseLookupBatch,
 } from '@bonfida/spl-name-service'
-import { TldParser } from '@onsol/tldparser'
+import { splitDomainTld, TldParser } from '@onsol/tldparser'
 import { Connection, ParsedAccountData, PublicKey } from '@solana/web3.js'
 
 interface Domain {
@@ -21,8 +21,9 @@ export const resolveDomain = async (
   domainName: string
 ) => {
   try {
+    const [tld] = splitDomainTld(domainName);
     // Get the public key for the domain
-    if (domainName.includes('.sol')) {
+    if (tld === '.sol') {
       const { pubkey } = await getDomainKey(domainName)
 
       // Check if the domain is an NFT

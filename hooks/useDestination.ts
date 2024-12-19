@@ -1,3 +1,4 @@
+import { splitDomainTld, TldParser } from '@onsol/tldparser'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { tryParseDomain, tryParseKey } from '@tools/validators/pubkey'
 import { debounce } from '@utils/debounce'
@@ -12,12 +13,24 @@ const getDestination = async (connection: Connection, address: string) => {
   let pubKey: PublicKey | null = null
   let account: TokenProgramAccount<TokenAccount> | undefined = undefined
 
-  if (address?.trim().toLowerCase().endsWith('.sol')) {
-    pubKey = await tryParseDomain(address)
+  if (address.length >= 4 && address.split(".").length === 2) {
+    const [tld] = splitDomainTld(address);
+    if (tld === '.sol') {
+      pubKey = await tryParseDomain(address)
+    }  else {
+      const parser = new TldParser(connection)
+      try {
+        const owner = await parser.getOwnerFromDomainTld(address)
+        pubKey = owner ?? null;
+      } catch (error) {
+        console.warn('Error resolving domain:', error)
+        pubKey = null
+      }
+    }
   } else {
     pubKey = tryParseKey(address)
   }
-
+  console.log(pubKey?.toString())
   if (pubKey) {
     account = await tryGetTokenAccount(connection, pubKey)
   }
