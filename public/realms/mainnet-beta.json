@@ -3806,5 +3806,16 @@
     "website": "https://sagadao-website.vercel.app/",
     "twitter": "@SagaMobileDAO",
     "discord": "http://discord.gg/sagadao"
+  },
+  {
+    "symbol": "CENA",
+    "displayName": "John Cena's Cenation",
+    "bannerImage": "/realms/Cena/cenabanner.jpg",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "GafSmkaPjT7RL8HZnECdhE3wDd86XqQGJu48yRzaKhPt",
+    "ogImage": "/realms/Cena/cenalogo.png",
+    "shortDescription": "A new token that will fund the creation of the Cenation Network State. NOT an official token or endorsed by John Cena, (but we hope it will be).",
+    "website": "https://bento.me/johncenation",
+    "twitter": "@_john_cenation_"
   }
 ]
