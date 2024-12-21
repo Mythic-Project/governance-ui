@@ -3794,5 +3794,28 @@
     "website": "https://deanslist.services/",
     "twitter": "@deanslistng",
     "discord": "http://discord.gg/deanslist"
+  },
+  {
+    "symbol": "Saga",
+    "displayName": "Saga Mobile DAO",
+    "bannerImage": "/realms/SagaMobile/sagabanner.jpg",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "FpdjN6qsQGKpSwH615K46J6Vtpvq6LzaxaDEkoQAUfzn",
+    "ogImage": "/realms/SagaMobile/sagalogo.jpg",
+    "shortDescription": "Empowering the connection between mobile and web3. Unlock your perks and join the Saga. Unleashing the power of Mobile X Web3!",
+    "website": "https://sagadao-website.vercel.app/",
+    "twitter": "@SagaMobileDAO",
+    "discord": "http://discord.gg/sagadao"
+  },
+  {
+    "symbol": "CENA",
+    "displayName": "John Cena's Cenation",
+    "bannerImage": "/realms/Cena/cenabanner.jpg",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "GafSmkaPjT7RL8HZnECdhE3wDd86XqQGJu48yRzaKhPt",
+    "ogImage": "/realms/Cena/cenalogo.png",
+    "shortDescription": "A new token that will fund the creation of the Cenation Network State. NOT an official token or endorsed by John Cena, (but we hope it will be).",
+    "website": "https://bento.me/johncenation",
+    "twitter": "@_john_cenation_"
   }
 ]
