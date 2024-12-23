@@ -179,9 +179,7 @@ const useGovernanceAssetsStore = create<GovernanceAssetsStore>((set, _get) => ({
     accounts.push(...governedTokenAccounts)
     const stakeAccounts = await loadStakeAccounts(
       connection,
-      governedTokenAccounts.filter(
-        (x) => x.isSol
-      )
+      governedTokenAccounts.filter((x) => x.isSol)
     )
     accounts.push(...stakeAccounts)
 
@@ -774,6 +772,7 @@ const loadMintGovernanceAccounts = async (
     const possibleMintAccount = possibleMintAccounts[index]
     const pk = possibleMintAccountPks[index]
     if (possibleMintAccount) {
+      // @ts-ignore
       const data = Buffer.from(possibleMintAccount.data)
       const parsedMintInfo = parseMintAccountData(data) as MintInfo
       const ownerGovernance = governances.find(
