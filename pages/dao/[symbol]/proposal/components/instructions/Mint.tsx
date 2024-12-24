@@ -141,7 +141,9 @@ const Mint = ({
   const destinationAccountName =
     destinationAccount?.publicKey &&
     getAccountName(destinationAccount?.account.address)
-  const destinationAddressParsed = address.endsWith('.sol')
+
+  let isDomain = address.length >= 4 && address.split(".").length === 2
+  const destinationAddressParsed = isDomain
     ? form.destinationAccount
     : undefined
   const schema = getMintSchema({ form, connection })
