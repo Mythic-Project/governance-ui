@@ -146,6 +146,7 @@ import SymmetryEditBasket from './components/instructions/Symmetry/SymmetryEditB
 import SymmetryDeposit from './components/instructions/Symmetry/SymmetryDeposit'
 import SymmetryWithdraw from './components/instructions/Symmetry/SymmetryWithdraw'
 import PythUpdatePoolAuthority from './components/instructions/Pyth/PythUpdatePoolAuthority'
+import CreateMeteoraPool from './components/instructions/Meteora/CreatePool'
 
 const TITLE_LENGTH_LIMIT = 130
 // the true length limit is either at the tx size level, and maybe also the total account size level (I can't remember)
@@ -608,6 +609,7 @@ const New = () => {
       [Instructions.SymmetryEditBasket]: SymmetryEditBasket,
       [Instructions.SymmetryDeposit]: SymmetryDeposit,
       [Instructions.SymmetryWithdraw]: SymmetryWithdraw,
+      [Instructions.CreateMeteoraPool]: CreateMeteoraPool,
     }),
     [governance?.pubkey?.toBase58()]
   )

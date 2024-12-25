@@ -28,6 +28,7 @@ export enum PackageEnum {
   Squads,
   Switchboard,
   VsrPlugin,
+  Meteora,
 }
 
 export interface UiInstruction {
@@ -397,7 +398,8 @@ export enum Instructions {
   SymmetryCreateBasket,
   SymmetryEditBasket,
   SymmetryDeposit,
-  SymmetryWithdraw
+  SymmetryWithdraw,
+  CreateMeteoraPool,
 }
 
 export interface ComponentInstructionData {
@@ -609,4 +611,9 @@ export interface SymmetryWithdrawForm {
   basketAddress?: PublicKey,
   withdrawAmount: number,
   withdrawType: number
+}
+
+export interface CreateMeteoraPoolForm {
+  governedAccount?: AssetAccount
+  // Add other required fields for Meteora pool creation
 }
