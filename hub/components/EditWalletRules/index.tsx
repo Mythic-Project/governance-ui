@@ -28,7 +28,6 @@ import { EditWalletForm } from './Form';
 import { EditWalletSummary } from './Summary';
 import { CommunityRules, CouncilRules } from './types';
 import { useGovernanceByPubkeyQuery } from '@hooks/queries/governance';
-import useGovernanceAssets from '@hooks/useGovernanceAssets';
 import useProgramVersion from '@hooks/useProgramVersion';
 import { useMintInfoByPubkeyQuery } from '@hooks/queries/mintInfo';
 import getGovernanceRules from './utils';
@@ -73,7 +72,6 @@ export function EditWalletRules(props: Props) {
 
   const { symbol } = useRealm();
   const { connection } = useConnection();
-  const {assetAccounts} = useGovernanceAssets()
 
   const router = useRouter();
   const [step, setStep] = useState(Step.Form);
@@ -383,7 +381,7 @@ export function EditWalletRules(props: Props) {
                                 60 *
                                 60 *
                                 24 *
-                                minInstructionHoldupDays,
+                                initialMinInstructionHoldupDays,
                               prerequisiteInstructions: [],
                             },
                           ],
