@@ -9,6 +9,7 @@ import { getRealmExplorerHost } from 'tools/routing'
 import { tryParsePublicKey } from '@tools/core/pubkey'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useConnection } from '@solana/wallet-adapter-react'
+import { useGetOnchainMetadata } from '@hooks/useOnchainMetadata'
 
 const RealmHeader = () => {
   const { fmtUrlWithCluster } = useQueryContext()
@@ -22,6 +23,7 @@ const RealmHeader = () => {
   const realmUrl = `https://${explorerHost}/account/${realmInfo?.realmId.toBase58()}${connection.rpcEndpoint.includes("devnet") ? "?cluster=devnet" : ""}`
 
   const [isBackNavVisible, setIsBackNavVisible] = useState(true)
+  const realmData = useGetOnchainMetadata(realmInfo?.realmId).data
 
   useEffect(() => {
     setIsBackNavVisible(realmInfo?.symbol !== REALM)
@@ -44,21 +46,21 @@ const RealmHeader = () => {
         ) : null}
       </div>
       <div className="flex flex-col items-center md:flex-row md:justify-between">
-        {realmInfo?.displayName ? (
+        {realmData?.displayName ? (
           <div className="flex items-center">
             <div className="flex flex-col items-center pb-3 md:flex-row md:pb-0">
-              {realmInfo?.ogImage ? (
+              {realmData?.daoImage ? (
                 <img
                   className="flex-shrink-0 w-8 mb-2 md:mb-0"
-                  src={realmInfo?.ogImage}
+                  src={realmData.daoImage}
                 ></img>
               ) : (
                 <div className="bg-[rgba(255,255,255,0.1)] h-14 w-14 flex font-bold items-center justify-center rounded-full text-fgd-3">
-                  {realmInfo.displayName.charAt(0)}
+                  {realmData.displayName.charAt(0)}
                 </div>
               )}
               <div className="flex items-center">
-                <h1 className="ml-3">{realmInfo.displayName}</h1>
+                <h1 className="ml-3">{realmData.displayName}</h1>
               </div>
             </div>
           </div>
