@@ -646,7 +646,7 @@
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "3YADdZuLqfZ8ZHnxDNMnMs77qbVdhioe6yi3b4i3hfNA",
     "ogImage": "/realms/RED/RED.png",
-    "twitter": "@Realms_DAOs",
+    "twitter": "@RealmsDAOs",
     "sortRank": 2
   },
   {
@@ -1733,7 +1733,7 @@
     "shortDescription": "The standard for enabling modern communities to share ideas, make decisions, and collectively manage treasuries.",
     "sortRank": 3,
     "website": "https://realms.today/",
-    "twitter": "@Realms_DAOs",
+    "twitter": "@RealmsDAOs",
     "discord": "https://discord.gg/zfxTA762",
     "github": "https://github.com/solana-labs/governance-ui"
   },
