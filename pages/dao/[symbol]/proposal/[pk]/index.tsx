@@ -41,7 +41,10 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import { useTokenOwnerRecordByPubkeyQuery } from '@hooks/queries/tokenOwnerRecord'
 import useVoteRecords from '@hooks/useVoteRecords'
 import { BigNumber } from 'bignumber.js'
-import { VoteType as ProposalVoteType } from '@models/proposal'
+import {
+  VoteType as ProposalVoteType,
+  VoterDisplayData,
+} from '@models/proposal'
 import { stringify } from 'csv-stringify/sync'
 import ReactMarkdown from 'react-markdown'
 import { formatPercentage } from '@utils/formatPercentage'
@@ -118,11 +121,15 @@ const Proposal = () => {
       governance.account.config.baseVotingTime +
       governance.account.config.votingCoolOffTime
 
+  function filterOutUndecidedVotes(voteRecords: VoterDisplayData[]) {
+    return voteRecords.filter(
+      (records) => records.voteType !== ProposalVoteType.Undecided
+    )
+  }
+
   async function handleExportCsv() {
     try {
-      const voters = voteRecords.filter(
-        (records) => records.voteType !== ProposalVoteType.Undecided
-      )
+      const voters = filterOutUndecidedVotes(voteRecords)
 
       const voteTypeText = (type: ProposalVoteType, isMulti: boolean) => {
         switch (type) {
@@ -182,7 +189,7 @@ const Proposal = () => {
   const showExportCsvButton = useMemo(() => {
     return (
       proposal?.account.state !== ProposalState.Voting &&
-      voteRecords?.length > 0
+      filterOutUndecidedVotes(voteRecords)?.length > 0
     )
   }, [proposal, voteRecords])
 
