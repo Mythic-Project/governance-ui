@@ -3817,5 +3817,16 @@
     "shortDescription": "A new token that will fund the creation of the Cenation Network State. NOT an official token or endorsed by John Cena, (but we hope it will be).",
     "website": "https://bento.me/johncenation",
     "twitter": "@_john_cenation_"
+  },
+  {
+    "symbol": "cXYZ",
+    "displayName": "Coordinate DAO",
+    "bannerImage": "/realms/CoordinateDAO/CoordinateBanner.png",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "7mEbX2fLvGjRvz4hsSwSBc9tpjC6UdTFqkLbgSzTTP83",
+    "ogImage": "/realms/CoordinateDAO/CoordinateLogo.png",
+    "shortDescription": "The DAO for the cXYZ token, checkout our website at coordinate.digital .",
+    "website": "https://coordinate.digital",
+    "twitter": "@coordinatecXYZ"
   }
 ]
