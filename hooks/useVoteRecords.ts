@@ -19,7 +19,7 @@ import { BN } from '@coral-xyz/anchor'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
 import { PublicKey } from '@solana/web3.js'
 import { useRealmQuery } from './queries/realm'
-import { useRealmCommunityMintInfoQuery } from './queries/mintInfo'
+import { useRealmCommunityMintInfoQuery, useRealmCouncilMintInfoQuery } from './queries/mintInfo'
 import useLegacyConnectionContext from './useLegacyConnectionContext'
 import { calculateMaxVoteScore } from '@models/proposal/calulateMaxVoteScore'
 import { getNetworkFromEndpoint } from '@utils/connection'
@@ -38,7 +38,9 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
     ProgramAccount<TokenOwnerRecord>[]
   >([])
   const realm = useRealmQuery().data?.result
-  const mint = useRealmCommunityMintInfoQuery().data?.result
+  const communityMint = useRealmCommunityMintInfoQuery().data?.result
+  const councilMint = useRealmCouncilMintInfoQuery().data?.result
+
   const { vsrMode, isNftMode } = useRealm()
 
   //for vsr
@@ -56,7 +58,12 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
   const { vsrClient } = useVsrClient();
   const connection = useLegacyConnectionContext()
   const governingTokenMintPk = proposal?.account.governingTokenMint
-
+  const mint = 
+    realm?.account.config.councilMint && 
+    governingTokenMintPk?.equals(realm?.account.config.councilMint) ?
+      councilMint :
+      communityMint
+      
   // for nft-voter
   // This part is to get the undecided nft-voter information for each proposal.
   // In buildTopVoters.ts, it checks whether the token_owner_record is in the vote_record.
@@ -230,13 +237,12 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
     tokenOwnerRecords.length,
     voteRecords.length,
     vsrMode,
-    undecidedDepositByVoteRecord,
     tokenOwnerRecords,
     voteRecords,
     realm,
     vsrClient,
     connection,
-    mintsUsedInRealm,
+    assetAccounts
   ])
   ///////
 
