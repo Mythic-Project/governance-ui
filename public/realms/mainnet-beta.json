@@ -3839,13 +3839,15 @@
     "shortDescription": "The AI research agent. Powered by #ai0x token. Scan any github to get a detailed report: http://ai0x.fun",
     "website": "http://ai0x.fun",
     "twitter": "@ai0xdotfun"
+  },
+  {
+    "symbol": "BBQ",
+    "displayName": "BBQ DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "4iPX41E6UcqUfxa2xW16nm1add73QnWNS5d6HmUzxWzQ",
+    "ogImage": "/realms/BBQDAO/BBQDAO.PNG",
+    "shortDescription": "Mork Zuckerbarge (the CEO of BETA) is building a bunker with lots of sauce and books as he prepares to take on his final form, suspended in permanent VR stasis inside the BETAVERSE.",
+    "website": "https://betaverse.quest",
+    "twitter": "@zuckerbarge" 
   }
-{ "symbol": "BBQ",
-"displayName": "BBQ DAO",
-"programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
-"realmId": "4iPX41E6UcqUfxa2xW16nm1add73QnWNS5d6HmUzxWzQ",
-"ogImage": "/realms/BBQDAO/BBQDAO.PNG",
-"shortDescription": "Mork Zuckerbarge (the CEO of BETA) is building a bunker with lots of sauce and books as he prepares to take on his final form, suspended in permanent VR stasis inside the BETAVERSE.",
-"website": "https://betaverse.quest",
-"twitter": "@zuckerbarge" },
 ]
