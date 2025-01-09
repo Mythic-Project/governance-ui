@@ -3839,7 +3839,8 @@
     "shortDescription": "The AI research agent. Powered by #ai0x token. Scan any github to get a detailed report: http://ai0x.fun",
     "website": "http://ai0x.fun",
     "twitter": "@ai0xdotfun"
-  }  {
+  },
+  {
     "symbol": "VHS",
     "displayName": "Fantasia DAO",
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
@@ -3849,4 +3850,5 @@
     "website": "http://fantasiadao.com",
     "twitter": "@fantasia_vhs"
   }
+]
 ]
