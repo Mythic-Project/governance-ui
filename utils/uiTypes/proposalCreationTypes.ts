@@ -50,6 +50,13 @@ export interface SplTokenTransferForm {
   mintInfo: MintInfo | undefined
 }
 
+export interface AddCouncilMembersForm {
+  governedTokenAccount: AssetAccount | undefined,
+  memberAddresses: string[],
+  amount: number | undefined,
+  mintInfo: MintInfo | undefined
+}
+
 export interface BurnTokensForm {
   amount: number | undefined
   governedTokenAccount: AssetAccount | undefined
@@ -295,6 +302,7 @@ export interface JoinDAOForm {
 }
 
 export enum Instructions {
+  AddCouncilMembers,
   Base64,
   Burn,
   ChangeMakeDonation,

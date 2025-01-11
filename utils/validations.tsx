@@ -881,6 +881,54 @@ export const getDualFinanceVoteDepositSchema = () => {
   })
 }
 
+export const getAddCouncilMembersSchema = () => {
+  return yup.object().shape({
+    governedTokenAccount: yup.object().required('Source account is required'),
+    amount: yup.number()
+      .typeError('Amount is required')
+      .min(0)
+      .test(
+        'amount',
+        'Amount validation error',
+        function (val: number) {
+          if (new BN(val).gt(new BN(0))) {
+            return true
+          }
+          return this.createError({
+            message: `Amount is required`,
+          })
+        }
+      ),
+    memberAddresses: yup
+    .array().min(1).of(
+      yup
+      .string()
+      .typeError('Address is required')
+      .test(
+        'memberAddresses',
+        'Account validation error',
+        function (val: string) {
+          if (val) {
+            try {
+              getValidatedPublickKey(val)
+              return true
+            } catch (e) {
+              console.log(e)
+              return this.createError({
+                message: `Invalid Public Key`,
+              })
+            }
+          } else {
+            return this.createError({
+              message: `Member addresses are required`,
+            })
+          }
+        }
+      )
+      ),
+  })
+}
+
 export const getTokenTransferSchema = ({
   form,
   connection,
