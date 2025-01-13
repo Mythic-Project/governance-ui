@@ -3643,6 +3643,21 @@
     "discord": "https://discord.gg/5asAuY2sR8",
     "github": "https://github.com/EpicentralLabs"
   },
+  {
+    "symbol": "LABSCT",
+    "bannerImage": "/realms/EpicentralDAO_CoreTeam_Multisig/EpicentralDAO-CoreTeam-Multisig-Banner.png",
+    "displayName": "Epicentral Labs Core Team Multisig",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "J8shg73bobmwaRY2EXsLV3ABytfCTp5uZ2TtVk4aZBfe",
+    "communityMint": "LABSh5DTebUcUbEoLzXKCiXFJLecDFiDWiBGUU1GpxR",
+    "councilMint": "DxggzkdEp3bwN8BXxT8ri8qXZFAd52tPFhhMBPzU4R5p",
+    "ogImage": "/realms/EpicentralDAO_CoreTeam_Multisig/EpicentralLabs_CoreTeam.png",
+    "website": "https://epicentrallabs.com/",
+    "keywords": "Epicentral Labs, REALM, Governance, DEFI, Developer Tooling, Community, Trading, Infrastructure",
+    "twitter": "@EpicentralLabs",
+    "discord": "https://discord.gg/5asAuY2sR8",
+    "github": "https://github.com/EpicentralLabs"
+  },
   { 
     "symbol": "COAL",
     "bannerImage": "/realms/CoalitionDAO/banner.png",
