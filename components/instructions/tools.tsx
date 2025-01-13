@@ -391,6 +391,7 @@ export const HIDDEN_PROPOSALS = new Map<string, string>([
   ['CRmUPr8CbfPQ4MAoo2yxSf5qL2nPsddL69kowMfp1JYP', ''],
   ['8msNFq5VBectsGAv66zYx5QRve1p3m6ZEz49xaWX3tbd', ''],
   ['3jU2YuKXKBw4cWx9taPDfhQZ8RFLmFUx3HLxMrh7w749', ''],
+  ['8eiBtZ7ZgAZEK747z1mXKPktQg3gdbgB9ew78t9LXwyL', ''],
 ])
 
 export const DEFAULT_NATIVE_SOL_MINT =
