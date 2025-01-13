@@ -160,6 +160,9 @@ export const ACCOUNT_NAMES = {
   '9zUzsav4JcUHnmzsT9YFkbk2YvjxEf9MosVTKYDDnnnW': 'Rewards Treasury',
   '6yuntQAS5gSwhhKaXG3QYbcwXPxhsbULu9Tzv9mizUUm': 'SOL Rewards Reserve',
   '6PPtCuNPxipkwATrXorGNMFsEiJK2WNwNRVdgzTJZfU8': 'LABS DeFi Rewards Vault',
+
+  // Epicentral Labs Core Team
+  'EPTE4ewwiBdSu53NHc2Q57tyiYkcPai3VLu3BSUUN89C': 'Core Team Wallet',
   
   // Physis DAO
   '29epeLvAMyRXtpA1HaoKB1hGcAnrc1NvMCbaZ8AVRwEi': 'Physis DAO Treasury',
