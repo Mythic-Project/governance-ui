@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Input from '@components/inputs/Input'
 import useRealm from '@hooks/useRealm'
-import { AccountInfo } from '@solana/spl-token'
 import { getMintMinAmountAsDecimal } from '@tools/sdk/units'
 import { PublicKey } from '@solana/web3.js'
 import { precision } from '@utils/formatting'
 import { tryParseKey } from '@tools/validators/pubkey'
-import { TokenProgramAccount, tryGetTokenAccount } from '@utils/tokens'
+import {
+  TokenAccount,
+  TokenProgramAccount,
+  tryGetTokenAccount,
+} from '@utils/tokens'
 import {
   SplTokenTransferForm,
   UiInstruction,
@@ -62,7 +65,7 @@ const ChangeDonation = ({
   const [
     destinationAccount,
     setDestinationAccount,
-  ] = useState<TokenProgramAccount<AccountInfo> | null>(null)
+  ] = useState<TokenProgramAccount<TokenAccount> | null>(null)
   const [formErrors, setFormErrors] = useState({})
   const mintMinAmount = form.mintInfo
     ? getMintMinAmountAsDecimal(form.mintInfo)

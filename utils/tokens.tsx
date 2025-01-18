@@ -26,7 +26,11 @@ import BigNumber from 'bignumber.js'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import { parseTokenAccountData } from './parseTokenAccountData'
 
-export type TokenAccount = AccountInfo
+export type TokenAccount = AccountInfo & {
+  extensions?: any[]
+  isToken2022?: boolean
+}
+
 export type MintAccount = MintInfo
 
 export type TokenProgramAccount<T> = {

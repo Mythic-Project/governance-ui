@@ -1,5 +1,4 @@
 import {
-  AccountInfo,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
@@ -9,6 +8,7 @@ import { BN_ZERO } from '@solana/spl-governance'
 import {
   getMultipleAccountInfoChunked,
   getTokenAccountsByMint,
+  TokenAccount,
   TokenProgramAccount,
 } from '@utils/tokens'
 import { parseTokenAccountData } from '@utils/parseTokenAccountData'
@@ -110,7 +110,7 @@ export const useMembersQuery = () => {
             connection.connection,
             realm.account.config.councilMint.toBase58()
           )
-          const tokenAccountsInfo: TokenProgramAccount<AccountInfo>[] = []
+          const tokenAccountsInfo: TokenProgramAccount<TokenAccount>[] = []
           for (const acc of tokenAccounts) {
             tokenAccountsInfo.push(acc)
           }
@@ -149,7 +149,7 @@ export const useMembersQuery = () => {
             connection.connection,
             ATAS
           )
-          const ownersAtasParsed: TokenProgramAccount<AccountInfo>[] = ownersAtas
+          const ownersAtasParsed: TokenProgramAccount<TokenAccount>[] = ownersAtas
             .filter((x) => x)
             .map((r) => {
               const publicKey = r!.owner

@@ -32,7 +32,6 @@ import { useRouter } from 'next/router'
 import useCreateProposal from '@hooks/useCreateProposal'
 import useQueryContext from '@hooks/useQueryContext'
 import {
-  AccountInfo,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   MintInfo,
   Token,
@@ -40,7 +39,7 @@ import {
 } from '@solana/spl-token'
 import { InstructionDataWithHoldUpTime } from 'actions/createProposal'
 import { AssetAccount } from '@utils/uiTypes/assets'
-import { TokenProgramAccount } from '@utils/tokens'
+import { TokenAccount, TokenProgramAccount } from '@utils/tokens'
 import useWalletDeprecated from '@hooks/useWalletDeprecated'
 import TokenSelect from '@components/inputs/TokenSelect'
 import DateTimePicker from '@components/inputs/DateTimePicker'
@@ -51,7 +50,7 @@ import {
 import { deriveAllBoundedStrategyKeysV2 } from '@utils/instructions/PsyFinance/poseidon'
 import { TokenInfo } from '@utils/services/types'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 type TradeProps = { tokenAccount: AssetAccount }
 
@@ -70,7 +69,7 @@ type TradeForm = {
 
 const formSchema = (
   mintInfo: TokenProgramAccount<MintInfo>,
-  token: TokenProgramAccount<AccountInfo>
+  token: TokenProgramAccount<TokenAccount>
 ) => {
   return (
     yup
@@ -174,7 +173,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   const { wallet, anchorProvider } = useWalletDeprecated()
   const { handleCreateProposal } = useCreateProposal()
   const { canUseTransferInstruction } = useGovernanceAssets()
-  const {symbol } = useRealm()
+  const { symbol } = useRealm()
   const { fmtUrlWithCluster } = useQueryContext()
   const [form, setForm] = useState<TradeForm>({
     amount: 0,
@@ -191,7 +190,11 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   })
   const [formErrors, setFormErrors] = useState({})
   const [showOptions, setShowOptions] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const {
+    voteByCouncil,
+    shouldShowVoteByCouncilToggle,
+    setVoteByCouncil,
+  } = useVoteByCouncilToggle()
   const [isLoading, setIsLoading] = useState(false)
   const [destinationToken, setDestinationToken] = useState<TokenInfo>()
 

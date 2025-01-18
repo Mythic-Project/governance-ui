@@ -5,10 +5,10 @@ import {
   Realm,
   getAllGovernances,
 } from '@solana/spl-governance'
-import { AccountInfo } from '@solana/spl-token'
 import { Connection, PublicKey } from '@solana/web3.js'
 import tokenPriceService from '@utils/services/tokenPrice'
 import {
+  TokenAccount,
   TokenProgramAccount,
   getOwnedTokenAccounts,
   tryGetMint,
@@ -27,7 +27,7 @@ import { DEFAULT_NFT_VOTER_PLUGIN } from '@tools/constants'
 
 interface CachedTokenAccounts {
   time: number
-  value: TokenProgramAccount<AccountInfo>[]
+  value: TokenProgramAccount<TokenAccount>[]
 }
 
 const tokenAmounts = new Map<string, CachedTokenAccounts>()

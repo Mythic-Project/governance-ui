@@ -30,6 +30,7 @@ export default function InstructionAccount({
   const connection = useLegacyConnectionContext()
   const { assetAccounts } = useGovernanceAssets()
   const solAndTokenAccounts = assetAccounts.filter((x) => x.isSol || x.isToken)
+
   const possibleDangerousInstruction = !!(
     !isNativeSolanaProgram(programId) &&
     !isGovernanceProgram(programId) &&

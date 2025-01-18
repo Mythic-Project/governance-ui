@@ -1,12 +1,13 @@
 import { PublicKey } from '@solana/web3.js'
-import { AccountInfo, AccountLayout, u64 } from '@solana/spl-token'
+import { AccountLayout, u64 } from '@solana/spl-token'
+import { TokenAccount } from './tokens'
 
 /** @asktree its very unclear why this must exist, like... why doesn't spl-token do this? */
 
 export function parseTokenAccountData(
   account: PublicKey,
   data: Buffer
-): AccountInfo {
+): TokenAccount {
   const accountInfo = AccountLayout.decode(data)
   accountInfo.address = account
   accountInfo.mint = new PublicKey(accountInfo.mint)
