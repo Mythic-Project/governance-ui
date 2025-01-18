@@ -2,7 +2,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import Input from '@components/inputs/Input'
 import useRealm from '@hooks/useRealm'
-import { AccountInfo } from '@solana/spl-token'
 import {
   getMintMinAmountAsDecimal,
   parseMintNaturalAmountFromDecimal,
@@ -10,7 +9,11 @@ import {
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { precision } from '@utils/formatting'
 import { tryParseKey } from '@tools/validators/pubkey'
-import { TokenProgramAccount, tryGetTokenAccount } from '@utils/tokens'
+import {
+  TokenAccount,
+  TokenProgramAccount,
+  tryGetTokenAccount,
+} from '@utils/tokens'
 import { GrantForm, UiInstruction } from '@utils/uiTypes/proposalCreationTypes'
 import { getAccountName } from '@components/instructions/tools'
 import { debounce } from '@utils/debounce'
@@ -43,7 +46,7 @@ import queryClient from '@hooks/queries/queryClient'
 import asFindable from '@utils/queries/asFindable'
 import { tokenOwnerRecordQueryKeys } from '@hooks/queries/tokenOwnerRecord'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
 
 const Grant = ({
   index,
@@ -52,7 +55,7 @@ const Grant = ({
   index: number
   governance: ProgramAccount<Governance> | null
 }) => {
-  const { vsrClient } = useVsrClient();
+  const { vsrClient } = useVsrClient()
   const dateNow = dayjs().unix()
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
@@ -98,7 +101,7 @@ const Grant = ({
   const [
     destinationAccount,
     setDestinationAccount,
-  ] = useState<TokenProgramAccount<AccountInfo> | null>(null)
+  ] = useState<TokenProgramAccount<TokenAccount> | null>(null)
   const [formErrors, setFormErrors] = useState({})
   const mintMinAmount = form.mintInfo
     ? getMintMinAmountAsDecimal(form.mintInfo)
@@ -289,9 +292,9 @@ const Grant = ({
     const getGrantMints = async () => {
       const clientProgramId = vsrClient!.program.programId
       const { registrar } = getRegistrarPDA(
-          realm!.pubkey,
-          realm!.account.communityMint,
-          clientProgramId
+        realm!.pubkey,
+        realm!.account.communityMint,
+        clientProgramId
       )
       const existingRegistrar = await tryGetRegistrar(registrar, vsrClient!)
       if (existingRegistrar) {

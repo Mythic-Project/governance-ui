@@ -1,15 +1,19 @@
 import { BN } from '@coral-xyz/anchor'
 import { Governance, ProgramAccount } from '@solana/spl-governance'
-import { AccountInfo, MintInfo, u64 } from '@solana/spl-token'
+import { MintInfo, u64 } from '@solana/spl-token'
 import { ParsedAccountData, PublicKey } from '@solana/web3.js'
-import { TokenProgramAccount, AccountInfoGen } from '@utils/tokens'
+import {
+  TokenProgramAccount,
+  AccountInfoGen,
+  TokenAccount,
+} from '@utils/tokens'
 
 interface AccountExtension {
   mint?: TokenProgramAccount<MintInfo> | undefined
   transferAddress?: PublicKey
   amount?: u64
   solAccount?: AccountInfoGen<Buffer | ParsedAccountData>
-  token?: TokenProgramAccount<AccountInfo>
+  token?: TokenProgramAccount<TokenAccount>
   program?: {
     authority: PublicKey
   }
@@ -47,7 +51,7 @@ export class AccountTypeToken implements AssetAccount {
   pubkey: PublicKey
   isToken: boolean
   constructor(
-    tokenAccount: TokenProgramAccount<AccountInfo>,
+    tokenAccount: TokenProgramAccount<TokenAccount>,
     mint: TokenProgramAccount<MintInfo>,
     governance: GovernanceProgramAccountWithNativeTreasuryAddress
   ) {
@@ -70,7 +74,7 @@ export class AccountTypeAuxiliaryToken implements AssetAccount {
   extensions: AccountExtension
   pubkey: PublicKey
   constructor(
-    tokenAccount: TokenProgramAccount<AccountInfo>,
+    tokenAccount: TokenProgramAccount<TokenAccount>,
     mint: TokenProgramAccount<MintInfo>
   ) {
     this.governance = {} as any
@@ -160,7 +164,7 @@ export class AccountTypeNFT implements AssetAccount {
   pubkey: PublicKey
   isNft: boolean
   constructor(
-    tokenAccount: TokenProgramAccount<AccountInfo>,
+    tokenAccount: TokenProgramAccount<TokenAccount>,
     mint: TokenProgramAccount<MintInfo>,
     governance: GovernanceProgramAccountWithNativeTreasuryAddress
   ) {
@@ -226,4 +230,10 @@ export interface StakeAccount {
   state: StakeState
   delegatedValidator: PublicKey | null
   amount: number
+}
+
+export function isToken2022(
+  tokenAccount: TokenAccount
+): tokenAccount is TokenAccount {
+  return !!tokenAccount.isToken2022
 }

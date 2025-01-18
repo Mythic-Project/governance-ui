@@ -29,6 +29,13 @@ import {
 } from '@metaplex-foundation/mpl-token-metadata'
 import { findMetadataPda } from '@metaplex-foundation/js'
 import { lidoStake } from '@utils/lidoStake'
+import {
+  createTransferCheckedInstruction,
+  createTransferInstruction,
+  getAssociatedTokenAddress,
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+} from '@solana/spl-token-new'
 
 export const validateInstruction = async ({
   schema,
@@ -80,6 +87,7 @@ export async function getTransferInstruction({
     governedTokenAccount.extensions?.mint?.account
   ) {
     const sourceAccount = governedTokenAccount.extensions.transferAddress
+    const isToken2022 = currentAccount?.extensions.token?.account.isToken2022
     //this is the original owner
     const destinationAccount = new PublicKey(form.destinationAccount)
     const mintPK = form.governedTokenAccount.extensions.mint.publicKey
@@ -88,36 +96,60 @@ export async function getTransferInstruction({
       governedTokenAccount.extensions.mint.account.decimals
     )
 
-    //we find true receiver address if its wallet and we need to create ATA the ata address will be the receiver
-    const { currentAddress: receiverAddress, needToCreateAta } = await getATA({
-      connection: connection,
-      receiverAddress: destinationAccount,
-      mintPK,
-      wallet: wallet!,
-    })
+    const receiverAccount = await connection.current.getAccountInfo(
+      destinationAccount
+    )
+    const isExistingReceiver = receiverAccount && receiverAccount.lamports > 0
+    const isSolWallet = receiverAccount?.owner.equals(PublicKey.default)
+    const ataAddress = isSolWallet
+      ? getAssociatedTokenAddressSync(
+          mintPK, // mint
+          destinationAccount, // owner
+          true,
+          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+        )
+      : destinationAccount
+    const ataAccount = await connection.current.getAccountInfo(ataAddress)
+    const isExistingAta =
+      destinationAccount.equals(ataAddress) && isExistingReceiver
+        ? true
+        : ataAccount && ataAccount.lamports > 0
+
     //we push this createATA instruction to transactions to create right before creating proposal
     //we don't want to create ata only when instruction is serialized
-    if (needToCreateAta) {
+    if (!isExistingAta) {
       prerequisiteInstructions.push(
         Token.createAssociatedTokenAccountInstruction(
           ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-          TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
           mintPK, // mint
-          receiverAddress, // ata
+          ataAddress, // ata
           destinationAccount, // owner of token account
           wallet!.publicKey! // fee payer
         )
       )
     }
 
-    const transferIx = Token.createTransferInstruction(
-      TOKEN_PROGRAM_ID,
-      sourceAccount!,
-      receiverAddress,
-      currentAccount!.extensions!.token!.account.owner,
-      [],
-      new u64(mintAmount.toString())
-    )
+    const transferIx = isToken2022
+      ? createTransferCheckedInstruction(
+          sourceAccount!,
+          currentAccount?.extensions.mint?.publicKey!,
+          ataAddress,
+          currentAccount!.extensions!.token!.account.owner,
+          mintAmount,
+          currentAccount!.extensions.mint!.account.decimals!,
+          [],
+          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+        )
+      : Token.createTransferInstruction(
+          TOKEN_PROGRAM_ID,
+          sourceAccount!,
+          ataAddress,
+          currentAccount!.extensions!.token!.account.owner,
+          [],
+          new u64(mintAmount.toString())
+        )
+
     serializedInstruction = serializeInstructionToBase64(transferIx)
   }
 
@@ -149,10 +181,14 @@ export async function getBatchTransferInstruction({
   currentAccount: AssetAccount | null
   setFormErrors: any
 }): Promise<UiInstruction[]> {
-  const isValid = await validateBatchInstruction({ schema, form, setFormErrors })
+  const isValid = await validateBatchInstruction({
+    schema,
+    form,
+    setFormErrors,
+  })
 
   const ixs: {
-    serializedInstruction: string,
+    serializedInstruction: string
     prerequisiteInstructions: TransactionInstruction[]
   }[] = []
 
@@ -169,49 +205,74 @@ export async function getBatchTransferInstruction({
     ) {
       const sourceAccount = governedTokenAccount.extensions.transferAddress
       //this is the original owner
+      const isToken2022 = currentAccount?.extensions.token?.account.isToken2022
       const destinationAccount = new PublicKey(form.destinationAccount[i])
       const mintPK = form.governedTokenAccount.extensions.mint.publicKey
       const mintAmount = parseMintNaturalAmountFromDecimal(
         form.amount[i]!,
         governedTokenAccount.extensions.mint.account.decimals
       )
-  
-      //we find true receiver address if its wallet and we need to create ATA the ata address will be the receiver
-      const { currentAddress: receiverAddress, needToCreateAta } = await getATA({
-        connection: connection,
-        receiverAddress: destinationAccount,
-        mintPK,
-        wallet: wallet!,
-      })
+
+      const receiverAccount = await connection.current.getAccountInfo(
+        destinationAccount
+      )
+      const isExistingReceiver = receiverAccount && receiverAccount.lamports > 0
+      const isSolWallet = receiverAccount?.owner.equals(PublicKey.default)
+      const ataAddress = isSolWallet
+        ? getAssociatedTokenAddressSync(
+            mintPK, // mint
+            destinationAccount, // owner
+            true,
+            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+          )
+        : destinationAccount
+      const ataAccount = await connection.current.getAccountInfo(ataAddress)
+      const isExistingAta =
+        destinationAccount.equals(ataAddress) && isExistingReceiver
+          ? true
+          : ataAccount && ataAccount.lamports > 0
+
       //we push this createATA instruction to transactions to create right before creating proposal
       //we don't want to create ata only when instruction is serialized
-      if (needToCreateAta) {
+      if (!isExistingAta) {
         prerequisiteInstructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-            TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
             mintPK, // mint
-            receiverAddress, // ata
+            ataAddress, // ata
             destinationAccount, // owner of token account
             wallet!.publicKey! // fee payer
           )
         )
       }
-  
-      const transferIx = Token.createTransferInstruction(
-        TOKEN_PROGRAM_ID,
-        sourceAccount!,
-        receiverAddress,
-        currentAccount!.extensions!.token!.account.owner,
-        [],
-        new u64(mintAmount.toString())
-      )
+
+      const transferIx = isToken2022
+        ? createTransferCheckedInstruction(
+            sourceAccount!,
+            currentAccount?.extensions.mint?.publicKey!,
+            ataAddress,
+            currentAccount!.extensions!.token!.account.owner,
+            mintAmount,
+            currentAccount!.extensions.mint!.account.decimals!,
+            [],
+            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+          )
+        : Token.createTransferInstruction(
+            TOKEN_PROGRAM_ID,
+            sourceAccount!,
+            ataAddress,
+            currentAccount!.extensions!.token!.account.owner,
+            [],
+            new u64(mintAmount.toString())
+          )
+
       serializedInstruction = serializeInstructionToBase64(transferIx)
-    }  
-    ixs.push({serializedInstruction, prerequisiteInstructions})
+    }
+    ixs.push({ serializedInstruction, prerequisiteInstructions })
   }
-  
-  const obj: UiInstruction[] = ixs.map(ix => ({
+
+  const obj: UiInstruction[] = ixs.map((ix) => ({
     serializedInstruction: ix.serializedInstruction,
     isValid,
     governance: currentAccount?.governance,
@@ -282,10 +343,14 @@ export async function getBatchSolTransferInstruction({
   currentAccount: AssetAccount | null
   setFormErrors: any
 }): Promise<UiInstruction[]> {
-  const isValid = await validateBatchInstruction({ schema, form, setFormErrors })
+  const isValid = await validateBatchInstruction({
+    schema,
+    form,
+    setFormErrors,
+  })
 
   const ixs: {
-    serializedInstruction: string,
+    serializedInstruction: string
     prerequisiteInstructions: TransactionInstruction[]
   }[] = []
 
@@ -293,7 +358,11 @@ export async function getBatchSolTransferInstruction({
     let serializedInstruction = ''
     const prerequisiteInstructions: TransactionInstruction[] = []
     const governedTokenAccount = form.governedTokenAccount as AssetAccount
-    if (isValid && programId && governedTokenAccount?.extensions.mint?.account) {
+    if (
+      isValid &&
+      programId &&
+      governedTokenAccount?.extensions.mint?.account
+    ) {
       const sourceAccount = governedTokenAccount.extensions.transferAddress
       const destinationAccount = new PublicKey(form.destinationAccount[i])
       //We have configured mint that has same decimals settings as SOL
@@ -301,7 +370,7 @@ export async function getBatchSolTransferInstruction({
         form.amount[i]!,
         governedTokenAccount.extensions.mint.account.decimals
       )
-  
+
       const transferIx = SystemProgram.transfer({
         fromPubkey: sourceAccount!,
         toPubkey: destinationAccount,
@@ -310,10 +379,10 @@ export async function getBatchSolTransferInstruction({
       serializedInstruction = serializeInstructionToBase64(transferIx)
     }
 
-    ixs.push({serializedInstruction,prerequisiteInstructions})
+    ixs.push({ serializedInstruction, prerequisiteInstructions })
   }
-  
-  const obj: UiInstruction[] = ixs.map(ix => ({
+
+  const obj: UiInstruction[] = ixs.map((ix) => ({
     serializedInstruction: ix.serializedInstruction,
     isValid,
     governance: currentAccount?.governance,

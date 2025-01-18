@@ -2,7 +2,6 @@ import Button from '@components/Button'
 import Input from '@components/inputs/Input'
 import { getAccountName } from '@components/instructions/tools'
 import useRealm from '@hooks/useRealm'
-import { AccountInfo } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import {
   //   getMintDecimalAmountFromNatural,
@@ -12,7 +11,11 @@ import {
 import { tryParseKey } from '@tools/validators/pubkey'
 import { debounce } from '@utils/debounce'
 import { precision } from '@utils/formatting'
-import { TokenProgramAccount, tryGetTokenAccount } from '@utils/tokens'
+import {
+  TokenAccount,
+  TokenProgramAccount,
+  tryGetTokenAccount,
+} from '@utils/tokens'
 import {
   SendTokenCompactViewForm,
   UiInstruction,
@@ -46,7 +49,7 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { fetchJupiterPrice } from '@hooks/queries/jupiterPrice'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 import { AddAlt } from '@carbon/icons-react'
 import { StyledLabel } from '@components/inputs/styles'
 
@@ -54,7 +57,7 @@ const SendTokens = () => {
   const currentAccount = useTreasuryAccountStore((s) => s.currentAccount)
   const connection = useLegacyConnectionContext()
   const realm = useRealmQuery().data?.result
-  const { realmInfo, symbol} = useRealm()
+  const { realmInfo, symbol } = useRealm()
   const { handleCreateProposal } = useCreateProposal()
   const { canUseTransferInstruction } = useGovernanceAssets()
   const tokenInfo = useTreasuryAccountStore((s) => s.tokenInfo)
@@ -73,19 +76,21 @@ const SendTokens = () => {
     title: '',
     description: '',
   })
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const {
+    voteByCouncil,
+    shouldShowVoteByCouncilToggle,
+    setVoteByCouncil,
+  } = useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
-  const [
-    destinationAccount,
-    setDestinationAccount,
-  ] = useState<(TokenProgramAccount<AccountInfo> | null)[]>([null])
+  const [destinationAccount, setDestinationAccount] = useState<
+    (TokenProgramAccount<TokenAccount> | null)[]
+  >([null])
 
   const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
-  const destinationAccountName = destinationAccount.map(acc => (
-    acc?.publicKey &&
-    getAccountName(acc?.account.address)
-  ))
+  const destinationAccountName = destinationAccount.map(
+    (acc) => acc?.publicKey && getAccountName(acc?.account.address)
+  )
 
   const mintMinAmount = form.governedTokenAccount?.extensions?.mint
     ? getMintMinAmountAsDecimal(
@@ -99,16 +104,24 @@ const SendTokens = () => {
     setForm({ ...form, [propertyName]: value })
   }
 
-  const handleSetMultipleProps = (
-    {destinationAccount, amount, txDollarAmount} : 
-    {amount: any, txDollarAmount: any, destinationAccount?: any}
-  ) => {
+  const handleSetMultipleProps = ({
+    destinationAccount,
+    amount,
+    txDollarAmount,
+  }: {
+    amount: any
+    txDollarAmount: any
+    destinationAccount?: any
+  }) => {
     setFormErrors({})
-    
-    setForm({ ...form,
-      destinationAccount : destinationAccount ? destinationAccount : form.destinationAccount,
+
+    setForm({
+      ...form,
+      destinationAccount: destinationAccount
+        ? destinationAccount
+        : form.destinationAccount,
       amount,
-      txDollarAmount
+      txDollarAmount,
     })
   }
 
@@ -123,7 +136,7 @@ const SendTokens = () => {
     })
   }
 
-  const validateAmountOnBlur = async(idx: number) => {
+  const validateAmountOnBlur = async (idx: number) => {
     const value = form.amount[idx]
     const newAmounts = [...form.amount]
     const newTxDollars = [...form.txDollarAmount]
@@ -134,7 +147,7 @@ const SendTokens = () => {
         Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
       ).toFixed(currentPrecision)
     )
-    
+
     newAmounts[idx] = newVal
 
     const mint = currentAccount?.extensions.mint?.publicKey
@@ -143,15 +156,16 @@ const SendTokens = () => {
     } else {
       const priceData = await fetchJupiterPrice(mint)
       const price = priceData.result?.price ?? 0
-  
+
       const totalPrice = newVal * price
-      const totalPriceFormatted = newVal && price ? new BigNumber(totalPrice).toFormat(2) : ''  
+      const totalPriceFormatted =
+        newVal && price ? new BigNumber(totalPrice).toFormat(2) : ''
       newTxDollars[idx] = totalPriceFormatted
     }
-    
+
     handleSetMultipleProps({
       amount: newAmounts,
-      txDollarAmount: newTxDollars
+      txDollarAmount: newTxDollars,
     })
   }
 
@@ -174,21 +188,21 @@ const SendTokens = () => {
   const handleProposeTransfer = async () => {
     setIsLoading(true)
     const instruction: UiInstruction[] = await getInstruction()
-    
-    if (instruction.every(ix => ix.isValid)) {
+
+    if (instruction.every((ix) => ix.isValid)) {
       const governance = currentAccount?.governance
       let proposalAddress: PublicKey | null = null
       if (!realm) {
         setIsLoading(false)
         throw 'No realm selected'
       }
-      const instructionsData = instruction.map(ix => ({
+      const instructionsData = instruction.map((ix) => ({
         data: ix.serializedInstruction
           ? getInstructionDataFromBase64(ix.serializedInstruction)
           : null,
         holdUpTime: governance?.account?.config.minInstructionHoldUpTime,
         prerequisiteInstructions: ix.prerequisiteInstructions || [],
-        chunkBy: 4
+        chunkBy: 4,
       }))
 
       try {
@@ -234,7 +248,11 @@ const SendTokens = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [currentAccount])
 
-  const schema = getBatchTokenTransferSchema({ form, connection, nftMode: false })
+  const schema = getBatchTokenTransferSchema({
+    form,
+    connection,
+    nftMode: false,
+  })
 
   const proposalTitle = `Transfer tokens`
   // ${
@@ -254,14 +272,14 @@ const SendTokens = () => {
     const newAmounts = [...form.amount]
     const newTxDollars = [...form.txDollarAmount]
 
-    newAddresses.push("")
+    newAddresses.push('')
     newAmounts.push(undefined)
     newTxDollars.push(undefined)
 
     handleSetMultipleProps({
       destinationAccount: newAddresses,
       amount: newAmounts,
-      txDollarAmount: newTxDollars
+      txDollarAmount: newTxDollars,
     })
 
     const currentAccounts = [...destinationAccount]
@@ -302,16 +320,18 @@ const SendTokens = () => {
       <div className="space-y-4 w-full pb-4">
         {form.destinationAccount.map((acc, idx) => (
           <div className="flex flex-col gap-2" key={idx}>
-            <StyledLabel>Recipient {idx+1}</StyledLabel>
+            <StyledLabel>Recipient {idx + 1}</StyledLabel>
             <Input
               label="Destination account"
               value={form.destinationAccount[idx]}
               type="text"
-              onChange={e => setAddress(idx, e.target.value)}
+              onChange={(e) => setAddress(idx, e.target.value)}
               noMaxWidth={true}
               error={
-                formErrors['destinationAccount'] && formErrors['destinationAccount'][idx] ? 
-                formErrors['destinationAccount'][idx] : ""
+                formErrors['destinationAccount'] &&
+                formErrors['destinationAccount'][idx]
+                  ? formErrors['destinationAccount'][idx]
+                  : ''
               }
             />
             {destinationAccount[idx] && (
@@ -325,7 +345,9 @@ const SendTokens = () => {
             {destinationAccountName[idx] && (
               <div>
                 <div className="pb-0.5 text-fgd-3 text-xs">Account name</div>
-                <div className="text-xs break-all">{destinationAccountName[idx]}</div>
+                <div className="text-xs break-all">
+                  {destinationAccountName[idx]}
+                </div>
               </div>
             )}
 
@@ -334,9 +356,13 @@ const SendTokens = () => {
               label={`Amount ${tokenInfo ? tokenInfo?.symbol : ''}`}
               value={form.amount[idx]}
               type="number"
-              onChange={e => setAmount(idx, e)}
+              onChange={(e) => setAmount(idx, e)}
               step={mintMinAmount}
-              error={formErrors['amount'] && formErrors['amount'][idx] ? formErrors['amount'][idx] : ""}
+              error={
+                formErrors['amount'] && formErrors['amount'][idx]
+                  ? formErrors['amount'][idx]
+                  : ''
+              }
               onBlur={() => validateAmountOnBlur(idx)}
               noMaxWidth={true}
             />
@@ -350,7 +376,7 @@ const SendTokens = () => {
             </small>
           </div>
         ))}
-        <div 
+        <div
           className="flex gap-2 items-center justify-end cursor-pointer text-sm"
           onClick={addRecipient}
         >
@@ -417,12 +443,12 @@ const SendTokens = () => {
               }
             ></Textarea>
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

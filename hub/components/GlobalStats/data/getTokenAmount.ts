@@ -1,12 +1,15 @@
-import { AccountInfo } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { differenceInMinutes, minutesToMilliseconds } from 'date-fns';
 
-import { TokenProgramAccount, getOwnedTokenAccounts } from '@utils/tokens';
+import {
+  TokenAccount,
+  TokenProgramAccount,
+  getOwnedTokenAccounts,
+} from '@utils/tokens';
 
 interface CachedTokenAccounts {
   time: number;
-  value: TokenProgramAccount<AccountInfo>[];
+  value: TokenProgramAccount<TokenAccount>[];
 }
 
 const tokenAmounts = new Map<string, CachedTokenAccounts>();

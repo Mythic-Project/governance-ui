@@ -53,6 +53,7 @@ export async function getATA({
   receiverAddress: PublicKey
   mintPK: PublicKey
   wallet: any
+  tokenProgram?: PublicKey
 }) {
   if (!wallet?.publicKey) {
     throw 'please connect your wallet'
