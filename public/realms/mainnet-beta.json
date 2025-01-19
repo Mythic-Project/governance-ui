@@ -3850,5 +3850,13 @@
     "shortDescription": "Acquiring all copies of The 1991 Disney Masterpiece Fantasia on VHS. The tapes are housed in a secure climate-controlled facility. They are redeemable for the token and vice versa.",
     "website": "http://fantasiadao.com",
     "twitter": "@fantasia_vhs"
+  },
+  { 
+    "symbol": "MiraDAO",
+    "displayName": "Mira DAO",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "3cJYGYUeooHH6AyndQChRW8quFnvqXD56yFd8q9mMwuX",
+    "ogImage": "/realms/Miradao/logo.jpg",
+    "bannerImage": "/realms/Miradao/banner.jpg"
   }
 ]
