@@ -7,6 +7,7 @@ import { Wallet } from '@models/treasury/Wallet'
 import AssetList, { Section } from './AssetList'
 import SummaryButton from './SummaryButton'
 import { PublicKey } from '@metaplex-foundation/js'
+import DefiCard from '@components/TreasuryAccount/DefiCard'
 
 interface Props {
   className?: string
@@ -75,6 +76,9 @@ export default function WalletListItem(props: Props) {
       </div>
       {isOpen && (
         <div className="p-2">
+          <DefiCard
+            wallet={props.wallet}
+          />
           <AssetList
             governance={governance}
             assets={props.wallet.assets}

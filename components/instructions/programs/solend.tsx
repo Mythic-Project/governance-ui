@@ -1,6 +1,6 @@
 import { AccountMetaData } from '@solana/spl-governance'
 import { Connection } from '@solana/web3.js'
-import { LendingInstruction } from '@solendprotocol/solend-sdk/dist/instructions/instruction'
+import { LendingInstruction } from '@solendprotocol/solend-sdk'
 import SolendConfiguration from '@tools/sdk/solend/configuration'
 
 import { nu64, struct, u8 } from 'buffer-layout'

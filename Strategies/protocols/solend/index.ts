@@ -1,4 +1,5 @@
 import { BN } from '@coral-xyz/anchor'
+import BigNumber from 'bignumber.js'
 import {
   ProgramAccount,
   Realm,
@@ -13,10 +14,12 @@ import {
   Token,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
-import { PublicKey, SystemProgram } from '@solana/web3.js'
+import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js'
 import {
   depositReserveLiquidityInstruction,
+  InstructionWithSigners,
   redeemReserveCollateralInstruction,
+  SolendActionCore,
   syncNative,
 } from '@solendprotocol/solend-sdk'
 import tokenPriceService from '@utils/services/tokenPrice'
@@ -26,11 +29,10 @@ import {
 } from 'actions/createProposal'
 import axios from 'axios'
 import { SolendStrategy } from 'Strategies/types/types'
-
 import { VotingClient } from '@utils/uiTypes/VotePlugin'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import { ConnectionContext } from '@utils/connection'
-import BigNumber from 'bignumber.js'
+import { MAIN_POOL_CONFIGS, RESERVE_CONFIG } from '@hub/providers/Defi/plans/save'
 
 const MAINNET_PROGRAM = 'So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo'
 const DEVNET_PROGRAM = 'ALend7Ketfx5bxh6ghsCDXAoDrhvEmsXT3cynB6aPLgx'
@@ -273,7 +275,7 @@ export async function getSolendStrategies() {
   return strats
 }
 
-async function handleSolendAction(
+export async function handleSolendAction(
   rpcContext: RpcContext,
   form: {
     action: 'Deposit' | 'Withdraw'
@@ -503,6 +505,89 @@ async function handleSolendAction(
     isDraft,
     ['Approve'],
     client,
+  )
+  return proposalAddress
+}
+
+export async function handleSolendActionV2(
+  rpcContext: RpcContext,
+  form: {
+    action: 'Deposit' | 'Withdraw'
+    title: string
+    description: string
+    bnAmount: BN
+    amountFmt: string,
+    reserveAddress: string,
+  },
+  realm: ProgramAccount<Realm>,
+  matchedTreasury: AssetAccount,
+  tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
+  governingTokenMint: PublicKey,
+  proposalIndex: number,
+  isDraft: boolean,
+  connection: ConnectionContext,
+  client?: VotingClient
+) {
+  const isSol = matchedTreasury.isSol
+  const owner = isSol
+    ? matchedTreasury!.pubkey
+    : matchedTreasury!.extensions!.token!.account.owner
+
+    console.log(
+      MAIN_POOL_CONFIGS,
+      RESERVE_CONFIG[form.reserveAddress]
+    );
+    const solendAction = await SolendActionCore.buildRedeemReserveCollateralTxns(
+      MAIN_POOL_CONFIGS,
+      RESERVE_CONFIG[form.reserveAddress],
+      connection.current,
+      form.bnAmount.toString(),
+      {
+        publicKey: owner,
+      },
+      {
+        lookupTableAddress: MAIN_POOL_CONFIGS.lookupTableAddress
+          ? new PublicKey(MAIN_POOL_CONFIGS.lookupTableAddress)
+          : undefined,
+      },
+    );
+
+    const solendIxs = await solendAction.getInstructions();
+    
+    const ixs = [
+      ...solendIxs.oracleIxs,
+      ...solendIxs.preLendingIxs,
+      ...solendIxs.lendingIxs,
+      ...solendIxs.postLendingIxs,
+    ] as InstructionWithSigners[];
+
+    const convertedIxs = ixs.map((ix) => ({
+      data: getInstructionDataFromBase64(serializeInstructionToBase64(ix.instruction)),
+      holdUpTime: matchedTreasury.governance!.account!.config
+        .minInstructionHoldUpTime,
+      prerequisiteInstructions: [],
+      signers: ix.signers?.map((signer) => Keypair.fromSecretKey(signer.secretKey)),
+    }));
+
+
+  const proposalAddress = await createProposal(
+    rpcContext,
+    realm,
+    matchedTreasury.governance!.pubkey,
+    tokenOwnerRecord,
+    form.title ||
+      `${form.action} ${form.amountFmt} ${
+        tokenPriceService.getTokenInfo(
+          matchedTreasury.extensions.mint!.publicKey.toBase58()
+        )?.symbol || 'tokens'
+      } from Save`,
+    form.description,
+    governingTokenMint,
+    proposalIndex,
+    convertedIxs,
+    isDraft,
+    ["Approve"],
+    client
   )
   return proposalAddress
 }
