@@ -1,15 +1,11 @@
 import { useMemo, useState } from 'react'
 import cx from 'classnames'
-
-import { Asset, AssetType } from '@models/treasury/Asset'
+import { PublicKey } from '@metaplex-foundation/js'
+import DefiSummary from '@components/TreasuryAccount/DefiSummary'
+import { Asset } from '@models/treasury/Asset'
 import { Wallet } from '@models/treasury/Wallet'
-
 import AssetList, { Section } from './AssetList'
 import SummaryButton from './SummaryButton'
-import { PublicKey } from '@metaplex-foundation/js'
-import DefiCard from '@components/TreasuryAccount/DefiCard'
-import { useDefi } from '@hooks/useDefi'
-import DefiSummary from '@components/TreasuryAccount/DefiSummary'
 
 interface Props {
   className?: string
