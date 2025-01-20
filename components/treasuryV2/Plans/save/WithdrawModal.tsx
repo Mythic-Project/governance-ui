@@ -34,18 +34,17 @@ import { useRealmProposalsQuery } from '@hooks/queries/proposal'
 import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
 import {useVotingClients} from "@hooks/useVotingClients";
 import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
-import { MergedPlan } from '@components/TreasuryAccount/DefiCard'
 import { useFetchReserveInfo } from '@hub/providers/Defi/plans/save'
 import Modal from '@components/Modal'
-import { createProposal } from '@hub/providers/Proposal/createProposal'
-import { handleSolendAction, handleSolendActionV2 } from 'Strategies/protocols/solend'
+import { handleSolendActionV2 } from 'Strategies/protocols/solend'
+import { Plan } from '@hub/providers/Defi'
 
 const WithdrawModal = ({
   plan,
   onClose,
   isOpen,
 }: {
-  plan: MergedPlan,
+  plan: Plan,
   onClose: () => void
   isOpen: boolean
 }) => {
@@ -58,8 +57,7 @@ const WithdrawModal = ({
     ...governedTokenAccountsWithoutNfts,
     ...auxiliaryTokenAccounts,
   ];
-  console.log(accounts, plan.account);
-  const governedTokenAccount = accounts.find((account) => account.pubkey.toBase58() === plan.account?.address);
+  const governedTokenAccount = accounts.find((account) => account.pubkey.toBase58() === plan.positions[0].accountAddress)!;
   const {
     canUseTransferInstruction,
   } = useGovernanceAssets();
@@ -108,7 +106,7 @@ const WithdrawModal = ({
   }
   const mintMinAmount = mintInfo ? getMintMinAmountAsDecimal(mintInfo) : 1
   const maxAmount = new BigNumber(
-    plan.amount ?? 0
+    plan.positions[0].amount ?? 0
   )
   const maxAmountFtm = maxAmount.toFixed(4)
   const currentPrecision = precision(mintMinAmount)
@@ -126,7 +124,7 @@ const WithdrawModal = ({
   }
 
   const handleWithdraw = async () => {
-    if (!reservesInfo[0]) throw new Error('Reserve not found');
+    if (!reservesInfo?.[0]) throw new Error('Reserve not found');
     if (ownVoterWeight === undefined) throw new Error()
     if (proposals === undefined) throw new Error()
     const isValid = await validateInstruction({ schema, form, setFormErrors })
@@ -165,7 +163,7 @@ const WithdrawModal = ({
             : new BN(
                 Math.floor(
                   getMintNaturalAmountFromDecimal(
-                    (form.amount as number) / reservesInfo[0].cTokenExchangeRate,
+                    (form.amount as number) / (reservesInfo?.[0].cTokenExchangeRate ?? 1),
                     governedTokenAccount.extensions.mint!.account.decimals
                   )
                 ).toString()
@@ -198,7 +196,7 @@ const WithdrawModal = ({
     amount: yup
       .number()
       .required('Amount is required')
-      .max(new BigNumber(plan.amount ?? 0).toNumber()),
+      .max(new BigNumber(plan.positions[0].amount ?? 0).toNumber()),
 
   })
 
@@ -258,7 +256,7 @@ const WithdrawModal = ({
         <div className="flex justify-between">
           <span className="text-fgd-3">Current Deposits</span>
           <span className="font-bold text-fgd-1">
-            {plan.amount?.toFixed(4) || 0}{' '}
+            {plan.positions[0].amount?.toFixed(4) || 0}{' '}
             <span className="font-normal text-fgd-3">{tokenInfo?.symbol}</span>
           </span>
         </div>

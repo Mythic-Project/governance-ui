@@ -14,9 +14,6 @@ import BigNumber from "bignumber.js";
 import useWalletOnePointOh from "@hooks/useWalletOnePointOh";
 import { Token as SplToken } from '@solana/spl-token'
 import { sendTransactionsV3, SequenceType } from "@utils/sendTransactions";
-import { createProposal } from "actions/createProposal";
-import { getProgramVersionForRealm } from "@models/registry/api";
-import { useSelectedRealmInfo } from "@hooks/selectedRealm/useSelectedRealmRegistryEntry";
 
 export const MAIN_POOL_CONFIGS = {
 name: "main",
@@ -68,7 +65,9 @@ lookupTableAddress: "89ig7Cu6Roi9mJMqpY8sBkPYL2cnqzpgP16sJxSUbvct"
 }
 
 const USDC_RESERVE_ADDRESS = 'BgxfHJDzm44T7XG68MYKx7YisTjZu73tVovyZSjJMpmw';
-const ELIGIBLE_RESERVES = [USDC_RESERVE_ADDRESS];
+const SOL_RESERVE_ADDRESS = '8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36';
+const USDT_RESERVE_ADDRESS = '8K9WC8xoh2rtQNY7iEGXtPvfbDCi563SdWhCAhuMP2xE';
+const ELIGIBLE_RESERVES = [USDC_RESERVE_ADDRESS, SOL_RESERVE_ADDRESS, USDT_RESERVE_ADDRESS];
 
 export const RESERVE_CONFIG: {
   [key: string]: {
@@ -93,6 +92,28 @@ export const RESERVE_CONFIG: {
     switchboardOracle: 'nu11111111111111111111111111111111111111111',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     liquidityFeeReceiverAddress: '5Gdxn4yquneifE6uk9tK8X4CqHfWKjW2BvYU25hAykwP',
+  },
+  [SOL_RESERVE_ADDRESS]: {
+    mintDecimals: 9,
+    address: SOL_RESERVE_ADDRESS,
+    liquidityAddress: '8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv',
+    cTokenMint: '5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV',
+    cTokenLiquidityAddress: 'B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g',
+    pythOracle: '7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',
+    switchboardOracle: 'GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR',
+    mintAddress: 'So11111111111111111111111111111111111111112',
+    liquidityFeeReceiverAddress: '5wo1tFpi4HaVKnemqaXeQnBEpezrJXcXvuztYaPhvgC7',
+  },
+  [USDT_RESERVE_ADDRESS]: {
+    mintDecimals: 6,
+    address: USDT_RESERVE_ADDRESS,
+    liquidityAddress: '3CdpSW5dxM7RTxBgxeyt8nnnjqoDbZe48tsBs9QUrmuN',
+    cTokenMint: 'BTsbZDV7aCMRJ3VNy9ygV4Q2UeEo9GpR8D6VvmMZzNr8',
+    cTokenLiquidityAddress: 'CXDxj6cepVv9nWh4QYqWS2MpeoVKBLKJkMfo3c6Y1Lud',
+    pythOracle: 'HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM',
+    switchboardOracle: 'ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9',
+    mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+    liquidityFeeReceiverAddress: 'Cpyk5WRGmdK2yFGTJCrmgyABPiNEF5eCyCMMZLxpdkXu',
   },
 }
 
@@ -152,15 +173,13 @@ export function useFetchReserveInfo(reserveAddresses: string[]) {
 
 export const useSavePlans = (wallets?: Wallet[]): {
   plans: Plan[];
-  positions: Position[];
 } => {
   const wallet = useWalletOnePointOh();
   const reservesInfo = useFetchReserveInfo(ELIGIBLE_RESERVES);
-  const realmInfo = useSelectedRealmInfo();
   const { data: tokenPrices } = useJupiterPricesByMintsQuery(reservesInfo.data?.map((r) => new PublicKey(r.mintAddress)) ?? []);  
   const { connection } = useConnection();
 
-  async function deposit(reserveAddress: string, amount: number, realmsWalletAddress: PublicKey) {
+  async function deposit(reserveAddress: string, amount: number, realmsWalletAddress: string) {
     const reserve = reservesInfo.data?.find((r) => r.address === reserveAddress);
     if (!reserve) throw new Error('Reserve not found');
     if (!wallet?.publicKey) throw new Error('Wallet not connected');
@@ -192,7 +211,7 @@ export const useSavePlans = (wallets?: Wallet[]): {
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
       new PublicKey(reserve.cTokenMint),
-      realmsWalletAddress,
+      new PublicKey(realmsWalletAddress),
       true
     );
 
@@ -213,7 +232,6 @@ export const useSavePlans = (wallets?: Wallet[]): {
       [],
       transferAmountBase,
     );
-
 
     sendTransactionsV3({
       connection,
@@ -239,10 +257,21 @@ export const useSavePlans = (wallets?: Wallet[]): {
       plans: reservesInfo.data?.map((reserve) => {
         const info = tokenPriceService.getTokenInfo(reserve.mintAddress);
         const price = tokenPrices?.[reserve.mintAddress]?.price;
-
+        const positions = wallets?.flatMap((wallet) => {
+          const account = wallet.assets.find((a) => a.type === AssetType.Token && a.mintAddress === reserve.cTokenMint) as Token;
+          return account ? {
+            planId: reserve.address,
+            accountAddress: account?.address,
+            walletAddress: wallet.address,
+            amount: account?.count?.times(reserve.cTokenExchangeRate),
+            account,
+            earnings: new BigNumber(0),
+          } : undefined;
+        }).filter((p) => p !== undefined) ?? [];
         return ({ 
         id: reserve.address,
         protocol: 'Save',
+        type: 'Lending',
         name: info?.symbol ?? '',
         assets: [{
           symbol: info?.symbol ?? '',
@@ -252,16 +281,8 @@ export const useSavePlans = (wallets?: Wallet[]): {
         }],
         apr: reserve.supplyInterest,
         price: price ? Number(price) : undefined,
-        deposit: (amount: number, realmsWalletAddress: PublicKey) => deposit(reserve.address, amount, realmsWalletAddress),
+        positions: positions as Position[],
+        deposit: (amount: number, realmsWalletAddress: string) => deposit(reserve.address, amount, realmsWalletAddress),
       })}) ?? [],
-      positions: wallets?.flatMap((wallet) => {
-        return reservesInfo.data?.map((reserve) => {
-          const account = (wallet.assets.find((a) => a.type === AssetType.Token && a.mintAddress === reserve.cTokenMint) as Token);
-          return ({
-          planId: reserve.address,
-          accountAddress: account?.address,
-          amount: ((wallet.assets.find((a) => a.type === AssetType.Token && a.mintAddress === reserve.cTokenMint) as Token)?.count?.times(reserve.cTokenExchangeRate)),
-        })}) ?? [];
-      }) ?? [],
   }
 }

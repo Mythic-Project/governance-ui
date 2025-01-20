@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@babel/traverse": ">=7.23.2",
     "@blockworks-foundation/mango-mints-redemption": "0.0.11",
     "@blockworks-foundation/mango-v4": "0.33.7",
     "@blockworks-foundation/mango-v4-settings": "0.14.24",
@@ -157,7 +158,9 @@
     "next": "12.3.2",
     "next-themes": "0.1.1",
     "next-transpile-modules": "9.1.0",
+    "node-fetch": "npm:@blockworks-foundation/node-fetch@2.6.11",
     "promptly": "3.2.0",
+    "protobufjs": ">=7.2.5",
     "psyfi-euros-test": "0.0.1-rc.33",
     "qr-code-styling": "1.6.0-rc.1",
     "ramda": "0.28.0",
@@ -215,7 +218,7 @@
     "postcss": "8.4.12",
     "postcss-preset-env": "6.7.0",
     "prettier": "3.0.2",
-    "tailwindcss": "3.0.23",
+    "tailwindcss": "3.2.0",
     "ts-jest": "29.0.3",
     "ts-loader": "9.3.1",
     "twin.macro": "2.4.0",

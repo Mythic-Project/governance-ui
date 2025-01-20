@@ -13,11 +13,16 @@ type TokenOwnerRecordView = {
   pubkey: PubkeyAsString
 }
 
+type DefiView = {
+  _kind: 'Defi',
+  selectedWalletAddress: string,
+}
+
 /** Used whenever the view state should use the legacy, non-zustand props */
 type LegacyView = {
   _kind: 'Legacy'
 }
-type View = NftCollectionView | LegacyView | TokenOwnerRecordView
+type View = NftCollectionView | LegacyView | TokenOwnerRecordView | DefiView
 
 type TreasurySelectState =
   | LegacyView

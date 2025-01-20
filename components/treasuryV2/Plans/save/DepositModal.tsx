@@ -5,19 +5,19 @@ import Modal from "@components/Modal"
 import Tooltip from "@components/Tooltip"
 import BigNumber from "bignumber.js"
 import { useState } from "react"
-import { MergedPlan } from "@components/TreasuryAccount/DefiCard"
-import { AccountTypeToken } from "@utils/uiTypes/assets"
+import { Plan } from "@hub/providers/Defi"
 
-const DepositModal = ({ isOpen, onClose, plan }: { isOpen: boolean, onClose: () => void, plan: MergedPlan }) => {
+const DepositModal = ({ isOpen, onClose, plan }: { isOpen: boolean, onClose: () => void, plan: Plan }) => {
   const [formErrors, setFormErrors] = useState({})
   const [isDepositing, setIsDepositing] = useState(false)
   const [amount, setAmount] = useState<string | undefined>(undefined)
   const mintMinAmount = new BigNumber(1).shiftedBy(plan.assets[0].decimals).toNumber()
 
+  console.log(plan.positions);
   async function handleDeposit() {
-    if(!plan.account?.governance.nativeTreasuryAddress) return;
+    if(!plan.positions[0].walletAddress) return;
     setIsDepositing(true)
-    await plan.deposit(Number(amount), plan.account?.governance.nativeTreasuryAddress)
+    await plan.deposit(Number(amount), plan.positions[0].walletAddress)
     setIsDepositing(false)
   }
 
@@ -39,7 +39,7 @@ const DepositModal = ({ isOpen, onClose, plan }: { isOpen: boolean, onClose: () 
       <div className="flex justify-between">
         <span className="text-fgd-3">Current Deposits</span>
         <span className="font-bold text-fgd-1">
-          {plan.amount?.toFixed(4) || 0}{' '}
+          {plan.positions[0].amount?.toFixed(4) || 0}{' '}
           <span className="font-normal text-fgd-3">{plan.assets[0].symbol}</span>
         </span>
       </div>

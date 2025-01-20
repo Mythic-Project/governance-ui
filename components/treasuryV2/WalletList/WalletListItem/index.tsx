@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react'
 import cx from 'classnames'
 
-import { Asset } from '@models/treasury/Asset'
+import { Asset, AssetType } from '@models/treasury/Asset'
 import { Wallet } from '@models/treasury/Wallet'
 
 import AssetList, { Section } from './AssetList'
 import SummaryButton from './SummaryButton'
 import { PublicKey } from '@metaplex-foundation/js'
 import DefiCard from '@components/TreasuryAccount/DefiCard'
+import { useDefi } from '@hooks/useDefi'
+import DefiSummary from '@components/TreasuryAccount/DefiSummary'
 
 interface Props {
   className?: string
@@ -21,7 +23,7 @@ interface Props {
 }
 
 export default function WalletListItem(props: Props) {
-  const [expandedSections, setExpandedSections] = useState<Section[]>([])
+  const [expandedSections, setExpandedSections] = useState<Section[]>([]);
   const isOpen = props.expanded
 
   const governance = useMemo(
@@ -76,7 +78,7 @@ export default function WalletListItem(props: Props) {
       </div>
       {isOpen && (
         <div className="p-2">
-          <DefiCard
+          <DefiSummary
             wallet={props.wallet}
           />
           <AssetList

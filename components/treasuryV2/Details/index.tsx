@@ -17,6 +17,7 @@ import DomainsDetails from './DomainsDetails'
 import TokenOwnerRecordDetails from './TokenOwnerRecordDetails'
 import StakeDetails from './StakeDetails'
 import { useTreasurySelectState } from './treasurySelectStore'
+import DefiDetails from './DefiDetails'
 
 function walletIsNotAuxiliary(
   wallet: AuxiliaryWallet | Wallet,
@@ -71,6 +72,11 @@ const Details = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 isStickied={props.isStickied}
                 governance={treasurySelect.selectedGovernance}
                 tokenOwnerRecord={treasurySelect.pubkey}
+              />
+            ) : treasurySelect?._kind === 'Defi' ? (
+              <DefiDetails
+                isStickied={props.isStickied}
+                walletAddress={treasurySelect.selectedWalletAddress}
               />
             ) : (
               (null as never)

@@ -4,7 +4,18 @@ import { Status } from '@hub/types/Result';
 import { useSavePlans } from './plans/save';
 import { BigNumber } from 'bignumber.js';
 import { PublicKey } from '@solana/web3.js';
+import { Token } from '@models/treasury/Asset';
 
+export type DefiType = 'Staking' | 'Lending';
+
+export type Position = {
+  planId: string;
+  amount: BigNumber;
+  accountAddress: string;
+  account: Token;
+  earnings: BigNumber;
+  walletAddress: string;
+}
 export type Plan = {
   id: string;
   assets: {
@@ -17,23 +28,18 @@ export type Plan = {
   apr: number;
   name: string;
   protocol: string;
-  deposit: (amount: number, realmsWalletAddress: PublicKey) => void;
+  type: DefiType;
+  deposit: (amount: number, realmsWalletAddress: string) => void;
+  positions: Position[];
 }
 
-export type Position = {
-  planId: string;
-  amount: BigNumber;
-  accountAddress: string;
-}
 
 interface Value {
   plans: Plan[];
-  positions: Position[];
 }
 
 export const DEFAULT: Value = {
   plans: [],
-  positions: [],
 };
 
 export const context = createContext(DEFAULT);
@@ -47,7 +53,6 @@ export function DefiProvider(props: Props) {
   const loadedData = data._tag === Status.Ok ? data.data : null;
   const {
     plans: savePlans,
-    positions: savePositions,
   } = useSavePlans(loadedData?.wallets);
 
   return (
@@ -55,9 +60,6 @@ export function DefiProvider(props: Props) {
       value={{
         plans: [
           ...savePlans,
-        ],
-        positions: [
-          ...savePositions,
         ],
       }}
     >
