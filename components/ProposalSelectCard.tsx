@@ -32,25 +32,25 @@ const ProposalSelectCard = ({
     realm?.owner,
     realm?.pubkey,
     proposal.governingTokenMint,
-    wallet?.publicKey ?? undefined
+    wallet?.publicKey ?? undefined,
   )
   const { data: voteRecordPk } = useAddressQuery_VoteRecord(
     realm?.owner,
     proposalPk,
-    tokenOwnerRecordPk
+    tokenOwnerRecordPk,
   )
   const { data: ownVoteRecord } = useVoteRecordByPubkeyQuery(voteRecordPk)
 
   const votesData = useProposalVotes(proposal)
 
   const checked = !!selectedProposals.find(
-    (p) => p.proposalPk.toString() === proposalPk.toString()
+    (p) => p.proposalPk.toString() === proposalPk.toString(),
   )
 
   const toggleCheckbox = () => {
     if (checked) {
       const proposals = selectedProposals.filter(
-        (p) => p.proposalPk.toString() !== proposalPk.toString()
+        (p) => p.proposalPk.toString() !== proposalPk.toString(),
       )
       setSelectedProposals(proposals)
     } else {

@@ -24,16 +24,19 @@ import {
 import { chunks } from '@utils/helpers'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmCommunityMintInfoQuery } from '@hooks/queries/mintInfo'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useSplitPosition = () => {
   const { connection, wallet, anchorProvider: provider } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
   const { realmInfo } = useRealm()
-    const {heliumClient} = useHeliumClient();
-    const registrarPk = realm && heliumClient ?
-        heliumClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint).registrar : undefined;
+  const { heliumClient } = useHeliumClient()
+  const registrarPk =
+    realm && heliumClient
+      ? heliumClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint)
+          .registrar
+      : undefined
   const { error, loading, execute } = useAsyncCallback(
     async ({
       sourcePosition,
@@ -77,12 +80,13 @@ export const useSplitPosition = () => {
         const [targetPosition] = positionKey(mintKeypair.publicKey)
         const isDao = Boolean(await connection.current.getAccountInfo(dao))
         const instructions: TransactionInstruction[] = []
-        const mintRent = await connection.current.getMinimumBalanceForRentExemption(
-          MintLayout.span
-        )
+        const mintRent =
+          await connection.current.getMinimumBalanceForRentExemption(
+            MintLayout.span,
+          )
         const amountToTransfer = getMintNaturalAmountFromDecimalAsBN(
           amount,
-          mint!.decimals
+          mint!.decimals,
         )
 
         instructions.push(
@@ -92,7 +96,7 @@ export const useSplitPosition = () => {
             lamports: mintRent,
             space: MintLayout.span,
             programId: TOKEN_PROGRAM_ID,
-          })
+          }),
         )
 
         instructions.push(
@@ -101,8 +105,8 @@ export const useSplitPosition = () => {
             mintKeypair.publicKey,
             0,
             targetPosition,
-            targetPosition
-          )
+            targetPosition,
+          ),
         )
 
         if (!tokenOwnerRecordPk) {
@@ -113,7 +117,7 @@ export const useSplitPosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -129,7 +133,7 @@ export const useSplitPosition = () => {
               depositMint: realm.account.communityMint,
               recipient: wallet!.publicKey!,
             })
-            .instruction()
+            .instruction(),
         )
 
         if (isDao) {
@@ -144,7 +148,7 @@ export const useSplitPosition = () => {
                 depositMint: realm.account.communityMint,
                 dao: dao,
               })
-              .instruction()
+              .instruction(),
           )
         } else {
           instructions.push(
@@ -157,7 +161,7 @@ export const useSplitPosition = () => {
                 targetPosition: targetPosition,
                 depositMint: realm.account.communityMint,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -168,7 +172,7 @@ export const useSplitPosition = () => {
               .accounts({
                 position: sourcePosition.pubkey,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -178,7 +182,7 @@ export const useSplitPosition = () => {
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [[mintKeypair], [], []],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Sequential,
         }))
@@ -197,7 +201,7 @@ export const useSplitPosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

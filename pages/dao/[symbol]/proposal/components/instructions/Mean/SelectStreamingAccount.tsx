@@ -14,14 +14,14 @@ import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 
 const getLabel = (
   paymentStreamingAccount: PaymentStreamingAccount | undefined,
-  accounts: AssetAccount[]
+  accounts: AssetAccount[],
 ) => {
   if (!paymentStreamingAccount) return undefined
   const passedAccount = getMint(accounts, paymentStreamingAccount)
   const amount = passedAccount
     ? formatMintNaturalAmountAsDecimal(
         passedAccount,
-        new BN(paymentStreamingAccount.balance)
+        new BN(paymentStreamingAccount.balance),
       )
     : paymentStreamingAccount.balance
 
@@ -87,13 +87,13 @@ const SelectStreamingAccount = ({
             !shouldBeGoverned
               ? !shouldBeGoverned
               : x?.governance?.pubkey.toBase58() ===
-                governance?.pubkey?.toBase58()
+                governance?.pubkey?.toBase58(),
           )
           .filter((a) => a.isSol)
-          .map((a) => paymentStreaming.listAccounts(a.governance.pubkey, true))
+          .map((a) => paymentStreaming.listAccounts(a.governance.pubkey, true)),
       )
       setPaymentStreamingAccounts(
-        nextPaymentStreamingAccounts.flat().filter((t) => getMint(accounts, t))
+        nextPaymentStreamingAccounts.flat().filter((t) => getMint(accounts, t)),
       )
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps

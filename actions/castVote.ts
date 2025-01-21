@@ -49,7 +49,7 @@ import { Wallet } from '@solana/wallet-adapter-react'
 
 const getVetoTokenMint = (
   proposal: ProgramAccount<Proposal>,
-  realm: ProgramAccount<Realm>
+  realm: ProgramAccount<Realm>,
 ) => {
   const communityMint = realm.account.communityMint
   const councilMint = realm.account.config.councilMint
@@ -100,7 +100,7 @@ const createDelegatorVote = async ({
   const pluginAddresses = await votingPlugin?.withCastPluginVote(
     castVoteIxs,
     proposal,
-    tokenOwnerRecordPk
+    tokenOwnerRecordPk,
     //createCastNftVoteTicketIxs
   )
   await withCastVote(
@@ -117,7 +117,7 @@ const createDelegatorVote = async ({
     vote,
     delegatePk,
     pluginAddresses?.voterWeightPk,
-    pluginAddresses?.maxVoterWeightRecord
+    pluginAddresses?.maxVoterWeightRecord,
   )
 
   return castVoteIxs
@@ -142,7 +142,7 @@ const createTokenOwnerRecordIfNeeded = async ({
 
   const tokenOwnerRecord = await fetchTokenOwnerRecordByPubkey(
     connection,
-    tokenOwnerRecordPk
+    tokenOwnerRecordPk,
   )
   if (tokenOwnerRecord.result) return []
   // create token owner record
@@ -154,7 +154,7 @@ const createTokenOwnerRecordIfNeeded = async ({
     realmPk,
     payer,
     governingTokenMint,
-    payer
+    payer,
   )
   return ixs
 }
@@ -171,7 +171,7 @@ export async function castVote(
   runAfterConfirmation?: (() => void) | null,
   voteWeights?: number[],
   additionalTokenOwnerRecords?: PublicKey[],
-  calculatedVoterWeight: BN | null = null
+  calculatedVoterWeight: BN | null = null,
 ) {
   const chatMessageSigners: Keypair[] = []
 
@@ -245,7 +245,7 @@ export async function castVote(
       pluginCastVoteIxs,
       proposal,
       tokenOwnerRecord,
-      createCastNftVoteTicketIxs
+      createCastNftVoteTicketIxs,
     )
 
     await withCastVote(
@@ -262,7 +262,7 @@ export async function castVote(
       vote,
       payer,
       plugin?.voterWeightPk,
-      plugin?.maxVoterWeightRecord
+      plugin?.maxVoterWeightRecord,
     )
   }
 
@@ -278,11 +278,11 @@ export async function castVote(
               const voteRecordPk = await getVoteRecordAddress(
                 realm.owner,
                 proposal.pubkey,
-                tokenOwnerRecordPk
+                tokenOwnerRecordPk,
               )
               const voteRecord = await fetchVoteRecordByPubkey(
                 connection,
-                voteRecordPk
+                voteRecordPk,
               )
               if (voteRecord.found) return undefined
 
@@ -299,7 +299,7 @@ export async function castVote(
                 vote,
                 votingPlugin: votingPlugin?.for(torOwnerPk),
               })
-            })
+            }),
           )
         ).filter((x): x is NonNullable<typeof x> => x !== undefined)
       : []
@@ -310,7 +310,7 @@ export async function castVote(
     const plugin = await votingPlugin?.withUpdateVoterWeightRecord(
       pluginPostMessageIxs,
       'commentProposal',
-      createPostMessageTicketIxs
+      createPostMessageTicketIxs,
     )
 
     // Check if the connected wallet is not SquadsX
@@ -328,7 +328,7 @@ export async function castVote(
         payer,
         undefined,
         message,
-        plugin?.voterWeightPk
+        plugin?.voterWeightPk,
       )
     } else {
       const chatMessage = await getEphemeralSigners(walletContext, 1)
@@ -347,7 +347,7 @@ export async function castVote(
         undefined,
         message,
         chatMessage[0], // Executing a chat message ix in Squads requires subbing in a custom ephemeral signer
-        plugin?.voterWeightPk
+        plugin?.voterWeightPk,
       )
     }
   }
@@ -372,13 +372,15 @@ export async function castVote(
     ]
     // chunk size chosen conservatively. "Atoms" refers to atomic clusters of instructions (namely, updatevoterweight? + vote)
     const delegatorBatches = chunks(delegatorCastVoteAtoms, 2).map((x) =>
-      x.flat()
+      x.flat(),
     )
     const actions = [batch1, ...delegatorBatches].map((ixs) => ({
       instructionsSet: ixs.map((ix) => ({
         transactionInstruction: ix,
         signers: chatMessageSigners.filter((kp) =>
-          ix.keys.find((key) => key.isSigner && key.pubkey.equals(kp.publicKey))
+          ix.keys.find(
+            (key) => key.isSigner && key.pubkey.equals(kp.publicKey),
+          ),
         ),
       })),
       sequenceType: SequenceType.Parallel,
@@ -408,7 +410,7 @@ export async function castVote(
         ...pluginPostMessageIxs,
         ...postMessageIxs,
       ],
-      2
+      2,
     )
 
     const ixsChunks = chunkerz.map((txBatch, batchIdx) => {
@@ -416,7 +418,7 @@ export async function castVote(
         instructionsSet: txBatchesToInstructionSetWithSigners(
           txBatch,
           message ? [[], chatMessageSigners] : [], // seeing signer related bugs when posting chat? This is likely culprit
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Sequential,
       }
@@ -438,14 +440,12 @@ export async function castVote(
 
   // we need to chunk instructions
   if (isNftVoter) {
-    const {
-      openNftVotingCountingModal,
-      closeNftVotingCountingModal,
-    } = useNftProposalStore.getState()
+    const { openNftVotingCountingModal, closeNftVotingCountingModal } =
+      useNftProposalStore.getState()
 
     const createNftVoteTicketsChunks = chunks(
       [...createCastNftVoteTicketIxs, ...createPostMessageTicketIxs],
-      1
+      1,
     )
 
     // last element of pluginCastVoteIxs
@@ -454,7 +454,7 @@ export async function castVote(
     const nftCountingChunks = pluginCastVoteIxs.slice(0, -1)
     const voteChunk = [last, ...castVoteIxs] // the final nft-voter.CastNftVote instruction has to in same tx as the vote
     const chunkedIxs = [...chunks(nftCountingChunks, 2), voteChunk].filter(
-      (x) => x.length > 0
+      (x) => x.length > 0,
     )
 
     // note that we are not chunking postMessageIxs, not yet supported (somehow)
@@ -465,7 +465,7 @@ export async function castVote(
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }
@@ -475,7 +475,7 @@ export async function castVote(
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             message ? [[], chatMessageSigners] : [], // seeing signer related bugs when posting chat? This is likely culprit
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Sequential,
         }
@@ -488,12 +488,12 @@ export async function castVote(
       proposal.pubkey,
       votingPlugin,
       realm.pubkey,
-      walletPubkey
+      walletPubkey,
     )
     const hasEnoughSol = await checkHasEnoughSolToVote(
       totalVoteCost,
       walletPubkey,
-      connection
+      connection,
     )
     if (!hasEnoughSol) {
       throw new Error('Not enough SOL.')
@@ -514,7 +514,7 @@ export async function castVote(
           closeNftVotingCountingModal(
             votingPlugin.client as NftVoterClient,
             proposal,
-            wallet.publicKey!
+            wallet.publicKey!,
           )
         },
       },

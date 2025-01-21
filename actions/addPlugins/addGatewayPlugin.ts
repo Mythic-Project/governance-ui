@@ -13,7 +13,7 @@ export const addGatewayPlugin = async (
   communityMintPk: PublicKey,
   programIdPk: PublicKey,
   predecessorPluginProgram: PublicKey | undefined, // if chained, set the previous plugin here
-  passType: PublicKey // The type of sybil resistance protection
+  passType: PublicKey, // The type of sybil resistance protection
 ): Promise<AddPluginResult> => {
   const options = AnchorProvider.defaultOptions()
   const provider = new AnchorProvider(connection, wallet as Wallet, options)
@@ -23,7 +23,7 @@ export const addGatewayPlugin = async (
   const { registrar } = await getRegistrarPDA(
     realmPk,
     communityMintPk,
-    gatewayClient.program.programId
+    gatewayClient.program.programId,
   )
 
   const gatewayRegistrarInstruction = await gatewayClient.program.methods
@@ -47,7 +47,7 @@ export const addGatewayPlugin = async (
               isSigner: false,
             },
           ]
-        : []
+        : [],
     )
     .instruction()
 

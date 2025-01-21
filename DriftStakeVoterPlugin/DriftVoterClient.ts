@@ -25,28 +25,28 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
     const { registrar: registrarPk } = this.getRegistrarPDA(realm, mint)
     const registrar = await queryClient.fetchQuery(
       ['Drift', 'Plugin Registrar', registrarPk],
-      () => this.program.account.registrar.fetch(registrarPk)
+      () => this.program.account.registrar.fetch(registrarPk),
     )
     return registrar
   }
 
   constructor(
     public program: Program<DriftStakeVoter>,
-    public devnet: boolean
+    public devnet: boolean,
   ) {
     super(program, devnet)
   }
 
   async calculateMaxVoterWeight(
     _realm: PublicKey,
-    _mint: PublicKey
+    _mint: PublicKey,
   ): Promise<BN | null> {
     console.log(
-      'drift voter client was just asked to calculate max voter weight'
+      'drift voter client was just asked to calculate max voter weight',
     )
     const { result: realm } = await fetchRealmByPubkey(
       this.program.provider.connection,
-      _realm
+      _realm,
     )
     console.log('drift voter client realm', realm)
     return realm?.account.config?.communityMintMaxVoteWeightSource.value ?? null // TODO this code should not actually be called because this is not a max voter weight plugin
@@ -56,7 +56,7 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
     voter: PublicKey,
     realm: PublicKey,
     mint: PublicKey,
-    inputVoterWeight: BN
+    inputVoterWeight: BN,
   ): Promise<BN | null> {
     const registrar = await this._fetchRegistrar(realm, mint)
     const spotMarketIndex = registrar.spotMarketIndex // could just hardcode spotmarket pk
@@ -64,16 +64,16 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
     const drift = new Program(DriftIDL, driftProgramId, this.program.provider)
     const spotMarketPk = await getSpotMarketPublicKey(
       driftProgramId,
-      spotMarketIndex
+      spotMarketIndex,
     )
     const insuranceFundVaultPk = await getInsuranceFundVaultPublicKey(
       driftProgramId,
-      spotMarketIndex
+      spotMarketIndex,
     )
     const insuranceFundStakePk = await getInsuranceFundStakeAccountPublicKey(
       driftProgramId,
       voter,
-      spotMarketIndex
+      spotMarketIndex,
     )
 
     const insuranceFundStake = await queryClient.fetchQuery({
@@ -99,11 +99,11 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
 
     const insuranceFundVault = await fetchTokenAccountByPubkey(
       this.program.provider.connection,
-      insuranceFundVaultPk
+      insuranceFundVaultPk,
     )
     if (insuranceFundVault.result === undefined) {
       console.log(
-        'Insurance fund vault not found: ' + insuranceFundVaultPk.toString()
+        'Insurance fund vault not found: ' + insuranceFundVaultPk.toString(),
       )
       return inputVoterWeight
     }
@@ -119,7 +119,7 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
       withdrawRequestShares,
       withdrawRequestAmount,
       totalIfShares,
-      insuranceFundVaultBalance
+      insuranceFundVaultBalance,
     )
 
     return amount.add(inputVoterWeight)
@@ -128,7 +128,7 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
   async updateVoterWeightRecord(
     voter: PublicKey,
     realm: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
     //action?: VoterWeightAction | undefined,
     //inputRecordCallback?: (() => Promise<PublicKey>) | undefined
   ): Promise<{
@@ -142,12 +142,12 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
       realmAccount?.owner,
       realm,
       mint,
-      voter
+      voter,
     )
     const { voterWeightPk } = await this.getVoterWeightRecordPDA(
       realm,
       mint,
-      voter
+      voter,
     )
     const { registrar: registrarPk } = this.getRegistrarPDA(realm, mint)
     const registrar = await this._fetchRegistrar(realm, mint)
@@ -158,16 +158,16 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
     //const drift = new Program(DriftIDL, driftProgramId, this.program.provider)
     const spotMarketPk = await getSpotMarketPublicKey(
       driftProgramId,
-      spotMarketIndex
+      spotMarketIndex,
     )
     const insuranceFundVaultPk = await getInsuranceFundVaultPublicKey(
       driftProgramId,
-      spotMarketIndex
+      spotMarketIndex,
     )
     const insuranceFundStakePk = await getInsuranceFundStakeAccountPublicKey(
       driftProgramId,
       voter,
-      spotMarketIndex
+      spotMarketIndex,
     )
 
     const spotMarket = await queryClient.fetchQuery({
@@ -178,7 +178,7 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
 
     const insuranceFundVault = await fetchTokenAccountByPubkey(
       this.program.provider.connection,
-      insuranceFundVaultPk
+      insuranceFundVaultPk,
     )
     const insuranceFundVaultPkOrNull =
       insuranceFundVault.found === false ? null : insuranceFundVaultPk
@@ -187,9 +187,8 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
       | Awaited<ReturnType<typeof drift.account.insuranceFundStake.fetch>>
       | undefined
     try {
-      insuranceFundStake = await drift.account.insuranceFundStake.fetch(
-        insuranceFundStakePk
-      )
+      insuranceFundStake =
+        await drift.account.insuranceFundStake.fetch(insuranceFundStakePk)
     } catch (e) {
       console.log('drift voter client', 'no insurance fund stake account found')
       insuranceFundStake = undefined
@@ -226,23 +225,23 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
   static async connect(
     provider: Provider,
     programId = new PublicKey(DRIFT_STAKE_VOTER_PLUGIN),
-    devnet = false
+    devnet = false,
   ): Promise<DriftVoterClient> {
     return new DriftVoterClient(
       new Program<DriftStakeVoter>(IDL, programId, provider),
-      devnet
+      devnet,
     )
   }
 
   async createVoterWeightRecord(
     voter: PublicKey,
     realm: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
   ): Promise<TransactionInstruction | null> {
     const { voterWeightPk } = await this.getVoterWeightRecordPDA(
       realm,
       mint,
-      voter
+      voter,
     )
     const { registrar } = this.getRegistrarPDA(realm, mint)
 

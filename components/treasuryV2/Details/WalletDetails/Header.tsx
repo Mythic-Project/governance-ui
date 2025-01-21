@@ -53,7 +53,7 @@ export default function Header(props: Props) {
         'py-4',
         'flex',
         'items-center',
-        'justify-between'
+        'justify-between',
       )}
     >
       <div>
@@ -87,8 +87,8 @@ export default function Header(props: Props) {
           onAddProgramSelected={() =>
             router.push(
               fmtUrlWithCluster(
-                `/dao/${symbol}${NEW_PROGRAM_VIEW}?wallet=${props.wallet.address}`
-              )
+                `/dao/${symbol}${NEW_PROGRAM_VIEW}?wallet=${props.wallet.address}`,
+              ),
             )
           }
           onAddTokenAccount={() => setOpenModal(ModalType.NewTokenAccount)}

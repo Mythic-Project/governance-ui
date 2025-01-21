@@ -32,20 +32,16 @@ export const getClawbackInstruction = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     realmCommunityMintPk,
-    clientProgramId
+    clientProgramId,
   )
-  const { voter } = getVoterPDA(
-    registrar,
-    voterWalletAddress,
-    clientProgramId
-  )
+  const { voter } = getVoterPDA(registrar, voterWalletAddress, clientProgramId)
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
     grantMintPk,
     voter,
-    true
+    true,
   )
 
   const clawbackIx = await client?.program.methods

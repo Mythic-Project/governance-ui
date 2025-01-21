@@ -46,14 +46,14 @@ const ProposalOptions: React.FC<{
           })
         }
       ></Textarea>
-        {shouldShowVoteByCouncilToggle && (
-            <VoteBySwitch
-                checked={voteByCouncil}
-                onChange={() => {
-                    setVoteByCouncil(!voteByCouncil)
-                }}
-            ></VoteBySwitch>
-        )}
+      {shouldShowVoteByCouncilToggle && (
+        <VoteBySwitch
+          checked={voteByCouncil}
+          onChange={() => {
+            setVoteByCouncil(!voteByCouncil)
+          }}
+        ></VoteBySwitch>
+      )}
     </>
   )
 }

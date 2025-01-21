@@ -49,7 +49,7 @@ export default function TokenListItem(props: Props) {
           props.thumbnail.props.className,
           'h-6',
           'fill-fgd-1',
-          'w-6'
+          'w-6',
         ),
       })}
       onSelect={props.onSelect}

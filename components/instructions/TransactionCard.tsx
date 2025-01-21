@@ -21,7 +21,7 @@ export default function TransactionCard({
   const [playing, setPlaying] = useState(
     proposalTransaction.account.executedAt
       ? PlayState.Played
-      : PlayState.Unplayed
+      : PlayState.Unplayed,
   )
 
   return (

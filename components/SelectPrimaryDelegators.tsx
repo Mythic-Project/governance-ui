@@ -30,9 +30,9 @@ const SelectPrimaryDelegators = () => {
       realm === undefined
         ? undefined
         : delegatesArray?.filter((x) =>
-            x.account.governingTokenMint.equals(realm.account.communityMint)
+            x.account.governingTokenMint.equals(realm.account.communityMint),
           ),
-    [delegatesArray, realm]
+    [delegatesArray, realm],
   )
 
   const councilMintAddr = realm?.account.config.councilMint
@@ -43,9 +43,9 @@ const SelectPrimaryDelegators = () => {
       councilMintAddr === undefined
         ? undefined
         : delegatesArray?.filter((x) =>
-            x.account.governingTokenMint.equals(councilMintAddr)
+            x.account.governingTokenMint.equals(councilMintAddr),
           ),
-    [delegatesArray, councilMintAddr]
+    [delegatesArray, councilMintAddr],
   )
 
   const {
@@ -57,13 +57,15 @@ const SelectPrimaryDelegators = () => {
 
   const handleCouncilSelect = (councilWalletPk: string | undefined) => {
     setCouncilDelegator(
-      councilWalletPk !== undefined ? new PublicKey(councilWalletPk) : undefined
+      councilWalletPk !== undefined
+        ? new PublicKey(councilWalletPk)
+        : undefined,
     )
   }
 
   const handleCommunitySelect = (communityWalletPk: string | undefined) => {
     setCommunityDelegator(
-      communityWalletPk ? new PublicKey(communityWalletPk) : undefined
+      communityWalletPk ? new PublicKey(communityWalletPk) : undefined,
     )
   }
 
@@ -103,7 +105,7 @@ const usePluginNameAsync = (kind: 'community' | 'council') => {
   return useAsync(
     async () =>
       kind && realmPk && determineVotingPowerType(connection, realmPk, kind),
-    [connection, realmPk, kind]
+    [connection, realmPk, kind],
   )
 }
 
@@ -194,7 +196,7 @@ function PrimaryDelegatorSelectBatchSupported({
 
 // its a conditional, make it use the old or new component depending on support. thanks.
 const PrimaryDelegatorSelect = (
-  props: Parameters<typeof PrimaryDelegatorSelectBatchSupported>[0]
+  props: Parameters<typeof PrimaryDelegatorSelectBatchSupported>[0],
 ) => {
   const { result: plugin } = usePluginNameAsync(props.kind)
   const batchDelegatorUxSupported =

@@ -33,8 +33,8 @@ export const getTreasuryAccountItemInfoV2 = (account: AssetAccount) => {
           new BN(
             account.isSol
               ? account.extensions.solAccount!.lamports
-              : account.extensions.amount
-          )
+              : account.extensions.amount,
+          ),
         ).toNumber()
       : 0
   const price = tokenPriceService.getUSDTokenPrice(mintAddress!)
@@ -84,14 +84,14 @@ export const getTreasuryAccountItemInfoV2 = (account: AssetAccount) => {
 const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes in milliseconds
 
 export const getTreasuryAccountItemInfoV2Async = async (
-  account: AssetAccount
+  account: AssetAccount,
 ) => {
   const cacheKey = `tokenAccountInfoItem_${account.pubkey.toString()}`
 
   // Check cache first
   const cachedData = localStorage.getItem(cacheKey)
   const cacheTTL = localStorage.getItem('tokenAccountInfoItem_ttl')
-  console.log(cachedData && cacheTTL && Date.now() < Number(cacheTTL))
+
   // If we have valid cached data, return it
   if (cachedData && cacheTTL && Date.now() < Number(cacheTTL)) {
     return JSON.parse(cachedData) as TreasuryAccountInfo
@@ -113,8 +113,8 @@ export const getTreasuryAccountItemInfoV2Async = async (
           new BN(
             account.isSol
               ? account.extensions.solAccount!.lamports
-              : account.extensions.amount
-          )
+              : account.extensions.amount,
+          ),
         ).toNumber()
       : 0
 
@@ -176,7 +176,7 @@ export const getTreasuryAccountItemInfoV2Async = async (
     localStorage.setItem(cacheKey, JSON.stringify(result))
     localStorage.setItem(
       `tokenAccountInfoItem_ttl`,
-      String(Date.now() + CACHE_TTL_MS)
+      String(Date.now() + CACHE_TTL_MS),
     )
   } catch (e) {
     console.warn('Failed to cache treasury account info:', e)

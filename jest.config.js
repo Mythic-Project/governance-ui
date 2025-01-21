@@ -13,7 +13,7 @@ const directories = readdirSync(__dirname, { withFileTypes: true })
       [`^${dir}/(.*)$`]: resolve(__dirname, `./${dir}/$1`),
       [`^@${dir}/(.*)$`]: resolve(__dirname, `./${dir}/$1`),
     }),
-    {}
+    {},
   )
 
 const customConfig = {

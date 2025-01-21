@@ -20,7 +20,7 @@ export const CastMultiVoteButtons = ({ proposal }: { proposal: Proposal }) => {
   const { data: ownVoteRecord } = useProposalVoteRecordQuery('electoral')
   const [selectedOptions, setSelectedOptions] = useState<number[]>([])
   const [optionStatus, setOptionStatus] = useState<boolean[]>(
-    new Array(proposal.options.length).fill(false)
+    new Array(proposal.options.length).fill(false),
   )
   const isVoteCast = !!ownVoteRecord?.found
   const isVoting = useIsVoting()

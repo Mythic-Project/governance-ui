@@ -15,7 +15,7 @@ export function createGovernanceThresholds(
   programVersion: number,
   communityYesVotePercentage: 'disabled' | number,
   // ignored if program version < v3
-  councilYesVotePercentage?: 'disabled' | number
+  councilYesVotePercentage?: 'disabled' | number,
 ) {
   // For backward compatybility with spl-gov versions <= 2
   // for Council vote and Veto vote thresholds we have to pass YesVotePerentage(0)
@@ -85,17 +85,19 @@ function createDefaultRealmConfigAccount(realmPk: PublicKey) {
 export async function getRealmConfigAccountOrDefault(
   connection: Connection,
   programId: PublicKey,
-  realmPk: PublicKey
+  realmPk: PublicKey,
 ) {
   const realmConfigPk = await getRealmConfigAddress(programId, realmPk)
   const accountInfo = await connection.getAccountInfo(realmConfigPk)
 
-  return (accountInfo
-    ? GovernanceAccountParser(RealmConfigAccount)(realmConfigPk, accountInfo)
-    : // If the account doesn't exist then create a default instance
-      {
-        pubkey: realmConfigPk,
-        owner: programId,
-        account: createDefaultRealmConfigAccount(realmPk),
-      }) as ProgramAccount<RealmConfigAccount>
+  return (
+    accountInfo
+      ? GovernanceAccountParser(RealmConfigAccount)(realmConfigPk, accountInfo)
+      : // If the account doesn't exist then create a default instance
+        {
+          pubkey: realmConfigPk,
+          owner: programId,
+          account: createDefaultRealmConfigAccount(realmPk),
+        }
+  ) as ProgramAccount<RealmConfigAccount>
 }

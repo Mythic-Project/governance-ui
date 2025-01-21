@@ -20,8 +20,8 @@ const useNotificationStore = create<NotificationStore>(
     }),
     {
       name: 'notifications',
-    }
-  )
+    },
+  ),
 )
 
 export default useNotificationStore

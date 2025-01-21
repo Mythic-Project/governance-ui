@@ -20,12 +20,8 @@ const VoteResultsForRealmProposal = ({
   realm,
   governance,
 }: VoteResultsForRealmProps) => {
-  const {
-    yesVoteCount,
-    noVoteCount,
-    relativeNoVotes,
-    relativeYesVotes,
-  } = useProposalVotesForRealm(realm, proposal, governance)
+  const { yesVoteCount, noVoteCount, relativeNoVotes, relativeYesVotes } =
+    useProposalVotesForRealm(realm, proposal, governance)
 
   return (
     <div className="flex items-center space-x-4">

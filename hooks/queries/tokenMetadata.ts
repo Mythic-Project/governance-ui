@@ -21,7 +21,7 @@ export const tokenMetadataQueryKeys = {
 
 export const useTokenMetadata = (
   mint: PublicKey | undefined,
-  enableConditions = true
+  enableConditions = true,
 ) => {
   const connection = useLegacyConnectionContext()
 
@@ -36,7 +36,7 @@ export const useTokenMetadata = (
       const metadataAccount = findMetadataPda(mintPubkey)
       const metadata = await Metadata.fromAccountAddress(
         connection.current,
-        metadataAccount
+        metadataAccount,
       )
       //Do not use data.img we don't want to have unsafe imgs to show in realms.
       return {
@@ -54,7 +54,7 @@ export const useTokenMetadata = (
 
 export const useTokensMetadata = (
   mints: PublicKey[],
-  enableConditions = true
+  enableConditions = true,
 ) => {
   const connection = useLegacyConnectionContext()
 
@@ -70,7 +70,7 @@ export const useTokensMetadata = (
         const metadataAccount = findMetadataPda(mint)
         const metadata = await Metadata.fromAccountAddress(
           connection.current,
-          metadataAccount
+          metadataAccount,
         )
 
         //Do not use data.img we don't want to have unsafe imgs to show in realms.
@@ -83,7 +83,7 @@ export const useTokensMetadata = (
         // we dont want to re-fetch for the individual one
         queryClient.setQueryData(
           tokenMetadataQueryKeys.byMint(connection.cluster, mint),
-          metadata.data
+          metadata.data,
         )
       }
       return data

@@ -49,7 +49,7 @@ function isNotNull<T>(x: T | null): x is T {
 export async function fetchMangoAccounts(
   assets: Asset[],
   mangoClient: MangoClient | null,
-  mangoGroup: Group | null
+  mangoGroup: Group | null,
 ) {
   if (!mangoClient || !mangoGroup) {
     return {
@@ -64,8 +64,8 @@ export async function fetchMangoAccounts(
         .filter((a) => a.type === AssetType.Token)
         .filter((a: Token) => a.raw.extensions.token)
         .filter((a: Token) => a.raw.extensions.token!.account.owner)
-        .map((a: Token) => a.raw.extensions.token!.account.owner.toString())
-    )
+        .map((a: Token) => a.raw.extensions.token!.account.owner.toString()),
+    ),
   ).map((o) => new PublicKey(o))
 
   const mangoAccounts: MangoAccount[] = []
@@ -73,7 +73,7 @@ export async function fetchMangoAccounts(
     for (const tokenAccountOwner of tokenAccountOwners) {
       const accounts = await mangoClient.getMangoAccountsForOwner(
         mangoGroup,
-        tokenAccountOwner
+        tokenAccountOwner,
       )
 
       if (accounts) {
@@ -82,16 +82,19 @@ export async function fetchMangoAccounts(
     }
   }
 
-  const mangoAccountsValue = mangoAccounts.reduce((acc: I80F48, account) => {
-    try {
-      const value = account.getAssetsValue(mangoGroup!)
-      acc = acc.add(value)
-      return acc
-    } catch (e) {
-      console.log(e)
-      return acc
-    }
-  }, new I80F48(new BN(0)))
+  const mangoAccountsValue = mangoAccounts.reduce(
+    (acc: I80F48, account) => {
+      try {
+        const value = account.getAssetsValue(mangoGroup!)
+        acc = acc.add(value)
+        return acc
+      } catch (e) {
+        console.log(e)
+        return acc
+      }
+    },
+    new I80F48(new BN(0)),
+  )
 
   return {
     mangoAccountsValue: new BigNumber(toUiDecimals(mangoAccountsValue, 6)),
@@ -112,15 +115,15 @@ export const assembleWallets = async (
   communityMint?: MintInfo,
   realm?: ProgramAccount<Realm>,
   realmConfig?: ProgramAccount<RealmConfigAccount>,
-  realmInfo?: RealmInfo
+  realmInfo?: RealmInfo,
 ) => {
   const walletMap: { [address: string]: Wallet } = {}
   const programs = accounts.filter(
-    (account) => account.type === AccountType.PROGRAM
+    (account) => account.type === AccountType.PROGRAM,
   ) as ProgramAssetAccount[]
   const programsGroupedByWallet = await groupProgramsByWallet(
     programId,
-    programs
+    programs,
   )
   const domainsGroupedByWallet = groupDomainsByWallet(domains)
   const ungovernedAssets: AssetAccount[] = []
@@ -161,7 +164,7 @@ export const assembleWallets = async (
       account,
       walletMap[walletAddress].rules,
       councilMint,
-      communityMint
+      communityMint,
     )
 
     if (!walletMap[walletAddress].stats.proposalsCount) {
@@ -184,7 +187,7 @@ export const assembleWallets = async (
       const asset = await convertAccountToAsset(
         account,
         councilMintAddress,
-        communityMintAddress
+        communityMintAddress,
       )
 
       if (asset) {
@@ -194,7 +197,7 @@ export const assembleWallets = async (
   }
 
   for (const [walletAddress, programList] of Object.entries(
-    programsGroupedByWallet
+    programsGroupedByWallet,
   )) {
     if (!walletMap[walletAddress]) {
       walletMap[walletAddress] = {
@@ -217,8 +220,8 @@ export const assembleWallets = async (
               walletMap[walletAddress].governanceAddress ||
             account.authority?.toBase58() === walletAddress,
           raw: p,
-        }))
-      )
+        })),
+      ),
     )
 
     walletMap[walletAddress].assets.push({
@@ -230,7 +233,7 @@ export const assembleWallets = async (
   }
 
   for (const [walletAddress, domainList] of Object.entries(
-    domainsGroupedByWallet
+    domainsGroupedByWallet,
   )) {
     if (!walletMap[walletAddress]) {
       walletMap[walletAddress] = {
@@ -255,7 +258,7 @@ export const assembleWallets = async (
     const { mangoAccountsValue } = await fetchMangoAccounts(
       wallet.assets,
       mangoClient,
-      mangoGroup
+      mangoGroup,
     )
 
     if (mangoAccountsValue.gt(0)) {
@@ -273,8 +276,8 @@ export const assembleWallets = async (
         : getAccountName(wallet.address),
       totalValue: calculateTotalValue(
         wallet.assets.map((asset) =>
-          'value' in asset ? asset.value : new BigNumber(0)
-        )
+          'value' in asset ? asset.value : new BigNumber(0),
+        ),
       ),
     })
   }
@@ -282,10 +285,10 @@ export const assembleWallets = async (
   allWallets.sort((a, b) => {
     if (a.totalValue.isZero() && b.totalValue.isZero()) {
       const aContainsSortable = a.assets.some(
-        (asset) => asset.type === AssetType.Programs
+        (asset) => asset.type === AssetType.Programs,
       )
       const bContainsSortable = b.assets.some(
-        (asset) => asset.type === AssetType.Programs
+        (asset) => asset.type === AssetType.Programs,
       )
 
       if (aContainsSortable && !bContainsSortable) {
@@ -307,14 +310,13 @@ export const assembleWallets = async (
           convertAccountToAsset({
             ...account,
             type: AccountType.TOKEN,
-          }) as Promise<Token | Mango | Sol>
-      )
+          }) as Promise<Token | Mango | Sol>,
+      ),
     )
   ).filter(isNotNull)
 
-  const {
-    mangoAccountsValue: auxMangoAccountsValue,
-  } = await fetchMangoAccounts(auxiliaryAssets, mangoClient!, mangoGroup!)
+  const { mangoAccountsValue: auxMangoAccountsValue } =
+    await fetchMangoAccounts(auxiliaryAssets, mangoClient!, mangoGroup!)
 
   if (auxMangoAccountsValue.gt(0)) {
     auxiliaryAssets.unshift({
@@ -331,8 +333,8 @@ export const assembleWallets = async (
           name: 'Auxiliary Assets',
           totalValue: calculateTotalValue(
             auxiliaryAssets.map((asset) =>
-              'value' in asset ? asset.value : new BigNumber(0)
-            )
+              'value' in asset ? asset.value : new BigNumber(0),
+            ),
           ),
         },
       ]
@@ -340,10 +342,13 @@ export const assembleWallets = async (
 
   const walletsToMerge = allWallets
     .filter((wallet) => !!governanceToWallet[wallet.address])
-    .reduce((acc, wallet) => {
-      acc[wallet.address] = wallet
-      return acc
-    }, {} as { [walletAddress: string]: Wallet })
+    .reduce(
+      (acc, wallet) => {
+        acc[wallet.address] = wallet
+        return acc
+      },
+      {} as { [walletAddress: string]: Wallet },
+    )
 
   const wallets = allWallets
     .filter((wallet) => !walletsToMerge[wallet.address])
@@ -378,7 +383,7 @@ export const assembleWallets = async (
             communityMintMaxVoteWeightSource:
               config.communityMintMaxVoteWeightSource,
             minCommunityTokensToCreateGovernance: new BigNumber(
-              config.minCommunityTokensToCreateGovernance.toString()
+              config.minCommunityTokensToCreateGovernance.toString(),
             ).shiftedBy(communityMint ? -communityMint.decimals : 0),
             communityTokenConfig: realmConfig?.account.communityTokenConfig,
             councilTokenConfig: realmConfig?.account.councilTokenConfig,

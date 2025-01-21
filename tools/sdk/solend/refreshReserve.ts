@@ -8,16 +8,13 @@ export async function refreshReserve({
 }: {
   mintName: SupportedMintName
 }): Promise<TransactionInstruction> {
-  const {
-    reserve,
-    pythOracle,
-    switchboardFeedAddress,
-  } = SolendConfiguration.getSupportedMintInformation(mintName)
+  const { reserve, pythOracle, switchboardFeedAddress } =
+    SolendConfiguration.getSupportedMintInformation(mintName)
 
   return refreshReserveInstruction(
     reserve,
     SolendConfiguration.programID,
     pythOracle,
-    switchboardFeedAddress
+    switchboardFeedAddress,
   )
 }

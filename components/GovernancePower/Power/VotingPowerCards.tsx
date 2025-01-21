@@ -12,6 +12,7 @@ import DriftVotingPower from 'DriftStakeVoterPlugin/components/DriftVotingPower'
 import TokenHaverVotingPower from '@components/ProposalVotingPower/TokenHaverVotingPower'
 import ParclVotingPower from 'ParclVotePlugin/components/ParclVotingPower'
 import BonkBalanceCard from 'BonkVotePlugin/components/BalanceCard'
+import TokenVoterBalanceCard from 'TokenVoterPlugin/components/BalanceCard'
 
 /****
  * Note to plugin implementors.
@@ -37,8 +38,9 @@ const pluginsWithDedicatedVotingPowerUI = [
   'QV',
   'drift',
   'token_haver',
-  "parcl",
-  'bonk'
+  'parcl',
+  'bonk',
+  'token_voter'
 ] as const
 
 export type VotingCardProps = {
@@ -53,14 +55,16 @@ export type VotingCardProps = {
 // - narrow the type to a plugin that requires a dedicated UI
 // - adding to the pluginsWithDedicatedVotingPowerUI list forces the CardForPlugin component to be updated
 const hasDedicatedVotingPowerUI = (
-  plugin: PluginName
-): plugin is typeof pluginsWithDedicatedVotingPowerUI[number] =>
+  plugin: PluginName,
+): plugin is (typeof pluginsWithDedicatedVotingPowerUI)[number] =>
   pluginsWithDedicatedVotingPowerUI.includes(
-    plugin as typeof pluginsWithDedicatedVotingPowerUI[number]
+    plugin as (typeof pluginsWithDedicatedVotingPowerUI)[number],
   )
 
 const CardForPlugin: FC<
-  { plugin: typeof pluginsWithDedicatedVotingPowerUI[number] } & VotingCardProps
+  {
+    plugin: (typeof pluginsWithDedicatedVotingPowerUI)[number]
+  } & VotingCardProps
 > = ({ plugin, role, ...props }) => {
   switch (plugin) {
     case 'NFT':
@@ -83,6 +87,8 @@ const CardForPlugin: FC<
       return <ParclVotingPower role={role} />
     case 'bonk':
       return <BonkBalanceCard role={role} />
+    case 'token_voter':
+      return <TokenVoterBalanceCard role={role} />
   }
 }
 
@@ -104,13 +110,16 @@ export const VotingPowerCards: FC<VotingCardProps> = (props) => {
     .filter(Boolean) // filter out undefined
 
   const includesUnrecognizedPlugin = plugins?.voterWeight.some(
-    (plugin) => plugin.name === 'unknown'
+    (plugin) => plugin.name === 'unknown',
   )
 
   if (!cards.length) {
     // No dedicated plugin cards - add the vanilla card
     cards.push(
-      <VanillaCard unrecognizedPlugin={includesUnrecognizedPlugin} {...props} />
+      <VanillaCard
+        unrecognizedPlugin={includesUnrecognizedPlugin}
+        {...props}
+      />,
     )
   }
 

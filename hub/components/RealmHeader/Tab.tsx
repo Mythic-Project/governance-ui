@@ -13,15 +13,8 @@ interface Props extends React.ComponentProps<typeof NavigationMenu.Item> {
 }
 
 export function Tab(props: Props) {
-  const {
-    children,
-    className,
-    external,
-    href,
-    icon,
-    selected,
-    ...rest
-  } = props;
+  const { children, className, external, href, icon, selected, ...rest } =
+    props;
 
   return (
     <NavigationMenu.Item

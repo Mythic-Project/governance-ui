@@ -56,7 +56,7 @@ const Proposal = () => {
   const proposal = useRouteProposalQuery().data?.result
   const governance = useProposalGovernanceQuery().data?.result
   const tor = useTokenOwnerRecordByPubkeyQuery(
-    proposal?.account.tokenOwnerRecord
+    proposal?.account.tokenOwnerRecord,
   ).data?.result
   const voteRecords = useVoteRecords(proposal)
   const { connection } = useConnection()
@@ -123,7 +123,7 @@ const Proposal = () => {
 
   function filterOutUndecidedVotes(voteRecords: VoterDisplayData[]) {
     return voteRecords.filter(
-      (records) => records.voteType !== ProposalVoteType.Undecided
+      (records) => records.voteType !== ProposalVoteType.Undecided,
     )
   }
 
@@ -179,7 +179,7 @@ const Proposal = () => {
       const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8' })
       saveAs(
         blob,
-        `proposal-voters-${proposal?.account.name.replace(/\s+/g, '_')}.csv`
+        `proposal-voters-${proposal?.account.name.replace(/\s+/g, '_')}.csv`,
       )
     } catch (error) {
       console.error('Error exporting CSV:', error)
@@ -208,7 +208,7 @@ const Proposal = () => {
                 )}
                 <a
                   href={`https://${getRealmExplorerHost(
-                    realmInfo
+                    realmInfo,
                   )}/account/${proposal.pubkey.toBase58()}${
                     connection.rpcEndpoint.includes('devnet')
                       ? '?cluster=devnet'
@@ -381,7 +381,7 @@ const Proposal = () => {
                 <div className="flex justify-end mt-4">
                   <Link
                     href={fmtUrlWithCluster(
-                      `/dao/${symbol}/proposal/${proposal.pubkey}/explore`
+                      `/dao/${symbol}/proposal/${proposal.pubkey}/explore`,
                     )}
                     passHref
                   >

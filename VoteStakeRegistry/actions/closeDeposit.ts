@@ -30,13 +30,9 @@ export const closeDeposit = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    client!.program.programId
+    client!.program.programId,
   )
-  const { voter } = getVoterPDA(
-    registrar,
-    wallet!.publicKey!,
-    clientProgramId
-  )
+  const { voter } = getVoterPDA(registrar, wallet!.publicKey!, clientProgramId)
   const closeDepositEntry = await client!.program.methods
     .closeDepositEntry(depositIndex)
     .accounts({

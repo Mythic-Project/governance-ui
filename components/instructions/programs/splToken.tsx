@@ -28,7 +28,7 @@ const MINT_METADATA = {
 }
 
 export function getMintMetadata(
-  tokenMintPk: PublicKey | undefined
+  tokenMintPk: PublicKey | undefined,
 ): TokenMintMetadata {
   const tokenMintAddress = tokenMintPk ? tokenMintPk.toBase58() : ''
   const tokenInfo = tokenMintAddress
@@ -51,11 +51,11 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenAccount = await tryGetTokenAccount(
           connection,
-          accounts[0].pubkey
+          accounts[0].pubkey,
         )
         const tokenMint = tokenAccount
           ? await tryGetMint(connection, tokenAccount!.account.mint)
@@ -103,7 +103,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenMint = await tryGetMint(connection, accounts[1].pubkey)
         const tokenMintDescriptor = getMintMetadata(accounts[1].pubkey)
@@ -113,13 +113,13 @@ export const SPL_TOKEN_INSTRUCTIONS = {
             data: Buffer.from(data),
             programId: TOKEN_PROGRAM_ID,
           }),
-          TOKEN_PROGRAM_ID
+          TOKEN_PROGRAM_ID,
         )
 
         const tokenAmount = tokenMint
           ? toUiDecimals(
               Number(transferChecked.data.amount),
-              transferChecked.data.decimals
+              transferChecked.data.decimals,
             )
           : transferChecked.data.amount.toString()
 
@@ -146,7 +146,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       accounts: [{ name: 'Mint', important: true }, { name: 'Mint Authority' }],
       getDataUI: async (
         connection: Connection,
-        data: Uint8Array
+        data: Uint8Array,
         //accounts: AccountMetaData[]
       ) => {
         interface SetAuthorityInstructionData {
@@ -167,12 +167,12 @@ export const SPL_TOKEN_INSTRUCTIONS = {
             u8('authorityType'),
             u8('newAuthorityOption'),
             publicKey('newAuthority'),
-          ]
+          ],
         )
         let authorityParams: SetAuthorityInstructionData | null = null
         try {
           authorityParams = setAuthorityInstructionData.decode(
-            Buffer.from(data)
+            Buffer.from(data),
           )
         } catch (e) {
           console.log(e)
@@ -213,7 +213,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenMint = await tryGetMint(connection, accounts[0].pubkey)
 
@@ -258,7 +258,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const mint = accounts[1].pubkey
         const tokenMint = await tryGetMint(connection, mint)

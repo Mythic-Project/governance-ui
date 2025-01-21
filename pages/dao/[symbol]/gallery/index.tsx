@@ -12,13 +12,13 @@ import DepositNFTFromWallet from '@components/TreasuryAccount/DepositNFTFromWall
 import NFTGallery from '@components/NFTGallery'
 
 const AllNFTsGallery = (
-  props: Omit<Parameters<typeof NFTGallery>[0], 'nfts'>
+  props: Omit<Parameters<typeof NFTGallery>[0], 'nfts'>,
 ) => {
   const { data: nftsDAS } = useRealmDigitalAssetsQuery()
   const DASnftsFlat = useMemo(
     () =>
       nftsDAS?.flat().filter((x) => SUPPORT_CNFTS || !x.compression.compressed),
-    [nftsDAS]
+    [nftsDAS],
   )
   return <NFTGallery nfts={DASnftsFlat} {...props} />
 }
@@ -26,10 +26,8 @@ const AllNFTsGallery = (
 const Gallery = () => {
   const [openNftDepositModal, setOpenNftDepositModal] = useState(false)
   const [openSendNftsModal, setOpenSendNftsModal] = useState(false)
-  const [
-    selectedNftAndItsGovernance,
-    setSelectedNftAndItsGovernance,
-  ] = useState<[PublicKey, PublicKey]>()
+  const [selectedNftAndItsGovernance, setSelectedNftAndItsGovernance] =
+    useState<[PublicKey, PublicKey]>()
   const handleCloseModal = () => {
     setOpenNftDepositModal(false)
   }
@@ -47,7 +45,7 @@ const Gallery = () => {
       setSelectedNftAndItsGovernance([new PublicKey(x.id), governance])
       setOpenSendNftsModal(true)
     },
-    [findGovernanceByTreasury]
+    [findGovernanceByTreasury],
   )
 
   return (

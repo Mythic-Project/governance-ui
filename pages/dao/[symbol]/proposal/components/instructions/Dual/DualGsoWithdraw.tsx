@@ -34,10 +34,13 @@ const DualGsoWithdraw = ({
   >(undefined)
   const [formErrors, setFormErrors] = useState({})
   const { handleSetInstructions } = useContext(NewProposalContext)
-  const handleSetForm = useCallback(({ propertyName, value }) => {
-    setFormErrors({})
-    setForm({ ...form, [propertyName]: value })
-  }, [form])
+  const handleSetForm = useCallback(
+    ({ propertyName, value }) => {
+      setFormErrors({})
+      setForm({ ...form, [propertyName]: value })
+    },
+    [form],
+  )
   const schema = getDualFinanceGsoWithdrawSchema()
   useEffect(() => {
     function getInstruction(): Promise<UiInstruction> {
@@ -51,7 +54,7 @@ const DualGsoWithdraw = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [form, governedAccount, handleSetInstructions, index, connection, wallet])
   useEffect(() => {

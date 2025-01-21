@@ -12,12 +12,14 @@ interface Props {
   isStickied?: boolean
 }
 export default function TokenOwnerRecordDetails(props: Props) {
-  const governancePk = useMemo(() => new PublicKey(props.governance), [
-    props.governance,
-  ])
-  const torPk = useMemo(() => new PublicKey(props.tokenOwnerRecord), [
-    props.tokenOwnerRecord,
-  ])
+  const governancePk = useMemo(
+    () => new PublicKey(props.governance),
+    [props.governance],
+  )
+  const torPk = useMemo(
+    () => new PublicKey(props.tokenOwnerRecord),
+    [props.tokenOwnerRecord],
+  )
 
   return (
     <div className={cx(props.className, 'rounded', 'overflow-hidden')}>

@@ -86,7 +86,7 @@ const AIRDROP_INSTRUCTIONS = {
       )
     },
   },
-};
+}
 
 const SO_INSTRUCTIONS = {
   45: {
@@ -109,12 +109,12 @@ const SO_INSTRUCTIONS = {
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as configV3Instruction
 
       const baseMint = await tryGetMint(connection, accounts[8].pubkey)
@@ -129,13 +129,13 @@ const SO_INSTRUCTIONS = {
           <div>
             Expiration:{' '}
             {new Date(
-              decodedInstructionData.optionExpiration.toNumber() * 1000
+              decodedInstructionData.optionExpiration.toNumber() * 1000,
             ).toDateString()}
           </div>
           <div>
             Subscription Period End:{' '}
             {new Date(
-              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1000
+              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1000,
             ).toDateString()}
           </div>
           <div>Num Tokens: {tokenAmount.toNumber()}</div>
@@ -164,12 +164,12 @@ const SO_INSTRUCTIONS = {
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as configV2Instruction
 
       const baseMint = await tryGetMint(connection, accounts[7].pubkey)
@@ -184,13 +184,13 @@ const SO_INSTRUCTIONS = {
           <div>
             Expiration:{' '}
             {new Date(
-              decodedInstructionData.optionExpiration.toNumber() * 1000
+              decodedInstructionData.optionExpiration.toNumber() * 1000,
             ).toDateString()}
           </div>
           <div>
             Subscription Period End:{' '}
             {new Date(
-              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1000
+              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1000,
             ).toDateString()}
           </div>
           <div>Num Tokens: {tokenAmount.toNumber()}</div>
@@ -213,12 +213,14 @@ const SO_INSTRUCTIONS = {
     getDataUI: async (connection: Connection, data: Uint8Array) => {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as initStrikeInstruction
 
       return (
         <div className="space-y-3">
-          <div>Strike atoms per lot: {decodedInstructionData.strike.toNumber()}</div>
+          <div>
+            Strike atoms per lot: {decodedInstructionData.strike.toNumber()}
+          </div>
         </div>
       )
     },
@@ -238,12 +240,14 @@ const SO_INSTRUCTIONS = {
     getDataUI: async (connection: Connection, data: Uint8Array) => {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as initStrikeReversibleInstruction
 
       return (
         <div className="space-y-3">
-          <div>Strike atoms per lot: {decodedInstructionData.strike.toNumber()}</div>
+          <div>
+            Strike atoms per lot: {decodedInstructionData.strike.toNumber()}
+          </div>
         </div>
       )
     },
@@ -264,7 +268,7 @@ const SO_INSTRUCTIONS = {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as nameTokenInstruction
 
       return (
@@ -287,7 +291,7 @@ const SO_INSTRUCTIONS = {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as issueInstruction
 
       return (
@@ -319,7 +323,7 @@ const SO_INSTRUCTIONS = {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as exerciseReversibleInstruction
 
       return (
@@ -350,7 +354,7 @@ const SO_INSTRUCTIONS = {
       const soHelper = new StakingOptions(connection.rpcEndpoint)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        soHelper.getIdl()
+        soHelper.getIdl(),
       ).decode(Buffer.from(data))?.data as exerciseInstruction
 
       return (
@@ -428,10 +432,10 @@ const GSO_INSTRUCTIONS = {
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const decodedInstructionData = new BorshInstructionCoder(
-        gsoIdl as Idl
+        gsoIdl as Idl,
       ).decode(Buffer.from(data))?.data as configGsoInstruction
 
       const baseMint = await tryGetMint(connection, accounts[8].pubkey)
@@ -447,17 +451,21 @@ const GSO_INSTRUCTIONS = {
           <div>
             Expiration:{' '}
             {new Date(
-              decodedInstructionData.optionExpiration.toNumber() * 1_000
+              decodedInstructionData.optionExpiration.toNumber() * 1_000,
             ).toDateString()}
           </div>
           <div>
             Subscription Period End:{' '}
             {new Date(
-              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1_000
+              decodedInstructionData.subscriptionPeriodEnd.toNumber() * 1_000,
             ).toDateString()}
           </div>
-          <div>Strike: { decodedInstructionData.strikePrice.toNumber() }</div>
-          <div>Lockup Ratio: { decodedInstructionData.lockupRatioTokensPerMillion.toNumber() / 1_000_000 }</div>
+          <div>Strike: {decodedInstructionData.strikePrice.toNumber()}</div>
+          <div>
+            Lockup Ratio:{' '}
+            {decodedInstructionData.lockupRatioTokensPerMillion.toNumber() /
+              1_000_000}
+          </div>
           <div>Lot size: {decodedInstructionData.lotSize.toNumber()}</div>
           <div>SoName: {decodedInstructionData.projectName}</div>
         </div>

@@ -51,11 +51,12 @@ export default function AddAssetModal(props: Props) {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
 
-  const tokenOwnerRecord = ownVoterWeight?.canCreateGovernanceUsingCouncilTokens()
-    ? ownVoterWeight.councilTokenRecord
-    : realm && ownVoterWeight?.canCreateGovernanceUsingCommunityTokens(realm)
-    ? ownVoterWeight.communityTokenRecord
-    : undefined
+  const tokenOwnerRecord =
+    ownVoterWeight?.canCreateGovernanceUsingCouncilTokens()
+      ? ownVoterWeight.councilTokenRecord
+      : realm && ownVoterWeight?.canCreateGovernanceUsingCommunityTokens(realm)
+      ? ownVoterWeight.communityTokenRecord
+      : undefined
 
   return (
     <Modal
@@ -73,7 +74,7 @@ export default function AddAssetModal(props: Props) {
           'gap-x-8',
           'grid',
           'justify-center',
-          isWallet(props.wallet) && 'grid-cols-[repeat(3,max-content)]'
+          isWallet(props.wallet) && 'grid-cols-[repeat(3,max-content)]',
         )}
       >
         <div className="flex flex-col items-center space-y-2">

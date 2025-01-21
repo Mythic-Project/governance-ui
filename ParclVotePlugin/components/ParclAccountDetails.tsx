@@ -6,7 +6,10 @@ import { useEffect } from 'react'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useUserCommunityTokenOwnerRecord } from '@hooks/queries/tokenOwnerRecord'
 import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
-import { useRealmCommunityMintInfoQuery, useRealmCouncilMintInfoQuery } from '@hooks/queries/mintInfo'
+import {
+  useRealmCommunityMintInfoQuery,
+  useRealmCouncilMintInfoQuery,
+} from '@hooks/queries/mintInfo'
 import ParclVotingPower from './ParclVotingPower'
 import { useUserTokenAccountsQuery } from '@hooks/queries/tokenAccount'
 import { useRealmQuery } from '@hooks/queries/realm'
@@ -16,18 +19,18 @@ import { Deposit } from '@components/GovernancePower/Power/Vanilla/Deposit'
 
 export const PARCL_INSTRUCTIONS =
   'You can deposit PRCL tokens at https://app.parcl.co/staking'
-  
+
 const TokenDeposit = ({
   mintInfo,
   mintAddress,
   inAccountDetails,
   setHasGovPower,
-  role
+  role,
 }: {
-  mintInfo: MintInfo | undefined,
-  mintAddress: PublicKey,
-  inAccountDetails?: boolean,
-  role: 'council' | 'community',
+  mintInfo: MintInfo | undefined
+  mintAddress: PublicKey
+  inAccountDetails?: boolean
+  role: 'council' | 'community'
   setHasGovPower?: (hasGovPower: boolean) => void
 }) => {
   const wallet = useWalletOnePointOh()
@@ -37,20 +40,21 @@ const TokenDeposit = ({
   const ownTokenRecord = useUserCommunityTokenOwnerRecord().data?.result
   const config = useRealmConfigQuery().data?.result
 
-  const relevantTokenConfig = role === "community"
-    ? config?.account.communityTokenConfig
-    : config?.account.councilTokenConfig;
+  const relevantTokenConfig =
+    role === 'community'
+      ? config?.account.communityTokenConfig
+      : config?.account.councilTokenConfig
 
   const isMembership =
     relevantTokenConfig?.tokenType === GoverningTokenType.Membership
-  const isDormant =  
-    relevantTokenConfig?.tokenType === GoverningTokenType.Dormant;
+  const isDormant =
+    relevantTokenConfig?.tokenType === GoverningTokenType.Dormant
 
   const depositTokenRecord = ownTokenRecord
   const depositTokenAccount = tokenAccounts?.find((a) =>
-    a.account.mint.equals(mintAddress)
-  );
-  
+    a.account.mint.equals(mintAddress),
+  )
+
   const hasTokensInWallet =
     depositTokenAccount && depositTokenAccount.account.amount.gt(new BN(0))
 
@@ -61,8 +65,8 @@ const TokenDeposit = ({
   const availableTokens =
     depositTokenRecord && mintInfo
       ? fmtMintAmount(
-        mintInfo,
-          depositTokenRecord.account.governingTokenDepositAmount
+          mintInfo,
+          depositTokenRecord.account.governingTokenDepositAmount,
         )
       : '0'
 
@@ -100,26 +104,14 @@ const TokenDeposit = ({
         You have {tokensToShow} {hasTokensDeposited ? `more ` : ``} tokens
         available to deposit.
       </div>
-      {
-        role === "community" 
-        ? <div className={`my-4 opacity-70 text-xs`}>{PARCL_INSTRUCTIONS}</div>
-        : null
-      }
-      {
-        !isDormant
-        ? <Deposit role="council" />
-        : null
-      }      
+      {role === 'community' ? (
+        <div className={`my-4 opacity-70 text-xs`}>{PARCL_INSTRUCTIONS}</div>
+      ) : null}
+      {!isDormant ? <Deposit role="council" /> : null}
       <div className="flex flex-col mt-6 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-                {!isMembership && // Membership tokens can't be withdrawn (that is their whole point, actually)
-                  !isDormant &&
-                    inAccountDetails && (
-                        <VanillaWithdrawTokensButton
-                            role={
-                                'council'
-                            }
-                        />
-                    )}
+        {!isMembership && // Membership tokens can't be withdrawn (that is their whole point, actually)
+          !isDormant &&
+          inAccountDetails && <VanillaWithdrawTokensButton role={'council'} />}
       </div>
     </div>
   )
@@ -128,25 +120,34 @@ const TokenDeposit = ({
 const ParclAccountDetails = () => {
   const realm = useRealmQuery().data?.result
   const communityMint = useRealmCommunityMintInfoQuery().data?.result
-  const councilMint = useRealmCouncilMintInfoQuery().data?.result;
+  const councilMint = useRealmCouncilMintInfoQuery().data?.result
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
-  const councilMintAddress = realm?.account.config.councilMint;
-  const hasLoaded = communityMint && councilMint && realm && councilMintAddress;
+  const councilMintAddress = realm?.account.config.councilMint
+  const hasLoaded = communityMint && councilMint && realm && councilMintAddress
 
   return (
     <>
       {hasLoaded ? (
         <div className={`${`flex flex-col w-full`}`}>
           {!connected ? (
-              <div className={'text-xs text-white/50 mt-8'}>
-                Connect your wallet to see governance power
-              </div>
-            ) : 
-            (
+            <div className={'text-xs text-white/50 mt-8'}>
+              Connect your wallet to see governance power
+            </div>
+          ) : (
             <>
-              <TokenDeposit mintInfo={communityMint} mintAddress={realm.account.communityMint} role={"community"} inAccountDetails={true} />
-              <TokenDeposit mintInfo={councilMint} mintAddress={councilMintAddress} role={"council"} inAccountDetails={true} />
+              <TokenDeposit
+                mintInfo={communityMint}
+                mintAddress={realm.account.communityMint}
+                role={'community'}
+                inAccountDetails={true}
+              />
+              <TokenDeposit
+                mintInfo={councilMint}
+                mintAddress={councilMintAddress}
+                role={'council'}
+                inAccountDetails={true}
+              />
             </>
           )}
         </div>

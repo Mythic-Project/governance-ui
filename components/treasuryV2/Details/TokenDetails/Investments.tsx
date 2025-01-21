@@ -28,14 +28,11 @@ interface Props {
 export default function Investments(props: Props) {
   const { currentAccount, setCurrentAccount } = useTreasuryAccountStore()
   const connection = useLegacyConnectionContext()
-  const [showAvailableInvestments, setShowAvailableInvestments] = useState(
-    false
-  )
+  const [showAvailableInvestments, setShowAvailableInvestments] =
+    useState(false)
 
-  const [
-    proposedInvestment,
-    setProposedInvestment,
-  ] = useState<ActiveInvestment | null>(null)
+  const [proposedInvestment, setProposedInvestment] =
+    useState<ActiveInvestment | null>(null)
 
   const [alternativeInvestment, setAlternativeInvestment] = useState<
     'Marinade' | 'Lido' | 'Poseidon' | 'Mango' | null
@@ -107,7 +104,7 @@ export default function Investments(props: Props) {
           [account.protocolName]:
             (acc[account.protocolName] ?? 0) + account.investedAmount,
         }),
-        {}
+        {},
       )
 
       return (
@@ -196,10 +193,7 @@ export default function Investments(props: Props) {
             />
           )}
           {alternativeInvestment === 'Mango' && (
-            <Modal
-              isOpen
-              onClose={() => setAlternativeInvestment(null)}
-            >
+            <Modal isOpen onClose={() => setAlternativeInvestment(null)}>
               <MangoModal account={props.asset.raw}></MangoModal>
             </Modal>
           )}

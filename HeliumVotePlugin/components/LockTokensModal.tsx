@@ -104,7 +104,7 @@ export const LockTokensModal: React.FC<{
         ]
       : []),
     ...defaultLockupPeriods.filter(
-      (lp) => lp.value > minLockupTimeInDays && lp.value <= maxLockupTimeInDays
+      (lp) => lp.value > minLockupTimeInDays && lp.value <= maxLockupTimeInDays,
     ),
   ]
 
@@ -134,9 +134,9 @@ export const LockTokensModal: React.FC<{
       parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(maxLockupAmount), Number(e.target.value))
-        ).toFixed(currentPrecision)
-      )
+          Math.min(Number(maxLockupAmount), Number(e.target.value)),
+        ).toFixed(currentPrecision),
+      ),
     )
   }
 
@@ -153,7 +153,7 @@ export const LockTokensModal: React.FC<{
           message: e.message || 'Unable to lock tokens',
         })
       }
-    }
+    },
   )
 
   const labelClasses = 'mb-2 text-fgd-2 text-sm'
@@ -209,7 +209,7 @@ export const LockTokensModal: React.FC<{
                     onChange={(kind) =>
                       setValue(
                         'lockupKind',
-                        lockupKindOptions.find((lt) => lt.display === kind)!
+                        lockupKindOptions.find((lt) => lt.display === kind)!,
                       )
                     }
                   />
@@ -252,7 +252,7 @@ export const LockTokensModal: React.FC<{
                 onChange={(period) => {
                   setValue(
                     'lockupPeriod',
-                    lockupPeriodOptions.find((p) => p.display === period)!
+                    lockupPeriodOptions.find((p) => p.display === period)!,
                   )
                   setShowCustomDuration(false)
                 }}
@@ -281,7 +281,7 @@ export const LockTokensModal: React.FC<{
                         ? val > maxLockupTimeInDays
                           ? maxLockupTimeInDays
                           : val
-                        : minLockupTimeInDays
+                        : minLockupTimeInDays,
                     )
                   }}
                 />

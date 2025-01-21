@@ -1,5 +1,9 @@
 import { useMemo } from 'react'
-import { HELIUM_VSR_PLUGINS_PKS, PYTH_PLUGIN_PK, VSR_PLUGIN_PKS } from '../constants/plugins'
+import {
+  HELIUM_VSR_PLUGINS_PKS,
+  PYTH_PLUGIN_PK,
+  VSR_PLUGIN_PKS,
+} from '../constants/plugins'
 import { useRealmConfigQuery } from './queries/realmConfig'
 
 export const useVsrMode = (): undefined | 'default' | 'helium' | 'pyth' => {

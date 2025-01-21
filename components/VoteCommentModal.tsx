@@ -30,7 +30,7 @@ const VoteCommentModal: FunctionComponent<VoteCommentModalProps> = ({
   isMulti,
 }) => {
   const [comment, setComment] = useState('')
-  const { submitting, submitVote , error } = useSubmitVote()
+  const { submitting, submitVote, error } = useSubmitVote()
 
   const voteString = VOTE_STRINGS[vote]
 
@@ -39,7 +39,8 @@ const VoteCommentModal: FunctionComponent<VoteCommentModalProps> = ({
       vote,
       comment,
       voteWeights: isMulti,
-    }).then(() => onClose())
+    })
+      .then(() => onClose())
       .catch(console.log)
   }
 

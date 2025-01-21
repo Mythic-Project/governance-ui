@@ -73,15 +73,15 @@ const DualAirdrop = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [form])
   useEffect(() => {
     setGovernedAccount(form.treasury?.governance)
   }, [form.treasury])
 
-  const merkleSchema = getDualFinanceMerkleAirdropSchema({form});
-  const governanceSchema = getDualFinanceGovernanceAirdropSchema({form});
+  const merkleSchema = getDualFinanceMerkleAirdropSchema({ form })
+  const governanceSchema = getDualFinanceGovernanceAirdropSchema({ form })
 
   return (
     <>

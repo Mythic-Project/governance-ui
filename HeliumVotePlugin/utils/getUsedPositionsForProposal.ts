@@ -12,24 +12,25 @@ export interface GetUsedPositionsForProposalArgs {
 }
 
 export const getUsedPositionsForProposal = async (
-  args: GetUsedPositionsForProposalArgs
+  args: GetUsedPositionsForProposalArgs,
 ): Promise<PositionWithMeta[]> => {
   const { connection, client, positions, proposalPk } = args
   const usedPositions: PositionWithMeta[] = []
   const nftVoteRecordKeys = positions.map(
-    (pos) => nftVoteRecordKey(proposalPk, pos.mint, client.program.programId)[0]
+    (pos) =>
+      nftVoteRecordKey(proposalPk, pos.mint, client.program.programId)[0],
   )
 
   const nftVoteRecordAccountInfos = (
     await Promise.all(
       chunks(nftVoteRecordKeys, 99).map((chunk) =>
-        connection.getMultipleAccountsInfo(chunk)
-      )
+        connection.getMultipleAccountsInfo(chunk),
+      ),
     )
   ).flat()
 
   usedPositions.push(
-    ...positions.filter((_pos, idx) => !!nftVoteRecordAccountInfos[idx])
+    ...positions.filter((_pos, idx) => !!nftVoteRecordAccountInfos[idx]),
   )
 
   return usedPositions

@@ -60,7 +60,7 @@ export const governanceInstructionInput = (
   realm: ProgramAccount<Realm> | undefined,
   governance: ProgramAccount<Governance> | undefined,
   assetAccounts: AssetAccount[],
-  shouldBeGoverned: false | ProgramAccount<Governance> | null
+  shouldBeGoverned: false | ProgramAccount<Governance> | null,
 ): InstructionInput => ({
   label: 'Wallet',
   initialValue: null,
@@ -70,7 +70,7 @@ export const governanceInstructionInput = (
   governance,
   options: assetAccounts.filter(
     (x) =>
-      x.governance.pubkey.toBase58() === realm?.account.authority?.toBase58()
+      x.governance.pubkey.toBase58() === realm?.account.authority?.toBase58(),
   ),
 })
 
@@ -158,7 +158,7 @@ export const instructionInputs: Record<string, InstructionInput> = {
 // wallet into the sol-did-client ensures the correct public key is set as the signer in the instructions.
 // The transactions are not signed now, but only after voting, so the signTransaction functions are no-ops.
 export const governedAccountToWallet = (
-  governedAccount: AssetAccount
+  governedAccount: AssetAccount,
 ): Wallet => ({
   publicKey: governedAccount.governance.pubkey,
   // noop signers, as we use this just to pass the public key

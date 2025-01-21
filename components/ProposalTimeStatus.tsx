@@ -15,7 +15,7 @@ const ProposalTimeStatus = ({ proposal }: ProposalTimeStatusProps) => {
     <div className="flex items-center text-fgd-3 text-sm">
       {proposal.votingCompletedAt ? (
         `${ProposalState[proposal.state]} ${fmtUnixTime(
-          proposal.votingCompletedAt
+          proposal.votingCompletedAt,
         )}`
       ) : proposal.votingAt ? (
         <ProposalTimer proposal={proposal} governance={governance.account} />

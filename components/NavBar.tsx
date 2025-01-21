@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 const ConnectWalletButtonDynamic = dynamic(
   async () => await import('./ConnectWalletButton'),
-  { ssr: false }
+  { ssr: false },
 )
 
 const NavBar = () => {
@@ -30,7 +30,7 @@ const NavBar = () => {
               </picture>
             </div>
           </Link>
-          <div 
+          <div
             className="text-[#4deeea] neon-text cursor-pointer text-[15px] font-medium relative md:top-[1px]"
             onMouseEnter={() => setShowTempPopup(true)}
             onMouseLeave={() => setShowTempPopup(false)}
@@ -41,12 +41,11 @@ const NavBar = () => {
           >
             Leaderboard
           </div>
-          {
-            showTempPopup &&
+          {showTempPopup && (
             <div className="p-2 border-[1px] border-[#df1fff] rounded-md absolute right-0 top-8 text-sm neon-box">
               Coming Soon
             </div>
-          }
+          )}
         </div>
         <div className="flex items-center justify-end space-x-2 md:space-x-4">
           <a

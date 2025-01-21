@@ -52,7 +52,7 @@ async function getTokenAmount(conn: Connection, publicKey: PublicKey) {
 async function getGovernances(
   conn: Connection,
   programId: PublicKey,
-  realm: PublicKey
+  realm: PublicKey,
 ): Promise<PublicKey[]> {
   const governances = await getAllGovernances(conn, programId, realm)
   return governances.map((g) => g.pubkey)
@@ -91,28 +91,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     tokenAmountMap.set(
       mintKey,
       (tokenAmountMap.get(mintKey) ?? new BigNumber(0)).plus(
-        new BigNumber(amount.toString())
-      )
+        new BigNumber(amount.toString()),
+      ),
     )
   }
 
   for (const [idx, realm] of allRealms.entries()) {
     console.log(
-      `fetching ${realm.account.name} governances and token accounts ${idx}/${allRealms.length}...`
+      `fetching ${realm.account.name} governances and token accounts ${idx}/${allRealms.length}...`,
     )
 
     const programId = realm.owner
     const realmConfig = await getRealmConfigAccountOrDefault(
       conn,
       programId,
-      realm.pubkey
+      realm.pubkey,
     )
 
     // Get NFT DAOs
 
     if (
       realmConfig.account.communityTokenConfig.voterWeightAddin?.equals(
-        new PublicKey(DEFAULT_NFT_VOTER_PLUGIN)
+        new PublicKey(DEFAULT_NFT_VOTER_PLUGIN),
       )
     ) {
       nftRealms.push(realm)
@@ -122,25 +122,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const governanceAddrs: PublicKey[] = await getGovernances(
       conn,
       programId,
-      realm.pubkey
+      realm.pubkey,
     )
 
     for (const governanceAddress of governanceAddrs) {
       // Check governance owned token accounts
       let tokenAccounts = await getTokenAmount(conn, governanceAddress)
       for (const tokenAccount of tokenAccounts.filter(
-        (ta) => !ta.account.amount.isZero()
+        (ta) => !ta.account.amount.isZero(),
       )) {
         updateTokenAmount(
           tokenAccount.account.mint,
-          tokenAccount.account.amount
+          tokenAccount.account.amount,
         )
       }
 
       // Check SOL wallet owned token accounts
       const solWalletPk = await getNativeTreasuryAddress(
         programId,
-        governanceAddress
+        governanceAddress,
       )
 
       const solWallet = await conn.getAccountInfo(solWalletPk)
@@ -152,11 +152,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         tokenAccounts = await getTokenAmount(conn, solWalletPk)
         for (const tokenAccount of tokenAccounts.filter(
-          (ta) => !ta.account.amount.isZero()
+          (ta) => !ta.account.amount.isZero(),
         )) {
           updateTokenAmount(
             tokenAccount.account.mint,
-            tokenAccount.account.amount
+            tokenAccount.account.amount,
           )
         }
       }

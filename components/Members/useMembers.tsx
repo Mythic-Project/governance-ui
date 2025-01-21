@@ -62,12 +62,12 @@ export const useMembersQuery = () => {
             tors.map(async (x) => {
               const ownedNfts = await fetchDigitalAssetsByOwner(
                 network,
-                x.account.governingTokenOwner
+                x.account.governingTokenOwner,
               )
 
               const verifiedNfts = ownedNfts.filter((nft) => {
                 const collection = nft.grouping.find(
-                  (x) => x.group_key === 'collection'
+                  (x) => x.group_key === 'collection',
                 )
                 return (
                   collection &&
@@ -76,14 +76,14 @@ export const useMembersQuery = () => {
               })
 
               x.account.governingTokenDepositAmount = new BN( // maybe should use add?
-                verifiedNfts.length * 10 ** 6
+                verifiedNfts.length * 10 ** 6,
               )
               return {
                 walletAddress: x.account.governingTokenOwner.toString(),
                 community: x,
                 _kind: 'community' as const,
               }
-            })
+            }),
           )
         : tors
             .filter((x) => x.account.governingTokenMint.equals(communityMint))
@@ -108,7 +108,7 @@ export const useMembersQuery = () => {
         if (realm?.account.config.councilMint) {
           const tokenAccounts = await getTokenAccountsByMint(
             connection.connection,
-            realm.account.config.councilMint.toBase58()
+            realm.account.config.councilMint.toBase58(),
           )
           const tokenAccountsInfo: TokenProgramAccount<TokenAccount>[] = []
           for (const acc of tokenAccounts) {
@@ -119,7 +119,7 @@ export const useMembersQuery = () => {
           return tokenAccountsInfo.filter(
             (x) =>
               !x.account.amount.isZero() &&
-              x.account.owner.toBase58() !== realm?.pubkey.toBase58()
+              x.account.owner.toBase58() !== realm?.pubkey.toBase58(),
           )
         }
         return []
@@ -131,8 +131,8 @@ export const useMembersQuery = () => {
           const ATAS: PublicKey[] = []
           // we filter out people who never voted and has tokens inside realm
           const communityTokenRecordsWallets = tokenRecordArray
-            .filter((x) =>
-              x.community?.account.governingTokenDepositAmount.isZero()
+            .filter(
+              (x) => x.community?.account.governingTokenDepositAmount.isZero(),
             )
             .map((x) => x.walletAddress)
           for (const walletAddress of communityTokenRecordsWallets) {
@@ -141,22 +141,23 @@ export const useMembersQuery = () => {
               TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
               realm.account.communityMint, // mint
               new PublicKey(walletAddress), // owner
-              true
+              true,
             )
             ATAS.push(ata)
           }
           const ownersAtas = await getMultipleAccountInfoChunked(
             connection.connection,
-            ATAS
+            ATAS,
           )
-          const ownersAtasParsed: TokenProgramAccount<TokenAccount>[] = ownersAtas
-            .filter((x) => x)
-            .map((r) => {
-              const publicKey = r!.owner
-              const data = Buffer.from(r!.data)
-              const account = parseTokenAccountData(r!.owner, data)
-              return { publicKey, account }
-            })
+          const ownersAtasParsed: TokenProgramAccount<TokenAccount>[] =
+            ownersAtas
+              .filter((x) => x)
+              .map((r) => {
+                const publicKey = r!.owner
+                const data = Buffer.from(r!.data)
+                const account = parseTokenAccountData(r!.owner, data)
+                return { publicKey, account }
+              })
           return ownersAtasParsed
         }
         return []
@@ -166,21 +167,21 @@ export const useMembersQuery = () => {
         membersArray,
         membersToMatch,
         type,
-        pushNonExisting = false
+        pushNonExisting = false,
       ) => {
         const votesPropoName = `${type.toLowerCase()}Votes`
         const hasVotesOutsidePropName = `has${capitalize(
-          type
+          type,
         )}TokenOutsideRealm`
         const members = [...membersArray]
         for (const memberToMatch of membersToMatch) {
           // We match members that had deposited tokens at least once
           const member = members.find(
-            (x) => x.walletAddress === memberToMatch.account.owner.toBase58()
+            (x) => x.walletAddress === memberToMatch.account.owner.toBase58(),
           )
           if (member) {
             member[votesPropoName] = member[votesPropoName].add(
-              memberToMatch.account.amount
+              memberToMatch.account.amount,
             )
             if (!memberToMatch.account.amount.isZero()) {
               member[hasVotesOutsidePropName] = true
@@ -209,7 +210,7 @@ export const useMembersQuery = () => {
       const membersWithTokensDeposited =
         // remove duplicated walletAddresses
         Array.from(
-          new Set(communityAndCouncilTokenRecords.map((s) => s.walletAddress))
+          new Set(communityAndCouncilTokenRecords.map((s) => s.walletAddress)),
         )
           // deduplication
           .map((walletAddress) => {
@@ -244,7 +245,7 @@ export const useMembersQuery = () => {
                     walletAddress: '',
                     councilVotes: BN_ZERO,
                     communityVotes: BN_ZERO,
-                  }
+                  },
                 ),
             }
           })
@@ -265,7 +266,7 @@ export const useMembersQuery = () => {
       members = matchMembers(members, communityMembers, 'community')
 
       const activeMembers = members.filter(
-        (x) => !x.councilVotes.isZero() || !x.communityVotes.isZero()
+        (x) => !x.councilVotes.isZero() || !x.communityVotes.isZero(),
       )
       return activeMembers
     },

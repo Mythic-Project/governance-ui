@@ -60,7 +60,7 @@ export const useSelectedRealmInfo = () => {
             address: realm.pubkey.toBase58(),
             name: realm.account.name,
           }),
-    [realm]
+    [realm],
   )
 
   const result =
@@ -71,7 +71,7 @@ export const useSelectedRealmInfo = () => {
       resultVersion === undefined || result === undefined
         ? undefined
         : { ...result, programVersion: resultVersion },
-    [result, resultVersion]
+    [result, resultVersion],
   )
 
   return withVersion

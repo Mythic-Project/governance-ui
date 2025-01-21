@@ -22,9 +22,10 @@ export interface Props<T> {
 }
 
 export interface FieldSelect {
-  <T>(props: Props<T>, ref: HTMLButtonElement): ReturnType<
-    ForwardRefRenderFunction<Props<T>, HTMLButtonElement>
-  >;
+  <T>(
+    props: Props<T>,
+    ref: HTMLButtonElement,
+  ): ReturnType<ForwardRefRenderFunction<Props<T>, HTMLButtonElement>>;
 }
 
 export const FieldSelect: FieldSelect = forwardRef(function Select<T>(

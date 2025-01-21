@@ -27,11 +27,11 @@ import { AssetAccount } from '@utils/uiTypes/assets'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const ConvertToMsol = () => {
   const realm = useRealmQuery().data?.result
-  const {symbol } = useRealm()
+  const { symbol } = useRealm()
   const { canUseTransferInstruction } = useGovernanceAssets()
   const { governedTokenAccounts } = useGovernanceAssets()
   const { fmtUrlWithCluster } = useQueryContext()
@@ -52,17 +52,18 @@ const ConvertToMsol = () => {
     description: '',
   })
   const [showOptions, setShowOptions] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [isLoading, setIsLoading] = useState(false)
 
   const mSolTokenAccounts = governedTokenAccounts.filter(
     (acc) =>
       acc.extensions.mint?.publicKey.toString() ===
-      'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'
+      'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
   )
   const mintMinAmount = form.governedTokenAccount?.extensions?.mint
     ? getMintMinAmountAsDecimal(
-        form.governedTokenAccount.extensions.mint.account
+        form.governedTokenAccount.extensions.mint.account,
       )
     : 1
   const proposalTitle = `Convert ${form.amount} SOL to mSOL`
@@ -112,7 +113,7 @@ const ConvertToMsol = () => {
           isDraft: false,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -171,9 +172,9 @@ const ConvertToMsol = () => {
                   Number(mintMinAmount),
                   Math.min(
                     Number(Number.MAX_SAFE_INTEGER),
-                    Number(evt.target.value)
-                  )
-                ).toFixed(precision(mintMinAmount))
+                    Number(evt.target.value),
+                  ),
+                ).toFixed(precision(mintMinAmount)),
               ),
               propertyName: 'amount',
             })
@@ -225,12 +226,12 @@ const ConvertToMsol = () => {
               }
             ></Textarea>
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

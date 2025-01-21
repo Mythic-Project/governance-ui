@@ -27,7 +27,7 @@ import { AssetAccount } from '@utils/uiTypes/assets'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 interface CloseBuffersForm {
   governedAccount: AssetAccount | undefined
@@ -46,7 +46,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
   const realm = useRealmQuery().data?.result
-  const { realmInfo} = useRealm()
+  const { realmInfo } = useRealm()
   const [isBuffersLoading, setIsBuffersLoading] = useState(false)
   const programId: PublicKey | undefined = realmInfo?.programId
   const [buffers, setBuffers] = useState<
@@ -58,7 +58,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
   const highestLampartsAmountInGovernedTokenAccounts = Math.max(
     ...governedTokenAccountsWithoutNfts
       .filter((x) => x.isSol)
-      .map((x) => x.extensions!.solAccount!.lamports)
+      .map((x) => x.extensions!.solAccount!.lamports),
   )
   const solAccounts = governedTokenAccountsWithoutNfts.filter((x) => x.isSol)
   const [form, setForm] = useState<CloseBuffersForm>({
@@ -69,7 +69,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
           .find(
             (x) =>
               x.extensions.solAccount?.lamports ===
-              highestLampartsAmountInGovernedTokenAccounts
+              highestLampartsAmountInGovernedTokenAccounts,
           )!
           .extensions.transferAddress!.toBase58()
       : wallet?.publicKey?.toBase58()
@@ -78,7 +78,8 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
     description: '',
     title: '',
   })
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
@@ -130,7 +131,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
         const closeIx = await createCloseBuffer(
           buffers[i].pubkey,
           new PublicKey(form.solReceiverAddress),
-          form.governedAccount.extensions.program!.authority
+          form.governedAccount.extensions.program!.authority,
         )
         serializedInstruction = serializeInstructionToBase64(closeIx)
       }
@@ -158,7 +159,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
           new InstructionDataWithHoldUpTime({
             instruction: x,
             governance,
-          })
+          }),
       )
       try {
         const proposalAddress = await handleCreateProposal({
@@ -169,7 +170,7 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
           governance: governance!,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -199,11 +200,12 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
               {
                 memcmp: {
                   offset: 5,
-                  bytes: form.governedAccount!.extensions.program!.authority.toBase58(),
+                  bytes:
+                    form.governedAccount!.extensions.program!.authority.toBase58(),
                 },
               },
             ],
-          }
+          },
         )
         setBuffers(buffers)
       } catch (e) {
@@ -301,12 +303,12 @@ const CloseBuffers = ({ program }: { program: AssetAccount }) => {
               }
             />
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

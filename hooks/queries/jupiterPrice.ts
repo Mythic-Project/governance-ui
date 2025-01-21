@@ -116,11 +116,11 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
           const x = await fetch(`${URL}?ids=${batch.join(',')}`)
           const response = (await x.json()) as Response
           return response
-        })
+        }),
       )
       const data = responses.reduce(
         (acc, next) => ({ ...acc, ...next.data }),
-        {} as Response['data']
+        {} as Response['data'],
       )
 
       //override chai price if its broken
@@ -141,8 +141,8 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
           jupiterPriceQueryKeys.byMint(mint),
           data[mint.toString()]
             ? ({ found: true, result: data[mint.toString()] } as const)
-            : ({ found: false, result: undefined } as const)
-        )
+            : ({ found: false, result: undefined } as const),
+        ),
       )
     },
   })

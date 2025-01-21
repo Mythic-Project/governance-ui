@@ -72,28 +72,28 @@ export default function ProposalDetails({
     const pda = await getVoteRecordAddress(
       proposal.owner,
       proposal.pubkey,
-      tokenOwnerRecordPk
+      tokenOwnerRecordPk,
     )
     return fetchVoteRecordByPubkey(connection, pda)
   }, [connection, proposal.owner, proposal.pubkey, tokenOwnerRecordPk]).result
     ?.result
 
-  const tokenOwnerRecord = useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk)
-    .data?.result
+  const tokenOwnerRecord =
+    useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk).data?.result
   const realmInfo = mainnetBetaRealms.find(
-    (x) => x.realmId === tokenOwnerRecord?.account.realm.toString()
+    (x) => x.realmId === tokenOwnerRecord?.account.realm.toString(),
   )
   const realmSymbol = realmInfo?.symbol ?? 'Unknown Realm'
 
   const otherRealm = useRealmByPubkeyQuery(realmPk).data?.result
   const proposalGovernance = useGovernanceByPubkeyQuery(
-    proposal.account.governance
+    proposal.account.governance,
   ).data?.result
 
   const voteData = useRealmProposalVotes(
     proposal.account,
     otherRealm?.account,
-    proposalGovernance?.account
+    proposalGovernance?.account,
   )
 
   const hasVoteTimeExpired = useHasVoteTimeExpired(proposalGovernance, proposal)
@@ -139,7 +139,7 @@ export default function ProposalDetails({
 
       const programVersion = await fetchProgramVersion(
         connection,
-        tokenOwnerRecord.owner
+        tokenOwnerRecord.owner,
       )
 
       await withRelinquishVote(
@@ -153,11 +153,11 @@ export default function ProposalDetails({
         tokenOwnerRecord.account.governingTokenMint,
         voteRecord.pubkey,
         tokenOwnerRecord.account.governingTokenOwner,
-        tokenOwnerRecord.account.governingTokenOwner
+        tokenOwnerRecord.account.governingTokenOwner,
       )
 
       const tx = new Transaction({ feePayer: wallet.publicKey }).add(
-        ...instructions
+        ...instructions,
       )
       const simulated = await connection.simulateTransaction(tx)
 
@@ -193,7 +193,7 @@ export default function ProposalDetails({
         governance: owningGovernance,
       })
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       await router.push(url)
     } catch (e) {

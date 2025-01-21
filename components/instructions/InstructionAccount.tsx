@@ -37,13 +37,13 @@ export default function InstructionAccount({
     !getProgramName(programId) &&
     accountMeta.isSigner &&
     accountMeta.isWritable &&
-    solAndTokenAccounts.find((x) =>
-      x.extensions?.transferAddress?.equals(accountMeta.pubkey)
+    solAndTokenAccounts.find(
+      (x) => x.extensions?.transferAddress?.equals(accountMeta.pubkey),
     )
   )
 
   const [accountLabel, setAccountLabel] = useState(
-    getAccountName(accountMeta.pubkey)
+    getAccountName(accountMeta.pubkey),
   )
   const isFetching = useRef(false)
 
@@ -57,7 +57,7 @@ export default function InstructionAccount({
             setAccountLabel(`owner: ${ta.result?.owner?.toBase58()}`)
           }
           isFetching.current = false
-        }
+        },
       )
       // TODO: Extend to other well known account types
     }

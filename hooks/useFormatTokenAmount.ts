@@ -15,7 +15,7 @@ const useFormatTokenAmount = (mint: PublicKey | undefined) => {
               .shiftedBy(-mintInfo?.result.decimals)
               .toString()
         : undefined,
-    [mintInfo?.result]
+    [mintInfo?.result],
   )
 }
 

@@ -9,15 +9,11 @@ export async function createObligationAccount({
   fundingAddress: PublicKey
   walletAddress: PublicKey
 }) {
-  const newAccountPubkey = await deriveObligationAddressFromWalletAndSeed(
-    walletAddress
-  )
+  const newAccountPubkey =
+    await deriveObligationAddressFromWalletAndSeed(walletAddress)
 
-  const {
-    seed,
-    lamports,
-    space,
-  } = SolendConfiguration.createObligationConfiguration
+  const { seed, lamports, space } =
+    SolendConfiguration.createObligationConfiguration
 
   return SystemProgram.createAccountWithSeed({
     basePubkey: walletAddress,

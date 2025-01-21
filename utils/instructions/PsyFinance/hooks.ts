@@ -22,7 +22,7 @@ export const useOptionAccounts = () => {
     const program = new Program(
       PsyAmericanIdl,
       PSY_AMERICAN_PROGRAM_ID,
-      anchorProvider
+      anchorProvider,
     )
     ;(async () => {
       const _options = (await program.account.optionMarket.all()) as
@@ -39,7 +39,7 @@ export const useOptionAccounts = () => {
  * Governed accounts for writer tokens only.
  */
 export const useGovernedWriterTokenAccounts = (
-  options: AnchorProgramAccount<OptionMarket>[] | null
+  options: AnchorProgramAccount<OptionMarket>[] | null,
 ) => {
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   return useMemo(() => {
@@ -48,8 +48,8 @@ export const useGovernedWriterTokenAccounts = (
       const govWriterTokenAccount = governedTokenAccountsWithoutNfts.find(
         (gAcct) =>
           gAcct.extensions.token?.account.mint.equals(
-            option.account.writerTokenMint
-          )
+            option.account.writerTokenMint,
+          ),
       )
       if (govWriterTokenAccount) {
         _accounts.push(govWriterTokenAccount)
@@ -63,7 +63,7 @@ export const useGovernedWriterTokenAccounts = (
  * Governed accounts for option tokens only.
  */
 export const useGovernedOptionTokenAccounts = (
-  options: AnchorProgramAccount<OptionMarket>[] | null
+  options: AnchorProgramAccount<OptionMarket>[] | null,
 ) => {
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   return useMemo(() => {
@@ -71,7 +71,9 @@ export const useGovernedOptionTokenAccounts = (
     options?.forEach((option) => {
       const govOptionTokenAccount = governedTokenAccountsWithoutNfts.find(
         (gAcct) =>
-          gAcct.extensions.token?.account.mint.equals(option.account.optionMint)
+          gAcct.extensions.token?.account.mint.equals(
+            option.account.optionMint,
+          ),
       )
       if (govOptionTokenAccount) {
         _accounts.push(govOptionTokenAccount)

@@ -51,7 +51,7 @@ const TransactionInstructionCard = ({
     const desc = await getInstructionDescriptor(
       connection,
       instructionData,
-      realm
+      realm,
     )
     setDescriptor(desc)
   }, [connection, instructionData, realm])
@@ -64,7 +64,7 @@ const TransactionInstructionCard = ({
     const mint = tokenAccount?.mint
 
     const isSol = governedTokenAccountsWithoutNfts.find(
-      (x) => x.extensions.transferAddress?.toBase58() === sourcePk.toBase58()
+      (x) => x.extensions.transferAddress?.toBase58() === sourcePk.toBase58(),
     )?.isSol
 
     if (mint) {

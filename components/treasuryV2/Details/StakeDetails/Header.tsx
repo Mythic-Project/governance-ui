@@ -21,7 +21,7 @@ export default function Header(props: Props) {
         'py-4',
         'flex',
         'items-center',
-        'justify-between'
+        'justify-between',
       )}
     >
       <div>
@@ -39,7 +39,7 @@ export default function Header(props: Props) {
                     'text-ellipsis',
                     'text-sm',
                     'text-white/50',
-                    'whitespace-nowrap'
+                    'whitespace-nowrap',
                   )}
                 >
                   SOL
@@ -52,7 +52,7 @@ export default function Header(props: Props) {
                     'text-2xl',
                     'text-ellipsis',
                     'text-fgd-1',
-                    'whitespace-nowrap'
+                    'whitespace-nowrap',
                   )}
                   title={'SOL'}
                 >

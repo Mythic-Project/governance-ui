@@ -63,7 +63,7 @@ const MeanFundAccountComponent = ({ index, governance }: Props) => {
         governedAccount: form.governedTokenAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
   }, [form])
 
@@ -90,8 +90,8 @@ const MeanFundAccountComponent = ({ index, governance }: Props) => {
       value: parseFloat(
         Math.max(
           mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)
-        ).toFixed(currentPrecision)
+          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -121,7 +121,7 @@ const MeanFundAccountComponent = ({ index, governance }: Props) => {
               value: paymentStreamingAccount,
               propertyName: 'paymentStreamingAccount',
             },
-            { governedTokenAccount: undefined }
+            { governedTokenAccount: undefined },
           )
         }}
         value={formPaymentStreamingAccount}
@@ -132,7 +132,7 @@ const MeanFundAccountComponent = ({ index, governance }: Props) => {
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
           (a) =>
             a.extensions.mint?.publicKey.toBase58() ===
-            formPaymentStreamingAccount?.mint.toString()
+            formPaymentStreamingAccount?.mint.toString(),
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

@@ -37,7 +37,7 @@ const AltExtend = ({
 
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
 
   const { assetAccounts } = useGovernanceAssets()
@@ -45,7 +45,7 @@ const AltExtend = ({
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup.admin)
+      x.extensions.transferAddress?.equals(mangoGroup.admin),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [form, setForm] = useState<AltExtendForm>({
@@ -97,7 +97,7 @@ const AltExtend = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -110,7 +110,7 @@ const AltExtend = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     index: yup.string().required(),
     publicKeys: yup.string().required(),

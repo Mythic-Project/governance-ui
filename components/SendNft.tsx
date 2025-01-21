@@ -49,7 +49,7 @@ import { SUPPORT_CNFTS } from '@constants/flags'
 import clsx from 'clsx'
 import { getNetworkFromEndpoint } from '@utils/connection'
 import { buildTransferCnftInstruction } from '@hooks/instructions/useTransferCnftInstruction'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const SendNft = ({
   initialNftAndGovernanceSelected,
@@ -69,12 +69,13 @@ const SendNft = ({
   const [selectedNfts, setSelectedNfts] = useState<PublicKey[]>(
     initialNftAndGovernanceSelected?.[0]
       ? [initialNftAndGovernanceSelected[0]]
-      : []
+      : [],
   )
   const [selectedGovernance, setSelectedGovernance] = useGovernanceSelect(
-    initialNftAndGovernanceSelected?.[1]
+    initialNftAndGovernanceSelected?.[1],
   )
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
   const [destination, setDestination] = useState<string>('')
   const [title, setTitle] = useState<string>('')
@@ -117,7 +118,7 @@ const SendNft = ({
           const ix = await buildTransferCnftInstruction(
             connection,
             nftMint,
-            toOwner
+            toOwner,
           )
           return {
             serializedInstruction: serializeInstructionToBase64(ix),
@@ -130,16 +131,15 @@ const SendNft = ({
             TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
             nftMint, // mint
             toOwner, // owner
-            true
+            true,
           )
-          const destinationAtaQueried = await connection.getAccountInfo(
-            destinationAtaPk
-          )
+          const destinationAtaQueried =
+            await connection.getAccountInfo(destinationAtaPk)
 
           // typically this should just be the same as the account that owns the NFT, but sometimes the governance owns it
           const nativeTreasury = await getNativeTreasuryAddress(
             realm.owner,
-            selectedGovernance
+            selectedGovernance,
           )
 
           const fromOwnerString = nft.ownership.owner
@@ -153,7 +153,7 @@ const SendNft = ({
             toOwner,
             nftMint,
             fromOwner,
-            nativeTreasury
+            nativeTreasury,
           )
 
           return {
@@ -168,18 +168,18 @@ const SendNft = ({
                       nftMint, // mint
                       destinationAtaPk, // ata
                       toOwner, // owner of token account
-                      walletPk // fee payer
+                      walletPk, // fee payer
                     ),
                   ]
                 : [],
           }
         }
-      })
+      }),
     )
 
     const governanceFetched = await fetchGovernanceByPubkey(
       connection,
-      selectedGovernance
+      selectedGovernance,
     )
     if (governanceFetched.result === undefined)
       throw new Error('governance not found')
@@ -202,7 +202,7 @@ const SendNft = ({
         utilizeLookupTable: anyCompressed,
       })
       const url = fmtUrlWithCluster(
-        `/dao/${router.query.symbol}/proposal/${proposalAddress}`
+        `/dao/${router.query.symbol}/proposal/${proposalAddress}`,
       )
       router.push(url)
     } catch (ex) {
@@ -283,12 +283,12 @@ const SendNft = ({
               onChange={(evt) => setDescription(evt.target.value)}
             ></Textarea>
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}
@@ -331,9 +331,8 @@ function GovernanceNFTSelector({
   nftWidth?: string
   nftHeight?: string
 }) {
-  const { result: treasuryAddress } = useTreasuryAddressForGovernance(
-    governance
-  )
+  const { result: treasuryAddress } =
+    useTreasuryAddressForGovernance(governance)
 
   // TODO just query by owner (which should be in cache already)
   const { data: allNfts, isLoading } = useRealmDigitalAssetsQuery()
@@ -345,9 +344,9 @@ function GovernanceNFTSelector({
         .filter(
           (x) =>
             x.ownership.owner === governance.toString() ||
-            x.ownership.owner === treasuryAddress?.toString()
+            x.ownership.owner === treasuryAddress?.toString(),
         ),
-    [allNfts, governance, treasuryAddress]
+    [allNfts, governance, treasuryAddress],
   )
 
   return (
@@ -361,7 +360,7 @@ function GovernanceNFTSelector({
                   onClick={() =>
                     setSelectedNfts((prev) => {
                       const alreadyIncluded = prev.find(
-                        (x) => x.toString() === nft.id
+                        (x) => x.toString() === nft.id,
                       )
                       return alreadyIncluded
                         ? prev.filter((x) => x.toString() !== nft.id)
@@ -373,7 +372,7 @@ function GovernanceNFTSelector({
                     `bg-bkg-2 flex-shrink-0 flex items-center justify-center cursor-pointer default-transition rounded-lg relative overflow-hidden`,
                     selectedNfts.find((k) => k.toString() === nft.id)
                       ? 'border-4 border-green'
-                      : 'border border-transparent hover:border-primary-dark '
+                      : 'border border-transparent hover:border-primary-dark ',
                   )}
                   style={{
                     width: nftWidth,

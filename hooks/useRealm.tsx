@@ -32,9 +32,9 @@ export default function useRealm() {
     () =>
       realm &&
       tokenAccounts?.find((a) =>
-        a.account.mint.equals(realm.account.communityMint)
+        a.account.mint.equals(realm.account.communityMint),
       ),
-    [realm, tokenAccounts]
+    [realm, tokenAccounts],
   )
 
   const councilTokenAccount = useMemo(
@@ -43,9 +43,9 @@ export default function useRealm() {
       tokenAccounts?.find(
         (a) =>
           realm.account.config.councilMint &&
-          a.account.mint.equals(realm.account.config.councilMint)
+          a.account.mint.equals(realm.account.config.councilMint),
       ),
-    [realm, tokenAccounts]
+    [realm, tokenAccounts],
   )
 
   //TODO take from realm config when available
@@ -105,6 +105,6 @@ export default function useRealm() {
       toManyCommunityOutstandingProposalsForUser,
       toManyCouncilOutstandingProposalsForUse,
       vsrMode,
-    ]
+    ],
   )
 }

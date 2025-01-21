@@ -62,14 +62,14 @@ const MyProposalsBn = () => {
   const { governancesArray } = useGovernanceAssets()
   const { connection } = useConnection()
   const myVoteRecords = useVoteRecordsByOwnerQuery(
-    wallet?.publicKey ?? undefined
+    wallet?.publicKey ?? undefined,
   ).data
 
   const ownVoteRecordsByProposal = useMemo(() => {
     return myVoteRecords !== undefined
       ? (Object.fromEntries(
-          myVoteRecords.map((x) => [x.account.proposal.toString(), x] as const)
-        ) as Record<string, typeof myVoteRecords[number]>)
+          myVoteRecords.map((x) => [x.account.proposal.toString(), x] as const),
+        ) as Record<string, (typeof myVoteRecords)[number]>)
       : undefined
   }, [myVoteRecords])
 
@@ -88,10 +88,8 @@ const MyProposalsBn = () => {
   const votingClients = useVotingClients()
   const { nftClient } = useNftClient()
 
-  const [
-    proposalsWithDepositedTokens,
-    setProposalsWithDepositedTokens,
-  ] = useState<ProgramAccount<ProposalDeposit>[]>([])
+  const [proposalsWithDepositedTokens, setProposalsWithDepositedTokens] =
+    useState<ProgramAccount<ProposalDeposit>[]>([])
   const ownTokenRecord = useUserCommunityTokenOwnerRecord().data?.result
   const ownCouncilTokenRecord = useUserCouncilTokenOwnerRecord().data?.result
 
@@ -105,7 +103,7 @@ const MyProposalsBn = () => {
               p.account.tokenOwnerRecord.toBase58() ===
                 ownTokenRecord?.pubkey.toBase58() ||
               p.account.tokenOwnerRecord.toBase58() ===
-                ownCouncilTokenRecord?.pubkey.toBase58()
+                ownCouncilTokenRecord?.pubkey.toBase58(),
           )
         : [],
     [
@@ -113,14 +111,14 @@ const MyProposalsBn = () => {
       proposals,
       ownTokenRecord?.pubkey,
       ownCouncilTokenRecord?.pubkey,
-    ]
+    ],
   )
   const drafts = myProposals?.filter((x) => {
     return x.account.state === ProposalState.Draft
   })
   const notfinalized = myProposals?.filter((x) => {
     const governance = governancesArray?.find(
-      (gov) => gov.pubkey.toBase58() === x.account.governance.toBase58()
+      (gov) => gov.pubkey.toBase58() === x.account.governance.toBase58(),
     )
     const now = dayjs().unix()
     const timestamp = x
@@ -149,7 +147,7 @@ const MyProposalsBn = () => {
         x.account.state === ProposalState.Vetoed ||
         x.account.state === ProposalState.Cancelled) &&
       ownVoteRecordsByProposal?.[x.pubkey.toBase58()] &&
-      !ownVoteRecordsByProposal?.[x.pubkey.toBase58()]?.account.isRelinquished
+      !ownVoteRecordsByProposal?.[x.pubkey.toBase58()]?.account.isRelinquished,
   )
 
   const createdVoting = myProposals?.filter((x) => {
@@ -160,7 +158,7 @@ const MyProposalsBn = () => {
 
   const cleanSelected = async (
     proposalsArray: ProgramAccount<Proposal>[],
-    withInstruction
+    withInstruction,
   ) => {
     if (!wallet || !programId || !realm) return
     setIsLoading(true)
@@ -187,15 +185,15 @@ const MyProposalsBn = () => {
         transaction.recentBlockhash = recentBlockhash
         transaction.setSigners(
           // fee payed by the wallet owner
-          wallet.publicKey!
+          wallet.publicKey!,
         )
         transactions.push(transaction)
       }
       const signedTXs = await wallet.signAllTransactions(transactions)
       await Promise.all(
         signedTXs.map((transaction) =>
-          sendSignedTransaction({ signedTransaction: transaction, connection })
-        )
+          sendSignedTransaction({ signedTransaction: transaction, connection }),
+        ),
       )
       queryClient.invalidateQueries({
         queryKey: proposalQueryKeys.all(connection.rpcEndpoint),
@@ -205,7 +203,7 @@ const MyProposalsBn = () => {
       })
       queryClient.invalidateQueries({
         queryKey: voteRecordQueryKeys.all(
-          connection.rpcEndpoint.includes('devnet') ? 'devnet' : 'mainnet'
+          connection.rpcEndpoint.includes('devnet') ? 'devnet' : 'mainnet',
         ),
       })
     } catch (e) {
@@ -226,7 +224,7 @@ const MyProposalsBn = () => {
         proposal!.account.governance,
         proposal!.pubkey,
         proposal!.account.tokenOwnerRecord,
-        wallet!.publicKey!
+        wallet!.publicKey!,
       )
     }
     cleanSelected(drafts.slice(0, toIndex || drafts.length), withInstruction)
@@ -235,7 +233,7 @@ const MyProposalsBn = () => {
     if (unReleased === undefined) throw new Error()
     const withInstruction = async (
       instructions,
-      proposal: ProgramAccount<Proposal>
+      proposal: ProgramAccount<Proposal>,
     ) => {
       let voterTokenRecord =
         proposal.account.governingTokenMint.toBase58() ===
@@ -253,7 +251,7 @@ const MyProposalsBn = () => {
       let voteRecordPk = await getVoteRecordAddress(
         realm!.owner,
         proposal.pubkey,
-        voterTokenRecord!.pubkey
+        voterTokenRecord!.pubkey,
       )
 
       let governingTokenMint = proposal.account.governingTokenMint
@@ -267,13 +265,13 @@ const MyProposalsBn = () => {
         voteRecordPk = await getVoteRecordAddress(
           realm!.owner,
           proposal.pubkey,
-          voterTokenRecord!.pubkey
+          voterTokenRecord!.pubkey,
         )
 
         governingTokenMint =
           role === 'community' && realm?.account.config.councilMint
             ? realm.account.config.councilMint
-            : realm?.account.communityMint!
+            : realm!.account.communityMint!
       }
 
       const inst = await withRelinquishVote(
@@ -287,26 +285,26 @@ const MyProposalsBn = () => {
         governingTokenMint,
         voteRecordPk,
         governanceAuthority,
-        beneficiary
+        beneficiary,
       )
       await votingClients(role).withRelinquishVote(
         instructions,
         proposal,
         voteRecordPk,
-        voterTokenRecord!.pubkey
+        voterTokenRecord!.pubkey,
       )
       return inst
     }
     cleanSelected(
       unReleased.slice(0, toIndex || unReleased.length),
-      withInstruction
+      withInstruction,
     )
   }
   const finalizeAll = (toIndex = null) => {
     if (notfinalized === undefined) throw new Error()
     const withInstruction = (
       instructions,
-      proposal: ProgramAccount<Proposal>
+      proposal: ProgramAccount<Proposal>,
     ) => {
       return withFinalizeVote(
         instructions,
@@ -317,12 +315,12 @@ const MyProposalsBn = () => {
         proposal.pubkey,
         proposal.account.tokenOwnerRecord,
         proposal.account.governingTokenMint,
-        maxVoterWeight
+        maxVoterWeight,
       )
     }
     cleanSelected(
       notfinalized.slice(0, toIndex || notfinalized.length),
-      withInstruction
+      withInstruction,
     )
   }
   const releaseNfts = async (count: number | null = null) => {
@@ -336,21 +334,21 @@ const MyProposalsBn = () => {
     const instructions: TransactionInstruction[] = []
     const { registrar } = nftClient.getRegistrarPDA(
       realm.pubkey,
-      realm.account.communityMint
+      realm.account.communityMint,
     )
     const { voterWeightPk } = await nftClient.getVoterWeightRecordPDA(
       realm.pubkey,
       realm.account.communityMint,
-      wallet.publicKey
+      wallet.publicKey,
     )
 
     const nfts = ownNftVoteRecordsFilterd.slice(
       0,
-      count ? count : ownNftVoteRecordsFilterd.length
+      count ? count : ownNftVoteRecordsFilterd.length,
     )
     for (const i of nfts) {
       const proposal = proposals.find((p) =>
-        p.pubkey.equals(i.account.proposal)
+        p.pubkey.equals(i.account.proposal),
       )
       const relinquishNftVoteIx = await nftClient.program.methods
         .relinquishNftVote()
@@ -376,7 +374,7 @@ const MyProposalsBn = () => {
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }
@@ -407,7 +405,7 @@ const MyProposalsBn = () => {
 
     const nftVoteRecordsFiltered = nftVoteRecords.filter((x) => {
       const proposal = proposals?.find((p) =>
-        p.pubkey.equals(x.account.proposal)
+        p.pubkey.equals(x.account.proposal),
       )
 
       return (
@@ -427,7 +425,7 @@ const MyProposalsBn = () => {
         programId!,
         programVersion,
         proposalDeposit.account.proposal,
-        proposalDeposit.account.depositPayer
+        proposalDeposit.account.depositPayer,
       )
     }
     await sendTransactionsV3({
@@ -444,11 +442,11 @@ const MyProposalsBn = () => {
     const solDeposits = await getProposalDepositsByDepositPayer(
       connection,
       realm!.owner,
-      wallet!.publicKey!
+      wallet!.publicKey!,
     )
     const filterdSolDeposits = solDeposits.filter((x) => {
       const proposal = proposals?.find((p) =>
-        p.pubkey.equals(x.account.proposal)
+        p.pubkey.equals(x.account.proposal),
       )
       const proposalState = proposal?.account.state
       return (
@@ -621,7 +619,7 @@ const ProposalList = ({
             <a
               className="underline cursor-pointer"
               href={fmtUrlWithCluster(
-                `/dao/${symbol}/proposal/${x.pubkey.toBase58()}`
+                `/dao/${symbol}/proposal/${x.pubkey.toBase58()}`,
               )}
               target="_blank"
               rel="noreferrer"

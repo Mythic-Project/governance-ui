@@ -68,18 +68,19 @@ interface Props {
 export function Team(props: Props) {
   const [keyCounter, setKeyCounter] = useState(0);
 
-  const team = (props.team.length
-    ? [...props.team]
-    : [
-        {
-          avatar: null,
-          description: null,
-          linkedIn: null,
-          name: '',
-          role: null,
-          twitter: null,
-        },
-      ]
+  const team = (
+    props.team.length
+      ? [...props.team]
+      : [
+          {
+            avatar: null,
+            description: null,
+            linkedIn: null,
+            name: '',
+            role: null,
+            twitter: null,
+          },
+        ]
   ).concat({
     avatar: null,
     description: null,

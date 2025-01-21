@@ -15,7 +15,7 @@ export default function useParclScalingFactor(): number | undefined {
   const { result: plugin } = useAsync(
     async () =>
       realm && determineVotingPowerType(connection, realm, 'community'),
-    [connection, realm]
+    [connection, realm],
   )
 
   const { data: scalingFactor } = useQuery(
@@ -23,11 +23,11 @@ export default function useParclScalingFactor(): number | undefined {
     async (): Promise<number> => {
       const parclClient = await StakeConnection.connect(
         connection,
-        {} as NodeWallet
+        {} as NodeWallet,
       )
       return parclClient.getScalingFactor()
     },
-    { enabled: plugin == 'parcl' }
+    { enabled: plugin == 'parcl' },
   )
 
   if (plugin == 'parcl') {

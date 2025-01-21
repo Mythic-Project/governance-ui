@@ -33,7 +33,7 @@ const simulationWallet = new PublicKey(SIMULATION_WALLET)
 const logsToEvents = <T extends Idl>(
   program: Program<T>,
   logs: string[],
-  walletPk: string
+  walletPk: string,
 ): {
   walletPk: string
   event: any
@@ -62,7 +62,7 @@ export const getDeposits = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    clientProgramId
+    clientProgramId,
   )
   const { voter } = getVoterPDA(registrar, walletPk, clientProgramId)
   const existingVoter = await tryGetVoter(voter, client)
@@ -85,7 +85,7 @@ export const getDeposits = async ({
             ...x,
             mint: mints[mintCfgs![x.votingMintConfigIdx].mint.toBase58()],
             index: idx,
-          } as DepositWithMintAccount)
+          }) as DepositWithMintAccount,
       )
       .filter((x) => typeof isUsed === 'undefined' || x.isUsed === isUsed)
     const usedDeposits = deposits.filter((x) => x.isUsed)
@@ -96,15 +96,15 @@ export const getDeposits = async ({
         usedDeposits,
         connection,
         registrar,
-        voter
+        voter,
       )
       const depositsInfo = events.filter((x) => x.name === DEPOSIT_EVENT_NAME)
       const votingPowerEntry = events.find(
-        (x) => x.name === VOTER_INFO_EVENT_NAME
+        (x) => x.name === VOTER_INFO_EVENT_NAME,
       )
       deposits = deposits.map((x) => {
         const additionalInfoData = depositsInfo.find(
-          (info) => info.data.depositEntryIndex === x.index
+          (info) => info.data.depositEntryIndex === x.index,
         ).data
 
         x.currentlyLocked = additionalInfoData.locking?.amount || new BN(0)
@@ -165,9 +165,8 @@ const getVotingPowersForWallets = async ({
     voterPks.push(voter)
   }
 
-  const voterAccsResponse = await client?.program.account.voter.fetchMultiple(
-    voterPks
-  )
+  const voterAccsResponse =
+    await client?.program.account.voter.fetchMultiple(voterPks)
   voters.push(...(voterAccsResponse as (Voter | null)[]))
 
   if (voters.length) {
@@ -179,8 +178,8 @@ const getVotingPowersForWallets = async ({
           (x) =>
             x.isUsed &&
             mintCfgs[x.votingMintConfigIdx].baselineVoteWeightScaledFactor.gtn(
-              0
-            )
+              0,
+            ),
         )
         if (hasDepositsWithCommunityMint) {
           const simulationWallet = new PublicKey(SIMULATION_WALLET)
@@ -212,7 +211,7 @@ const getVotingPowersForWallets = async ({
 
     const chunkedEncodedTransactionsParsed = chunks(
       encodedTransactionsParsedByWallets,
-      100
+      100,
     )
     // TODO Batch alert
     const simulations = await Promise.all(
@@ -236,14 +235,14 @@ const getVotingPowersForWallets = async ({
               ],
             })),
           ]),
-        })
-      )
+        }),
+      ),
     )
     const logsJsons = await Promise.all(simulations.map((x) => x.json()))
     for (const logJson of logsJsons) {
       for (const result of logJson) {
         events.push(
-          ...logsToEvents(client.program, result.result.value.logs!, result.id)
+          ...logsToEvents(client.program, result.result.value.logs!, result.id),
         )
       }
     }
@@ -278,7 +277,7 @@ export const calcMultiplier = ({
     const n_periods = lockupSecs / onMonthSecs
     const n_unsaturated_periods = Math.min(
       n_periods,
-      n_periods_before_saturation
+      n_periods_before_saturation,
     )
     const n_saturated_periods = Math.max(0, n_periods - n_unsaturated_periods)
     const calc =
@@ -302,7 +301,7 @@ export const calcMultiplier = ({
 
 export const getPeriod = (
   lockUpPeriodInDays: number,
-  lockupKind: LockupType
+  lockupKind: LockupType,
 ) => {
   //in case we do monthly close up we pass months not days.
   const period =
@@ -326,11 +325,11 @@ export const calcMintMultiplier = (
   lockupSecs: number,
   registrar: Registrar | null,
   realm: ProgramAccount<Realm> | undefined,
-  isVested?: boolean
+  isVested?: boolean,
 ) => {
   const mintCfgs = registrar?.votingMints
   const mintCfg = mintCfgs?.find(
-    (x) => x.mint.toBase58() === realm?.account.communityMint.toBase58()
+    (x) => x.mint.toBase58() === realm?.account.communityMint.toBase58(),
   )
   if (mintCfg) {
     const {
@@ -339,12 +338,14 @@ export const calcMintMultiplier = (
       maxExtraLockupVoteWeightScaledFactor,
     } = mintCfg
     const depositScaledFactorNum = baselineVoteWeightScaledFactor.toNumber()
-    const maxExtraLockupVoteWeightScaledFactorNum = maxExtraLockupVoteWeightScaledFactor.toNumber()
+    const maxExtraLockupVoteWeightScaledFactorNum =
+      maxExtraLockupVoteWeightScaledFactor.toNumber()
     const lockupSaturationSecsNum = lockupSaturationSecs.toNumber()
     //(deposit_scaled_factor + max_extra_lockup_vote_weight_scaled_factor * min(lockup_secs, lockup_saturation_secs) / lockup_saturation_secs) / deposit_scaled_factor
     const calced = calcMultiplier({
       depositScaledFactor: depositScaledFactorNum,
-      maxExtraLockupVoteWeightScaledFactor: maxExtraLockupVoteWeightScaledFactorNum,
+      maxExtraLockupVoteWeightScaledFactor:
+        maxExtraLockupVoteWeightScaledFactorNum,
       lockupSaturationSecs: lockupSaturationSecsNum,
       lockupSecs,
       isVested,
@@ -360,7 +361,7 @@ const getDepositsAdditionalInfoEvents = async (
   usedDeposits: DepositWithMintAccount[],
   connection: Connection,
   registrar: PublicKey,
-  voter: PublicKey
+  voter: PublicKey,
 ) => {
   //because we switch wallet in here we can't use rpc from npm module
   //anchor dont allow to switch wallets inside existing client
@@ -381,7 +382,7 @@ const getDepositsAdditionalInfoEvents = async (
       .accounts({ registrar, voter })
       .instruction()
     transaction.add(
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 })
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 }),
     )
     transaction.add(logVoterInfoIx)
     // TODO cache using fetchVotingPowerSimulation
@@ -397,12 +398,12 @@ export const getLockTokensVotingPowerPerWallet = async (
   walletsPks: PublicKey[],
   realm: ProgramAccount<Realm>,
   client: VsrClient,
-  connection: Connection
+  connection: Connection,
 ) => {
   const { registrar } = getRegistrarPDA(
-      realm.pubkey,
-      realm.account.communityMint,
-      client.program.programId
+    realm.pubkey,
+    realm.account.communityMint,
+    client.program.programId,
   )
   const existingRegistrar = await tryGetRegistrar(registrar, client)
   const latestBlockhash = await connection.getLatestBlockhash()

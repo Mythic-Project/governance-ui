@@ -28,7 +28,7 @@ const CreateAta = ({
 }) => {
   const realm = useRealmQuery().data?.result
   const refetchGovernanceAccounts = useGovernanceAssetsStore(
-    (s) => s.refetchGovernanceAccounts
+    (s) => s.refetchGovernanceAccounts,
   )
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
@@ -58,7 +58,7 @@ const CreateAta = ({
         wallet,
         mintPk,
         owner,
-        wallet.publicKey!
+        wallet.publicKey!,
       )
     } else {
       const instructions: TransactionInstruction[] = []
@@ -67,15 +67,15 @@ const CreateAta = ({
       const provider = new serum.Provider(
         connection.current,
         wallet as serum.Wallet,
-        serum.Provider.defaultOptions()
+        serum.Provider.defaultOptions(),
       )
       instructions.push(
         ...(await serum.createTokenAccountInstrs(
           provider,
           tokenAccount.publicKey,
           mintPk,
-          owner
-        ))
+          owner,
+        )),
       )
       signers.push(tokenAccount)
       const transaction = new Transaction()

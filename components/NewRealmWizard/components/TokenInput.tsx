@@ -86,7 +86,7 @@ export default function TokenInput({
       setTokenInfo(PENDING_COIN)
       const mintInfo = await tryGetMint(
         connection.current,
-        new PublicKey(tokenMintAddress)
+        new PublicKey(tokenMintAddress),
       )
       if (mintInfo) {
         const tokenInfo =

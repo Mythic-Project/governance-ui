@@ -111,7 +111,7 @@ export default function Rules(props: Props) {
     ownVoterWeight &&
     props.wallet.governanceAccount &&
     ownVoterWeight.canCreateProposal(
-      props.wallet.governanceAccount.account.config
+      props.wallet.governanceAccount.account.config,
     )
 
   return (
@@ -145,15 +145,15 @@ export default function Rules(props: Props) {
                 'text-sm',
                 'transition-opacity',
                 'disabled:cursor-not-allowed',
-                'disabled:opacity-50'
+                'disabled:opacity-50',
               )}
               disabled={!canEditRules}
               onClick={() => {
                 if (props.wallet.governanceAccount) {
                   router.push(
                     fmtUrlWithCluster(
-                      `/dao/${symbol}/treasury/governance/${props.wallet.governanceAccount.pubkey.toBase58()}/edit`
-                    )
+                      `/dao/${symbol}/treasury/governance/${props.wallet.governanceAccount.pubkey.toBase58()}/edit`,
+                    ),
                   )
                 }
               }}
@@ -191,7 +191,7 @@ export default function Rules(props: Props) {
                     icon={<HandIcon />}
                     name="Vote Tipping"
                     value={voteTippingText(
-                      governanceConfig.communityVoteTipping
+                      governanceConfig.communityVoteTipping,
                     )}
                   />
                 )}
@@ -221,10 +221,12 @@ export default function Rules(props: Props) {
                 : 'grid-cols-1')
             }
           >
-            {([
-              ...(communityEnabled ? ['community'] : []),
-              ...(councilEnabled ? ['council'] : []),
-            ] as const).map((govpop) => {
+            {(
+              [
+                ...(communityEnabled ? ['community'] : []),
+                ...(councilEnabled ? ['council'] : []),
+              ] as const
+            ).map((govpop) => {
               const governingTokenMintInfo =
                 govpop === 'community' ? mint : councilMint
 
@@ -276,7 +278,7 @@ export default function Rules(props: Props) {
                           ? 'Disabled'
                           : formatMintNaturalAmountAsDecimal(
                               governingTokenMintInfo,
-                              minTokensToCreateProposal
+                              minTokensToCreateProposal,
                             )
                       }
                     />

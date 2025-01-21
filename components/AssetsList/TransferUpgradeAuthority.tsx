@@ -21,7 +21,7 @@ import { abbreviateAddress } from '@utils/formatting'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 interface CloseBuffersForm {
   governedAccount: AssetAccount | undefined
@@ -38,7 +38,7 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
   const realm = useRealmQuery().data?.result
-  const { realmInfo} = useRealm()
+  const { realmInfo } = useRealm()
   const programId: PublicKey | undefined = realmInfo?.programId
 
   const [form, setForm] = useState<CloseBuffersForm>({
@@ -50,7 +50,8 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
     description: '',
     title: '',
   })
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
@@ -101,10 +102,10 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
       const transferUpgradeAuthIx = await createSetUpgradeAuthority(
         form.governedAccount.pubkey,
         form.governedAccount.extensions.program!.authority,
-        new PublicKey(form.newUpgradeAuthority)
+        new PublicKey(form.newUpgradeAuthority),
       )
       serializedInstruction = serializeInstructionToBase64(
-        transferUpgradeAuthIx
+        transferUpgradeAuthIx,
       )
     }
     const obj: UiInstruction = {
@@ -130,7 +131,7 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
           new InstructionDataWithHoldUpTime({
             instruction: x,
             governance,
-          })
+          }),
       )
       try {
         const proposalAddress = await handleCreateProposal({
@@ -141,7 +142,7 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
           governance: governance!,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -221,12 +222,12 @@ const TransferUpgradeAuthority = ({ program }: { program: AssetAccount }) => {
               }
             />
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

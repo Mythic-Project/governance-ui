@@ -206,7 +206,7 @@ const EditToken = ({
 
   const { getAdditionalLabelInfo, mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const [forcedValues, setForcedValues] = useState<string[]>([])
@@ -217,7 +217,7 @@ const EditToken = ({
       ((mangoGroup?.admin &&
         x.extensions.transferAddress?.equals(mangoGroup.admin)) ||
         (mangoGroup?.securityAdmin &&
-          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin)))
+          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin))),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [tokens, setTokens] = useState<NamePkVal[]>([])
@@ -245,7 +245,7 @@ const EditToken = ({
     ) {
       const bank = mangoGroup!.getFirstBankByMint(new PublicKey(form.mintPk))
       const mintInfo = mangoGroup!.mintInfosMapByTokenIndex.get(
-        bank.tokenIndex
+        bank.tokenIndex,
       )!
       const values = getChangedValues<
         Omit<EditTokenForm, 'reduceOnly'> & { reduceOnly: number }
@@ -258,7 +258,7 @@ const EditToken = ({
           ...form,
           reduceOnly: form.reduceOnly.value,
         },
-        forcedValues
+        forcedValues,
       )
 
       const oracleConfFilter =
@@ -278,7 +278,7 @@ const EditToken = ({
         adjustmentFactor: getNullOrTransform(
           values.adjustmentFactor,
           null,
-          Number
+          Number,
         ),
         util0: getNullOrTransform(values.util0, null, Number),
         rate0: getNullOrTransform(values.rate0, null, Number),
@@ -287,7 +287,7 @@ const EditToken = ({
         maxRate: getNullOrTransform(values.maxRate, null, Number),
       }
       const isThereNeedOfSendingRateConfigs = Object.values(rateConfigs).filter(
-        (x) => x !== null
+        (x) => x !== null,
       ).length
       //Mango instruction call and serialize
       const ix = await mangoClient!.program.methods
@@ -320,7 +320,7 @@ const EditToken = ({
           getNullOrTransform(
             values.stablePriceDelayIntervalSeconds,
             null,
-            Number
+            Number,
           ),
           getNullOrTransform(values.stablePriceDelayGrowthLimit, null, Number),
           getNullOrTransform(values.stablePriceGrowthLimit, null, Number),
@@ -337,12 +337,12 @@ const EditToken = ({
           getNullOrTransform(
             values.tokenConditionalSwapTakerFeeRate,
             null,
-            Number
+            Number,
           ),
           getNullOrTransform(
             values.tokenConditionalSwapMakerFeeRate,
             null,
-            Number
+            Number,
           ),
           getNullOrTransform(values.flashLoanSwapFeeRate, null, Number),
           getNullOrTransform(values.interestCurveScaling, null, Number),
@@ -357,14 +357,14 @@ const EditToken = ({
             values.depositLimit !== null && values.depositLimit !== undefined
               ? values.depositLimit?.toString()
               : null,
-            BN
+            BN,
           ),
           getNullOrTransform(values.zeroUtilRate, null, Number),
           getNullOrTransform(values.platformLiquidationFee, null, Number),
           values.disableAssetLiquidation!,
           getNullOrTransform(values.collateralFeePerDay, null, Number),
           values.forceWithdraw!,
-          getNullOrTransform(values.tier, null, String)
+          getNullOrTransform(values.tier, null, String),
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -385,7 +385,7 @@ const EditToken = ({
         .instruction()
 
       serializedInstruction = serializeInstructionToBase64(
-        forwarderProgramHelpers.withForwarderWrapper(ix)
+        forwarderProgramHelpers.withForwarderWrapper(ix),
       )
     }
     const obj: UiInstruction = {
@@ -401,7 +401,7 @@ const EditToken = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -417,7 +417,7 @@ const EditToken = ({
         (x) => ({
           name: x[0].name,
           value: x[0].mint,
-        })
+        }),
       )
       setTokens(currentTokens)
     }
@@ -434,14 +434,15 @@ const EditToken = ({
       mangoGroup!.banksMapByMint.get(formTokenPk)
     ) {
       const currentToken = mangoGroup!.banksMapByMint.get(formTokenPk)![0]
-      const groupInsuranceFund = mangoGroup.mintInfosMapByMint.get(formTokenPk)
-        ?.groupInsuranceFund
+      const groupInsuranceFund =
+        mangoGroup.mintInfosMapByMint.get(formTokenPk)?.groupInsuranceFund
       console.log(currentToken.tier)
       const vals = {
         oraclePk: currentToken.oracle.toBase58(),
         fallbackOracle: currentToken.fallbackOracle.toBase58(),
         oracleConfFilter: currentToken.oracleConfig.confFilter.toNumber(),
-        maxStalenessSlots: currentToken.oracleConfig.maxStalenessSlots.toNumber(),
+        maxStalenessSlots:
+          currentToken.oracleConfig.maxStalenessSlots.toNumber(),
         mintPk: currentToken.mint.toBase58(),
         name: currentToken.name,
         adjustmentFactor: currentToken.adjustmentFactor.toNumber(),
@@ -463,13 +464,15 @@ const EditToken = ({
           currentToken.stablePriceModel.delayGrowthLimit,
         stablePriceGrowthLimit: currentToken.stablePriceModel.stableGrowthLimit,
         minVaultToDepositsRatio: currentToken.minVaultToDepositsRatio,
-        netBorrowLimitPerWindowQuote: currentToken.netBorrowLimitPerWindowQuote.toNumber(),
-        netBorrowLimitWindowSizeTs: currentToken.netBorrowLimitWindowSizeTs.toNumber(),
+        netBorrowLimitPerWindowQuote:
+          currentToken.netBorrowLimitPerWindowQuote.toNumber(),
+        netBorrowLimitWindowSizeTs:
+          currentToken.netBorrowLimitWindowSizeTs.toNumber(),
         borrowWeightScaleStartQuote: currentToken.borrowWeightScaleStartQuote,
         depositWeightScaleStartQuote: currentToken.depositWeightScaleStartQuote,
         groupInsuranceFund: !!groupInsuranceFund,
         reduceOnly: REDUCE_ONLY_OPTIONS.find(
-          (x) => x.value === currentToken.reduceOnly
+          (x) => x.value === currentToken.reduceOnly,
         )!,
         forceClose: currentToken.forceClose,
         tokenConditionalSwapTakerFeeRate:
@@ -481,8 +484,10 @@ const EditToken = ({
         interestTargetUtilization: currentToken.interestTargetUtilization,
         maintWeightShiftStart: currentToken.maintWeightShiftStart.toNumber(),
         maintWeightShiftEnd: currentToken.maintWeightShiftEnd.toNumber(),
-        maintWeightShiftAssetTarget: currentToken.maintWeightShiftAssetTarget.toNumber(),
-        maintWeightShiftLiabTarget: currentToken.maintWeightShiftLiabTarget.toNumber(),
+        maintWeightShiftAssetTarget:
+          currentToken.maintWeightShiftAssetTarget.toNumber(),
+        maintWeightShiftLiabTarget:
+          currentToken.maintWeightShiftLiabTarget.toNumber(),
         depositLimit: currentToken.depositLimit.toString(),
         zeroUtilRate: currentToken.zeroUtilRate.toNumber(),
         platformLiquidationFee: currentToken.platformLiquidationFee.toNumber(),
@@ -507,13 +512,13 @@ const EditToken = ({
       .string()
       .required()
       .test('is-valid-address1', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     oraclePk: yup
       .string()
       .required()
       .test('is-valid-address2', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     name: yup.string().required(),
   })

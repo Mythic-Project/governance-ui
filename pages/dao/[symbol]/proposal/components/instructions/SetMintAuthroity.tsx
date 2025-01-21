@@ -33,7 +33,7 @@ const SetMintAuthority = ({
 }) => {
   const { assetAccounts } = useGovernanceAssets()
   const mintGovernancesWithMintInfo = assetAccounts.filter(
-    (x) => x.type === AccountType.MINT
+    (x) => x.type === AccountType.MINT,
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
 
@@ -65,7 +65,7 @@ const SetMintAuthority = ({
         form.setAuthorityToNone ? null : new PublicKey(form.mintAuthority),
         'MintTokens',
         form.governedAccount.extensions.mint!.account.mintAuthority!,
-        []
+        [],
       )
 
       serializedInstruction = serializeInstructionToBase64(ix)
@@ -81,7 +81,7 @@ const SetMintAuthority = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -109,7 +109,7 @@ const SetMintAuthority = ({
             })
           }
           return true
-        }
+        },
       ),
     governedAccount: yup
       .object()

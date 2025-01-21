@@ -13,7 +13,7 @@ const common_instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       try {
@@ -42,7 +42,7 @@ const common_instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       try {

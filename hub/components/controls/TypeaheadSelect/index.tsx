@@ -29,9 +29,10 @@ interface Props<T> {
 }
 
 interface TypeaheadSelect {
-  <T>(props: Props<T>, ref: HTMLButtonElement): ReturnType<
-    ForwardRefRenderFunction<Props<T>, HTMLButtonElement>
-  >;
+  <T>(
+    props: Props<T>,
+    ref: HTMLButtonElement,
+  ): ReturnType<ForwardRefRenderFunction<Props<T>, HTMLButtonElement>>;
 }
 
 export const TypeaheadSelect: TypeaheadSelect = forwardRef(

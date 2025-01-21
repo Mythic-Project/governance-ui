@@ -6,7 +6,7 @@ import { TokenAccount } from './tokens'
 
 export function parseTokenAccountData(
   account: PublicKey,
-  data: Buffer
+  data: Buffer,
 ): TokenAccount {
   const accountInfo = AccountLayout.decode(data)
   accountInfo.address = account

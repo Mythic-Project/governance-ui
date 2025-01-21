@@ -21,10 +21,10 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
   const GROUP_NUM = 0
   const ADMIN_PK = new PublicKey('BJFYN2ZbcxRSTFGCAVkUEn4aJF99xaPFuyQj2rq5pFpo')
   const DEVNET_GROUP = new PublicKey(
-    'Bpk8VzppSEkygd4KgXSgVzgVHib4EArhbDzyRpiS4yaf'
+    'Bpk8VzppSEkygd4KgXSgVzgVHib4EArhbDzyRpiS4yaf',
   )
   const MAINNET_GROUP = new PublicKey(
-    '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX'
+    '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX',
   )
   const clientCluster = cluster === 'devnet' ? 'devnet' : 'mainnet-beta'
   const GROUP = group
@@ -39,13 +39,13 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
   const [mangoGroup, setMangoGroup] = useState<Group | null>(null)
   const getClient = async (
     connection: ConnectionContext,
-    wallet: WalletSigner
+    wallet: WalletSigner,
   ) => {
     const options = AnchorProvider.defaultOptions()
     const adminProvider = new AnchorProvider(
       connection.current,
       wallet as any,
-      options
+      options,
     )
 
     const client = await MangoClient.connect(
@@ -54,7 +54,7 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
       program,
       {
         idsSource: isMainMangoProgram ? 'api' : undefined,
-      }
+      },
     )
 
     return client
@@ -97,11 +97,11 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
   const getMaxBorrowForBank = (
     group: Group,
     bank: Bank,
-    mangoAccount: MangoAccount
+    mangoAccount: MangoAccount,
   ) => {
     try {
       const maxBorrow = new Decimal(
-        mangoAccount.getMaxWithdrawWithBorrowForTokenUi(group, bank.mint)
+        mangoAccount.getMaxWithdrawWithBorrowForTokenUi(group, bank.mint),
       )
       return maxBorrow
     } catch (e) {
@@ -114,7 +114,7 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
     group: Group,
     bank: Bank,
     mangoAccount: MangoAccount,
-    allowBorrow = false
+    allowBorrow = false,
   ): Decimal => {
     const accountBalance = new Decimal(mangoAccount.getTokenBalanceUi(bank))
     const vaultBalance = group.getTokenVaultBalanceByMintUi(bank.mint)
@@ -141,12 +141,12 @@ export default function UseMangoV4(programId?: PublicKey, group?: PublicKey) {
 }
 
 export const MANGO_BOOST_PROGRAM_ID = new PublicKey(
-  'zF2vSz6V9g1YHGmfrzsY497NJzbRr84QUrPry4bLQ25'
+  'zF2vSz6V9g1YHGmfrzsY497NJzbRr84QUrPry4bLQ25',
 )
 export const BOOST_MAINNET_GROUP = new PublicKey(
-  'AKeMSYiJekyKfwCc3CUfVNDVAiqk9FfbQVMY3G7RUZUf'
+  'AKeMSYiJekyKfwCc3CUfVNDVAiqk9FfbQVMY3G7RUZUf',
 )
 
 export const MANGO_V4_MAINNET_GROUP = new PublicKey(
-  '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX'
+  '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX',
 )

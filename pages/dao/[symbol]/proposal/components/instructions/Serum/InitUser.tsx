@@ -57,7 +57,7 @@ const InitUser = ({
         if (pubKey) {
           const [account] = PublicKey.findProgramAddressSync(
             [Buffer.from('user'), pubKey.toBuffer()],
-            new PublicKey(form.programId)
+            new PublicKey(form.programId),
           )
           setUserAccount(account ? account : null)
         } else {
@@ -92,7 +92,7 @@ const InitUser = ({
     const ix = await actions.getInitUserInstruction(
       new PublicKey(form.owner),
       form.governedAccount.pubkey,
-      anchorProvider
+      anchorProvider,
     )
 
     return {
@@ -108,7 +108,7 @@ const InitUser = ({
         governedAccount: form.governedAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

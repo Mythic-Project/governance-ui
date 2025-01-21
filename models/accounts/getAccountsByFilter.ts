@@ -29,21 +29,24 @@ export function getAccountsByFilters<AccountType extends GovernanceAccount>({
         getGovernanceAccounts(
           connection,
           programId,
-          (accountClass as unknown) as new (args: any) => AccountType,
-          filters
+          accountClass as unknown as new (args: any) => AccountType,
+          filters,
         ),
       (error) =>
-        error instanceof Error ? error : new Error('Could not fetch accounts')
+        error instanceof Error ? error : new Error('Could not fetch accounts'),
     ),
     map((accounts) =>
-      accounts.reduce((acc, account) => {
-        acc[account.pubkey.toBase58()] = account
-        return acc
-      }, {} as { [address: string]: ProgramAccount<AccountType> })
+      accounts.reduce(
+        (acc, account) => {
+          acc[account.pubkey.toBase58()] = account
+          return acc
+        },
+        {} as { [address: string]: ProgramAccount<AccountType> },
+      ),
     ),
     match((error) => {
       console.error(error)
       return none
-    }, some)
+    }, some),
   )()
 }

@@ -11,9 +11,9 @@ import { Keypair, PublicKey } from '@solana/web3.js'
  */
 export async function getEphemeralSigners(
   wallet: Wallet,
-  num: number
+  num: number,
 ): Promise<PublicKey[]> {
-  let adapter = wallet.adapter as StandardWalletAdapter
+  const adapter = wallet.adapter as StandardWalletAdapter
 
   const features = adapter.wallet.features
 
@@ -27,7 +27,7 @@ export async function getEphemeralSigners(
     ]) as EphemeralSignerFeature
 
     const ephemeralSigners = (await ephemeralSignerFeature.getEphemeralSigners(
-      num
+      num,
     )) as GetEphemeralSignersOutput
 
     // WIP: Types for Solana wallet adapter features can be difficult
@@ -48,19 +48,19 @@ export type GetEphemeralSignersOutput = {
   }
 }
 
-export const SquadsGetEphemeralSignersFeatureIdentifier = 'fuse:getEphemeralSigners' as const
+export const SquadsGetEphemeralSignersFeatureIdentifier =
+  'fuse:getEphemeralSigners' as const
 
 export type WalletAdapterFeature<
   FeatureName extends string,
   FeatureProperties extends Record<string, any> = {},
-  FeatureMethods extends Record<string, (...args: any[]) => any> = {}
+  FeatureMethods extends Record<string, (...args: any[]) => any> = {},
 > = {
-  [K in FeatureName]: FeatureProperties &
-    {
-      [M in keyof FeatureMethods]: (
-        ...args: Parameters<FeatureMethods[M]>
-      ) => ReturnType<FeatureMethods[M]>
-    }
+  [K in FeatureName]: FeatureProperties & {
+    [M in keyof FeatureMethods]: (
+      ...args: Parameters<FeatureMethods[M]>
+    ) => ReturnType<FeatureMethods[M]>
+  }
 }
 
 export type WalletWithEphemeralSigners = WalletAdapterFeature<

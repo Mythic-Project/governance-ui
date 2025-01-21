@@ -30,7 +30,7 @@ export const proposalQueryKeys = {
 
 export const fetchProposalByPubkeyQuery = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: proposalQueryKeys.byPubkey(connection.rpcEndpoint, pubkey),
@@ -58,7 +58,7 @@ export const useSelectedProposalPk = () => {
   const { pk } = useRouter().query
   return useMemo(
     () => (typeof pk === 'string' ? tryParsePublicKey(pk) : undefined),
-    [pk]
+    [pk],
   )
 }
 
@@ -86,8 +86,8 @@ export const useRealmProposalsQuery = () => {
         await Promise.all(
           governances.map((x) =>
             // why not just get all proposals for a realm? what was i doing here?
-            getProposalsByGovernance(connection.current, realm.owner, x.pubkey)
-          )
+            getProposalsByGovernance(connection.current, realm.owner, x.pubkey),
+          ),
         )
       )
         .flat()
@@ -99,7 +99,7 @@ export const useRealmProposalsQuery = () => {
       results.forEach((x) => {
         queryClient.setQueryData(
           proposalQueryKeys.byPubkey(connection.endpoint, x.pubkey),
-          { found: true, result: x }
+          { found: true, result: x },
         )
       })
 
@@ -135,7 +135,7 @@ export const useARealmProposalsQuery = (realmPk: PublicKey | undefined) => {
       results.forEach((x) => {
         queryClient.setQueryData(
           proposalQueryKeys.byPubkey(connection.endpoint, x.pubkey),
-          { found: true, result: x }
+          { found: true, result: x },
         )
       })
 

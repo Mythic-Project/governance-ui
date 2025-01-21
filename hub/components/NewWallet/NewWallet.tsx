@@ -105,11 +105,11 @@ function NewWalletWithDefaults({
     );
   }
 
-  const setRule = (field: keyof NonNullable<typeof rules>) => (
-    v: NonNullable<typeof rules>[typeof field],
-  ) => {
-    setRules((prev) => ({ ...prev, [field]: v }));
-  };
+  const setRule =
+    (field: keyof NonNullable<typeof rules>) =>
+    (v: NonNullable<typeof rules>[typeof field]) => {
+      setRules((prev) => ({ ...prev, [field]: v }));
+    };
 
   return (
     <div className={cx(props.className, 'dark:bg-neutral-900')}>

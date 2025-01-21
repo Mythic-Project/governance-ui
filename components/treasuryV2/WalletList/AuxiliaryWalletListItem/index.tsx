@@ -23,7 +23,7 @@ interface Props {
 
 export default function AuxiliaryWalletListItem(props: Props) {
   const containsTokens = props.wallet.assets.some(
-    (asset) => asset.type === AssetType.Token || asset.type === AssetType.Sol
+    (asset) => asset.type === AssetType.Token || asset.type === AssetType.Sol,
   )
   const isOpen = props.expanded
 
@@ -38,7 +38,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
         'overflow-hidden',
         'p-2',
         'relative',
-        'rounded'
+        'rounded',
       )}
     >
       <div
@@ -51,7 +51,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
           'w-1',
           props.selected && !props.expanded && !!props.selectedAsset
             ? 'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
-            : 'bg-transparent'
+            : 'bg-transparent',
         )}
       />
       <button
@@ -66,7 +66,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
             ? 'bg-bkg-1'
             : props.expanded
             ? 'bg-transparent hover:bg-bkg-1'
-            : undefined
+            : undefined,
         )}
         onClick={props.onSelectWallet}
       >
@@ -80,7 +80,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
             'w-1',
             props.selected && !props.selectedAsset
               ? 'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
-              : 'bg-transparent'
+              : 'bg-transparent',
           )}
         />
         <div
@@ -88,7 +88,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
             'gap-x-4',
             'grid-cols-[1fr_max-content]',
             'grid',
-            'items-center'
+            'items-center',
           )}
         >
           <div className="flex flex-col items-start">
@@ -102,7 +102,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
                     'top-0',
                     'left-0',
                     'transition-opacity',
-                    props.selected ? 'opacity-100' : 'opacity-0'
+                    props.selected ? 'opacity-100' : 'opacity-0',
                   )}
                 />
                 <UnselectedWalletIcon
@@ -113,7 +113,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
                     'top-0',
                     'left-0',
                     'transition-opacity',
-                    props.selected ? 'opacity-0' : 'opacity-100'
+                    props.selected ? 'opacity-0' : 'opacity-100',
                   )}
                 />
               </div>
@@ -123,7 +123,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
                   'overflow-hidden',
                   'text-ellipsis',
                   'text-left',
-                  'whitespace-nowrap'
+                  'whitespace-nowrap',
                 )}
               >
                 {props.wallet.name}
@@ -149,7 +149,7 @@ export default function AuxiliaryWalletListItem(props: Props) {
                 'transition-all',
                 'w-5',
                 props.expanded ? '' : '-rotate-90',
-                props.selected ? 'text-[#00C2FF]' : 'text-white/50'
+                props.selected ? 'text-[#00C2FF]' : 'text-white/50',
               )}
               onClick={(e) => {
                 e.stopPropagation()

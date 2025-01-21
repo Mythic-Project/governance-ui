@@ -27,7 +27,7 @@ export const getCastNftVoteInstruction = async (
   tokenOwnerRecord: PublicKey,
   voterWeightPk: PublicKey,
   votingNfts: DasNftObject[],
-  nftVoteRecordsFiltered: NftVoteRecord[]
+  nftVoteRecordsFiltered: NftVoteRecord[],
 ) => {
   console.log('getCastNftVoteInstruction')
   const clientProgramId = program.programId
@@ -38,26 +38,26 @@ export const getCastNftVoteInstruction = async (
     const tokenAccount = await getAssociatedTokenAddress(
       new PublicKey(nft.id),
       walletPk,
-      true
+      true,
     )
     const metadata = await fetchNFTbyMint(
       program.provider.connection,
-      new PublicKey(nft.id)
+      new PublicKey(nft.id),
     )
     const { nftVoteRecord } = await getNftVoteRecordProgramAddress(
       proposal,
       nft.id,
-      clientProgramId
+      clientProgramId,
     )
     if (
       !nftVoteRecordsFiltered.find(
-        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58()
+        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58(),
       )
     )
       remainingAccounts.push(
         new AccountData(tokenAccount),
         new AccountData(metadata?.result?.metadataAddress || ''),
-        new AccountData(nftVoteRecord, false, true)
+        new AccountData(nftVoteRecord, false, true),
       )
   }
 
@@ -77,7 +77,7 @@ export const getCastNftVoteInstruction = async (
           systemProgram: SYSTEM_PROGRAM_ID,
         })
         .remainingAccounts(chunk)
-        .instruction()
+        .instruction(),
     )
   }
 
@@ -105,7 +105,7 @@ export const getCastNftVoteInstructionV2 = async (
   tokenOwnerRecord: PublicKey,
   voterWeightPk: PublicKey,
   votingNfts: DasNftObject[],
-  nftVoteRecordsFiltered: NftVoteRecord[]
+  nftVoteRecordsFiltered: NftVoteRecord[],
 ) => {
   console.log('getCastNftVoteInstructionV2')
   const clientProgramId = program.programId
@@ -120,11 +120,11 @@ export const getCastNftVoteInstructionV2 = async (
     const { nftVoteRecord } = await getNftVoteRecordProgramAddress(
       proposal,
       nft.id,
-      clientProgramId
+      clientProgramId,
     )
     if (
       !nftVoteRecordsFiltered.find(
-        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58()
+        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58(),
       )
     ) {
       const { nftActionTicket } = getNftActionTicketProgramAddress(
@@ -132,28 +132,28 @@ export const getCastNftVoteInstructionV2 = async (
         registrar,
         walletPk,
         nft.id,
-        clientProgramId
+        clientProgramId,
       )
 
       const tokenAccount = await getAssociatedTokenAddress(
         new PublicKey(nft.id),
         walletPk,
-        true
+        true,
       )
       const metadata = await fetchNFTbyMint(
         program.provider.connection,
-        new PublicKey(nft.id)
+        new PublicKey(nft.id),
       )
 
       nftRemainingAccounts.push(
         new AccountData(tokenAccount),
         new AccountData(metadata?.result?.metadataAddress || ''),
-        new AccountData(nftActionTicket, false, true)
+        new AccountData(nftActionTicket, false, true),
       )
 
       castVoteRemainingAccounts.push(
         new AccountData(nftActionTicket, false, true),
-        new AccountData(nftVoteRecord, false, true)
+        new AccountData(nftVoteRecord, false, true),
       )
     }
   }
@@ -171,7 +171,7 @@ export const getCastNftVoteInstructionV2 = async (
           systemProgram: SYSTEM_PROGRAM_ID,
         })
         .remainingAccounts(chunk)
-        .instruction()
+        .instruction(),
     )
   }
 
@@ -181,11 +181,11 @@ export const getCastNftVoteInstructionV2 = async (
     const { nftVoteRecord } = await getNftVoteRecordProgramAddress(
       proposal,
       cnft.id,
-      clientProgramId
+      clientProgramId,
     )
     if (
       !nftVoteRecordsFiltered.find(
-        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58()
+        (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58(),
       )
     ) {
       const { nftActionTicket } = getNftActionTicketProgramAddress(
@@ -193,20 +193,24 @@ export const getCastNftVoteInstructionV2 = async (
         registrar,
         walletPk,
         cnft.id,
-        clientProgramId
+        clientProgramId,
       )
 
       const { param, additionalAccounts } = await getCnftParamAndProof(
         program.provider.connection,
-        cnft
+        cnft,
       )
 
       // CreateCnftActionTicket requires a non-null collection,
       // but getCnftParamAndProof returns a nullable one
-      if (!param.collection.key) throw new Error("Collection key not found");
+      if (!param.collection.key) throw new Error('Collection key not found')
       // Typescript doesn't infer this in its current version, but this is basically
       // casting the collection key to non-null.
-      const typesafeParams = [param as typeof param & { collection: typeof param.collection & { key : PublicKey }}]
+      const typesafeParams = [
+        param as typeof param & {
+          collection: typeof param.collection & { key: PublicKey }
+        },
+      ]
 
       const instruction = await program.methods
         .createCnftActionTicket({ [type]: {} }, typesafeParams)
@@ -226,7 +230,7 @@ export const getCastNftVoteInstructionV2 = async (
 
       castVoteRemainingAccounts.push(
         new AccountData(nftActionTicket, false, true),
-        new AccountData(nftVoteRecord, false, true)
+        new AccountData(nftVoteRecord, false, true),
       )
     }
   }
@@ -246,7 +250,7 @@ export const getCastNftVoteInstructionV2 = async (
           systemProgram: SYSTEM_PROGRAM_ID,
         })
         .remainingAccounts(chunk)
-        .instruction()
+        .instruction(),
     )
   }
 

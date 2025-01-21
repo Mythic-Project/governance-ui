@@ -1,5 +1,10 @@
 import { BN, EventParser, Program } from '@coral-xyz/anchor'
-import { PublicKey, Transaction, Connection, ComputeBudgetProgram } from '@solana/web3.js'
+import {
+  PublicKey,
+  Transaction,
+  Connection,
+  ComputeBudgetProgram,
+} from '@solana/web3.js'
 import { SIMULATION_WALLET } from '@tools/constants'
 import { getRegistrarPDA, getVoterPDA } from 'VoteStakeRegistry/sdk/accounts'
 import { fetchRealmByPubkey, useRealmQuery } from '../realm'
@@ -14,8 +19,8 @@ import useUserOrDelegator from '@hooks/useUserOrDelegator'
 import { getLockTokensVotingPowerPerWallet } from 'VoteStakeRegistry/tools/deposits'
 import { useQuery } from '@tanstack/react-query'
 import { findPluginName } from '@constants/plugins'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
-import {getPluginClientCachedWithEmptySigner} from "@hooks/queries/pluginRegistrar";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { getPluginClientCachedWithEmptySigner } from '@hooks/queries/pluginRegistrar'
 
 const VOTER_INFO_EVENT_NAME = 'VoterInfo'
 
@@ -30,7 +35,7 @@ export const vsrQueryKeys = {
     connection: Connection,
     pluginId: PublicKey,
     registrarPk: PublicKey,
-    voterPk: PublicKey
+    voterPk: PublicKey,
   ) => [
     ...vsrQueryKeys.allVotingPower(connection, pluginId),
     registrarPk.toString(),
@@ -43,27 +48,33 @@ export const vsrQueryKeys = {
 export const getVsrGovpower = async (
   connection: Connection,
   realmPk: PublicKey,
-  walletPk: PublicKey
+  walletPk: PublicKey,
 ) => {
   const { result: realm } = await fetchRealmByPubkey(connection, realmPk)
   if (realm === undefined) throw new Error()
-  const plugin = await getPluginClientCachedWithEmptySigner(realmPk, connection, walletPk, 'VSR', 'voterWeight');
-  const votingPower =await plugin?.client?.calculateVoterWeight(
+  const plugin = await getPluginClientCachedWithEmptySigner(
+    realmPk,
+    connection,
+    walletPk,
+    'VSR',
+    'voterWeight',
+  )
+  const votingPower = await plugin?.client?.calculateVoterWeight(
     walletPk,
     realmPk,
     realm.account.communityMint,
-    new BN(0) // technically incorrect. Should obtain the voter weight from the input TOR
-  );
+    new BN(0), // technically incorrect. Should obtain the voter weight from the input TOR
+  )
 
   if (!votingPower) {
-    return {found: false, result: undefined} as const
+    return { found: false, result: undefined } as const
   }
 
   return { found: true, result: votingPower }
 }
 
 const extractVotingPowerFromSimulation = (
-  logs: Awaited<ReturnType<typeof voterPowerLogQueryFn>>
+  logs: Awaited<ReturnType<typeof voterPowerLogQueryFn>>,
 ) => {
   const votingPowerEntry = logs.find((x) => x.name === VOTER_INFO_EVENT_NAME)
   const votingPower = votingPowerEntry
@@ -79,7 +90,7 @@ const votingPowerQueryFn = async (
   connection: Connection,
   pluginId: PublicKey,
   registrarPk: PublicKey,
-  voterPk: PublicKey
+  voterPk: PublicKey,
 ) => {
   const program = new Program<VoterStakeRegistry>(IDL, pluginId, {
     connection,
@@ -88,7 +99,7 @@ const votingPowerQueryFn = async (
     connection,
     program,
     registrarPk,
-    voterPk
+    voterPk,
   )
   const votingPower = extractVotingPowerFromSimulation(logs)
   return votingPower
@@ -98,14 +109,14 @@ export const fetchVotingPower = (
   connection: Connection,
   pluginId: PublicKey,
   registrarPk: PublicKey,
-  voterPk: PublicKey
+  voterPk: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: vsrQueryKeys.votingPower(
       connection,
       pluginId,
       registrarPk,
-      voterPk
+      voterPk,
     ),
     queryFn: () =>
       votingPowerQueryFn(connection, pluginId, registrarPk, voterPk),
@@ -117,7 +128,7 @@ export const fetchVotingPowerSimulation = (
   registrarPk: PublicKey,
   voterPk: PublicKey,
   depositEntryBegin = 0,
-  depositEntryCount = 0
+  depositEntryCount = 0,
 ) =>
   queryClient.fetchQuery({
     queryKey: [
@@ -137,7 +148,7 @@ export const fetchVotingPowerSimulation = (
         registrarPk,
         voterPk,
         depositEntryBegin,
-        depositEntryCount
+        depositEntryCount,
       ),
   })
 
@@ -146,10 +157,12 @@ export const useRegistrarPk = () => {
   const communityMintPk = realm?.account.communityMint
   const config = useRealmConfigQuery().data?.result
   const programId = config?.account.communityTokenConfig.voterWeightAddin
-  return realm &&
-      communityMintPk &&
-      programId &&
-      getRegistrarPDA(realm.pubkey, communityMintPk, programId)
+  return (
+    realm &&
+    communityMintPk &&
+    programId &&
+    getRegistrarPDA(realm.pubkey, communityMintPk, programId)
+  )
 }
 
 export const useVoterPk = (walletPk: PublicKey | undefined) => {
@@ -157,10 +170,12 @@ export const useVoterPk = (walletPk: PublicKey | undefined) => {
   const config = useRealmConfigQuery().data?.result
   const programId = config?.account.communityTokenConfig.voterWeightAddin
 
-  return registrar &&
-      walletPk &&
-      programId &&
-      getVoterPDA(registrar.registrar, walletPk, programId);
+  return (
+    registrar &&
+    walletPk &&
+    programId &&
+    getVoterPDA(registrar.registrar, walletPk, programId)
+  )
 }
 
 export const useVsrGovpower = () => {
@@ -200,12 +215,12 @@ const voterPowerLogQueryFn = async (
   registrar: PublicKey,
   voter: PublicKey,
   depositEntryBegin = 0,
-  depositEntryCount = 0
+  depositEntryCount = 0,
 ) => {
   const increaseCuIx = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000,
-  });
-  
+  })
+
   const ix = await program.methods
     .logVoterInfo(depositEntryBegin, depositEntryCount)
     .accounts({ registrar, voter })
@@ -226,7 +241,7 @@ const voterPowerLogQueryFn = async (
 export const useVsrGovpowerMulti = (wallets: PublicKey[] | undefined) => {
   const { connection } = useConnection()
   const realm = useRealmQuery().data?.result
-  const { vsrClient } = useVsrClient();
+  const { vsrClient } = useVsrClient()
 
   return useQuery({
     enabled: wallets !== undefined && wallets.length > 0,
@@ -251,26 +266,26 @@ export const useVsrGovpowerMulti = (wallets: PublicKey[] | undefined) => {
       const x = await getLockTokensVotingPowerPerWallet(
         wallets,
         realm,
-          vsrClient,
-        connection
+        vsrClient,
+        connection,
       )
 
       const { registrar: registrarPk } = getRegistrarPDA(
-          realm.pubkey,
-          realm.account.communityMint,
-          programId
+        realm.pubkey,
+        realm.account.communityMint,
+        programId,
       )
 
       for (const [key, power] of Object.entries(x)) {
         const { voter: voterPk } = getVoterPDA(
           registrarPk,
           new PublicKey(key),
-          programId
+          programId,
         )
 
         queryClient.setQueryData(
           vsrQueryKeys.votingPower(connection, programId, registrarPk, voterPk),
-          { found: true, result: power }
+          { found: true, result: power },
         )
       }
 

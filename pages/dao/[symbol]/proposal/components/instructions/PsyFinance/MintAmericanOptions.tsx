@@ -38,7 +38,7 @@ import { Program } from '@coral-xyz/anchor'
 
 const formReducer = (
   state: PsyFinanceMintAmericanOptionsForm,
-  action: Partial<PsyFinanceMintAmericanOptionsForm>
+  action: Partial<PsyFinanceMintAmericanOptionsForm>,
 ) => ({
   ...state,
   ...action,
@@ -55,7 +55,7 @@ const MintAmericanOptions = ({
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   const { handleSetInstructions } = useContext(NewProposalContext)
   const [underlyingMintInfo, setUnderlyingMintInfo] = useState<MintInfo | null>(
-    null
+    null,
   )
   const [form, dispatch] = useReducer(formReducer, {
     contractSize: 1,
@@ -84,7 +84,7 @@ const MintAmericanOptions = ({
     const program = new Program(
       PsyAmericanIdl,
       PSY_AMERICAN_PROGRAM_ID,
-      anchorProvider
+      anchorProvider,
     )
     const quoteMint = new PublicKey(form.quoteMint)
     const quoteMintInfo = await tryGetMint(connection.current, quoteMint)
@@ -96,11 +96,11 @@ const MintAmericanOptions = ({
     // derive option params needed for instruction
     const underlyingAmountPerContract = getMintNaturalAmountFromDecimalAsBN(
       form.contractSize,
-      underlyingMintInfo.decimals
+      underlyingMintInfo.decimals,
     )
     const quoteAmountPerContract = getMintNaturalAmountFromDecimalAsBN(
       new BigNumber(form.strike).multipliedBy(form.contractSize).toNumber(),
-      quoteMintInfo.account.decimals
+      quoteMintInfo.account.decimals,
     )
     const optionParams = {
       programId: PSY_AMERICAN_PROGRAM_ID,
@@ -137,8 +137,8 @@ const MintAmericanOptions = ({
     } else {
       const { currentAddress, needToCreateAta } = await getATA({
         connection,
-        receiverAddress: form.underlyingAccount!.extensions.token!.account
-          .owner,
+        receiverAddress:
+          form.underlyingAccount!.extensions.token!.account.owner,
         mintPK: optionMintKey!,
         wallet,
       })
@@ -150,8 +150,8 @@ const MintAmericanOptions = ({
             optionMintKey!,
             currentAddress,
             form.underlyingAccount!.extensions.token!.account.owner,
-            wallet?.publicKey as PublicKey
-          )
+            wallet?.publicKey as PublicKey,
+          ),
         )
       }
       optionDestination = currentAddress
@@ -163,8 +163,8 @@ const MintAmericanOptions = ({
     } else {
       const { currentAddress, needToCreateAta } = await getATA({
         connection,
-        receiverAddress: form.underlyingAccount!.extensions.token!.account
-          .owner,
+        receiverAddress:
+          form.underlyingAccount!.extensions.token!.account.owner,
         mintPK: writerMintKey!,
         wallet,
       })
@@ -176,8 +176,8 @@ const MintAmericanOptions = ({
             writerMintKey!,
             currentAddress,
             form.underlyingAccount!.extensions.token!.account.owner,
-            wallet?.publicKey as PublicKey
-          )
+            wallet?.publicKey as PublicKey,
+          ),
         )
       }
       writerDestination = currentAddress
@@ -209,7 +209,7 @@ const MintAmericanOptions = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.underlyingAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, handleSetInstructions, index])

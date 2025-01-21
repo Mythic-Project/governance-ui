@@ -53,7 +53,7 @@ const DualDelegate = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [
     form,

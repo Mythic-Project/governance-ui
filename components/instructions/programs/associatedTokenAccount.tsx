@@ -15,14 +15,14 @@ export const ATA_PROGRAM_INSTRUCTIONS = {
     getDataUI: (
       _connection: Connection,
       _data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const ata = accounts[1].pubkey.toString()
       const tokenMint = accounts[3].pubkey.toString()
       const tokenName =
         SPL_TOKENS[
           Object.keys(SPL_TOKENS).find(
-            (name) => SPL_TOKENS[name].mint?.toString() === tokenMint
+            (name) => SPL_TOKENS[name].mint?.toString() === tokenMint,
           )!
         ]?.name ?? 'unknown'
 

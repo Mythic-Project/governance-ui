@@ -120,7 +120,7 @@ export default function FormPage({
           query: query?.cluster ? { cluster: query.cluster } : {},
         },
         undefined,
-        { shallow: true }
+        { shallow: true },
       )
     } else {
       const previousStep = steps

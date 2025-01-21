@@ -31,12 +31,12 @@ const ParamsView = ({ activeGovernance }) => {
     ?.minCommunityTokensToCreateProposal
     ? mint &&
       DISABLED_VOTER_WEIGHT.eq(
-        activeGovernance.account.config.minCommunityTokensToCreateProposal
+        activeGovernance.account.config.minCommunityTokensToCreateProposal,
       )
       ? 'Disabled'
       : fmtMintAmount(
           mint,
-          activeGovernance?.account?.config?.minCommunityTokensToCreateProposal
+          activeGovernance?.account?.config?.minCommunityTokensToCreateProposal,
         )
     : 'calculating...'
 
@@ -44,12 +44,12 @@ const ParamsView = ({ activeGovernance }) => {
     ?.minCouncilTokensToCreateProposal
     ? mint &&
       DISABLED_VOTER_WEIGHT.eq(
-        activeGovernance.account.config.minCouncilTokensToCreateProposal
+        activeGovernance.account.config.minCouncilTokensToCreateProposal,
       )
       ? 'Disabled'
       : fmtMintAmount(
           councilMint,
-          activeGovernance?.account?.config?.minCouncilTokensToCreateProposal
+          activeGovernance?.account?.config?.minCouncilTokensToCreateProposal,
         )
     : 'calculating...'
 
@@ -65,7 +65,7 @@ const ParamsView = ({ activeGovernance }) => {
             label="Max Voting Time"
             padding
             val={getFormattedStringFromDays(
-              activeGovernance.account.config.baseVotingTime / SECS_PER_DAY
+              activeGovernance.account.config.baseVotingTime / SECS_PER_DAY,
             )}
           />
           {communityMint && (
@@ -93,7 +93,7 @@ const ParamsView = ({ activeGovernance }) => {
                 label="Proposal Cool-off Time"
                 padding
                 val={`${getHoursFromTimestamp(
-                  activeGovernance.account.config.votingCoolOffTime
+                  activeGovernance.account.config.votingCoolOffTime,
                 )} hour(s)`}
               />
               <AddressField
@@ -153,7 +153,7 @@ const ParamsView = ({ activeGovernance }) => {
               disabled={
                 ownVoterWeight === undefined ||
                 !ownVoterWeight.canCreateProposal(
-                  activeGovernance.account.config
+                  activeGovernance.account.config,
                 )
               }
               tooltipMessage={
@@ -162,13 +162,13 @@ const ParamsView = ({ activeGovernance }) => {
               onClick={() => {
                 if (
                   ownVoterWeight?.canCreateProposal(
-                    activeGovernance.account.config
+                    activeGovernance.account.config,
                   )
                 ) {
                   router.push(
                     fmtUrlWithCluster(
-                      `/dao/${symbol}/treasury/governance/${activeGovernance.pubkey.toString()}/edit`
-                    )
+                      `/dao/${symbol}/treasury/governance/${activeGovernance.pubkey.toString()}/edit`,
+                    ),
                   )
                 }
               }}

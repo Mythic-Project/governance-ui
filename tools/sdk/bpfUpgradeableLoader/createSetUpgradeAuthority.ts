@@ -4,13 +4,13 @@ import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 export async function createSetUpgradeAuthority(
   programId: PublicKey,
   upgradeAuthority: PublicKey,
-  newUpgradeAuthority: PublicKey
+  newUpgradeAuthority: PublicKey,
 ) {
   const bpfUpgradableLoaderId = BPF_UPGRADE_LOADER_ID
 
   const [programDataAddress] = await PublicKey.findProgramAddress(
     [programId.toBuffer()],
-    bpfUpgradableLoaderId
+    bpfUpgradableLoaderId,
   )
 
   const keys = [

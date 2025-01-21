@@ -13,7 +13,7 @@ export const programVersionQueryKeys = {
 }
 
 export function useProgramVersionByIdQuery(
-  realmsProgramId: PublicKey | undefined
+  realmsProgramId: PublicKey | undefined,
 ) {
   const { connection } = useConnection()
   const query = useQuery({
@@ -21,7 +21,7 @@ export function useProgramVersionByIdQuery(
       realmsProgramId &&
       programVersionQueryKeys.byProgramId(
         connection.rpcEndpoint,
-        realmsProgramId
+        realmsProgramId,
       ),
     queryFn: () => getGovernanceProgramVersion(connection, realmsProgramId!),
     enabled: realmsProgramId !== undefined,
@@ -36,12 +36,12 @@ export function useProgramVersionByIdQuery(
 
 export const fetchProgramVersion = (
   connection: Connection,
-  programId: PublicKey
+  programId: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: programVersionQueryKeys.byProgramId(
       connection.rpcEndpoint,
-      programId
+      programId,
     ),
     queryFn: () => getGovernanceProgramVersion(connection, programId),
     staleTime: Number.MAX_SAFE_INTEGER,

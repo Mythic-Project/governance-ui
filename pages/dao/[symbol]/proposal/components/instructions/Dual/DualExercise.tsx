@@ -55,7 +55,7 @@ const DualExercise = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [
     form,

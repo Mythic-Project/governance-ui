@@ -27,7 +27,7 @@ export const followedRealms = gql`
 `;
 
 export const follow = gql`
-  mutation($realm: PublicKey!) {
+  mutation ($realm: PublicKey!) {
     followRealm(publicKey: $realm) {
       publicKey
       followedRealms {
@@ -42,7 +42,7 @@ export const follow = gql`
 `;
 
 export const unfollow = gql`
-  mutation($realm: PublicKey!) {
+  mutation ($realm: PublicKey!) {
     unfollowRealm(publicKey: $realm) {
       publicKey
       followedRealms {

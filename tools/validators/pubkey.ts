@@ -7,7 +7,7 @@ import { resolveDomain } from '@utils/domains'
 export const PublicKeyFromString = coerce(
   instance(PublicKey),
   string(),
-  (value) => new PublicKey(value)
+  (value) => new PublicKey(value),
 )
 
 export const tryParseKey = (key: string): PublicKey | null => {
@@ -19,13 +19,13 @@ export const tryParseKey = (key: string): PublicKey | null => {
 }
 
 export const tryParseDomain = async (
-  domain: string
+  domain: string,
 ): Promise<PublicKey | null> => {
   const { current: connection } = getConnectionContext('mainnet')
   try {
     const publicKey = await resolveDomain(
       connection,
-      domain.toLowerCase().trim()
+      domain.toLowerCase().trim(),
     )
 
     return publicKey ?? null

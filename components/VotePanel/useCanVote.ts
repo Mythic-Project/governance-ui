@@ -1,13 +1,15 @@
-import {useVoterTokenRecord, useVotingPop} from './hooks'
+import { useVoterTokenRecord, useVotingPop } from './hooks'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
-import {useProposalVoteRecordQuery} from '@hooks/queries/voteRecord'
-import {useRealmVoterWeightPlugins} from '@hooks/useRealmVoterWeightPlugins'
-import {useDelegatorAwareVoterWeight} from "@hooks/useDelegatorAwareVoterWeight";
+import { useProposalVoteRecordQuery } from '@hooks/queries/voteRecord'
+import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
+import { useDelegatorAwareVoterWeight } from '@hooks/useDelegatorAwareVoterWeight'
 
 const useHasAnyVotingPower = (role: 'community' | 'council' | undefined) => {
-  const voterWeight = useDelegatorAwareVoterWeight(role ?? 'community');
-  const {isReady } = useRealmVoterWeightPlugins(role)
-  return isReady && !!voterWeight?.value && voterWeight.value?.isZero() === false
+  const voterWeight = useDelegatorAwareVoterWeight(role ?? 'community')
+  const { isReady } = useRealmVoterWeightPlugins(role)
+  return (
+    isReady && !!voterWeight?.value && voterWeight.value?.isZero() === false
+  )
 }
 
 export const useCanVote = () => {
@@ -18,9 +20,11 @@ export const useCanVote = () => {
 
   const { data: ownVoteRecord } = useProposalVoteRecordQuery('electoral')
   const voterTokenRecord = useVoterTokenRecord()
-  const { plugins } = useRealmVoterWeightPlugins(votingPop);
+  const { plugins } = useRealmVoterWeightPlugins(votingPop)
 
-  const hasAllVoterWeightRecords = (plugins?.voterWeight ?? []).every((plugin) => plugin.weights !== undefined)
+  const hasAllVoterWeightRecords = (plugins?.voterWeight ?? []).every(
+    (plugin) => plugin.weights !== undefined,
+  )
   const isVoteCast = !!ownVoteRecord?.found
 
   const hasMinAmountToVote = useHasAnyVotingPower(votingPop)

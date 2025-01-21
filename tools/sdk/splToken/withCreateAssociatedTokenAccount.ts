@@ -9,14 +9,14 @@ export const withCreateAssociatedTokenAccount = async (
   instructions: TransactionInstruction[],
   mintPk: PublicKey,
   ownerPk: PublicKey,
-  payerPk: PublicKey
+  payerPk: PublicKey,
 ) => {
   const ataPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
     mintPk,
     ownerPk, // owner
-    true
+    true,
   )
 
   instructions.push(
@@ -26,8 +26,8 @@ export const withCreateAssociatedTokenAccount = async (
       mintPk,
       ataPk,
       ownerPk,
-      payerPk
-    )
+      payerPk,
+    ),
   )
 
   return ataPk

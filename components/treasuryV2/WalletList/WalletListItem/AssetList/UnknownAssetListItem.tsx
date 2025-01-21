@@ -33,7 +33,7 @@ export default function UnknownAssetListItem(props: Props) {
               'rounded-full',
               'text-sm',
               'text-fgd-1',
-              'w-6'
+              'w-6',
             )}
           >
             {formatNumber(props.count, undefined, { maximumFractionDigits: 0 })}
@@ -48,7 +48,7 @@ export default function UnknownAssetListItem(props: Props) {
           React.cloneElement(props.thumbnail, {
             className: cx(
               props.thumbnail.props.className,
-              'h-6 w-6 stroke-fgd-1'
+              'h-6 w-6 stroke-fgd-1',
             ),
           })
         ) : (

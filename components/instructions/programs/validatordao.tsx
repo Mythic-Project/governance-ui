@@ -4,7 +4,7 @@ import { AccountMetaData } from '@solana/spl-governance'
 import BigNumber from 'bignumber.js'
 
 export const SOLANA_VALIDATOR_DAO_PROGRAM_ID = new PublicKey(
-  'AwyKDr1Z5BfdvK3jX1UWopyjsJSV5cq4cuJpoYLofyEn'
+  'AwyKDr1Z5BfdvK3jX1UWopyjsJSV5cq4cuJpoYLofyEn',
 )
 
 export const VALIDATORDAO_INSTRUCTIONS = {
@@ -28,13 +28,13 @@ export const VALIDATORDAO_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         try {
           const seed = data[8]
           const amountArray = data.slice(9)
           const amount = new BigNumber(
-            new BN(amountArray, 'le').toString()
+            new BN(amountArray, 'le').toString(),
           ).shiftedBy(9)
           return (
             <>

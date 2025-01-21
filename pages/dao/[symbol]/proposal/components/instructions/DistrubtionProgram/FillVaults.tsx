@@ -88,7 +88,7 @@ const FillVaults = ({
           .nullable()
           .required('Program governed account is required'),
       }),
-    []
+    [],
   )
 
   const getInstruction = useCallback(async () => {
@@ -106,7 +106,7 @@ const FillVaults = ({
       for (const t of transfers.filter((x) => x.amount)) {
         const mintAmount = parseMintNaturalAmountFromDecimal(
           t.amount,
-          t.decimals
+          t.decimals,
         )
         const transferIx = Token.createTransferInstruction(
           TOKEN_PROGRAM_ID,
@@ -114,10 +114,10 @@ const FillVaults = ({
           t.to,
           form.governedAccount.extensions.transferAddress!,
           [],
-          new u64(mintAmount.toString())
+          new u64(mintAmount.toString()),
         )
         additionalSerializedInstructions.push(
-          serializeInstructionToBase64(transferIx!)
+          serializeInstructionToBase64(transferIx!),
         )
       }
       serializedInstruction = ''
@@ -134,7 +134,7 @@ const FillVaults = ({
   }, [form, schema, transfers, vaults, wallet?.publicKey])
   const handleSelectDistribution = async (number: number) => {
     const distribution = await client?.loadDistribution(
-      Number(`${SEASON_PREFIX}${number}`)
+      Number(`${SEASON_PREFIX}${number}`),
     )
     setDistribution(distribution)
   }
@@ -145,12 +145,12 @@ const FillVaults = ({
       const mint = distribution.metadata!.mints[i]
       const type = mint.properties.type
       const vaultAddress = distribution.findVaultAddress(
-        new PublicKey(mint.address)
+        new PublicKey(mint.address),
       )
       try {
         const tokenAccount = await tryGetTokenAccount(
           connection.current,
-          vaultAddress
+          vaultAddress,
         )
 
         v[vaultAddress.toString()] = {
@@ -177,8 +177,8 @@ const FillVaults = ({
       new AnchorProvider(
         connection.current,
         new EmptyWallet(Keypair.generate()),
-        { skipPreflight: true }
-      )
+        { skipPreflight: true },
+      ),
     )
     setClient(client)
   }, [])
@@ -193,8 +193,8 @@ const FillVaults = ({
               assetAccount.isToken &&
               assetAccount.extensions.mint?.publicKey.equals(v.mint) &&
               assetAccount.extensions.token?.account.owner.equals(
-                form.governedAccount!.extensions.transferAddress!
-              )
+                form.governedAccount!.extensions.transferAddress!,
+              ),
           )
           const fromNft = nfts?.find((x) => x.id === v.mint.toBase58())
 
@@ -211,7 +211,7 @@ const FillVaults = ({
                     TOKEN_PROGRAM_ID.toBuffer(),
                     new PublicKey(fromNft!.id).toBuffer(),
                   ],
-                  ASSOCIATED_TOKEN_PROGRAM_ID
+                  ASSOCIATED_TOKEN_PROGRAM_ID,
                 )[0],
             to: v.publicKey,
             amount: '',
@@ -230,7 +230,7 @@ const FillVaults = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
   }, [form, getInstruction, handleSetInstructions, index, vaults])
 
@@ -305,7 +305,7 @@ const FillVaults = ({
                                         }
                                       }
                                       return x
-                                    }
+                                    },
                                   )
                                   setTransfers(newTrans)
                                 }}

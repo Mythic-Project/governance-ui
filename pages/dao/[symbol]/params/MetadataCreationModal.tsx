@@ -30,7 +30,7 @@ import { Metaplex } from '@metaplex-foundation/js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 interface GovernanceConfigForm {
   mintAccount: AssetAccount | undefined
@@ -52,7 +52,7 @@ const MetadataCreationModal = ({
 }) => {
   const router = useRouter()
   const realm = useRealmQuery().data?.result
-  const {symbol, realmInfo } = useRealm()
+  const { symbol, realmInfo } = useRealm()
   const programId: PublicKey | undefined = realmInfo?.programId
 
   const { assetAccounts } = useGovernanceAssets()
@@ -66,7 +66,8 @@ const MetadataCreationModal = ({
   const { handleCreateProposal } = useCreateProposal()
   const [formErrors, setFormErrors] = useState({})
   const [creatingProposal, setCreatingProposal] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [selectedImage, setSelectedImage] = useState<null | string>(null)
   const [imageFile, setImageFile] = useState<null | Buffer>(null)
   const [mintAuthority, setMintAuthority] = useState<
@@ -162,7 +163,7 @@ const MetadataCreationModal = ({
             governance: form.mintAccount?.governance,
           })
           const url = fmtUrlWithCluster(
-            `/dao/${symbol}/proposal/${proposalAddress}`
+            `/dao/${symbol}/proposal/${proposalAddress}`,
           )
           router.push(url)
         } else {
@@ -184,7 +185,7 @@ const MetadataCreationModal = ({
       wallet,
       {
         providerUrl: connection.current.rpcEndpoint,
-      }
+      },
     )
     try {
       await bundlr.utils.getBundlerAddress('solana')
@@ -247,7 +248,7 @@ const MetadataCreationModal = ({
 
     const price = await bundlr.utils.getPrice(
       'solana',
-      tokenMetadataJson.length
+      tokenMetadataJson.length,
     )
     const amount = bundlr.utils.unitConverter(price)
     const amountNum = amount.toNumber()
@@ -289,7 +290,7 @@ const MetadataCreationModal = ({
     const currentGovernanceSolTreasury = assetAccounts.filter(
       (x) =>
         x.governance.pubkey.toString() ===
-          form.mintAccount?.governance.pubkey.toString() && x.isSol
+          form.mintAccount?.governance.pubkey.toString() && x.isSol,
     )
     if (currentGovernanceSolTreasury.length !== 0) {
       setShouldMakeSolTreasury(false)
@@ -402,12 +403,12 @@ const MetadataCreationModal = ({
         ></Textarea>
 
         {shouldShowVoteByCouncilToggle && (
-            <VoteBySwitch
-                checked={voteByCouncil}
-                onChange={() => {
-                  setVoteByCouncil(!voteByCouncil)
-                }}
-            ></VoteBySwitch>
+          <VoteBySwitch
+            checked={voteByCouncil}
+            onChange={() => {
+              setVoteByCouncil(!voteByCouncil)
+            }}
+          ></VoteBySwitch>
         )}
       </div>
       <div className="flex justify-end pt-6 mt-6 space-x-4 border-t border-fgd-4">

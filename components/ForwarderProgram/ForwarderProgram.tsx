@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react'
 export function wrapWithForwarder(
   ix: TransactionInstruction,
   executableBy: PublicKey,
-  executableUntilUnixTs: number
+  executableUntilUnixTs: number,
 ): TransactionInstruction {
   return new TransactionInstruction({
     keys: [
@@ -46,13 +46,13 @@ export const useForwarderProgramHelpers = () => {
         return wrapWithForwarder(
           ix,
           new PublicKey(form.wallet),
-          Number(form.timestamp)
+          Number(form.timestamp),
         )
       } else {
         return ix
       }
     },
-    [form]
+    [form],
   )
   return { form, setForm, withForwarderWrapper }
 }

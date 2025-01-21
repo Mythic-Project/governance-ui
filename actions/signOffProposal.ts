@@ -16,7 +16,7 @@ export const signOffProposal = async (
   { connection, wallet, programId }: RpcContext,
   realmPk: PublicKey,
   proposal: ProgramAccount<Proposal>,
-  signatoryRecord: ProgramAccount<SignatoryRecord>
+  signatoryRecord: ProgramAccount<SignatoryRecord>,
 ) => {
   const instructions: TransactionInstruction[] = []
   const signers: Keypair[] = []
@@ -34,7 +34,7 @@ export const signOffProposal = async (
     proposal.pubkey,
     signatoryRecord.account.signatory,
     signatoryRecord?.pubkey,
-    undefined
+    undefined,
   )
 
   const transaction = new Transaction()

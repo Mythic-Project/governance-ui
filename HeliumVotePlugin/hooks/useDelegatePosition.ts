@@ -57,7 +57,7 @@ export const useDelegatePosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -68,7 +68,7 @@ export const useDelegatePosition = () => {
               position: position.pubkey,
               subDao: subDao.pubkey,
             })
-            .instruction()
+            .instruction(),
         )
 
         notify({ message: 'Delegating' })
@@ -78,7 +78,7 @@ export const useDelegatePosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -94,7 +94,7 @@ export const useDelegatePosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

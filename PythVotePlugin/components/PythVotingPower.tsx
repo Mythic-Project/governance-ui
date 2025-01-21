@@ -14,7 +14,8 @@ import { GoverningTokenType } from '@solana/spl-governance'
 import usePythScalingFactor from '@hooks/PythNetwork/useScalingFactor'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 
-export const PYTH_INSTRUCTIONS = "You can deposit Pyth tokens at https://staking.pyth.network/. If you previously deposited tokens on https://app.realms.today/dao/PYTH, use the button below to withdraw them immediately. Those tokens have no voting power."
+export const PYTH_INSTRUCTIONS =
+  'You can deposit Pyth tokens at https://staking.pyth.network/. If you previously deposited tokens on https://app.realms.today/dao/PYTH, use the button below to withdraw them immediately. Those tokens have no voting power.'
 
 interface Props {
   className?: string
@@ -32,8 +33,7 @@ export default function PythVotingPower({
   const realm = useRealmQuery().data?.result
   const realmConfig = useRealmConfigQuery().data?.result
 
-  const wallet = useWalletOnePointOh();
-
+  const wallet = useWalletOnePointOh()
 
   const { connection } = useConnection()
 
@@ -45,11 +45,12 @@ export default function PythVotingPower({
   const mintInfo = useMintInfoByPubkeyQuery(relevantMint).data?.result
 
   const { result: personalAmount } = useAsync(
-    async () => wallet?.publicKey && getPythGovPower(connection, wallet?.publicKey),
-    [connection, wallet]
+    async () =>
+      wallet?.publicKey && getPythGovPower(connection, wallet?.publicKey),
+    [connection, wallet],
   )
 
-  const pythScalingFactor: number | undefined = usePythScalingFactor();
+  const pythScalingFactor: number | undefined = usePythScalingFactor()
 
   const totalAmount = personalAmount ?? new BN(0)
 
@@ -57,12 +58,12 @@ export default function PythVotingPower({
     () =>
       mintInfo && totalAmount !== undefined
         ? new BigNumber(totalAmount.toString())
-          .multipliedBy(pythScalingFactor ?? 1)
-          .shiftedBy(-mintInfo.decimals)
-          .integerValue()
-          .toString()
+            .multipliedBy(pythScalingFactor ?? 1)
+            .shiftedBy(-mintInfo.decimals)
+            .integerValue()
+            .toString()
         : undefined,
-    [totalAmount, mintInfo]
+    [totalAmount, mintInfo],
   )
 
   const tokenName =
@@ -71,16 +72,16 @@ export default function PythVotingPower({
   const disabled =
     role === 'community'
       ? realmConfig?.account.communityTokenConfig.tokenType ===
-      GoverningTokenType.Dormant
+        GoverningTokenType.Dormant
       : realmConfig?.account.councilTokenConfig.tokenType ===
-      GoverningTokenType.Dormant
+        GoverningTokenType.Dormant
 
   return (
     <div
       className={clsx(
         props.className,
         hideIfZero && totalAmount.isZero() && 'hidden',
-        disabled && 'hidden'
+        disabled && 'hidden',
       )}
     >
       <div className={'p-3 rounded-md bg-bkg-1'}>

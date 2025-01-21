@@ -11,7 +11,7 @@ const useTreasuryAddressForGovernance = (governance: PublicKey | undefined) => {
       governance && realm?.owner
         ? await getNativeTreasuryAddress(realm.owner, governance)
         : undefined,
-    [governance, realm?.owner]
+    [governance, realm?.owner],
   )
 }
 

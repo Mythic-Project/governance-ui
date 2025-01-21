@@ -23,7 +23,7 @@ export const useChatMessagesQuery = () => {
       return getGovernanceChatMessages(
         connection.current,
         GOVERNANCE_CHAT_PROGRAM_ID,
-        proposalPk
+        proposalPk,
       )
     },
     enabled,
@@ -39,9 +39,9 @@ const DiscussionPanel = () => {
     () =>
       chatMessages?.sort(
         (m1, m2) =>
-          m2.account.postedAt.toNumber() - m1.account.postedAt.toNumber()
+          m2.account.postedAt.toNumber() - m1.account.postedAt.toNumber(),
       ),
-    [chatMessages]
+    [chatMessages],
   )
 
   return (

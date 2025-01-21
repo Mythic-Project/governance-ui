@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 function parseTransactions(
   transactions: ProgramAccount<ProposalTransaction>[],
-  proposal: ProgramAccount<Proposal>
+  proposal: ProgramAccount<Proposal>,
 ) {
   const executed: ProgramAccount<ProposalTransaction>[] = []
   const ready: ProgramAccount<ProposalTransaction>[] = []
@@ -52,7 +52,7 @@ function parseTransactions(
     executed,
     // Order instructions by instruction index
     ready: ready.sort(
-      (a, b) => a.account.instructionIndex - b.account.instructionIndex
+      (a, b) => a.account.instructionIndex - b.account.instructionIndex,
     ),
     notReady,
     nextExecuteAt,
@@ -62,7 +62,7 @@ function parseTransactions(
 /** @deprecated this needs to be rewritten */
 export default function useProposalTransactions(
   allTransactions: ProgramAccount<ProposalTransaction>[] = [],
-  proposal?: ProgramAccount<Proposal>
+  proposal?: ProgramAccount<Proposal>,
 ) {
   const [executed, setExecuted] = useState<
     ProgramAccount<ProposalTransaction>[]
@@ -83,7 +83,7 @@ export default function useProposalTransactions(
 
         const { executed, ready, notReady, nextExecuteAt } = parseTransactions(
           allTransactions,
-          proposal
+          proposal,
         )
         setExecuted(executed)
         setReady(ready)

@@ -13,14 +13,14 @@ import {
 } from '@solana/spl-token'
 import BN from 'bn.js'
 import { fetchProgramVersion } from '@hooks/queries/useProgramVersionQuery'
-import queryClient from "@hooks/queries/queryClient";
-import {useJoinRealm} from "@hooks/useJoinRealm";
+import queryClient from '@hooks/queries/queryClient'
+import { useJoinRealm } from '@hooks/useJoinRealm'
 import { SequenceType, sendTransactionsV3 } from '@utils/sendTransactions'
 
 export const useDepositCallback = (
-  role: 'community' | 'council' | 'undefined'
+  role: 'community' | 'council' | 'undefined',
 ) => {
-  const { handleRegister } = useJoinRealm();
+  const { handleRegister } = useJoinRealm()
   const wallet = useWalletOnePointOh()
   const walletPk = wallet?.publicKey ?? undefined
   const realmPk = useSelectedRealmPubkey()
@@ -42,24 +42,34 @@ export const useDepositCallback = (
         TOKEN_PROGRAM_ID,
         mint,
         walletPk, // owner
-        true
+        true,
       )
 
       const instructions: TransactionInstruction[] = []
       const signers: Keypair[] = []
 
       // Checks if the connected wallet is the Squads Multisig extension (or any PDA wallet for future reference). If it is the case, it will not use an ephemeral signer.
-      const transferAuthority = wallet?.name == "SquadsX"
-        ? undefined
-        : approveTokenTransfer(instructions, [], userAtaPk, wallet!.publicKey!, amount);
+      const transferAuthority =
+        wallet?.name == 'SquadsX'
+          ? undefined
+          : approveTokenTransfer(
+              instructions,
+              [],
+              userAtaPk,
+              wallet!.publicKey!,
+              amount,
+            )
 
       if (transferAuthority) {
-        signers.push(transferAuthority);
+        signers.push(transferAuthority)
       }
 
       const programVersion = await fetchProgramVersion(connection, realm.owner)
 
-      const publicKeyToUse = transferAuthority != undefined && wallet?.publicKey != null ? transferAuthority.publicKey : wallet?.publicKey;
+      const publicKeyToUse =
+        transferAuthority != undefined && wallet?.publicKey != null
+          ? transferAuthority.publicKey
+          : wallet?.publicKey
 
       if (!publicKeyToUse) {
         throw new Error()
@@ -75,24 +85,26 @@ export const useDepositCallback = (
         walletPk,
         publicKeyToUse,
         walletPk,
-        amount
+        amount,
       )
 
       // instructions required to create voter weight records for any plugins connected to the realm
       // no need to create the TOR, as it is already created by the deposit.
       const pluginRegisterInstructions = await handleRegister(false)
 
-      const txes = [[...instructions, ...pluginRegisterInstructions]].map((txBatch) => {
-        return {
-          instructionsSet: txBatch.map((x) => {
-            return {
-              transactionInstruction: x,
-              signers: signers,
-            }
-          }),
-          sequenceType: SequenceType.Sequential,
-        }
-      })
+      const txes = [[...instructions, ...pluginRegisterInstructions]].map(
+        (txBatch) => {
+          return {
+            instructionsSet: txBatch.map((x) => {
+              return {
+                transactionInstruction: x,
+                signers: signers,
+              }
+            }),
+            sequenceType: SequenceType.Sequential,
+          }
+        },
+      )
 
       await sendTransactionsV3({
         connection,
@@ -100,11 +112,11 @@ export const useDepositCallback = (
         transactionInstructions: txes,
       })
 
-        // Force the UI to recalculate voter weight
-        queryClient.invalidateQueries({
-            queryKey: ['calculateVoterWeight'],
-        })
+      // Force the UI to recalculate voter weight
+      queryClient.invalidateQueries({
+        queryKey: ['calculateVoterWeight'],
+      })
     },
-    [connection, realmPk, role, wallet, walletPk]
+    [connection, realmPk, role, wallet, walletPk],
   )
 }

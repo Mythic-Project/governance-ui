@@ -29,21 +29,20 @@ const useNewWalletCallback = (
 ) => {
   const wallet = useWalletOnePointOh();
   const connection = useLegacyConnectionContext();
-  const {
-    voterWeightPkForWallet,
-    updateVoterWeightRecords,
-  } = useRealmVoterWeightPlugins();
+  const { voterWeightPkForWallet, updateVoterWeightRecords } =
+    useRealmVoterWeightPlugins();
   const voterWeightPk =
     wallet?.publicKey && voterWeightPkForWallet(wallet.publicKey);
   const programVersion = useProgramVersion();
   const realm = useRealmQuery().data?.result;
   const { result: ownVoterWeight } = useLegacyVoterWeight();
 
-  const tokenOwnerRecord = ownVoterWeight?.canCreateGovernanceUsingCouncilTokens()
-    ? ownVoterWeight.councilTokenRecord
-    : realm && ownVoterWeight?.canCreateGovernanceUsingCommunityTokens(realm)
-    ? ownVoterWeight.communityTokenRecord
-    : undefined;
+  const tokenOwnerRecord =
+    ownVoterWeight?.canCreateGovernanceUsingCouncilTokens()
+      ? ownVoterWeight.councilTokenRecord
+      : realm && ownVoterWeight?.canCreateGovernanceUsingCommunityTokens(realm)
+      ? ownVoterWeight.communityTokenRecord
+      : undefined;
 
   return useCallback(async () => {
     if (rules === undefined) throw new Error();
@@ -61,8 +60,8 @@ const useNewWalletCallback = (
 
     const instructions: TransactionInstruction[] = [];
     const createNftTicketsIxs: TransactionInstruction[] = [];
-    
-    if (voterWeightPk) { 
+
+    if (voterWeightPk) {
       const { pre: preIx, post: postIx } = await updateVoterWeightRecords(
         wallet.publicKey,
         convertTypeToVoterWeightAction('createGovernance'),
@@ -70,7 +69,7 @@ const useNewWalletCallback = (
       instructions.push(...preIx);
       createNftTicketsIxs.push(...postIx);
     }
-    
+
     const governanceAddress = await withCreateGovernance(
       instructions,
       realm.owner,

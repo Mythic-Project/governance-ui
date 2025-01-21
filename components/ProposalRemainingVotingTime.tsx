@@ -8,7 +8,7 @@ import { ntext } from '@utils/ntext'
 export const diffTime = (
   ended: boolean,
   now: dayjs.Dayjs,
-  end: dayjs.Dayjs
+  end: dayjs.Dayjs,
 ) => {
   if (ended) {
     return {
@@ -65,7 +65,7 @@ const Divider = () => (
       'opacity-30',
       'text-[1.875rem]',
       'text-white',
-      'w-5'
+      'w-5',
     )}
   >
     :
@@ -81,10 +81,10 @@ interface Props {
 
 export default function ProposalRemainingVotingTime(props: Props) {
   const voteTime = props.proposal.account.getTimeToVoteEnd(
-    props.governance.account
+    props.governance.account,
   )
   const votingEnded = props.proposal.account.hasVoteTimeEnded(
-    props.governance.account
+    props.governance.account,
   )
 
   const [now, setNow] = useState(dayjs())
@@ -101,7 +101,7 @@ export default function ProposalRemainingVotingTime(props: Props) {
   const { days, hours, minutes, seconds } = diffTime(
     votingEnded,
     now,
-    end.current
+    end.current,
   )
 
   return (
@@ -115,7 +115,7 @@ export default function ProposalRemainingVotingTime(props: Props) {
             'text-3xl',
             'font-bold',
             'text-fgd-3',
-            props.align === 'right' && 'text-right'
+            props.align === 'right' && 'text-right',
           )}
         >
           Voting has ended
@@ -124,7 +124,7 @@ export default function ProposalRemainingVotingTime(props: Props) {
         <div
           className={classNames(
             'flex',
-            props.align === 'right' && 'justify-end'
+            props.align === 'right' && 'justify-end',
           )}
         >
           <Cell hideLeadingZeros count={days} label="day" />

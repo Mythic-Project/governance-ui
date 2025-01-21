@@ -32,10 +32,8 @@ const Members = () => {
 
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
-  const {
-    canUseMintInstruction,
-    canMintRealmCouncilToken,
-  } = useGovernanceAssets()
+  const { canUseMintInstruction, canMintRealmCouncilToken } =
+    useGovernanceAssets()
   const [paginatedMembers, setPaginatedMembers] = useState<Member[]>([])
   const [activeMember, setActiveMember] = useState<Member>()
   const [openAddMemberModal, setOpenAddMemberModal] = useState(false)
@@ -54,13 +52,13 @@ const Members = () => {
 
   // if this is not vanilla or NFT, this view is used only to show council. filter accordingly.
   const councilOnly = !(kind === 'vanilla' || kind === 'NFT')
-  
+
   const filterMembers = (v) => {
     if (activeMembers !== undefined) {
       setSearchString(v)
       if (v.length > 0) {
-        const filtered = activeMembers.filter((r) =>
-          r.walletAddress?.toLowerCase().includes(v.toLowerCase())
+        const filtered = activeMembers.filter(
+          (r) => r.walletAddress?.toLowerCase().includes(v.toLowerCase()),
         )
         setFilteredMembers(filtered)
       } else {
@@ -86,7 +84,7 @@ const Members = () => {
   const paginateMembers = (page) => {
     return filteredMembers.slice(
       page * membersPerPage,
-      (page + 1) * membersPerPage
+      (page + 1) * membersPerPage,
     )
   }
   useEffect(() => {
@@ -100,7 +98,7 @@ const Members = () => {
     pagination?.current?.setPage(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [JSON.stringify(filteredMembers)])
-  
+
   return (
     <div className="bg-bkg-2 rounded-lg p-4 md:p-6">
       {openAddMemberModal && (
@@ -113,12 +111,13 @@ const Members = () => {
           <AddCouncilMemberForm close={() => setOpenAddMemberModal(false)} />
         </Modal>
       )}
-      {!councilMode && councilOnly ?
-        <VsrMembers 
-          councilMode={councilMode} 
-          councilOnly={councilOnly} 
-          setCouncilMode={setCouncilMode} 
-        /> :
+      {!councilMode && councilOnly ? (
+        <VsrMembers
+          councilMode={councilMode}
+          councilOnly={councilOnly}
+          setCouncilMode={setCouncilMode}
+        />
+      ) : (
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12">
             <div className="mb-4">
@@ -131,20 +130,23 @@ const Members = () => {
                 ) : null}
                 <div>
                   <p>{realmInfo?.displayName}</p>
-                  <h1 className="mb-0">{
-                    councilOnly && councilMode ? 'Council ' :
-                    councilOnly ? 'All' : ''
-                    } Members
+                  <h1 className="mb-0">
+                    {councilOnly && councilMode
+                      ? 'Council '
+                      : councilOnly
+                      ? 'All'
+                      : ''}{' '}
+                    Members
                   </h1>
                 </div>
-                {councilOnly &&
-                  <div 
-                    className="mt-6 ml-4 text-md underline cursor-pointer" 
+                {councilOnly && (
+                  <div
+                    className="mt-6 ml-4 text-md underline cursor-pointer"
                     onClick={() => setCouncilMode(!councilMode)}
                   >
                     {councilMode ? 'All' : 'Council'} Members
                   </div>
-                }
+                )}
               </div>
               <div className="flex space-x-3">
                 <div className="bg-bkg-1 px-4 py-2 rounded-md w-full">
@@ -204,7 +206,7 @@ const Members = () => {
                     // @ts-ignore
                     activeMembers.find((m) => {
                       return m.walletAddress === v
-                    })
+                    }),
                   )
                 }
                 placeholder="Please select..."
@@ -246,7 +248,7 @@ const Members = () => {
             ) : null}
           </div>
         </div>
-      }
+      )}
     </div>
   )
 }

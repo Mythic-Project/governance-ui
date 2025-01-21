@@ -18,6 +18,6 @@ export default function (connection: ConnectionContext) {
   return new PaymentStreaming(
     connection.current,
     streamV2ProgramAddress,
-    'confirmed'
+    'confirmed',
   )
 }

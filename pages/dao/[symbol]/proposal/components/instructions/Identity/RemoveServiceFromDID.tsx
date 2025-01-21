@@ -65,16 +65,14 @@ const RemoveServiceFromDID = ({
         .instructions()
 
       serializedInstructions = removeServiceIxs.map(
-        serializeInstructionToBase64
+        serializeInstructionToBase64,
       )
     }
 
     // Realms appears to put additionalSerializedInstructions first, so reverse the order of the instructions
     // to ensure the resize function comes first.
-    const [
-      serializedInstruction,
-      ...additionalSerializedInstructions
-    ] = serializedInstructions.reverse()
+    const [serializedInstruction, ...additionalSerializedInstructions] =
+      serializedInstructions.reverse()
 
     return {
       serializedInstruction,
@@ -86,7 +84,7 @@ const RemoveServiceFromDID = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
   }, [form])
   const schema = yup.object().shape({
@@ -99,7 +97,7 @@ const RemoveServiceFromDID = ({
       realm,
       governance || undefined,
       assetAccounts,
-      shouldBeGoverned
+      shouldBeGoverned,
     ),
     instructionInputs.did,
     instructionInputs.alias,

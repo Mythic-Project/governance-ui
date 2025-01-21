@@ -19,7 +19,9 @@ const RealmHeader = () => {
   const { realmInfo, symbol, vsrMode } = useRealm()
 
   const explorerHost = getRealmExplorerHost(realmInfo)
-  const realmUrl = `https://${explorerHost}/account/${realmInfo?.realmId.toBase58()}${connection.rpcEndpoint.includes("devnet") ? "?cluster=devnet" : ""}`
+  const realmUrl = `https://${explorerHost}/account/${realmInfo?.realmId.toBase58()}${
+    connection.rpcEndpoint.includes('devnet') ? '?cluster=devnet' : ''
+  }`
 
   const [isBackNavVisible, setIsBackNavVisible] = useState(true)
 

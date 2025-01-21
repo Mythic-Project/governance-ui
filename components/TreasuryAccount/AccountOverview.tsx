@@ -24,7 +24,7 @@ export const StrategyCard = ({
     noProtocol,
   } = strat
   const currentPositionFtm = new BigNumber(
-    currentDeposits.toFixed(2)
+    currentDeposits.toFixed(2),
   ).toFormat()
   return (
     <div className="flex items-center justify-between p-4 mt-2 border rounded-md border-fgd-4">

@@ -1,4 +1,8 @@
-import { GovernanceAccountType, ProposalState, VoteType } from '@solana/spl-governance'
+import {
+  GovernanceAccountType,
+  ProposalState,
+  VoteType,
+} from '@solana/spl-governance'
 import { BanIcon } from '@heroicons/react/solid'
 
 import Tooltip from '@components/Tooltip'
@@ -29,8 +33,9 @@ const VotePanel = () => {
     proposal.account.state !== ProposalState.Draft &&
     !isVoteCast
 
-  const isMulti = proposal?.account.voteType !== VoteType.SINGLE_CHOICE
-    && proposal?.account.accountType === GovernanceAccountType.ProposalV2
+  const isMulti =
+    proposal?.account.voteType !== VoteType.SINGLE_CHOICE &&
+    proposal?.account.accountType === GovernanceAccountType.ProposalV2
 
   return (
     <>

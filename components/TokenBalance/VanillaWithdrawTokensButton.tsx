@@ -12,7 +12,10 @@ import {
   GoverningTokenType,
   ProgramAccount,
 } from '@solana/spl-governance'
-import { getProposalsAtVotingStateByTOR, getUnrelinquishedVoteRecords } from '@models/api'
+import {
+  getProposalsAtVotingStateByTOR,
+  getUnrelinquishedVoteRecords,
+} from '@models/api'
 import { withRelinquishVote } from '@solana/spl-governance'
 import { withWithdrawGoverningTokens } from '@solana/spl-governance'
 import { SecondaryButton } from '../Button'
@@ -34,7 +37,7 @@ import queryClient from '@hooks/queries/queryClient'
 import { proposalQueryKeys } from '@hooks/queries/proposal'
 import asFindable from '@utils/queries/asFindable'
 import { fetchTokenAccountByPubkey } from '@hooks/queries/tokenAccount'
-import {useVotingClients} from "@hooks/useVotingClients";
+import { useVotingClients } from '@hooks/useVotingClients'
 import { sendTransactionsV3, SequenceType } from '@utils/sendTransactions'
 import { useState } from 'react'
 
@@ -54,7 +57,7 @@ const VanillaWithdrawTokensButton = ({
   const ownCouncilTokenRecord = useUserCouncilTokenOwnerRecord().data?.result
   const realm = useRealmQuery().data?.result
   const config = useRealmConfigQuery().data?.result
-  const votingClient = useVotingClients()(role);
+  const votingClient = useVotingClients()(role)
 
   const relevantTokenConfig =
     role === 'community'
@@ -83,9 +86,9 @@ const VanillaWithdrawTokensButton = ({
       : realm?.account.config.councilMint
 
   const vetoMint =
-  role === 'community'
-    ? realm?.account.config.councilMint
-    : realm?.account.communityMint
+    role === 'community'
+      ? realm?.account.config.councilMint
+      : realm?.account.communityMint
 
   const withdrawAllTokens = async function () {
     const instructions: TransactionInstruction[] = []
@@ -96,57 +99,60 @@ const VanillaWithdrawTokensButton = ({
         const voteRecords = await getUnrelinquishedVoteRecords(
           connection,
           realmInfo!.programId,
-          depositTokenRecord!.account!.governingTokenOwner
+          depositTokenRecord!.account!.governingTokenOwner,
         )
-        
+
         for (const voteRecord of Object.values(voteRecords)) {
           const proposalQuery = await queryClient.fetchQuery({
             queryKey: proposalQueryKeys.byPubkey(
               connection.rpcEndpoint,
-              voteRecord.account.proposal
+              voteRecord.account.proposal,
             ),
             staleTime: 0,
             queryFn: () =>
               asFindable(() =>
-                getProposal(connection, voteRecord.account.proposal)
+                getProposal(connection, voteRecord.account.proposal),
               )(),
           })
-  
+
           const proposal = proposalQuery.result
           if (!proposal) {
             continue
           }
 
           if (voteRecord.account.vote?.veto) {
-            if (vetoMint && !proposal.account.governingTokenMint.equals(vetoMint)) {
-              continue;
+            if (
+              vetoMint &&
+              !proposal.account.governingTokenMint.equals(vetoMint)
+            ) {
+              continue
             }
           } else {
             if (!proposal.account.governingTokenMint.equals(depositMint!)) {
-              continue;
+              continue
             }
           }
-  
+
           const governance = (
             await fetchGovernanceByPubkey(
               connection,
-              proposal.account.governance
+              proposal.account.governance,
             )
           ).result
-  
+
           if (!governance) throw new Error('failed to fetch governance')
-  
+
           if (!governance.account.realm.equals(realm!.pubkey)) {
             continue
           }
-          
+
           if (proposal.account.getTimeToVoteEnd(governance.account) > 0) {
             notify({
               type: 'error',
               message: `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
             })
             throw new Error(
-              `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`
+              `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
             )
           } else {
             await withRelinquishVote(
@@ -160,49 +166,55 @@ const VanillaWithdrawTokensButton = ({
               depositMint!,
               voteRecord.pubkey,
               depositTokenRecord!.account.governingTokenOwner,
-              wallet!.publicKey!
+              wallet!.publicKey!,
             )
             await votingClient.withRelinquishVote(
               instructions,
               proposal,
               voteRecord.pubkey,
-              depositTokenRecord!.pubkey
+              depositTokenRecord!.pubkey,
             )
           }
         }
       }
-  
+
       if (depositTokenRecord!.account.outstandingProposalCount > 0) {
         const activeProposals = await getProposalsAtVotingStateByTOR(
           connection,
           realmInfo!.programId,
-          depositTokenRecord!.pubkey
+          depositTokenRecord!.pubkey,
         )
-  
+
         for (const proposal of Object.values(activeProposals)) {
           const fetchedGovernances: ProgramAccount<Governance>[] = []
-          const isGovernanceFetched = fetchedGovernances.find(governance => governance.pubkey.equals(proposal.pubkey))
-  
-          const currentGovernance = isGovernanceFetched ? isGovernanceFetched : (
-            await fetchGovernanceByPubkey(
-              connection,
-              proposal.account.governance
-            )
-          ).result
-  
+          const isGovernanceFetched = fetchedGovernances.find((governance) =>
+            governance.pubkey.equals(proposal.pubkey),
+          )
+
+          const currentGovernance = isGovernanceFetched
+            ? isGovernanceFetched
+            : (
+                await fetchGovernanceByPubkey(
+                  connection,
+                  proposal.account.governance,
+                )
+              ).result
+
           if (!currentGovernance) throw new Error('failed to fetch governance')
-          
-          if(fetchedGovernances.indexOf(currentGovernance) === -1) {
+
+          if (fetchedGovernances.indexOf(currentGovernance) === -1) {
             fetchedGovernances.push(currentGovernance)
           }
-  
-          if (proposal.account.getTimeToVoteEnd(currentGovernance.account) > 0) {
+
+          if (
+            proposal.account.getTimeToVoteEnd(currentGovernance.account) > 0
+          ) {
             notify({
               type: 'error',
               message: `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on.`,
             })
             throw new Error(
-              `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on.`
+              `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on.`,
             )
           } else {
             await withFinalizeVote(
@@ -214,21 +226,21 @@ const VanillaWithdrawTokensButton = ({
               proposal.pubkey,
               proposal.account.tokenOwnerRecord,
               proposal.account.governingTokenMint,
-              maxVoterWeight
+              maxVoterWeight,
             )
           }
         }
       }
-  
+
       const ataPk = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
         depositMint!,
         wallet!.publicKey!,
-        true
+        true,
       )
       const ata = await fetchTokenAccountByPubkey(connection, ataPk)
-  
+
       if (!ata.found) {
         const ataIx = Token.createAssociatedTokenAccountInstruction(
           ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -236,11 +248,11 @@ const VanillaWithdrawTokensButton = ({
           depositMint!,
           ataPk,
           wallet!.publicKey!,
-          wallet!.publicKey! // fee payer
+          wallet!.publicKey!, // fee payer
         )
         instructions.push(ataIx)
       }
-  
+
       await withWithdrawGoverningTokens(
         instructions,
         realmInfo!.programId,
@@ -250,15 +262,14 @@ const VanillaWithdrawTokensButton = ({
           ? depositTokenAccount!.publicKey
           : new PublicKey(ataPk),
         depositTokenRecord!.account.governingTokenMint,
-        wallet!.publicKey!
+        wallet!.publicKey!,
       )
-  
+
       // Force the UI to recalculate voter weight
       queryClient.invalidateQueries({
         queryKey: ['calculateVoterWeight'],
       })
-  
-  
+
       try {
         const ixChunks = chunks(instructions, 8)
         for (const chunk of ixChunks.values()) {
@@ -272,11 +283,11 @@ const VanillaWithdrawTokensButton = ({
               sequenceType: SequenceType.Sequential,
             }
           })
-  
+
           await sendTransactionsV3({
             connection,
             wallet: wallet!,
-            transactionInstructions: txes
+            transactionInstructions: txes,
           })
         }
         setDisableButton(false)
@@ -286,13 +297,12 @@ const VanillaWithdrawTokensButton = ({
         notify({ type: 'error', message: `${ex}` })
         console.error("Can't withdraw tokens", ex)
       }
-    } catch(e) {
-        setDisableButton(false)
-        notify({ type: 'error', message: `${e}` })
-        console.error("Can't withdraw tokens", e)
+    } catch (e) {
+      setDisableButton(false)
+      notify({ type: 'error', message: `${e}` })
+      console.error("Can't withdraw tokens", e)
     }
   }
-    
 
   const hasTokensDeposited =
     depositTokenRecord &&

@@ -7,7 +7,7 @@ const useGovernanceSelect = (initialSelection?: PublicKey) => {
   const { data: governances } = useRealmGovernancesQuery()
   const selectionOrDefault = useMemo(
     () => selection ?? governances?.[0]?.pubkey,
-    [governances, selection]
+    [governances, selection],
   )
 
   return [selectionOrDefault, setSelection] as const

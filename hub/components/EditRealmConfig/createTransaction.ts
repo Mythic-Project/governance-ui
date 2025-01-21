@@ -1,5 +1,6 @@
 import { AnchorProvider, Wallet } from '@coral-xyz/anchor';
 
+import { getGovernanceProgramVersion } from '@realms-today/spl-governance';
 import {
   GatewayClient,
   QuadraticClient,
@@ -12,9 +13,6 @@ import {
   getRealm,
   SYSTEM_PROGRAM_ID,
 } from '@solana/spl-governance';
-import {
-  getGovernanceProgramVersion
-} from "@realms-today/spl-governance"
 import type {
   Connection,
   PublicKey,
@@ -221,10 +219,11 @@ export async function createTransaction(
         isDevnet,
       );
 
-      const existingRegistrarAccount = await quadraticClient.getRegistrarAccount(
-        realmPublicKey,
-        config.communityMint.publicKey,
-      );
+      const existingRegistrarAccount =
+        await quadraticClient.getRegistrarAccount(
+          realmPublicKey,
+          config.communityMint.publicKey,
+        );
 
       // if the update is a simple coefficient update, do not change the predecessor unless also set specifically
       // Note - the UI is somewhat overloaded here and it would be nicer differentiate

@@ -5,7 +5,10 @@ import {
   DEFAULT_COEFFICIENTS,
   toAnchorType,
 } from '../../QuadraticPlugin/sdk/api'
-import {Coefficients, QuadraticClient} from '@solana/governance-program-library'
+import {
+  Coefficients,
+  QuadraticClient,
+} from '@solana/governance-program-library'
 import { getRegistrarPDA } from '@utils/plugin/accounts'
 import { SYSTEM_PROGRAM_ID } from '@solana/spl-governance'
 import { AddPluginResult } from './types'
@@ -18,7 +21,7 @@ import { DEFAULT_MINT_DECIMALS } from '@tools/governance/prepareRealmCreation'
 export async function getCoefficients(
   coefficientsFromForm: Coefficients | undefined,
   existingCommunityMintPk: PublicKey | undefined,
-  connection: Connection
+  connection: Connection,
 ): Promise<Coefficients> {
   let qvCoefficients = coefficientsFromForm
   if (!qvCoefficients) {
@@ -46,12 +49,12 @@ export const addQVPlugin = async (
   programIdPk: PublicKey,
   predecessorPluginProgram: PublicKey | undefined, // if chained, set the previous plugin here
   coefficientsFromForm: Coefficients | undefined,
-  existingCommunityMintPk: PublicKey | undefined
+  existingCommunityMintPk: PublicKey | undefined,
 ): Promise<AddPluginResult> => {
   const qvCoefficients = await getCoefficients(
     coefficientsFromForm,
     existingCommunityMintPk,
-    connection
+    connection,
   )
 
   const options = AnchorProvider.defaultOptions()
@@ -62,7 +65,7 @@ export const addQVPlugin = async (
   const { registrar } = await getRegistrarPDA(
     realmPk,
     communityMintPk,
-    quadraticClient.program.programId
+    quadraticClient.program.programId,
   )
 
   const qvRegistrarInstruction = await quadraticClient.program.methods
@@ -85,7 +88,7 @@ export const addQVPlugin = async (
               isSigner: false,
             },
           ]
-        : []
+        : [],
     )
     .instruction()
 

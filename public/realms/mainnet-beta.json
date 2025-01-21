@@ -3890,8 +3890,13 @@
   "displayName": "Fungi DAO",
   "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
   "realmId": "4b6xiJotK7wkK1WFfDzDGpehBbus2znU3QsMxu36xemv",
+<<<<<<< HEAD
   "ogImage": "/realms/FungiDAO/fungilogo.png",
   "bannerImage": "/realms/FungiDAO/fungibanner.png",
+=======
+  "ogImage": "/realms/FungiDAO/fungilogo.jpg",
+  "bannerImage": "/realms/FungiDAO/fungibanner.jpg",
+>>>>>>> bf3d3c5dd6c9de23041060cac8cb5a93bc0e974f
   "shortDescription": "Unlocking the Agentic Economy for all. Creators of @FungiAgent",
   "website": "https://www.fungi.ag/",
   "twitter": "@FungiProject",

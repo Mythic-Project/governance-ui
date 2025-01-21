@@ -47,7 +47,7 @@ export default function Header(props: Props) {
           TOKEN_PROGRAM_ID,
           mint,
           new PublicKey(props.wallet.address),
-          true
+          true,
         ).then((ata) => {
           setIsATA(ata.toBase58() === props.asset.address)
         })
@@ -66,7 +66,7 @@ export default function Header(props: Props) {
         'gap-x-4',
         'grid',
         'grid-cols-[1fr_max-content]',
-        'items-center'
+        'items-center',
       )}
     >
       <div className="overflow-hidden">
@@ -82,7 +82,7 @@ export default function Header(props: Props) {
                 props.asset.icon.props.className,
                 'h-10',
                 'rounded-full',
-                'w-10'
+                'w-10',
               ),
             })
           )}
@@ -93,7 +93,7 @@ export default function Header(props: Props) {
                 'text-ellipsis',
                 'text-sm',
                 'text-white/50',
-                'whitespace-nowrap'
+                'whitespace-nowrap',
               )}
             >
               {props.asset.type === AssetType.Sol ? 'SOL' : props.asset.name}
@@ -106,7 +106,7 @@ export default function Header(props: Props) {
                 'text-2xl',
                 'text-ellipsis',
                 'text-fgd-1',
-                'whitespace-nowrap'
+                'whitespace-nowrap',
               )}
               title={
                 formatNumber(props.asset.count) +
@@ -181,7 +181,8 @@ export default function Header(props: Props) {
                 : props.asset.logo,
             name:
               props.asset.type === AssetType.Sol ? 'SOL' : props.asset.symbol,
-            tokenAccountAddress: props.asset.raw.extensions.transferAddress.toBase58(),
+            tokenAccountAddress:
+              props.asset.raw.extensions.transferAddress.toBase58(),
             tokenMintAddress:
               props.asset.type === AssetType.Sol
                 ? undefined

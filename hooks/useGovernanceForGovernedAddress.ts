@@ -6,7 +6,7 @@ const useGovernanceForGovernedAddress = (pubkey: PublicKey | undefined) => {
   const { assetAccounts } = useGovernanceAssets()
   const assetAccount = useMemo(
     () => pubkey && assetAccounts.find((x) => x.pubkey.equals(pubkey)),
-    [assetAccounts, pubkey]
+    [assetAccounts, pubkey],
   )
   return assetAccount?.governance
 }

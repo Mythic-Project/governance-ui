@@ -9,7 +9,7 @@ export const useAddressQuery_CouncilTokenOwner = () => {
   const realm = useRealmQuery().data?.result
   const wallet = useWalletOnePointOh()
   const selectedCouncilDelegator = useSelectedDelegatorStore(
-    (s) => s.councilDelegator
+    (s) => s.councilDelegator,
   )
 
   // if we have a council token delegator selected (this is rare), use that. otherwise use user wallet.
@@ -22,7 +22,7 @@ export const useAddressQuery_CouncilTokenOwner = () => {
     realm?.owner,
     realm?.pubkey,
     realm?.account.config.councilMint,
-    owner
+    owner,
   )
 }
 
@@ -30,7 +30,7 @@ export const useAddressQuery_CommunityTokenOwner = () => {
   const realm = useRealmQuery().data?.result
   const wallet = useWalletOnePointOh()
   const selectedCommunityDelegator = useSelectedDelegatorStore(
-    (s) => s.communityDelegator
+    (s) => s.communityDelegator,
   )
 
   // if we have a community token delegator selected (this is rare), use that. otherwise use user wallet.
@@ -44,7 +44,7 @@ export const useAddressQuery_CommunityTokenOwner = () => {
     realm?.owner,
     realm?.pubkey,
     realm?.account.communityMint,
-    owner
+    owner,
   )
 }
 
@@ -52,7 +52,7 @@ export const useAddressQuery_TokenOwnerRecord = (
   programId?: PublicKey,
   realmPk?: PublicKey,
   governingTokenMint?: PublicKey,
-  owner?: PublicKey
+  owner?: PublicKey,
 ) => {
   const enabled =
     owner !== undefined &&
@@ -71,7 +71,7 @@ export const useAddressQuery_TokenOwnerRecord = (
         programId,
         realmPk,
         governingTokenMint,
-        owner
+        owner,
       )
     },
     enabled,

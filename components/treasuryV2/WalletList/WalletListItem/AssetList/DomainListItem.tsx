@@ -31,7 +31,7 @@ export default function DomainListItem(props: Props) {
             'rounded-full',
             'text-sm',
             'text-white',
-            'w-6'
+            'w-6',
           )}
         >
           {formatNumber(props.count, undefined, { maximumFractionDigits: 0 })}

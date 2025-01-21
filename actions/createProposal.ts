@@ -73,7 +73,7 @@ export const createProposal = async (
   isDraft: boolean,
   options: string[],
   client?: VotingClient,
-  callbacks?: Parameters<typeof sendTransactionsV3>[0]['callbacks']
+  callbacks?: Parameters<typeof sendTransactionsV3>[0]['callbacks'],
 ): Promise<PublicKey> => {
   const instructions: TransactionInstruction[] = []
   const createNftTicketsIxs: TransactionInstruction[] = []
@@ -101,7 +101,7 @@ export const createProposal = async (
         MultiChoiceType.FullWeight,
         1,
         options.length,
-        options.length
+        options.length,
       )
     : VoteType.SINGLE_CHOICE
 
@@ -114,7 +114,7 @@ export const createProposal = async (
       governingTokenMint.toBytes(),
       proposalSeed.toBytes(),
     ],
-    realm.owner
+    realm.owner,
   )
 
   //will run only if plugin is connected with realm
@@ -122,7 +122,7 @@ export const createProposal = async (
     instructions,
     'createProposal',
     createNftTicketsIxs,
-    governance
+    governance,
   )
 
   if (
@@ -156,7 +156,7 @@ export const createProposal = async (
     useDenyOption,
     payer,
     plugin?.voterWeightPk,
-    proposalSeed
+    proposalSeed,
   )
 
   await withAddSignatory(
@@ -167,14 +167,14 @@ export const createProposal = async (
     tokenOwnerRecord.pubkey,
     governanceAuthority,
     signatory,
-    payer
+    payer,
   )
 
   // TODO: Return signatoryRecordAddress from the SDK call
   const signatoryRecordAddress = await getSignatoryRecordAddress(
     programId,
     proposalAddress,
-    signatory
+    signatory,
   )
 
   const insertInstructions: TransactionInstruction[] = []
@@ -194,7 +194,7 @@ export const createProposal = async (
       }
       if (instruction.prerequisiteInstructionsSigners) {
         prerequisiteInstructionsSigners.push(
-          ...instruction.prerequisiteInstructionsSigners
+          ...instruction.prerequisiteInstructionsSigners,
         )
       }
       await withInsertTransaction(
@@ -209,7 +209,7 @@ export const createProposal = async (
         0,
         instruction.holdUpTime || 0,
         [instruction.data],
-        payer
+        payer,
       )
     }
   }
@@ -224,7 +224,7 @@ export const createProposal = async (
       proposalAddress,
       signatory,
       signatoryRecordAddress,
-      undefined
+      undefined,
     )
   }
 
@@ -235,21 +235,20 @@ export const createProposal = async (
   signerChunks.fill([])
 
   const deduplicatedPrerequisiteInstructions = prerequisiteInstructions.filter(
-    deduplicateObjsFilter
+    deduplicateObjsFilter,
   )
 
-  const deduplicatedPrerequisiteInstructionsSigners = prerequisiteInstructionsSigners.filter(
-    deduplicateObjsFilter
-  )
+  const deduplicatedPrerequisiteInstructionsSigners =
+    prerequisiteInstructionsSigners.filter(deduplicateObjsFilter)
 
   const prerequisiteInstructionsChunks = chunks(
     deduplicatedPrerequisiteInstructions,
-    lowestChunkBy
+    lowestChunkBy,
   )
 
   const prerequisiteInstructionsSignersChunks = chunks(
     deduplicatedPrerequisiteInstructionsSigners,
-    lowestChunkBy
+    lowestChunkBy,
   ).filter((keypairArray) => keypairArray.filter((keypair) => keypair))
 
   const signersSet = [
@@ -269,7 +268,7 @@ export const createProposal = async (
         instructionsSet: txBatchesToInstructionSetWithSigners(
           txBatch,
           signersSet,
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Sequential,
       }
@@ -307,7 +306,7 @@ export const createProposal = async (
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }
@@ -317,7 +316,7 @@ export const createProposal = async (
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             signersSet,
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Sequential,
         }

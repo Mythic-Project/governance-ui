@@ -19,7 +19,7 @@ import StakeDetails from './StakeDetails'
 import { useTreasurySelectState } from './treasurySelectStore'
 
 function walletIsNotAuxiliary(
-  wallet: AuxiliaryWallet | Wallet
+  wallet: AuxiliaryWallet | Wallet,
 ): wallet is Wallet {
   return 'address' in wallet
 }
@@ -54,7 +54,7 @@ const Details = forwardRef<HTMLDivElement, Props>((props, ref) => {
         <div
           className={cx(
             props.className,
-            'grid grid-rows-[1fr] gap-y-5 max-h-screen overflow-y-auto'
+            'grid grid-rows-[1fr] gap-y-5 max-h-screen overflow-y-auto',
           )}
           ref={ref}
         >

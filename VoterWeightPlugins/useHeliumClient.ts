@@ -1,8 +1,8 @@
-import { HELIUM_VSR_PLUGINS_PKS} from '@constants/plugins'
+import { HELIUM_VSR_PLUGINS_PKS } from '@constants/plugins'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 
 import { useVoterWeightPluginReadinessReturnType } from './lib/types'
-import {HeliumVsrClient} from "../HeliumVotePlugin/sdk/client";
+import { HeliumVsrClient } from '../HeliumVotePlugin/sdk/client'
 
 export interface useHeliumClientReturnType
   extends useVoterWeightPluginReadinessReturnType {
@@ -13,7 +13,7 @@ export const useHeliumClient = (): useHeliumClientReturnType => {
   const { isReady, plugins } = useRealmVoterWeightPlugins()
 
   const heliumPlugin = plugins?.voterWeight.find((plugin) =>
-      HELIUM_VSR_PLUGINS_PKS.includes(plugin.programId.toString())
+    HELIUM_VSR_PLUGINS_PKS.includes(plugin.programId.toString()),
   )
 
   const isEnabled = heliumPlugin !== undefined

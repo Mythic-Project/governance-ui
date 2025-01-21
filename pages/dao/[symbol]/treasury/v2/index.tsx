@@ -35,7 +35,7 @@ export default function Treasury() {
           const item = entries[0]
           setIsStickied(item.intersectionRatio < 1)
         },
-        { threshold: [1] }
+        { threshold: [1] },
       )
 
       observer.current.observe(stickyTracker.current)
@@ -72,7 +72,7 @@ export default function Treasury() {
                 name: data.name,
               },
               value: data.totalValue,
-            }))
+            })),
           )}
         />
       </header>
@@ -84,7 +84,7 @@ export default function Treasury() {
             map((data) => ({
               auxiliaryWallets: data.auxiliaryWallets,
               wallets: data.wallets,
-            }))
+            })),
           )}
           selectedAsset={legacySelectedAsset}
           selectedWallet={legacySelectedWallet}

@@ -32,7 +32,7 @@ const IdlSetBuffer = ({
   const wallet = useWalletOnePointOh()
   const { assetAccounts } = useGovernanceAssets()
   const govAccounts = assetAccounts.filter(
-    (x) => x.type === AccountType.PROGRAM
+    (x) => x.type === AccountType.PROGRAM,
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [form, setForm] = useState<AltSetForm>({
@@ -62,7 +62,7 @@ const IdlSetBuffer = ({
         new PublicKey(form.programId),
         new PublicKey(form.buffer),
         form.governedAccount.governance.pubkey!,
-        new PublicKey(form.idlAccount)
+        new PublicKey(form.idlAccount),
       )
       serializedInstruction = serializeInstructionToBase64(ix)
     }
@@ -78,7 +78,7 @@ const IdlSetBuffer = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -91,19 +91,19 @@ const IdlSetBuffer = ({
       .string()
       .required()
       .test('is-valid-programId', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     idlAccount: yup
       .string()
       .required()
       .test('is-idl-account', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     buffer: yup
       .string()
       .required()
       .test('is-buffer', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
   })
   const inputs: InstructionInput[] = [
@@ -164,7 +164,7 @@ async function createIdlUpgradeInstruction(
   programId: PublicKey,
   bufferAddress: PublicKey,
   upgradeAuthority: PublicKey,
-  idlAccount: PublicKey
+  idlAccount: PublicKey,
 ) {
   const prefix = Buffer.from('0a69e9a778bcf440', 'hex')
   const ixn = Buffer.from('03', 'hex')

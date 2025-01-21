@@ -19,9 +19,11 @@ interface Args {
 }
 
 function getGovernedAccountPk(acc: AssetAccount): PublicKey {
-  return (acc.isSol
-    ? acc.extensions.transferAddress
-    : acc.extensions?.token?.account?.owner) as PublicKey
+  return (
+    acc.isSol
+      ? acc.extensions.transferAddress
+      : acc.extensions?.token?.account?.owner
+  ) as PublicKey
 }
 
 export default async function getMeanCreateAccountInstruction({
@@ -50,32 +52,29 @@ export default async function getMeanCreateAccountInstruction({
     const type = form.type
 
     console.log('111111', { owner, feePayer, mint }, label, type)
-    const {
-      transaction: transaction1,
-      psAccount,
-    } = await paymentStreaming.buildCreateAccountTransaction(
-      { owner, feePayer, mint },
-      label,
-      type
-    )
+    const { transaction: transaction1, psAccount } =
+      await paymentStreaming.buildCreateAccountTransaction(
+        { owner, feePayer, mint },
+        label,
+        type,
+      )
 
     const contributor = feePayer
 
     const amount = parseMintNaturalAmountFromDecimal(
       form.amount,
-      governedTokenAccount.extensions.mint.account.decimals
+      governedTokenAccount.extensions.mint.account.decimals,
     )
     console.log(
       '2222[',
       { psAccount, psAccountMint: mint, contributor, feePayer },
-      amount
+      amount,
     )
-    const {
-      transaction: transaction2,
-    } = await paymentStreaming.buildAddFundsToAccountTransaction(
-      { psAccount, psAccountMint: mint, contributor, feePayer },
-      amount
-    )
+    const { transaction: transaction2 } =
+      await paymentStreaming.buildAddFundsToAccountTransaction(
+        { psAccount, psAccountMint: mint, contributor, feePayer },
+        amount,
+      )
 
     const additionalSerializedInstructions = [
       ...transaction1.instructions,

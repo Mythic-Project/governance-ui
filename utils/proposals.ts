@@ -17,7 +17,7 @@ export const compareProposals = (
   p2: Proposal,
   governances: {
     [governance: string]: ProgramAccount<Governance>
-  }
+  },
 ) => {
   const p1Rank = p1.getStateSortRank()
   const p2Rank = p2.getStateSortRank()
@@ -49,7 +49,7 @@ function getVotingStateRank(
   proposal: Proposal,
   governances: {
     [governance: string]: ProgramAccount<Governance>
-  }
+  },
 ) {
   // Show proposals in Voting state before proposals in Finalizing state
   const governance = governances[proposal.governance.toBase58()].account
@@ -63,7 +63,7 @@ export const filterProposals = (
   realm: ProgramAccount<Realm> | undefined,
   governances: Record<string, ProgramAccount<Governance>>,
   councilMint: MintInfo | undefined,
-  communityMint: MintInfo | undefined
+  communityMint: MintInfo | undefined,
 ) => {
   return proposals
     .sort(([, proposalA], [, proposalB]) => {
@@ -78,7 +78,7 @@ export const filterProposals = (
             proposalB.account.votingCompletedAt ||
               proposalB.account.signingOffAt ||
               proposalB.account.draftAt ||
-              new BN(0)
+              new BN(0),
           )
           .toNumber()
       }
@@ -93,7 +93,7 @@ export const filterProposals = (
             proposalA.account.votingCompletedAt ||
               proposalA.account.signingOffAt ||
               proposalA.account.draftAt ||
-              new BN(0)
+              new BN(0),
           )
           .toNumber()
       }
@@ -106,7 +106,7 @@ export const filterProposals = (
           .sub(
             proposalB.account.signingOffAt ||
               proposalB.account.draftAt ||
-              new BN(0)
+              new BN(0),
           )
           .toNumber()
       }
@@ -119,7 +119,7 @@ export const filterProposals = (
           .sub(
             proposalA.account.signingOffAt ||
               proposalA.account.draftAt ||
-              new BN(0)
+              new BN(0),
           )
           .toNumber()
       }
@@ -219,7 +219,7 @@ export const filterProposals = (
         return (
           fmtTokenAmount(
             proposal.account.getYesVoteCount(),
-            proposalMint!.decimals
+            proposalMint!.decimals,
           ) < minimumYesVotes && !proposal.account.hasVoteTimeEnded(governance)
         )
       }

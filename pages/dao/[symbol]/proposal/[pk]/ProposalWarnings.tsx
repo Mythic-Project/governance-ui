@@ -195,7 +195,7 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
     ?.flatMap(
       (tx) =>
         tx.account.instructions?.flatMap((ins) => ins.programId.toBase58()) ||
-        []
+        [],
     )
     .filter((x) => x === MANGO_INSTRUCTION_FORWARDER).length
 
@@ -204,12 +204,13 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
       governance !== undefined
         ? getNativeTreasuryAddress(governance.owner, governance.pubkey)
         : undefined,
-    [governance]
+    [governance],
   )
-  const walletsPassedToInstructions = transactions?.flatMap((tx) =>
-    tx.account.instructions?.flatMap((ins) =>
-      ins.accounts.map((acc) => acc.pubkey)
-    )
+  const walletsPassedToInstructions = transactions?.flatMap(
+    (tx) =>
+      tx.account.instructions?.flatMap((ins) =>
+        ins.accounts.map((acc) => acc.pubkey),
+      ),
   )
 
   const proposalWarnings = useMemo(() => {
@@ -223,7 +224,7 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
       !walletsPassedToInstructions?.find(
         (x) =>
           x &&
-          (governance?.pubkey?.equals(x) || treasuryAddress.result?.equals(x))
+          (governance?.pubkey?.equals(x) || treasuryAddress.result?.equals(x)),
       )
 
     const proposalWarnings: (
@@ -250,7 +251,7 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
         }
         if (
           ix.accounts.find(
-            (a) => a.isWritable && config && a.pubkey.equals(config.pubkey)
+            (a) => a.isWritable && config && a.pubkey.equals(config.pubkey),
           ) !== undefined
         ) {
           if (ix.programId.equals(realmInfo.programId)) {
@@ -262,7 +263,7 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
         if (isUsingForwardProgram) {
           return 'usingMangoInstructionForwarder'
         }
-      })
+      }),
     )
 
     if (possibleWrongGovernance) {
@@ -275,7 +276,7 @@ const useProposalSafetyCheck = (proposal: Proposal) => {
         governance &&
         bufferAuthorities?.some(
           (authority) =>
-            !authority.equals(treasury) && !authority.equals(governance.pubkey)
+            !authority.equals(treasury) && !authority.equals(governance.pubkey),
         )
       ) {
         proposalWarnings.push('bufferAuthorityMismatch')

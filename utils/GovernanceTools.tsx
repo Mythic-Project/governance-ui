@@ -13,7 +13,7 @@ import { PublicKey } from '@solana/web3.js'
 export const getProposals = async (
   pubkeys: PublicKey[],
   connection: ConnectionContext,
-  programId: PublicKey
+  programId: PublicKey,
 ) => {
   const proposalsRaw = await axios.request({
     url: connection.endpoint,
@@ -27,7 +27,7 @@ export const getProposals = async (
           programId,
           connection,
           bs58.encode(Uint8Array.from([GovernanceAccountType.ProposalV1])),
-          x
+          x,
         )
       }),
       ...pubkeys.map((x) => {
@@ -35,7 +35,7 @@ export const getProposals = async (
           programId,
           connection,
           bs58.encode(Uint8Array.from([GovernanceAccountType.ProposalV2])),
-          x
+          x,
         )
       }),
     ]),
@@ -67,8 +67,8 @@ export const getProposals = async (
       x.find(
         (x) =>
           x.account.governance.toBase58() ===
-          current.account.governance.toBase58()
-      )
+          current.account.governance.toBase58(),
+      ),
     )
     if (exsitingIdx > -1) {
       acc[exsitingIdx].push(current)
@@ -84,7 +84,7 @@ const getProposalsFilter = (
   programId: PublicKey,
   connection: ConnectionContext,
   memcmpBytes: string,
-  pk: PublicKey
+  pk: PublicKey,
 ) => {
   return {
     jsonrpc: '2.0',

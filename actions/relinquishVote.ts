@@ -1,8 +1,4 @@
-import {
-  Keypair,
-  PublicKey,
-  TransactionInstruction,
-} from '@solana/web3.js'
+import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js'
 
 import { Proposal } from '@solana/spl-governance'
 import { RpcContext } from '@solana/spl-governance'
@@ -25,7 +21,7 @@ export const relinquishVote = async (
   tokenOwnerRecord: PublicKey,
   voteRecord: PublicKey,
   instructions: TransactionInstruction[] = [],
-  plugin: VotingClient
+  plugin: VotingClient,
 ) => {
   const signers: Keypair[] = []
 
@@ -42,14 +38,14 @@ export const relinquishVote = async (
     proposal.account.governingTokenMint,
     voteRecord,
     governanceAuthority,
-    beneficiary
+    beneficiary,
   )
 
   await plugin.withRelinquishVote(
     instructions,
     proposal,
     voteRecord,
-    tokenOwnerRecord
+    tokenOwnerRecord,
   )
 
   const shouldChunk =
@@ -64,7 +60,7 @@ export const relinquishVote = async (
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Sequential,
         }
@@ -74,7 +70,7 @@ export const relinquishVote = async (
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }

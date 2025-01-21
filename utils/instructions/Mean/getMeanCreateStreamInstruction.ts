@@ -20,13 +20,15 @@ interface Args {
 }
 
 function getGovernedAccountPk(acc: AssetAccount): PublicKey {
-  return (acc.isSol
-    ? acc.extensions.transferAddress
-    : acc.extensions?.token?.account?.owner) as PublicKey
+  return (
+    acc.isSol
+      ? acc.extensions.transferAddress
+      : acc.extensions?.token?.account?.owner
+  ) as PublicKey
 }
 
 const getRateIntervalInSeconds = (
-  interval: MeanCreateStream['rateInterval']
+  interval: MeanCreateStream['rateInterval'],
 ) => {
   switch (interval) {
     case 0:
@@ -80,11 +82,11 @@ Args): Promise<UiInstruction> {
     const streamName = form.streamName
     const allocationAssigned = parseMintNaturalAmountFromDecimal(
       form.allocationAssigned,
-      form.mintInfo.decimals
+      form.mintInfo.decimals,
     )
     const rateAmount = parseMintNaturalAmountFromDecimal(
       form.rateAmount,
-      form.mintInfo.decimals
+      form.mintInfo.decimals,
     )
     const rateIntervalInSeconds = getRateIntervalInSeconds(form.rateInterval)
     const startUtc = new Date(form.startDate)
@@ -100,11 +102,11 @@ Args): Promise<UiInstruction> {
       undefined,
       undefined,
       undefined,
-      usePda
+      usePda,
     )
 
     const additionalSerializedInstructions = transaction.instructions.map(
-      serializeInstructionToBase64
+      serializeInstructionToBase64,
     )
 
     const obj: UiInstruction = {

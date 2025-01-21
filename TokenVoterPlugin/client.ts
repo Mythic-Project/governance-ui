@@ -1,19 +1,18 @@
 import { Provider, BN, Program } from "@coral-xyz/anchor";
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
-import tokenIdl from "./token-idl.json";
+import idl from "../BonkVotePlugin/token-idl.json";
 import { Client } from "@solana/governance-program-library";
 import { fetchRealmByPubkey } from "@hooks/queries/realm";
-import { TokenVoter } from "./token-type";
-import { tokenVoterKey } from "./utils";
+import { TokenVoter } from "../BonkVotePlugin/token-type";
+import { tokenVoterKey } from "../BonkVotePlugin/utils";
 import { VoterWeightAction } from "@solana/spl-governance";
-import {  TOKEN_VOTER_PK } from "@constants/plugins";
+
+const DEFAULT_TOKEN_VOTER_PROGRAMID = new PublicKey("HA99cuBQCCzZu1zuHN2qBxo2FBo1cxNLwKkdt6Prhy8v")
 
 export class TokenVoterClient extends Client<TokenVoter> {
-  readonly requiresInputVoterWeight = true
+  readonly requiresInputVoterWeight = false
 
-  constructor(
-    public program: Program<TokenVoter>, 
-  ) {    
+  constructor(public program: Program<TokenVoter>) {    
     super(program)
   }
 
@@ -29,6 +28,34 @@ export class TokenVoterClient extends Client<TokenVoter> {
     return realm?.account.config?.communityMintMaxVoteWeightSource.value ?? null // TODO this code should not actually be called because this is not a max voter weight plugin
   }
 
+  getRegistrarPDA(realm: PublicKey, mint: PublicKey) {
+    const [registrar, registrarBump] = PublicKey.findProgramAddressSync(
+        [Buffer.from('registrar'), realm.toBuffer(), mint.toBuffer()],
+        this.program.programId
+    )
+    return {
+      registrar,
+      registrarBump,
+    }
+  }
+
+  async getVoterWeightRecordPDA(realm: PublicKey, mint: PublicKey, walletPk: PublicKey) {
+    const {registrar} = this.getRegistrarPDA(realm, mint);
+    
+    const [voterWeightPk, voterWeightRecordBump] = PublicKey.findProgramAddressSync(
+        [
+          registrar.toBuffer(),
+          Buffer.from('voter-weight-record'),
+          walletPk.toBuffer(),
+        ],
+        this.program.programId
+    )
+
+    return {
+      voterWeightPk,
+      voterWeightRecordBump,
+    }
+  }
 
   async calculateVoterWeight(
     voter: PublicKey,
@@ -36,11 +63,9 @@ export class TokenVoterClient extends Client<TokenVoter> {
     mint: PublicKey
   ): Promise<BN | null> {
     try {
-
       const tokenVoterAddress = tokenVoterKey(realm, mint, voter, this.program.programId)[0]
       const tokenVoterAccount = await this.program.account.voter.fetch(tokenVoterAddress)
-      const depositedTokens = tokenVoterAccount.deposits[0].amountDepositedNative
-      return depositedTokens
+      return tokenVoterAccount.deposits[0].amountDepositedNative
     } catch(e) {
       console.log(e)
       return null
@@ -71,12 +96,10 @@ export class TokenVoterClient extends Client<TokenVoter> {
   }
 
   static async connect(
-    provider: Provider,
-    programId = new PublicKey(TOKEN_VOTER_PK[0]),
+    provider: Provider
   ) {
-    const DEFAULT_TOKEN_VOTER_PROGRAMID = new PublicKey("HA99cuBQCCzZu1zuHN2qBxo2FBo1cxNLwKkdt6Prhy8v")
     return new TokenVoterClient(
-      new Program<TokenVoter>(tokenIdl as TokenVoter, programId, provider),
+      new Program<TokenVoter>(idl as TokenVoter, DEFAULT_TOKEN_VOTER_PROGRAMID, provider),
     )
   }
 
@@ -89,4 +112,3 @@ export class TokenVoterClient extends Client<TokenVoter> {
   }
 
 }
-

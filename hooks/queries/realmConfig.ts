@@ -35,7 +35,7 @@ export const useRealmConfigQuery = () => {
 
       const realmConfigPk = await getRealmConfigAddress(
         realm.owner,
-        realm.pubkey
+        realm.pubkey,
       )
 
       return asFindable(getRealmConfig)(connection, realmConfigPk)
@@ -50,7 +50,7 @@ export const useRealmConfigQuery = () => {
 
 export const fetchRealmConfigQuery = async (
   connection: Connection,
-  realmPk: PublicKey
+  realmPk: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: realmConfigQueryKeys.byRealm(connection.rpcEndpoint, realmPk),
@@ -60,7 +60,7 @@ export const fetchRealmConfigQuery = async (
 
       const realmConfigPk = await getRealmConfigAddress(
         realm.owner,
-        realm.pubkey
+        realm.pubkey,
       )
       return asFindable(getRealmConfig)(connection, realmConfigPk)
     },

@@ -28,7 +28,7 @@ export default function TokenOwnerRecordListItem({
   const tor = useTokenOwnerRecordByPubkeyQuery(pubkey).data?.result
 
   const realmInfo = mainnetBetaRealms.find(
-    (x) => x.realmId === tor?.account.realm.toString()
+    (x) => x.realmId === tor?.account.realm.toString(),
   )
 
   return tor === undefined ? (

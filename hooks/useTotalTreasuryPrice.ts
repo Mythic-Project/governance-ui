@@ -27,9 +27,8 @@ export function useTotalTreasuryPrice() {
     new PublicKey(WSOL_MINT),
   ])
 
-  const { mangoAccountsValue, isFetching } = useMangoAccountsTreasury(
-    assetAccounts
-  )
+  const { mangoAccountsValue, isFetching } =
+    useMangoAccountsTreasury(assetAccounts)
 
   const totalTokensPrice = [
     ...governedTokenAccountsWithoutNfts,
@@ -45,8 +44,8 @@ export function useTotalTreasuryPrice() {
               ? x.extensions.solAccount!.lamports
               : x.isToken || x.type === AccountType.AUXILIARY_TOKEN
               ? x.extensions.token!.account?.amount
-              : 0
-          )
+              : 0,
+          ),
         ).toNumber() *
         (prices?.[x.extensions.mint!.publicKey.toBase58()]?.price ?? 0)
       )
@@ -62,9 +61,10 @@ export function useTotalTreasuryPrice() {
 
   const totalPrice = totalTokensPrice + stakeAccountsTotalPrice
 
-  const totalPriceFormatted = (governedTokenAccountsWithoutNfts.length
-    ? new BigNumber(totalPrice)
-    : new BigNumber(0)
+  const totalPriceFormatted = (
+    governedTokenAccountsWithoutNfts.length
+      ? new BigNumber(totalPrice)
+      : new BigNumber(0)
   ).plus(mangoAccountsValue)
 
   return {

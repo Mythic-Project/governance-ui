@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { LinkButton } from './Button'
 import Input from './inputs/Input'
 import Textarea from './inputs/Textarea'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const AdditionalProposalOptions: React.FC<{
   title: string
@@ -26,7 +26,7 @@ const AdditionalProposalOptions: React.FC<{
   setVoteByCouncil,
 }) => {
   const [showOptions, setShowOptions] = useState(false)
-  const { shouldShowVoteByCouncilToggle } = useVoteByCouncilToggle();
+  const { shouldShowVoteByCouncilToggle } = useVoteByCouncilToggle()
   return (
     <>
       <LinkButton
@@ -62,12 +62,12 @@ const AdditionalProposalOptions: React.FC<{
             onChange={setDescription}
           />
           {shouldShowVoteByCouncilToggle && (
-              <VoteBySwitch
-                  checked={voteByCouncil}
-                  onChange={() => {
-                    setVoteByCouncil(!voteByCouncil)
-                  }}
-              ></VoteBySwitch>
+            <VoteBySwitch
+              checked={voteByCouncil}
+              onChange={() => {
+                setVoteByCouncil(!voteByCouncil)
+              }}
+            ></VoteBySwitch>
           )}
         </div>
       )}

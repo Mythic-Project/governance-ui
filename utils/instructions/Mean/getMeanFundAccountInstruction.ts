@@ -13,9 +13,11 @@ import {
 import createPaymentStreaming from './createPaymentStreaming'
 
 function getGovernedAccountPk(acc: AssetAccount): PublicKey {
-  return (acc.isSol
-    ? acc.extensions.transferAddress
-    : acc.extensions?.token?.account?.owner) as PublicKey
+  return (
+    acc.isSol
+      ? acc.extensions.transferAddress
+      : acc.extensions?.token?.account?.owner
+  ) as PublicKey
 }
 
 interface Args {
@@ -53,17 +55,16 @@ export default async function getMeanCreateAccountInstruction({
     const psAccount = new PublicKey(formPaymentStreamingAccount.id)
     const amount = parseMintNaturalAmountFromDecimal(
       form.amount,
-      governedTokenAccount.extensions.mint.account.decimals
+      governedTokenAccount.extensions.mint.account.decimals,
     )
-    const {
-      transaction,
-    } = await paymentStreaming.buildAddFundsToAccountTransaction(
-      { psAccount, psAccountMint: mint, contributor, feePayer },
-      amount
-    )
+    const { transaction } =
+      await paymentStreaming.buildAddFundsToAccountTransaction(
+        { psAccount, psAccountMint: mint, contributor, feePayer },
+        amount,
+      )
 
     const additionalSerializedInstructions = transaction.instructions.map(
-      serializeInstructionToBase64
+      serializeInstructionToBase64,
     )
 
     const obj: UiInstruction = {

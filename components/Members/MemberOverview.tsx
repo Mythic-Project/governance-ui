@@ -85,7 +85,7 @@ const RevokeMembership: FC<{ member: PublicKey; mint: PublicKey }> = ({
   const proposalTitle = `Remove ${govpop}member ${abbrevAddress}`
 
   const tooltipContent = useProposalCreationButtonTooltip(
-    governance ? [governance] : []
+    governance ? [governance] : [],
   )
 
   return !wallet?.publicKey?.equals(member) ? (
@@ -99,8 +99,8 @@ const RevokeMembership: FC<{ member: PublicKey; mint: PublicKey }> = ({
               fmtUrlWithCluster(
                 `/dao/${symbol}/proposal/new?i=${
                   Instructions.RevokeGoverningTokens
-                }&t=${proposalTitle}&memberKey=${member.toString()}`
-              )
+                }&t=${proposalTitle}&memberKey=${member.toString()}`,
+              ),
             )
           }
         >
@@ -160,7 +160,7 @@ const NftDisplayList = ({
   councilAmount: string
 }) => {
   const { data: nfts, isLoading } = useDigitalAssetsByOwner(
-    new PublicKey(member.walletAddress)
+    new PublicKey(member.walletAddress),
   )
 
   const usedCollectionsPks: string[] = useNftRegistrarCollection()
@@ -168,7 +168,7 @@ const NftDisplayList = ({
     () =>
       nfts?.filter((nft) => {
         const collection = nft.grouping.find(
-          (x) => x.group_key === 'collection'
+          (x) => x.group_key === 'collection',
         )
         return (
           collection &&
@@ -176,7 +176,7 @@ const NftDisplayList = ({
           nft.creators?.filter((x) => x.verified).length > 0
         )
       }),
-    [nfts, usedCollectionsPks]
+    [nfts, usedCollectionsPks],
   )
 
   if (isLoading) {
@@ -221,10 +221,10 @@ const NftDisplayList = ({
 const MemberOverview = ({
   member,
   activeMembers,
-  vsrDisplay
+  vsrDisplay,
 }: {
   member: Member
-  activeMembers: any[] | undefined,
+  activeMembers: any[] | undefined
   vsrDisplay?: boolean
 }) => {
   const programVersion = useProgramVersion()
@@ -240,9 +240,9 @@ const MemberOverview = ({
       proposalsArray === undefined
         ? {}
         : Object.fromEntries(
-            proposalsArray.map((x) => [x.pubkey.toString(), x])
+            proposalsArray.map((x) => [x.pubkey.toString(), x]),
           ),
-    [proposalsArray]
+    [proposalsArray],
   )
 
   const currentPluginPk = config?.account.communityTokenConfig.voterWeightAddin
@@ -276,14 +276,14 @@ const MemberOverview = ({
       communityVotes && communityVotes && !communityVotes.isZero()
         ? fmtMintAmount(mint, communityVotes)
         : '',
-    [communityVotes, mint]
+    [communityVotes, mint],
   )
   const councilAmount = useMemo(
     () =>
       councilVotes && councilVotes && !councilVotes.isZero()
         ? fmtMintAmount(councilMint, councilVotes)
         : '',
-    [councilMint, councilVotes]
+    [councilMint, councilVotes],
   )
 
   const getVoteRecordsAndChatMsgs = useCallback(async () => {
@@ -295,12 +295,12 @@ const MemberOverview = ({
         getVoteRecordsByVoterMapByProposal(
           connection.current,
           realm.owner,
-          new PublicKey(walletAddress)
+          new PublicKey(walletAddress),
         ),
         getGovernanceChatMessagesByVoter(
           connection!.current,
           GOVERNANCE_CHAT_PROGRAM_ID,
-          new PublicKey(walletAddress)
+          new PublicKey(walletAddress),
         ),
       ])
       voteRecords = results[0]
@@ -320,7 +320,7 @@ const MemberOverview = ({
       const handleSetVoteRecords = async () => {
         const { voteRecords, chat } = await getVoteRecordsAndChatMsgs()
         const voteRecordsArray: WalletTokenRecordWithProposal[] = Object.keys(
-          voteRecords
+          voteRecords,
         )
           .sort((a, b) => {
             const prevProposal = proposalsByProposal[a]
@@ -337,10 +337,10 @@ const MemberOverview = ({
             const currentChatsMsgPk = Object.keys(chat).filter(
               (c) =>
                 chat[c]?.account.proposal.toBase58() ===
-                currentProposal?.pubkey.toBase58()
+                currentProposal?.pubkey.toBase58(),
             )
             const currentChatMsgs = currentChatsMsgPk.map(
-              (c) => chat[c].account.body.value
+              (c) => chat[c].account.body.value,
             )
             return {
               proposalPublicKey: x,
@@ -359,11 +359,11 @@ const MemberOverview = ({
   const memberVotePowerRank = useMemo(() => {
     if (activeMembers === undefined) return undefined
     const sortedMembers = activeMembers.sort((a, b) =>
-      a.communityVotes.cmp(b.communityVotes) === 1 ? -1 : 1
+      a.communityVotes.cmp(b.communityVotes) === 1 ? -1 : 1,
     )
     return (
       sortedMembers.findIndex(
-        (m) => m.walletAddress === member?.walletAddress
+        (m) => m.walletAddress === member?.walletAddress,
       ) + 1
     )
   }, [activeMembers, member?.walletAddress])
@@ -372,7 +372,7 @@ const MemberOverview = ({
     (page) => {
       return ownVoteRecords.slice(page * perPage, (page + 1) * perPage)
     },
-    [ownVoteRecords]
+    [ownVoteRecords],
   )
   useEffect(() => {
     setRecentVotes(paginateVotes(0))
@@ -438,7 +438,7 @@ const MemberOverview = ({
         </div>
       </div>
       <div className="flex flex-col space-y-3 md:space-y-0 md:flex-row md:space-x-3">
-        {(communityAmount || !councilAmount && !vsrDisplay) && (
+        {(communityAmount || (!councilAmount && !vsrDisplay)) && (
           <div className="bg-bkg-1 px-4 py-2 rounded-md w-full break-all">
             <p>{tokenName} votes</p>
             <div className="font-bold text-fgd-1 text-2xl flex items-center">
@@ -495,7 +495,7 @@ const MemberOverview = ({
         {recentVotes.map((x) => (
           <a
             href={fmtUrlWithCluster(
-              `/dao/${symbol}/proposal/${x.proposalPublicKey}`
+              `/dao/${symbol}/proposal/${x.proposalPublicKey}`,
             )}
             rel="noopener noreferrer"
             className="border border-fgd-4 default-transition rounded-lg hover:bg-bkg-3 p-4 text-xs text-th-fgd-1 mb-2 block"

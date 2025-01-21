@@ -6,7 +6,7 @@ const VerifyWalletResponse = IT.type({
 });
 
 export const verifyWallet = gql`
-  mutation($code: String!, $application: DiscordApplication = SOLANA) {
+  mutation ($code: String!, $application: DiscordApplication = SOLANA) {
     verifyWallet(code: $code, application: $application) {
       publicKey
     }

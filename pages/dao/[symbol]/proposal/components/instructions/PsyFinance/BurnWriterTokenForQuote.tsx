@@ -29,7 +29,7 @@ import { BN } from 'bn.js'
 
 const formReducer = (
   state: PsyFinanceBurnWriterForQuote,
-  action: Partial<PsyFinanceBurnWriterForQuote>
+  action: Partial<PsyFinanceBurnWriterForQuote>,
 ) => ({
   ...state,
   ...action,
@@ -62,7 +62,7 @@ const BurnWriterTokenForQuote = ({
     const program = new Program(
       PsyAmericanIdl,
       PSY_AMERICAN_PROGRAM_ID,
-      anchorProvider
+      anchorProvider,
     )
 
     const prerequisiteInstructions: TransactionInstruction[] = []
@@ -70,8 +70,8 @@ const BurnWriterTokenForQuote = ({
     const optionAccount = options?.find((_option) =>
       _option.account.writerTokenMint.equals(
         form.writerTokenAccount?.extensions.token?.account.mint ??
-          PublicKey.default
-      )
+          PublicKey.default,
+      ),
     )
     if (!optionAccount) {
       throw new Error('Invalid option from writer token account')
@@ -83,8 +83,8 @@ const BurnWriterTokenForQuote = ({
     } else {
       const { currentAddress, needToCreateAta } = await getATA({
         connection,
-        receiverAddress: form.writerTokenAccount!.extensions.token!.account
-          .owner,
+        receiverAddress:
+          form.writerTokenAccount!.extensions.token!.account.owner,
         mintPK: optionAccount.account.quoteAssetMint,
         wallet,
       })
@@ -96,8 +96,8 @@ const BurnWriterTokenForQuote = ({
             optionAccount.account.quoteAssetMint,
             currentAddress,
             form.writerTokenAccount!.extensions.token!.account.owner,
-            wallet?.publicKey as PublicKey
-          )
+            wallet?.publicKey as PublicKey,
+          ),
         )
       }
       quoteDestination = currentAddress
@@ -126,7 +126,7 @@ const BurnWriterTokenForQuote = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.writerTokenAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, handleSetInstructions, index])

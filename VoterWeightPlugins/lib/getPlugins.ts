@@ -12,12 +12,12 @@ const getInitialPluginProgramId = async (
   realmPublicKey: PublicKey,
   governanceMintPublicKey: PublicKey,
   connection: Connection,
-  type: PluginType
+  type: PluginType,
 ): Promise<PublicKey | undefined> => {
   const config = await fetchRealmConfigQuery(connection, realmPublicKey)
   const realm = await fetchRealmByPubkey(connection, realmPublicKey)
   const kind = realm.result?.account.communityMint.equals(
-    governanceMintPublicKey
+    governanceMintPublicKey,
   )
     ? 'community'
     : 'council'
@@ -36,13 +36,13 @@ const weightForWallet = async (
   realmPublicKey: PublicKey,
   governanceMintPublicKey: PublicKey,
   wallet: PublicKey,
-  type: PluginType
+  type: PluginType,
 ): Promise<BN | undefined> => {
   if (type === 'voterWeight') {
     const voterWeightRecord = (await client.getVoterWeightRecord(
       realmPublicKey,
       governanceMintPublicKey,
-      wallet
+      wallet,
     )) as { voterWeight: BN } | null
     return voterWeightRecord?.voterWeight
   } else {
@@ -51,7 +51,7 @@ const weightForWallet = async (
     // If so, it should be optimised.
     const maxVoterWeightRecord = (await client.getMaxVoterWeightRecord(
       realmPublicKey,
-      governanceMintPublicKey
+      governanceMintPublicKey,
     )) as { maxVoterWeight: BN } | null
     return maxVoterWeightRecord?.maxVoterWeight
   }
@@ -77,7 +77,7 @@ export const getPlugins = async ({
     realmPublicKey,
     governanceMintPublicKey,
     provider.connection,
-    type
+    type,
   )
 
   if (programId) {
@@ -88,7 +88,7 @@ export const getPlugins = async ({
         pluginName as PluginName,
         programId,
         provider,
-        signer
+        signer,
       )
 
       // obtain the currently stored on-chain voter weight or max voter weight depending on the passed-in type
@@ -99,21 +99,21 @@ export const getPlugins = async ({
             realmPublicKey,
             governanceMintPublicKey,
             wallet,
-            type
-          )
-        )
+            type,
+          ),
+        ),
       )
 
       const { registrar: registrarPublicKey } = getPluginRegistrarPDA(
         realmPublicKey,
         governanceMintPublicKey,
         programId,
-        pluginName
+        pluginName,
       )
 
       const registrarData = await client.getRegistrarAccount(
         realmPublicKey,
-        governanceMintPublicKey
+        governanceMintPublicKey,
       )
 
       plugins.push({

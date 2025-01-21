@@ -4,7 +4,7 @@ import { BN } from '@coral-xyz/anchor'
 
 export async function getSpotMarketPublicKey(
   programId: PublicKey,
-  marketIndex: number
+  marketIndex: number,
 ): Promise<PublicKey> {
   return (
     await PublicKey.findProgramAddress(
@@ -12,14 +12,14 @@ export async function getSpotMarketPublicKey(
         Buffer.from(anchor.utils.bytes.utf8.encode('spot_market')),
         new anchor.BN(marketIndex).toArrayLike(Buffer, 'le', 2),
       ],
-      programId
+      programId,
     )
   )[0]
 }
 
 export async function getInsuranceFundVaultPublicKey(
   programId: PublicKey,
-  marketIndex: number
+  marketIndex: number,
 ): Promise<PublicKey> {
   return (
     await PublicKey.findProgramAddress(
@@ -27,7 +27,7 @@ export async function getInsuranceFundVaultPublicKey(
         Buffer.from(anchor.utils.bytes.utf8.encode('insurance_fund_vault')),
         new anchor.BN(marketIndex).toArrayLike(Buffer, 'le', 2),
       ],
-      programId
+      programId,
     )
   )[0]
 }
@@ -35,7 +35,7 @@ export async function getInsuranceFundVaultPublicKey(
 export function getInsuranceFundStakeAccountPublicKey(
   programId: PublicKey,
   authority: PublicKey,
-  marketIndex: number
+  marketIndex: number,
 ): PublicKey {
   return PublicKey.findProgramAddressSync(
     [
@@ -43,7 +43,7 @@ export function getInsuranceFundStakeAccountPublicKey(
       authority.toBuffer(),
       new anchor.BN(marketIndex).toArrayLike(Buffer, 'le', 2),
     ],
-    programId
+    programId,
   )[0]
 }
 
@@ -53,7 +53,7 @@ export function unstakeSharesToAmountWithOpenRequest(
   withdrawRequestShares: BN,
   withdrawRequestAmount: BN,
   totalIfShares: BN,
-  insuranceFundVaultBalance: BN
+  insuranceFundVaultBalance: BN,
 ): BN {
   let stakedAmount: BN
   if (totalIfShares.gt(ZERO)) {
@@ -62,7 +62,7 @@ export function unstakeSharesToAmountWithOpenRequest(
       nShares
         .sub(withdrawRequestShares)
         .mul(insuranceFundVaultBalance)
-        .div(totalIfShares)
+        .div(totalIfShares),
     )
   } else {
     stakedAmount = ZERO
@@ -70,7 +70,7 @@ export function unstakeSharesToAmountWithOpenRequest(
 
   const withdrawAmount = BN.min(
     withdrawRequestAmount,
-    withdrawRequestShares.mul(insuranceFundVaultBalance).div(totalIfShares)
+    withdrawRequestShares.mul(insuranceFundVaultBalance).div(totalIfShares),
   )
   const amount = withdrawAmount.add(stakedAmount)
 

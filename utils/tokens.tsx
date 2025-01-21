@@ -40,7 +40,7 @@ export type TokenProgramAccount<T> = {
 
 export async function getOwnedTokenAccounts(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<TokenAccount>[]> {
   const result = await connection.getTokenAccountsByOwner(publicKey, {
     programId: TOKEN_PROGRAM_ID,
@@ -57,7 +57,7 @@ export async function getOwnedTokenAccounts(
 /** @deprecated -- use react-query by pubkey */
 export const getTokenAccountsByMint = async (
   connection: Connection,
-  mint: string
+  mint: string,
 ): Promise<TokenProgramAccount<TokenAccount>[]> => {
   const results = await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
     filters: [
@@ -83,7 +83,7 @@ export const getTokenAccountsByMint = async (
 /** @deprecated, probably */
 export async function tryGetMint(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<MintAccount> | undefined> {
   try {
     const result = await connection.getAccountInfo(publicKey)
@@ -96,7 +96,7 @@ export async function tryGetMint(
   } catch (ex) {
     console.error(
       `Can't fetch mint ${publicKey?.toBase58()} @ ${connection.rpcEndpoint}`,
-      ex
+      ex,
     )
     return undefined
   }
@@ -105,7 +105,7 @@ export async function tryGetMint(
 /** @deprecated -- use react-query by pubkey */
 export async function tryGetTokenAccount(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<TokenAccount> | undefined> {
   try {
     const result = await connection.getAccountInfo(publicKey)
@@ -129,7 +129,7 @@ export async function tryGetTokenAccount(
 /** @deprecated -- use react-query by pubkey */
 export async function tryGetTokenMint(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<MintAccount> | undefined> {
   const tokenAccount = await tryGetTokenAccount(connection, publicKey)
   return tokenAccount && tryGetMint(connection, tokenAccount.account.mint)
@@ -138,10 +138,10 @@ export async function tryGetTokenMint(
 // copied from @solana/spl-token
 /** @deprecated -- why? just import from spl-token? */
 export const TOKEN_PROGRAM_ID = new PublicKey(
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
+  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
 )
 export const BPF_UPGRADE_LOADER_ID = new PublicKey(
-  'BPFLoaderUpgradeab1e11111111111111111111111'
+  'BPFLoaderUpgradeab1e11111111111111111111111',
 )
 
 /** @deprecated -- why not just use the normal mint layout? */
@@ -174,7 +174,7 @@ export function approveTokenTransfer(
 
   // if delegate is not passed ephemeral transfer authority is used
   delegate?: PublicKey,
-  existingTransferAuthority?: Keypair
+  existingTransferAuthority?: Keypair,
 ): Keypair {
   const tokenProgram = TOKEN_PROGRAM_ID
   const transferAuthority = existingTransferAuthority || new Keypair()
@@ -192,13 +192,13 @@ export function approveTokenTransfer(
       delegate ?? transferAuthority.publicKey,
       owner,
       [],
-      amount
-    )
+      amount,
+    ),
   )
 
   if (autoRevoke) {
     cleanupInstructions.push(
-      Token.createRevokeInstruction(tokenProgram, account, owner, [])
+      Token.createRevokeInstruction(tokenProgram, account, owner, []),
     )
   }
 
@@ -208,13 +208,13 @@ export function approveTokenTransfer(
 export async function getMultipleAccountInfoChunked(
   connection: Connection,
   keys: PublicKey[],
-  commitment: Commitment | undefined = 'recent'
+  commitment: Commitment | undefined = 'recent',
 ) {
   return (
     await Promise.all(
       chunks(keys, 99).map((chunk) =>
-        connection.getMultipleAccountsInfo(chunk, commitment)
-      )
+        connection.getMultipleAccountsInfo(chunk, commitment),
+      ),
     )
   ).flat()
 }
@@ -230,7 +230,7 @@ export function getTokenAccountLabelInfo(acc: AssetAccount | undefined) {
 
   if (acc?.extensions.token && acc.extensions.mint) {
     const info = tokenPriceService.getTokenInfo(
-      acc.extensions!.mint!.publicKey.toBase58()
+      acc.extensions!.mint!.publicKey.toBase58(),
     )
     imgUrl = info?.logoURI ? info.logoURI : ''
     tokenAccount = acc.extensions.token.publicKey.toBase58()
@@ -240,7 +240,7 @@ export function getTokenAccountLabelInfo(acc: AssetAccount | undefined) {
     tokenAccountName = getAccountName(acc.extensions.token.publicKey)
     amount = formatMintNaturalAmountAsDecimal(
       acc.extensions.mint!.account,
-      acc.extensions.token?.account.amount
+      acc.extensions.token?.account.amount,
     )
   }
   return {
@@ -271,7 +271,7 @@ export function getSolAccountLabel(acc: AssetAccount | undefined) {
       : ''
     amount = formatMintNaturalAmountAsDecimal(
       acc.extensions.mint!.account,
-      new BN(acc.extensions.solAccount!.lamports)
+      new BN(acc.extensions.solAccount!.lamports),
     )
   }
   return {
@@ -298,7 +298,7 @@ export function getMintAccountLabelInfo(acc: AssetAccount | undefined) {
     mintAccountName = getAccountName(acc.pubkey)
     amount = formatMintNaturalAmountAsDecimal(
       acc.extensions.mint.account,
-      acc?.extensions.mint.account.supply
+      acc?.extensions.mint.account.supply,
     )
   }
   return {
@@ -338,7 +338,7 @@ const SCALED_FACTOR_SHIFT = 9
 
 export function getScaledFactor(amount: number) {
   return new BN(
-    new BigNumber(amount.toString()).shiftedBy(SCALED_FACTOR_SHIFT).toString()
+    new BigNumber(amount.toString()).shiftedBy(SCALED_FACTOR_SHIFT).toString(),
   )
 }
 

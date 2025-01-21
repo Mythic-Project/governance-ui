@@ -14,15 +14,13 @@ export default function useWalletDeprecated() {
     const options = AnchorProvider.defaultOptions()
     return new AnchorProvider(
       connection.current,
-      (wallet as unknown) as Wallet,
-      options
+      wallet as unknown as Wallet,
+      options,
     )
   }, [connection, wallet])
 
-  return useMemo(() => ({ connected, wallet, anchorProvider, connection }), [
-    anchorProvider,
-    connected,
-    connection,
-    wallet,
-  ])
+  return useMemo(
+    () => ({ connected, wallet, anchorProvider, connection }),
+    [anchorProvider, connected, connection, wallet],
+  )
 }

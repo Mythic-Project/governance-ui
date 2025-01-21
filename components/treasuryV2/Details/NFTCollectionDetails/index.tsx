@@ -41,11 +41,11 @@ const NftCollectionGallery = ({
               collectionId === 'none'
                 ? x.grouping?.length < 1
                 : (x.grouping as any[]).find(
-                    (y) => y.group_value === collectionId.toString()
-                  )
+                    (y) => y.group_value === collectionId.toString(),
+                  ),
             )
         : undefined,
-    [collectionId, governanceNfts, treasuryNfts]
+    [collectionId, governanceNfts, treasuryNfts],
   )
 
   return <NFTGallery nfts={nfts} {...props} />
@@ -57,17 +57,16 @@ export default function NFTCollectionDetails(props: Props) {
       props.collectionId === 'none'
         ? 'none'
         : new PublicKey(props.collectionId),
-    [props.collectionId]
+    [props.collectionId],
   )
-  const governance = useMemo(() => new PublicKey(props.governance), [
-    props.governance,
-  ])
+  const governance = useMemo(
+    () => new PublicKey(props.governance),
+    [props.governance],
+  )
   const [openSendNftsModal, setOpenSendNftsModal] = useState(false)
 
-  const [
-    selectedNftAndItsGovernance,
-    setSelectedNftAndItsGovernance,
-  ] = useState<[PublicKey | undefined, PublicKey]>()
+  const [selectedNftAndItsGovernance, setSelectedNftAndItsGovernance] =
+    useState<[PublicKey | undefined, PublicKey]>()
 
   const findGovernanceByTreasury = useFindGovernanceByTreasury()
   // x is an nft object from the DAS api
@@ -78,7 +77,7 @@ export default function NFTCollectionDetails(props: Props) {
       setSelectedNftAndItsGovernance([new PublicKey(x.id), governance])
       setOpenSendNftsModal(true)
     },
-    [findGovernanceByTreasury]
+    [findGovernanceByTreasury],
   )
 
   const onHeaderClickSendNft = useCallback(async () => {

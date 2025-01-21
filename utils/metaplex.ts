@@ -8,10 +8,10 @@ export const createIx_transferNft = async (
   toOwner: PublicKey,
   mint: PublicKey,
   authority: PublicKey,
-  payer: PublicKey
+  payer: PublicKey,
 ) => {
   const metaplex = new Metaplex(
-    connection
+    connection,
     // surely this doesn't matter? who cares what the cluster is if you know the endpoint?
     /*  {
       cluster:

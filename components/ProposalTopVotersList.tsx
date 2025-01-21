@@ -20,21 +20,21 @@ const COL_2_STYLES = classNames(
   ROW_STYLES,
   'left-[30%]',
   'w-[15%]',
-  'text-right'
+  'text-right',
 )
 
 const COL_3_STYLES = classNames(
   ROW_STYLES,
   'left-[45%]',
   'w-[30%]',
-  'text-right'
+  'text-right',
 )
 
 const COL_4_STYLES = classNames(
   ROW_STYLES,
   'left-[75%]',
   'right-0',
-  'text-right'
+  'text-right',
 )
 
 const formatNumber = (value: BN, decimals: number) => {
@@ -135,7 +135,7 @@ export default function ProposalTopVotersList(props: Props) {
 
         return true
       }),
-    [props.data, showYays, showNays, showUndecideds]
+    [props.data, showYays, showNays, showUndecideds],
   )
 
   useEffect(() => {
@@ -196,7 +196,7 @@ export default function ProposalTopVotersList(props: Props) {
                           ? 'opacity-100'
                           : index % 2
                           ? 'opacity-40'
-                          : 'opacity-20'
+                          : 'opacity-20',
                       )}
                     />
                     <div
@@ -205,7 +205,7 @@ export default function ProposalTopVotersList(props: Props) {
                         'opacity-80',
                         'text-sm',
                         'inline-flex',
-                        'items-center'
+                        'items-center',
                       )}
                     >
                       <ProfilePopup publicKey={rowData.name} expanded={true} />
@@ -215,7 +215,7 @@ export default function ProposalTopVotersList(props: Props) {
                       className={classNames(
                         COL_2_STYLES,
                         'opacity-80',
-                        'text-sm'
+                        'text-sm',
                       )}
                     >
                       {voteTypeText(rowData.voteType, props.isMulti)}
@@ -224,7 +224,7 @@ export default function ProposalTopVotersList(props: Props) {
                       className={classNames(
                         COL_3_STYLES,
                         'opacity-80',
-                        'text-sm'
+                        'text-sm',
                       )}
                     >
                       {formatNumber(rowData.votesCast, rowData.decimals)}
@@ -233,7 +233,7 @@ export default function ProposalTopVotersList(props: Props) {
                       className={classNames(
                         COL_4_STYLES,
                         'opacity-80',
-                        'text-sm'
+                        'text-sm',
                       )}
                     >
                       {formatPercentage(rowData.votePercentage)}
@@ -247,10 +247,18 @@ export default function ProposalTopVotersList(props: Props) {
       </div>
       <div className="flex-shink-0 text-xs px-2 mt-3 flex items-center gap-3">
         Show:
-        <Filter defaultChecked={showYays} label={props.isMulti ? "Voted" : "Yays"} onChange={setShowYays} />
-        {!props.isMulti &&
-          <Filter defaultChecked={showNays} label="Nays" onChange={setShowNays} />
-        }
+        <Filter
+          defaultChecked={showYays}
+          label={props.isMulti ? 'Voted' : 'Yays'}
+          onChange={setShowYays}
+        />
+        {!props.isMulti && (
+          <Filter
+            defaultChecked={showNays}
+            label="Nays"
+            onChange={setShowNays}
+          />
+        )}
         <Filter
           defaultChecked={showUndecideds}
           label="Undecided"

@@ -56,7 +56,7 @@ const DualVoteDeposit = ({
     }
     handleSetInstructions(
       { governedAccount: form.delegateToken?.governance, getInstruction },
-      index
+      index,
     )
   }, [form, handleSetInstructions, index, connection, wallet, realmInputParsed])
 

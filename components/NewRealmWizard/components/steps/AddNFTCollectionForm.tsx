@@ -155,12 +155,10 @@ export default function AddNFTCollectionForm({
     mode: 'all',
     resolver: yupResolver(schema),
   })
-  const [
-    collectionVerificationState,
-    setCollectionVerificationState,
-  ] = useState<
-    'none' | 'invalid' | 'verified' | 'is nft but no collection details'
-  >('none')
+  const [collectionVerificationState, setCollectionVerificationState] =
+    useState<
+      'none' | 'invalid' | 'verified' | 'is nft but no collection details'
+    >('none')
   const collectionKey = watch('collectionKey')
   const numberOfNFTs = watch('numberOfNFTs') || 10000
   const approvalPercent = watch('communityYesVotePercentage', 60) || 60
@@ -204,7 +202,7 @@ export default function AddNFTCollectionForm({
         if (network === 'localnet') throw new Error()
         const { result: collectionInfo } = await dasByIdQueryFn(
           network,
-          collectionInput
+          collectionInput,
         )
 
         console.log('NFT collection info from user input:', collectionInfo)
@@ -212,7 +210,7 @@ export default function AddNFTCollectionForm({
         setCollectionVerificationState(
           collectionInfo?.grouping.length === 0
             ? 'verified'
-            : 'is nft but no collection details'
+            : 'is nft but no collection details',
         )
         setSelectedNFTCollection(collectionInfo)
         setRequestPending(false)

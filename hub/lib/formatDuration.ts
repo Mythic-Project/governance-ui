@@ -22,7 +22,7 @@ const SHORT_MAP = {
 
 type Args = Parameters<typeof _formatDuration>;
 interface Options extends NonNullable<Args[1]> {
-  format?: typeof AVAILABLE_FORMATS[number][];
+  format?: (typeof AVAILABLE_FORMATS)[number][];
   short?: boolean;
 }
 

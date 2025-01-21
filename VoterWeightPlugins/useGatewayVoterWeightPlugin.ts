@@ -3,7 +3,7 @@ import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 
 import { useVoterWeightPluginReadinessReturnType } from './lib/types'
 import { PublicKey } from '@solana/web3.js'
-import {GatewayClient} from "@solana/governance-program-library";
+import { GatewayClient } from '@solana/governance-program-library'
 
 export interface useGatewayVoterWeightPluginReturnType
   extends useVoterWeightPluginReadinessReturnType {
@@ -15,22 +15,23 @@ type GatewayPluginParams = {
   gatekeeperNetwork: PublicKey | undefined
 }
 
-export const useGatewayVoterWeightPlugin = (): useGatewayVoterWeightPluginReturnType => {
-  const { isReady, plugins } = useRealmVoterWeightPlugins()
+export const useGatewayVoterWeightPlugin =
+  (): useGatewayVoterWeightPluginReturnType => {
+    const { isReady, plugins } = useRealmVoterWeightPlugins()
 
-  const gatewayPlugin = plugins?.voterWeight.find((plugin) =>
-    GATEWAY_PLUGINS_PKS.includes(plugin.programId.toString())
-  )
+    const gatewayPlugin = plugins?.voterWeight.find((plugin) =>
+      GATEWAY_PLUGINS_PKS.includes(plugin.programId.toString()),
+    )
 
-  const isEnabled = gatewayPlugin !== undefined
-  const gatekeeperNetwork = (
-    (gatewayPlugin?.params as GatewayPluginParams) || undefined
-  )?.gatekeeperNetwork
+    const isEnabled = gatewayPlugin !== undefined
+    const gatekeeperNetwork = (
+      (gatewayPlugin?.params as GatewayPluginParams) || undefined
+    )?.gatekeeperNetwork
 
-  return {
-    isReady,
-    gatekeeperNetwork,
-    isEnabled,
-    gatewayClient: gatewayPlugin?.client as GatewayClient,
+    return {
+      isReady,
+      gatekeeperNetwork,
+      isEnabled,
+      gatewayClient: gatewayPlugin?.client as GatewayClient,
+    }
   }
-}

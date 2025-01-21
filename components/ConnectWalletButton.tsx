@@ -10,14 +10,14 @@ import { abbreviateAddress } from '@utils/formatting'
 import { useCallback, useEffect, useState } from 'react'
 import Switch from './Switch'
 import { notify } from '@utils/notifications'
-import {Profile, ProfileImage} from '@components/Profile'
+import { Profile, ProfileImage } from '@components/Profile'
 import Loading from './Loading'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { DEFAULT_PROVIDER } from '../utils/wallet-adapters'
 import useViewAsWallet from '@hooks/useViewAsWallet'
-import { ProfileName } from "@components/Profile/ProfileName";
+import { ProfileName } from '@components/Profile/ProfileName'
 
 const StyledWalletProviderLabel = styled.p`
   font-size: 0.65rem;
@@ -109,7 +109,11 @@ const ConnectWalletButton = (props) => {
           ) : null}
           {connected && publicKey ? (
             <div className="hidden w-12 pr-2 sm:block">
-              <ProfileImage publicKey={publicKey} expanded={false} className="h-9 text-fgd-3 w-9" />
+              <ProfileImage
+                publicKey={publicKey}
+                expanded={false}
+                className="h-9 text-fgd-3 w-9"
+              />
             </div>
           ) : (
             <div className="hidden pl-2 pr-2 sm:block">
@@ -120,12 +124,12 @@ const ConnectWalletButton = (props) => {
             {connected && publicKey ? (
               <>
                 {connected && publicKey ? (
-                    <ProfileName
-                        publicKey={publicKey}
-                        width="100px"
-                        height="20px"
-                        dark={true}
-                    />
+                  <ProfileName
+                    publicKey={publicKey}
+                    width="100px"
+                    height="20px"
+                    dark={true}
+                  />
                 ) : null}
                 <StyledWalletProviderLabel className="font-normal text-fgd-3">
                   {walletAddressFormatted}
@@ -161,7 +165,7 @@ const ConnectWalletButton = (props) => {
                   {wallets
                     .filter(
                       ({ adapter }) =>
-                        adapter.readyState !== WalletReadyState.Unsupported
+                        adapter.readyState !== WalletReadyState.Unsupported,
                     )
                     .map(({ adapter: { icon, name } }) => (
                       <Menu.Item key={name}>

@@ -13,13 +13,13 @@ import {
 } from '@utils/sendTransactions'
 import { withCreateTokenOwnerRecord } from '@solana/spl-governance'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useExtendPosition = () => {
   const { connection, wallet, anchorProvider: provider } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const { realmInfo } = useRealm()
-  const {heliumClient} = useHeliumClient();
+  const { heliumClient } = useHeliumClient()
   const { error, loading, execute } = useAsyncCallback(
     async ({
       position,
@@ -39,7 +39,7 @@ export const useExtendPosition = () => {
         !realm ||
         !wallet ||
         !heliumClient ||
-        !realmInfo;
+        !realmInfo
 
       const idl = await Program.fetchIdl(programId, provider)
       const hsdProgram = await init(provider as any, programId, idl)
@@ -61,7 +61,7 @@ export const useExtendPosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -76,7 +76,7 @@ export const useExtendPosition = () => {
                 position: position.pubkey,
                 dao: dao,
               })
-              .instruction()
+              .instruction(),
           )
         } else {
           instructions.push(
@@ -88,7 +88,7 @@ export const useExtendPosition = () => {
               .accounts({
                 position: position.pubkey,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -99,7 +99,7 @@ export const useExtendPosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -115,7 +115,7 @@ export const useExtendPosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

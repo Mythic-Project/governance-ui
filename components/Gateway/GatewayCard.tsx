@@ -24,11 +24,8 @@ const GatewayCard = ({ role }: Props) => {
   const connected = !!wallet?.connected
   const { gatewayStatus } = useGateway()
 
-  const {
-    gatekeeperNetwork,
-    isReady,
-    isEnabled,
-  } = useGatewayVoterWeightPlugin()
+  const { gatekeeperNetwork, isReady, isEnabled } =
+    useGatewayVoterWeightPlugin()
   const { communityWeight, councilWeight } = useRealmVoterWeights()
 
   const { plugins } = useRealmVoterWeightPlugins(role)

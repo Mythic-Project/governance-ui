@@ -44,7 +44,7 @@ export default function Explore() {
     proposal?.account.voteType !== VoteType.SINGLE_CHOICE &&
     proposal?.account.accountType === GovernanceAccountType.ProposalV2
 
-  const voterCount = records.filter(r => r.voteType !== 1).length
+  const voterCount = records.filter((r) => r.voteType !== 1).length
 
   return (
     <div className="bg-bkg-2 rounded-lg p-4 space-y-3 md:p-6">
@@ -56,7 +56,7 @@ export default function Explore() {
           'text-fgd-2',
           'text-sm',
           'transition-all',
-          'hover:text-fgd-3'
+          'hover:text-fgd-3',
         )}
         onClick={handleExploreBackClick}
       >

@@ -32,7 +32,7 @@ import { Tab } from './Tab';
 import { Team } from './Team';
 
 function removeClippedAnswer<
-  O extends { clippedAnswer?: any; [key: string]: any }
+  O extends { clippedAnswer?: any; [key: string]: any },
 >(item: O): Omit<O, 'clippedAnswer'> {
   if ('clippedAnswer' in item) {
     // eslint-disable-next-line
@@ -56,7 +56,7 @@ function removeTypename<O extends { __typename?: string; [key: string]: any }>(
 }
 
 function removeTwitterFollowerCount<
-  O extends { twitterFollowerCount?: any; [key: string]: any }
+  O extends { twitterFollowerCount?: any; [key: string]: any },
 >(item: O): Omit<O, 'twitterFollowerCount'> {
   if ('twitterFollowerCount' in item) {
     // eslint-disable-next-line

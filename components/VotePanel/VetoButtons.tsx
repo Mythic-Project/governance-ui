@@ -30,9 +30,8 @@ const useCanVeto = ():
   | { canVeto: true }
   | { canVeto: false; message: string } => {
   const vetoPop = useVetoingPop()
-  const { calculatedMaxVoterWeight, isReady } = useRealmVoterWeightPlugins(
-    vetoPop
-  )
+  const { calculatedMaxVoterWeight, isReady } =
+    useRealmVoterWeightPlugins(vetoPop)
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
   const isVetoable = useIsVetoable()

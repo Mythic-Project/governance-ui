@@ -50,7 +50,7 @@ const SplTokenTransfer = ({
   >(undefined)
   const { destinationAccount, destinationAddress } = useDestination(
     connection.current,
-    address
+    address,
   )
   const [formErrors, setFormErrors] = useState({})
   const mintMinAmount = form.mintInfo
@@ -80,8 +80,8 @@ const SplTokenTransfer = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -134,7 +134,7 @@ const SplTokenTransfer = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

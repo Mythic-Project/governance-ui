@@ -15,14 +15,14 @@ import {
 import { useSolanaUnixNow } from '@hooks/useSolanaUnixNow'
 import { withCreateTokenOwnerRecord } from '@solana/spl-governance'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useFlipPositionLockupKind = () => {
   const { unixNow } = useSolanaUnixNow()
   const { connection, wallet, anchorProvider: provider } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const { realmInfo } = useRealm()
-  const {heliumClient} = useHeliumClient();
+  const { heliumClient } = useHeliumClient()
   const { error, loading, execute } = useAsyncCallback(
     async ({
       position,
@@ -65,8 +65,8 @@ export const useFlipPositionLockupKind = () => {
           secsToDays(
             isConstant
               ? position.lockup.endTs.sub(position.lockup.startTs).toNumber()
-              : position.lockup.endTs.sub(new BN(unixNow)).toNumber()
-          )
+              : position.lockup.endTs.sub(new BN(unixNow)).toNumber(),
+          ),
         )
 
         if (!tokenOwnerRecordPk) {
@@ -77,7 +77,7 @@ export const useFlipPositionLockupKind = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -92,7 +92,7 @@ export const useFlipPositionLockupKind = () => {
                 position: position.pubkey,
                 dao,
               })
-              .instruction()
+              .instruction(),
           )
         } else {
           instructions.push(
@@ -104,7 +104,7 @@ export const useFlipPositionLockupKind = () => {
               .accounts({
                 position: position.pubkey,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -115,7 +115,7 @@ export const useFlipPositionLockupKind = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -133,7 +133,7 @@ export const useFlipPositionLockupKind = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

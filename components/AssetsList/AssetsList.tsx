@@ -10,7 +10,7 @@ const AssetsList = ({ panelView }: AssetsListProps) => {
   const { assetAccounts } = useGovernanceAssets()
 
   const programGovernances = assetAccounts.filter(
-    (x) => x.type === AccountType.PROGRAM
+    (x) => x.type === AccountType.PROGRAM,
   )
 
   return !panelView ? (

@@ -16,7 +16,7 @@ export const governanceAccountQueryKeys = {
 export function useGovernanceAccountByPubkeyQuery<T extends GovernanceAccount>(
   kind: new (...args) => T,
   kindLabel: string,
-  pubkey: PublicKey | undefined
+  pubkey: PublicKey | undefined,
 ) {
   const connection = useLegacyConnectionContext()
 
@@ -26,7 +26,7 @@ export function useGovernanceAccountByPubkeyQuery<T extends GovernanceAccount>(
       ? governanceAccountQueryKeys.byPubkey(
           connection.cluster,
           kindLabel,
-          pubkey
+          pubkey,
         )
       : undefined,
     queryFn: async () => {
@@ -42,12 +42,12 @@ export function useGovernanceAccountByPubkeyQuery<T extends GovernanceAccount>(
 }
 
 export async function fetchGovernanceAccountByPubkey<
-  T extends GovernanceAccount
+  T extends GovernanceAccount,
 >(
   connection: Connection,
   kind: new (...args) => T,
   kindLabel: string,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) {
   const f = () =>
     asFindable(() => getGovernanceAccount(connection, pubkey, kind))()
@@ -55,7 +55,7 @@ export async function fetchGovernanceAccountByPubkey<
     queryKey: governanceAccountQueryKeys.byPubkey(
       connection.rpcEndpoint,
       kindLabel,
-      pubkey
+      pubkey,
     ),
     queryFn: f,
   })

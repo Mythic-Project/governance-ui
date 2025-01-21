@@ -73,7 +73,7 @@ const JoinDAO = ({
       return governedSPLTokenAccounts.filter(
         (t) =>
           t.extensions.mint?.publicKey.toBase58() ===
-          selectedRealm.account.communityMint.toBase58()
+          selectedRealm.account.communityMint.toBase58(),
       )
     } else return []
   }, [governedSPLTokenAccounts, selectedRealm])
@@ -93,8 +93,8 @@ const JoinDAO = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -123,12 +123,12 @@ const JoinDAO = ({
 
     const atomicAmount = parseMintNaturalAmountFromDecimalAsBN(
       form.amount,
-      form.mintInfo.decimals
+      form.mintInfo.decimals,
     )
 
     const programVersion = await fetchProgramVersion(
       connection.current,
-      form.realm.programId
+      form.realm.programId,
     )
 
     await withDepositGoverningTokens(
@@ -141,7 +141,7 @@ const JoinDAO = ({
       form.governedAccount.extensions.token.account.owner,
       form.governedAccount.extensions.token.account.owner,
       wallet!.publicKey!,
-      atomicAmount
+      atomicAmount,
     )
 
     if (instructions.length != 1) {
@@ -182,7 +182,7 @@ const JoinDAO = ({
         governedAccount: form.governedAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

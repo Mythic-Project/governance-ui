@@ -80,7 +80,7 @@ const TokenRegister = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup, getAdditionalLabelInfo } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const forwarderProgramHelpers = useForwarderProgramHelpers()
@@ -89,7 +89,7 @@ const TokenRegister = ({
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup?.admin)
+      x.extensions.transferAddress?.equals(mangoGroup?.admin),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [form, setForm] = useState<TokenRegisterForm>({
@@ -199,7 +199,7 @@ const TokenRegister = ({
           Number(form.platformLiquidationFee),
           form.disableAssetLiquidation,
           Number(form.collateralFeePerDay),
-          form.tier
+          form.tier,
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -213,7 +213,7 @@ const TokenRegister = ({
         .instruction()
 
       serializedInstruction = serializeInstructionToBase64(
-        forwarderProgramHelpers.withForwarderWrapper(ix)
+        forwarderProgramHelpers.withForwarderWrapper(ix),
       )
     }
     const obj: UiInstruction = {
@@ -229,7 +229,7 @@ const TokenRegister = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -246,13 +246,13 @@ const TokenRegister = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     mintPk: yup
       .string()
       .required()
       .test('is-valid-address1', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     name: yup.string().required(),
     tokenIndex: yup.string().required(),

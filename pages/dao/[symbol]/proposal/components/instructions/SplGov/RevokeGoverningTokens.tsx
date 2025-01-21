@@ -82,8 +82,12 @@ const RevokeGoverningTokens: FC<{
     }
   }, [query])
 
-  const [selectedMint, setSelectedMint] = useState<PublicKey | undefined>(undefined)
-  const [selectedMembershipType, setSelectedMembershipType] = useState<string | undefined>(undefined)
+  const [selectedMint, setSelectedMint] = useState<PublicKey | undefined>(
+    undefined,
+  )
+  const [selectedMembershipType, setSelectedMembershipType] = useState<
+    string | undefined
+  >(undefined)
 
   const { data: mintInfo } = useMintInfoByPubkeyQuery(selectedMint)
   const governance = useGovernanceForGovernedAddress(selectedMint)
@@ -142,8 +146,8 @@ const RevokeGoverningTokens: FC<{
       revokeTokenAuthority,
       getMintNaturalAmountFromDecimalAsBN(
         parseFloat(form.amount),
-        mintInfo.result.decimals
-      )
+        mintInfo.result.decimals,
+      ),
     )
     return {
       isValid: true,
@@ -169,7 +173,7 @@ const RevokeGoverningTokens: FC<{
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -187,7 +191,7 @@ const RevokeGoverningTokens: FC<{
 
   // Add state for domain resolution
   const [isResolvingDomain, setIsResolvingDomain] = useState(false)
-  const {connection} = useConnection()
+  const { connection } = useConnection()
 
   // Add the debounced resolve function
   const resolveDomainDebounced = useMemo(
@@ -197,7 +201,7 @@ const RevokeGoverningTokens: FC<{
           console.log('Attempting to resolve domain:', domain)
           const resolved = await resolveDomain(connection, domain)
           console.log('Domain resolved to:', resolved?.toBase58() || 'null')
-          
+
           if (resolved) {
             setForm((prevForm) => ({
               ...prevForm,
@@ -210,10 +214,10 @@ const RevokeGoverningTokens: FC<{
           setIsResolvingDomain(false)
         }
       }, 500),
-    [connection]
+    [connection],
   )
 
-  const updateMembershipType = (x: "council" | "community" | undefined) => {
+  const updateMembershipType = (x: 'council' | 'community' | undefined) => {
     setForm((p) => ({ ...p, membershipPopulation: x }))
     setSelectedMembershipType(x)
     if (x) {
@@ -252,7 +256,7 @@ const RevokeGoverningTokens: FC<{
           onChange={(e) => {
             const value = e.target.value
             setForm((p) => ({ ...p, memberKey: value }))
-            
+
             if (value.includes('.')) {
               setIsResolvingDomain(true)
               resolveDomainDebounced(value)

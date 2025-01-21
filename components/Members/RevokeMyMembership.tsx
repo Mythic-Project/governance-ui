@@ -51,7 +51,7 @@ const Form: FC<{ closeModal: () => void }> = ({ closeModal }) => {
       form.membershipPopulation ?? Object.keys(membershipTypes).length === 1
         ? Object.keys(membershipTypes)[0]
         : undefined,
-    [form.membershipPopulation, membershipTypes]
+    [form.membershipPopulation, membershipTypes],
   )
 
   const selectedMint = useMemo(
@@ -59,11 +59,11 @@ const Form: FC<{ closeModal: () => void }> = ({ closeModal }) => {
       selectedMembershipType === undefined
         ? undefined
         : (membershipTypes[selectedMembershipType] as PublicKey | undefined),
-    [membershipTypes, selectedMembershipType]
+    [membershipTypes, selectedMembershipType],
   )
-  
+
   const { data: mintInfo } = useMintInfoByPubkeyQuery(selectedMint)
-  
+
   // erase errors on dirtying
   useEffect(() => {
     setFormErrors({})
@@ -107,8 +107,8 @@ const Form: FC<{ closeModal: () => void }> = ({ closeModal }) => {
       wallet.publicKey,
       getMintNaturalAmountFromDecimalAsBN(
         parseFloat(form.amount),
-        mintInfo.result.decimals
-      )
+        mintInfo.result.decimals,
+      ),
     )
 
     setIsLoading(true)

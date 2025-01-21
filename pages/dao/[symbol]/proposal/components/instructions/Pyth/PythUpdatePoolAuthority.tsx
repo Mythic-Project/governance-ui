@@ -20,7 +20,9 @@ export interface PythUpdatePoolAuthorityForm {
   poolAuthority: string
 }
 
-const INSTRUCTION_DISCRIMINATOR = new Uint8Array([160, 162, 113, 9, 99, 187, 23, 239]);
+const INSTRUCTION_DISCRIMINATOR = new Uint8Array([
+  160, 162, 113, 9, 99, 187, 23, 239,
+])
 
 const PythUpdatePoolAuthority = ({
   index,
@@ -57,16 +59,23 @@ const PythUpdatePoolAuthority = ({
         connection: connection.current,
       })
 
-      const [configAddress, _] = getConfigAddress();
+      const [configAddress, _] = getConfigAddress()
 
       const poolAuthorityPublicKey = new PublicKey(form.poolAuthority)
-      const instruction : TransactionInstruction = {
+      const instruction: TransactionInstruction = {
         keys: [
-          {pubkey : form.governedAccount.governance.pubkey, isSigner: true, isWritable: false},
-          {pubkey : configAddress, isSigner: false, isWritable: true},
+          {
+            pubkey: form.governedAccount.governance.pubkey,
+            isSigner: true,
+            isWritable: false,
+          },
+          { pubkey: configAddress, isSigner: false, isWritable: true },
         ],
-        programId : pythClient.stakingProgram.programId,
-        data : Buffer.concat([INSTRUCTION_DISCRIMINATOR, poolAuthorityPublicKey.toBuffer()])
+        programId: pythClient.stakingProgram.programId,
+        data: Buffer.concat([
+          INSTRUCTION_DISCRIMINATOR,
+          poolAuthorityPublicKey.toBuffer(),
+        ]),
       }
 
       return {
@@ -88,7 +97,7 @@ const PythUpdatePoolAuthority = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -98,7 +107,7 @@ const PythUpdatePoolAuthority = ({
       .object()
       .nullable()
       .required('Program governed account is required'),
-      poolAuthority: yup
+    poolAuthority: yup
       .string()
       .required('Pool authority is required')
       .test(
@@ -106,7 +115,7 @@ const PythUpdatePoolAuthority = ({
         'Invalid Pool Authority',
         function (val: string) {
           return val ? validatePubkey(val) : true
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [

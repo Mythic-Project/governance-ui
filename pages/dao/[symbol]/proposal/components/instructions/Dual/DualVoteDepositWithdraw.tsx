@@ -50,7 +50,7 @@ const DualVoteDepositWithdraw = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [
     form,

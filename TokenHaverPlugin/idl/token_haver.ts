@@ -11,7 +11,7 @@ export type TokenHaver = {
           isSigner: false
           docs: [
             'The Realm Voter Registrar',
-            'There can only be a single registrar per governance Realm and governing mint of the Realm'
+            'There can only be a single registrar per governance Realm and governing mint of the Realm',
           ]
         },
         {
@@ -19,7 +19,7 @@ export type TokenHaver = {
           isMut: false
           isSigner: false
           docs: [
-            'The program id of the spl-governance program the realm belongs to'
+            'The program id of the spl-governance program the realm belongs to',
           ]
         },
         {
@@ -32,7 +32,7 @@ export type TokenHaver = {
             'Realm is validated in the instruction:',
             '- Realm is owned by the governance_program_id',
             '- governing_token_mint must be the community or council mint',
-            '- realm_authority is realm.authority'
+            '- realm_authority is realm.authority',
           ]
         },
         {
@@ -44,7 +44,7 @@ export type TokenHaver = {
             'It must match Realm.community_mint or Realm.config.council_mint',
             '',
             'Note: Once the Realm voter plugin is enabled the governing_token_mint is used only as identity',
-            'for the voting population and the tokens of that are no longer used'
+            'for the voting population and the tokens of that are no longer used',
           ]
         },
         {
@@ -62,7 +62,7 @@ export type TokenHaver = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -70,7 +70,7 @@ export type TokenHaver = {
           type: {
             vec: 'publicKey'
           }
-        }
+        },
       ]
     },
     {
@@ -95,13 +95,13 @@ export type TokenHaver = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'governingTokenOwner'
           type: 'publicKey'
-        }
+        },
       ]
     },
     {
@@ -117,7 +117,7 @@ export type TokenHaver = {
           name: 'voterWeightRecord'
           isMut: true
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -150,7 +150,7 @@ export type TokenHaver = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -158,9 +158,9 @@ export type TokenHaver = {
           type: {
             vec: 'publicKey'
           }
-        }
+        },
       ]
-    }
+    },
   ]
   accounts: [
     {
@@ -169,7 +169,7 @@ export type TokenHaver = {
         'MaxVoterWeightRecord account as defined in spl-governance-addin-api',
         "It's redefined here without account_discriminator for Anchor to treat it as native account",
         '',
-        'The account is used as an api interface to provide max voting power to the governance program from external addin contracts'
+        'The account is used as an api interface to provide max voting power to the governance program from external addin contracts',
       ]
       type: {
         kind: 'struct'
@@ -183,7 +183,7 @@ export type TokenHaver = {
             name: 'governingTokenMint'
             docs: [
               'Governing Token Mint the MaxVoterWeightRecord is associated with',
-              'Note: The addin can take deposits of any tokens and is not restricted to the community or council tokens only'
+              'Note: The addin can take deposits of any tokens and is not restricted to the community or council tokens only',
             ]
             type: 'publicKey'
           },
@@ -191,7 +191,7 @@ export type TokenHaver = {
             name: 'maxVoterWeight'
             docs: [
               'Max voter weight',
-              'The max voter weight provided by the addin for the given realm and governing_token_mint'
+              'The max voter weight provided by the addin for the given realm and governing_token_mint',
             ]
             type: 'u64'
           },
@@ -202,7 +202,7 @@ export type TokenHaver = {
               'It should be set to None if the weight never expires',
               'If the max vote weight decays with time, for example for time locked based weights, then the expiry must be set',
               'As a pattern Revise instruction to update the max weight should be invoked before governance instruction within the same transaction',
-              'and the expiry set to the current slot to provide up to date weight'
+              'and the expiry set to the current slot to provide up to date weight',
             ]
             type: {
               option: 'u64'
@@ -214,14 +214,14 @@ export type TokenHaver = {
             type: {
               array: ['u8', 8]
             }
-          }
+          },
         ]
       }
     },
     {
       name: 'registrar'
       docs: [
-        'Registrar which stores spl-governance configurations for the given Realm'
+        'Registrar which stores spl-governance configurations for the given Realm',
       ]
       type: {
         kind: 'struct'
@@ -242,7 +242,7 @@ export type TokenHaver = {
               'Governing token mint the Registrar is for',
               'It can either be the Community or the Council mint of the Realm',
               'When the plugin is enabled the mint is only used as the identity of the governing power (voting population)',
-              'and the actual token of the mint is not used'
+              'and the actual token of the mint is not used',
             ]
             type: 'publicKey'
           },
@@ -251,7 +251,7 @@ export type TokenHaver = {
             type: {
               vec: 'publicKey'
             }
-          }
+          },
         ]
       }
     },
@@ -261,7 +261,7 @@ export type TokenHaver = {
         'VoterWeightRecord account as defined in spl-governance-addin-api',
         "It's redefined here without account_discriminator for Anchor to treat it as native account",
         '',
-        'The account is used as an api interface to provide voting power to the governance program from external addin contracts'
+        'The account is used as an api interface to provide voting power to the governance program from external addin contracts',
       ]
       type: {
         kind: 'struct'
@@ -275,7 +275,7 @@ export type TokenHaver = {
             name: 'governingTokenMint'
             docs: [
               'Governing Token Mint the VoterWeightRecord is associated with',
-              'Note: The addin can take deposits of any tokens and is not restricted to the community or council tokens only'
+              'Note: The addin can take deposits of any tokens and is not restricted to the community or council tokens only',
             ]
             type: 'publicKey'
           },
@@ -283,7 +283,7 @@ export type TokenHaver = {
             name: 'governingTokenOwner'
             docs: [
               'The owner of the governing token and voter',
-              'This is the actual owner (voter) and corresponds to TokenOwnerRecord.governing_token_owner'
+              'This is the actual owner (voter) and corresponds to TokenOwnerRecord.governing_token_owner',
             ]
             type: 'publicKey'
           },
@@ -291,7 +291,7 @@ export type TokenHaver = {
             name: 'voterWeight'
             docs: [
               "Voter's weight",
-              'The weight of the voter provided by the addin for the given realm, governing_token_mint and governing_token_owner (voter)'
+              'The weight of the voter provided by the addin for the given realm, governing_token_mint and governing_token_owner (voter)',
             ]
             type: 'u64'
           },
@@ -302,7 +302,7 @@ export type TokenHaver = {
               'It should be set to None if the weight never expires',
               'If the voter weight decays with time, for example for time locked based weights, then the expiry must be set',
               'As a common pattern Revise instruction to update the weight should be invoked before governance instruction within the same transaction',
-              'and the expiry set to the current slot to provide up to date weight'
+              'and the expiry set to the current slot to provide up to date weight',
             ]
             type: {
               option: 'u64'
@@ -313,7 +313,7 @@ export type TokenHaver = {
             docs: [
               "The governance action the voter's weight pertains to",
               "It allows to provided voter's weight specific to the particular action the weight is evaluated for",
-              'When the action is provided then the governance program asserts the executing action is the same as specified by the addin'
+              'When the action is provided then the governance program asserts the executing action is the same as specified by the addin',
             ]
             type: {
               option: {
@@ -327,7 +327,7 @@ export type TokenHaver = {
               "The target the voter's weight  action pertains to",
               "It allows to provided voter's weight specific to the target the weight is evaluated for",
               'For example when addin supplies weight to vote on a particular proposal then it must specify the proposal as the action target',
-              'When the target is provided then the governance program asserts the target is the same as specified by the addin'
+              'When the target is provided then the governance program asserts the target is the same as specified by the addin',
             ]
             type: {
               option: 'publicKey'
@@ -339,10 +339,10 @@ export type TokenHaver = {
             type: {
               array: ['u8', 8]
             }
-          }
+          },
         ]
       }
-    }
+    },
   ]
   types: [
     {
@@ -356,7 +356,7 @@ export type TokenHaver = {
           },
           {
             name: 'Remove'
-          }
+          },
         ]
       }
     },
@@ -364,7 +364,7 @@ export type TokenHaver = {
       name: 'VoterWeightAction'
       docs: [
         'VoterWeightAction enum as defined in spl-governance-addin-api',
-        "It's redefined here for Anchor to export it to IDL"
+        "It's redefined here for Anchor to export it to IDL",
       ]
       type: {
         kind: 'enum'
@@ -383,10 +383,10 @@ export type TokenHaver = {
           },
           {
             name: 'SignOffProposal'
-          }
+          },
         ]
       }
-    }
+    },
   ]
   errors: [
     {
@@ -428,7 +428,7 @@ export type TokenHaver = {
       code: 6007
       name: 'TokenAccountNotLocked'
       msg: "All token accounts' mints must be included in the registrar"
-    }
+    },
   ]
 }
 

@@ -16,10 +16,10 @@ export const withCreateMint = async (
   ownerPk: PublicKey,
   freezeAuthorityPk: PublicKey | null,
   decimals: number,
-  payerPk: PublicKey
+  payerPk: PublicKey,
 ) => {
   const mintRentExempt = await connection.getMinimumBalanceForRentExemption(
-    MintLayout.span
+    MintLayout.span,
   )
 
   const mintAccount = new Keypair()
@@ -31,7 +31,7 @@ export const withCreateMint = async (
       lamports: mintRentExempt,
       space: MintLayout.span,
       programId: TOKEN_PROGRAM_ID,
-    })
+    }),
   )
   signers.push(mintAccount)
 
@@ -41,8 +41,8 @@ export const withCreateMint = async (
       mintAccount.publicKey,
       decimals,
       ownerPk,
-      freezeAuthorityPk
-    )
+      freezeAuthorityPk,
+    ),
   )
   return mintAccount.publicKey
 }

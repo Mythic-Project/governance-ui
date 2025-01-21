@@ -6,7 +6,7 @@ interface nftPluginStore extends State {
     maxVoteRecord: ProgramAccount<MaxVoterWeightRecord> | null
   }
   setMaxVoterWeight: (
-    maxVoterRecord: ProgramAccount<MaxVoterWeightRecord> | null
+    maxVoterRecord: ProgramAccount<MaxVoterWeightRecord> | null,
   ) => void
 }
 

@@ -33,11 +33,11 @@ const CLUSTER = 'mainnet'
 const REALM = new PublicKey('DPiH3H3c7t47BMxqTxLsuPQpEC6Kne8GA9VXbxpnZxFE')
 
 const GOVERNANCE_PROGRAM = new PublicKey(
-  'GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J'
+  'GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J',
 )
 
 const PROPOSAL_MINT = new PublicKey(
-  'MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac'
+  'MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac',
 )
 
 class GovernanceCli {
@@ -64,34 +64,34 @@ class GovernanceCli {
     const options = AnchorProvider.defaultOptions()
     const provider = new AnchorProvider(
       this.#connectionContext.current,
-      (this.wallet as unknown) as Wallet,
-      options
+      this.wallet as unknown as Wallet,
+      options,
     )
     const vsrClient = await VsrClient.connect(
       provider,
       new PublicKey(VSR_PROGRAM_ID),
-      this.#connectionContext.cluster === 'devnet'
+      this.#connectionContext.cluster === 'devnet',
     )
     this.vsrClient = vsrClient
     console.log('Vsr ready')
   }
   async createProposal() {
     const instructionsCount = await promptly.prompt(
-      'How many instructions you want to use?'
+      'How many instructions you want to use?',
     )
     if (isNaN(instructionsCount)) {
       console.log('Error instruction count is not a number')
       return
     }
     const governancePk = await promptly.prompt(
-      'Provide governance address for proposal: '
+      'Provide governance address for proposal: ',
     )
     if (!tryParseKey(governancePk)) {
       console.log('Error invalid publickey')
       return
     }
     const delegatedWallet = await promptly.prompt(
-      'Enter the address that delegated the token to you: '
+      'Enter the address that delegated the token to you: ',
     )
     if (!tryParseKey(delegatedWallet)) {
       console.log('Error invalid publickey')
@@ -103,7 +103,7 @@ class GovernanceCli {
     for (let i = 0; i < instructionsCount; i++) {
       const instructionNumber = i + 1
       const inst = await promptly.prompt(
-        `Instruction ${instructionNumber} Base64: `
+        `Instruction ${instructionNumber} Base64: `,
       )
       try {
         getInstructionDataFromBase64(inst)
@@ -119,14 +119,14 @@ class GovernanceCli {
         GOVERNANCE_PROGRAM,
         REALM,
         PROPOSAL_MINT,
-        new PublicKey(delegatedWallet)
+        new PublicKey(delegatedWallet),
       )
     } else {
       tokenOwnerRecordPk = await getTokenOwnerRecordAddress(
         GOVERNANCE_PROGRAM,
         REALM,
         PROPOSAL_MINT,
-        this.wallet.publicKey
+        this.wallet.publicKey,
       )
     }
     const [tokenOwnerRecord, proposals] = await Promise.all([
@@ -134,7 +134,7 @@ class GovernanceCli {
       getAllProposals(
         this.#connectionContext.current,
         GOVERNANCE_PROGRAM,
-        REALM
+        REALM,
       ),
     ])
     const proposalIndex = proposals.flatMap((x) => x).length
@@ -152,10 +152,10 @@ class GovernanceCli {
         description,
         proposalIndex,
         [...instructions],
-        this.vsrClient
+        this.vsrClient,
       )
       console.log(
-        `Success proposal created url: https://realms.today/dao/${REALM.toBase58()}/proposal/${address.toBase58()}`
+        `Success proposal created url: https://realms.today/dao/${REALM.toBase58()}/proposal/${address.toBase58()}`,
       )
     } catch (e) {
       console.log('ERROR: ', e)
@@ -169,8 +169,8 @@ class GovernanceCli {
 async function run() {
   console.log(
     chalk.red(
-      figlet.textSync('spl-governance-cli', { horizontalLayout: 'full' })
-    )
+      figlet.textSync('spl-governance-cli', { horizontalLayout: 'full' }),
+    ),
   )
   ;(async () => {
     //Load wallet from file system assuming its in default direction /Users/-USERNAME-/.config/solana/id.json

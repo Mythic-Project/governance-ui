@@ -79,13 +79,13 @@ const SwitchboardFundOracle = ({
       const program = await SwitchboardProgram.load(connection.current)
       const [oracle, oracleAccountData] = await AggregatorAccount.load(
         program,
-        form.oraclePublicKey
+        form.oraclePublicKey,
       )
 
       const [leaseAccount, leaseAccountData] = await LeaseAccount.load(
         program,
         oracleAccountData.queuePubkey,
-        oracle.publicKey
+        oracle.publicKey,
       )
       if (
         leaseAccountData.withdrawAuthority.toBase58() ===
@@ -95,7 +95,7 @@ const SwitchboardFundOracle = ({
           wallet.publicKey,
           {
             newAuthority: form.governedAccount.extensions.transferAddress!,
-          }
+          },
         )
         prerequsieInstructionsSigners.push(...transferWithdrawAuthIx.signers)
         prerequisiteInstructions.push(...transferWithdrawAuthIx.ixns)
@@ -108,7 +108,7 @@ const SwitchboardFundOracle = ({
           wallet.publicKey,
           {
             newAuthority: form.governedAccount.extensions.transferAddress!,
-          }
+          },
         )
         prerequsieInstructionsSigners.push(...transferAuthIx.signers)
         prerequisiteInstructions.push(...transferAuthIx.ixns)
@@ -116,7 +116,7 @@ const SwitchboardFundOracle = ({
       const [ix, amountToFund] = await oracle.fundUpToInstruction(
         form.governedAccount.extensions.transferAddress!,
         form.solAmount,
-        false
+        false,
       )
 
       if (ix === undefined) {
@@ -130,19 +130,20 @@ const SwitchboardFundOracle = ({
         TOKEN_PROGRAM_ID,
         new PublicKey(WSOL_MINT),
         form.governedAccount.extensions.transferAddress!,
-        true
+        true,
       )
       const wsolAccount = await connection.current.getAccountInfo(wsolAddress)
 
       if (!wsolAccount) {
-        const createWsolacc = await Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          new PublicKey(WSOL_MINT),
-          wsolAddress,
-          form.governedAccount.extensions.transferAddress!,
-          wallet.publicKey
-        )
+        const createWsolacc =
+          await Token.createAssociatedTokenAccountInstruction(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_PROGRAM_ID,
+            new PublicKey(WSOL_MINT),
+            wsolAddress,
+            form.governedAccount.extensions.transferAddress!,
+            wallet.publicKey,
+          )
         prerequisiteInstructions.push(createWsolacc)
       }
 
@@ -153,13 +154,13 @@ const SwitchboardFundOracle = ({
       })
       const syncIx = syncNative(wsolAddress)
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(transferWSolIx)
+        serializeInstructionToBase64(transferWSolIx),
       )
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(syncIx)
+        serializeInstructionToBase64(syncIx),
       )
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(ix!.ixns[0])
+        serializeInstructionToBase64(ix!.ixns[0]),
       )
 
       serializedInstruction = ''
@@ -179,7 +180,7 @@ const SwitchboardFundOracle = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

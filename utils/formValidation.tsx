@@ -45,7 +45,11 @@ export const isFormValid = async (schema, formValues, abortEarly = false) => {
   return values
 }
 
-export const isBatchFormValid = async (schema, formValues, abortEarly = false) => {
+export const isBatchFormValid = async (
+  schema,
+  formValues,
+  abortEarly = false,
+) => {
   if (!schema) {
     throw 'please provide schema'
   }
@@ -55,8 +59,9 @@ export const isBatchFormValid = async (schema, formValues, abortEarly = false) =
     validationErrors: new SanitizedObject({}),
   }) as formValidation
 
-  values.validationErrors.amount = formValues.amount.map(_ => "")
-  values.validationErrors.destinationAccount = formValues.destinationAccount.map(_ => "")
+  values.validationErrors.amount = formValues.amount.map((_) => '')
+  values.validationErrors.destinationAccount =
+    formValues.destinationAccount.map((_) => '')
 
   try {
     await schema.validate(formValues, { abortEarly })
@@ -71,15 +76,14 @@ export const isBatchFormValid = async (schema, formValues, abortEarly = false) =
       Object.prototype.hasOwnProperty.call(schema.fields, fieldName)
     ) {
       values.validationErrors[fieldName] = err.errors
-      
     } else {
       err.inner?.forEach((error) => {
         const fieldName = error.path
-                  
-        if (fieldName.includes("amount")) {
+
+        if (fieldName.includes('amount')) {
           const idx = parseInt(fieldName.replace(/^\D+/g, ''))
           values.validationErrors.amount[idx] = error.message
-        } else if (fieldName.includes("destinationAccount")) {
+        } else if (fieldName.includes('destinationAccount')) {
           const idx = parseInt(fieldName.replace(/^\D+/g, ''))
           values.validationErrors.destinationAccount[idx] = error.message
         }
@@ -88,7 +92,6 @@ export const isBatchFormValid = async (schema, formValues, abortEarly = false) =
           error.path &&
           Object.prototype.hasOwnProperty.call(schema.fields, fieldName)
         ) {
-          
           values.validationErrors[fieldName] = error.message
         }
       })
@@ -149,7 +152,7 @@ export function isWizardValid({ currentStep, steps, formData }) {
         'form validation error',
         error.message,
         error.values,
-        JSON.stringify('error')
+        JSON.stringify('error'),
       )
       return false
     }

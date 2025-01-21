@@ -4,7 +4,7 @@ import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 export async function createCloseBuffer(
   bufferAddress: PublicKey,
   closedAccountSolReceiver: PublicKey,
-  upgradeAuthority: PublicKey
+  upgradeAuthority: PublicKey,
 ) {
   const bpfUpgradableLoaderId = BPF_UPGRADE_LOADER_ID
 

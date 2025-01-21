@@ -12,93 +12,105 @@ import { ON_NFT_VOTER_V2 } from '@constants/flags'
 import { fetchRealmByPubkey } from './realm'
 import { fetchRealmConfigQuery } from './realmConfig'
 
-import { StakeConnection } from "@parcl-oss/staking"
-import {
-  LegacyVoterWeightAdapter,
-} from '@models/voteWeights'
-import { PythStakingClient } from "@pythnetwork/staking-sdk";
+import { StakeConnection } from '@parcl-oss/staking'
+import { LegacyVoterWeightAdapter } from '@models/voteWeights'
+import { PythStakingClient } from '@pythnetwork/staking-sdk'
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
 import { findPluginName } from '@constants/plugins'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
-import {IdlAccounts} from "@coral-xyz/anchor";
-import {NftVoter} from "../../idls/nft_voter";
-import {getPluginRegistrarClientCached} from "@hooks/queries/pluginRegistrar";
+import { IdlAccounts } from '@coral-xyz/anchor'
+import { NftVoter } from '../../idls/nft_voter'
+import { getPluginRegistrarClientCached } from '@hooks/queries/pluginRegistrar'
 
 export const getVanillaGovpower = async (
   connection: Connection,
-  tokenOwnerRecord: PublicKey
+  tokenOwnerRecord: PublicKey,
 ) => {
   const torAccount = await fetchTokenOwnerRecordByPubkey(
     connection,
-    tokenOwnerRecord
+    tokenOwnerRecord,
   )
   return torAccount.result
     ? torAccount.result.account.governingTokenDepositAmount
     : new BN(0)
 }
 
-export const useVanillaGovpower = (tokenOwnerRecordPk: PublicKey | undefined) => {
-  const { data: torAccount } = useTokenOwnerRecordByPubkeyQuery(
-    tokenOwnerRecordPk
-  )
+export const useVanillaGovpower = (
+  tokenOwnerRecordPk: PublicKey | undefined,
+) => {
+  const { data: torAccount } =
+    useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk)
   return torAccount?.result
     ? torAccount.result.account.governingTokenDepositAmount
     : new BN(0)
 }
 
-export const getNftGovpowerForOwnerAndRegistrar = async(connection: Connection, owner: PublicKey, registrar: IdlAccounts<NftVoter>['registrar'] | undefined) => {
+export const getNftGovpowerForOwnerAndRegistrar = async (
+  connection: Connection,
+  owner: PublicKey,
+  registrar: IdlAccounts<NftVoter>['registrar'] | undefined,
+) => {
   if (registrar === undefined) throw new Error()
-  const {collectionConfigs} = registrar
+  const { collectionConfigs } = registrar
 
   // grab the user nfts
   const network = getNetworkFromEndpoint(connection.rpcEndpoint)
   if (network === 'localnet') throw new Error()
   const nfts = (await fetchDigitalAssetsByOwner(network, owner))
-      // filter cnfts if not supported yet
-      .filter((nft) => ON_NFT_VOTER_V2 || !nft.compression.compressed)
+    // filter cnfts if not supported yet
+    .filter((nft) => ON_NFT_VOTER_V2 || !nft.compression.compressed)
 
   // map nfts to power and sum them
   const power = nfts
-      .map(
-          (nft) =>
-              // find collectionConfig such that the nft's `collection` grouping matches the collection id
-              collectionConfigs.find(
-                  (x) =>
-                      x.collection.toString() ===
-                      (nft.grouping.find((y) => y.group_key === 'collection')
-                          ?.group_value ?? false)
-                  // take the weight for that collection, or 0 if the nft matches none of the dao's collections
-              )?.weight ?? new BN(0)
-      )
-      // sum
-      .reduce((partialSum, a) => partialSum.add(a), new BN(0))
+    .map(
+      (nft) =>
+        // find collectionConfig such that the nft's `collection` grouping matches the collection id
+        collectionConfigs.find(
+          (x) =>
+            x.collection.toString() ===
+            (nft.grouping.find((y) => y.group_key === 'collection')
+              ?.group_value ?? false),
+          // take the weight for that collection, or 0 if the nft matches none of the dao's collections
+        )?.weight ?? new BN(0),
+    )
+    // sum
+    .reduce((partialSum, a) => partialSum.add(a), new BN(0))
 
   return power
 }
 
-export const getNftGovpowerForOwner = async (connection: Connection, realmPk: PublicKey, owner: PublicKey) => {
-  const registrar = await getPluginRegistrarClientCached<NftVoter>(realmPk, connection, owner, 'NFT');
-  return getNftGovpowerForOwnerAndRegistrar(connection, owner, registrar);
+export const getNftGovpowerForOwner = async (
+  connection: Connection,
+  realmPk: PublicKey,
+  owner: PublicKey,
+) => {
+  const registrar = await getPluginRegistrarClientCached<NftVoter>(
+    realmPk,
+    connection,
+    owner,
+    'NFT',
+  )
+  return getNftGovpowerForOwnerAndRegistrar(connection, owner, registrar)
 }
 
 export const getNftGovpower = async (
   connection: Connection,
   realmPk: PublicKey,
-  tokenOwnerRecordPk: PublicKey
+  tokenOwnerRecordPk: PublicKey,
 ) => {
   // grab the owner of the TOR
   const { result: TOR } = await fetchTokenOwnerRecordByPubkey(
-      connection,
-      tokenOwnerRecordPk
+    connection,
+    tokenOwnerRecordPk,
   )
   if (TOR === undefined) throw new Error()
   const owner = TOR.account.governingTokenOwner
-  return getNftGovpowerForOwner(connection, realmPk, owner);
+  return getNftGovpowerForOwner(connection, realmPk, owner)
 }
 
 export const getPythGovPower = async (
   connection: Connection,
-  user: PublicKey | undefined
+  user: PublicKey | undefined,
 ): Promise<BN> => {
   if (!user) return new BN(0)
 
@@ -112,12 +124,12 @@ export const getPythGovPower = async (
 
 export const getParclGovPower = async (
   connection: Connection,
-  user: PublicKey | undefined
+  user: PublicKey | undefined,
 ): Promise<BN> => {
   if (!user) return new BN(0)
   const client = await StakeConnection.connect(
     connection,
-    new NodeWallet(new Keypair())
+    new NodeWallet(new Keypair()),
   )
   const stakeAccount = await client.getMainAccount(user)
   if (stakeAccount) {
@@ -127,11 +139,10 @@ export const getParclGovPower = async (
   }
 }
 
-
 export const determineVotingPowerType = async (
   connection: Connection,
   realmPk: PublicKey,
-  role: 'council' | 'community'
+  role: 'council' | 'community',
 ) => {
   const realm = (await fetchRealmByPubkey(connection, realmPk)).result
   if (!realm) throw new Error()
@@ -187,17 +198,17 @@ export const WithVsrGovernancePower = <
 
 // TODO QV-2 Check if there is no plugin and get the vanilla value (or should the usePlugins hook have the vanilla value?)
 export const useGovernancePower = (
-  kind: 'community' | 'council' | undefined
+  kind: 'community' | 'council' | undefined,
 ) => {
   const { calculatedMaxVoterWeight } = useRealmVoterWeightPlugins(kind)
   return calculatedMaxVoterWeight?.value
 }
 /** deprecated: this should not be used any more. Use useRealmVoterWeightPlugins hook */
 export const useGovernancePowerAsync = (
-  kind: 'community' | 'council' | undefined
+  kind: 'community' | 'council' | undefined,
 ) => {
   const { totalCalculatedVoterWeight } = useRealmVoterWeightPlugins(kind)
-  return totalCalculatedVoterWeight?.value;
+  return totalCalculatedVoterWeight?.value
 }
 
 /**
@@ -205,11 +216,13 @@ export const useGovernancePowerAsync = (
  * use useRealmVoterWeightPlugins instead
  */
 export const useLegacyVoterWeight = () => {
-  const communityPluginDetails = useRealmVoterWeightPlugins('community');
-  const councilPluginDetails = useRealmVoterWeightPlugins('council');
+  const communityPluginDetails = useRealmVoterWeightPlugins('community')
+  const councilPluginDetails = useRealmVoterWeightPlugins('council')
   const ownVoterWeights = {
-    community: communityPluginDetails.totalCalculatedVoterWeight?.value ?? undefined,
-    council: councilPluginDetails.totalCalculatedVoterWeight?.value ?? undefined,
+    community:
+      communityPluginDetails.totalCalculatedVoterWeight?.value ?? undefined,
+    council:
+      councilPluginDetails.totalCalculatedVoterWeight?.value ?? undefined,
   }
   const { data: communityTOR } = useUserCommunityTokenOwnerRecord()
   const { data: councilTOR } = useUserCouncilTokenOwnerRecord()
@@ -217,9 +230,9 @@ export const useLegacyVoterWeight = () => {
   const voterWeight = new LegacyVoterWeightAdapter(ownVoterWeights, {
     community: communityTOR?.result,
     council: councilTOR?.result,
-  });
-  const ready = communityPluginDetails.isReady && councilPluginDetails.isReady;
+  })
+  const ready = communityPluginDetails.isReady && councilPluginDetails.isReady
 
   // only expose the vote weight once everything is loaded
-  return { result: ready ? voterWeight : undefined, ready };
+  return { result: ready ? voterWeight : undefined, ready }
 }

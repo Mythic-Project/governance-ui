@@ -10,7 +10,7 @@ export default function useQueryContext() {
   const fmtUrlWithCluster = (url: string) => {
     const urlWithCluster = hasClusterOption
       ? decodeURIComponent(
-          `${url}${url.includes('?') ? '&' : '?'}cluster=${endpoint}`
+          `${url}${url.includes('?') ? '&' : '?'}cluster=${endpoint}`,
         )
       : url
 
@@ -20,7 +20,7 @@ export default function useQueryContext() {
         ? decodeURIComponent(
             `${urlWithCluster}${
               urlWithCluster.includes('?') ? '&' : '?'
-            }viewAs=${viewAs}`
+            }viewAs=${viewAs}`,
           )
         : urlWithCluster
 

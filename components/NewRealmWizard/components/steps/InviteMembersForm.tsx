@@ -76,7 +76,7 @@ function InviteAddress({
             'ml-4',
             'truncate',
             'input-base',
-            invalid && 'text-error-red'
+            invalid && 'text-error-red',
           )}
         >
           {address}
@@ -113,7 +113,7 @@ export const InviteMembersSchema = {
     .when(['$addCouncil', '$useExistingCouncilToken'], ((
       addCouncil,
       useExistingCouncilToken,
-      schema
+      schema,
     ) => {
       if (useExistingCouncilToken) {
         return schema.min(0).required('Required')
@@ -139,9 +139,12 @@ export interface InviteMembers {
  * Convert a list of addresses/domains into a list of resolved addresses
  */
 async function resolveAddressList(connection: Connection, textBlock: string) {
-  const items = textBlock.split(/[\n,]+/).map((item) => item.trim()).filter(Boolean)
+  const items = textBlock
+    .split(/[\n,]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
   console.log('Resolving items:', items)
-  
+
   const results = await Promise.all(
     items.map(async (item) => {
       try {
@@ -150,21 +153,24 @@ async function resolveAddressList(connection: Connection, textBlock: string) {
           console.log(`${item} is already a valid address`)
           return { input: item, resolved: item }
         }
-        
+
         // Try to resolve as domain
         console.log(`Attempting to resolve domain: ${item}`)
         const resolved = await resolveDomain(connection, item)
         console.log('Resolved:', resolved)
-        console.log(`Domain ${item} resolved to:`, resolved?.toBase58() || 'null')
+        console.log(
+          `Domain ${item} resolved to:`,
+          resolved?.toBase58() || 'null',
+        )
         return {
           input: item,
-          resolved: resolved?.toBase58()
+          resolved: resolved?.toBase58(),
         }
       } catch (error) {
         console.error(`Error resolving ${item}:`, error)
         return { input: item, resolved: undefined }
       }
-    })
+    }),
   )
 
   const valid: string[] = []
@@ -181,7 +187,7 @@ async function resolveAddressList(connection: Connection, textBlock: string) {
   console.log('Final resolution results:', {
     valid,
     invalid,
-    results
+    results,
   })
 
   return { valid, invalid }
@@ -232,7 +238,7 @@ export default function InviteMembersForm({
           (current) =>
             formData.memberAddresses?.filter((wallet) => {
               return validateSolAddress(wallet)
-            }) || current
+            }) || current,
         )
       }
     } else if (visible) {
@@ -280,7 +286,7 @@ export default function InviteMembersForm({
     const { unique, duplicate } = splitUniques(inviteList.concat(valid))
     setInviteList(unique)
     setInvalidAddresses((currentList) =>
-      currentList.concat(invalid).concat(duplicate)
+      currentList.concat(invalid).concat(duplicate),
     )
   }
 

@@ -44,9 +44,9 @@ import {
 } from '@hooks/queries/mintInfo'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { fetchJupiterPrice } from '@hooks/queries/jupiterPrice'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
-import {Registrar} from "../sdk/types";
-import {useVotingClients} from "@hooks/useVotingClients";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
+import { Registrar } from '../sdk/types'
+import { useVotingClients } from '@hooks/useVotingClients'
 
 export const LockTokensAccount: React.FC<{
   // tokenOwnerRecordPk: string | string[] | undefined // @asktree: this was unused
@@ -67,7 +67,7 @@ export const LockTokensAccount: React.FC<{
   const { realmTokenAccount, realmInfo } = useRealm()
 
   const selectedCommunityDelegator = useSelectedDelegatorStore(
-    (s) => s.communityDelegator
+    (s) => s.communityDelegator,
   )
   // if we have a community token delegator selected (this is rare), use that. otherwise use user wallet.
   const tokenOwnerRecordWalletPk =
@@ -76,17 +76,17 @@ export const LockTokensAccount: React.FC<{
       : // I wanted to eliminate `null` as a possible type
         wallet?.publicKey ?? undefined
 
-  const { heliumClient: vsrClient } = useHeliumClient();
-  const votingClients = useVotingClients();
-  
-  const vsrRegistrar = useAsync<Registrar | undefined>(
-    async () => {
-      if (realm && vsrClient) {
-        return vsrClient.getRegistrarAccount(realm?.pubkey, realm?.account.communityMint) as Promise<Registrar>
-      }
-    },
-    [realm, vsrClient]
-  )
+  const { heliumClient: vsrClient } = useHeliumClient()
+  const votingClients = useVotingClients()
+
+  const vsrRegistrar = useAsync<Registrar | undefined>(async () => {
+    if (realm && vsrClient) {
+      return vsrClient.getRegistrarAccount(
+        realm?.pubkey,
+        realm?.account.communityMint,
+      ) as Promise<Registrar>
+    }
+  }, [realm, vsrClient])
 
   const {
     loading: loadingSubDaos,
@@ -94,19 +94,14 @@ export const LockTokensAccount: React.FC<{
     result: subDaos,
   } = useSubDaos()
 
-  const [
-    loading,
-    positions,
-    votingPower,
-    amountLocked,
-    getPositions,
-  ] = useHeliumVsrStore((s) => [
-    s.state.isLoading,
-    s.state.positions,
-    s.state.votingPower,
-    s.state.amountLocked,
-    s.getPositions,
-  ])
+  const [loading, positions, votingPower, amountLocked, getPositions] =
+    useHeliumVsrStore((s) => [
+      s.state.isLoading,
+      s.state.positions,
+      s.state.votingPower,
+      s.state.amountLocked,
+      s.getPositions,
+    ])
 
   const sortedPositions = useMemo(
     () =>
@@ -120,7 +115,7 @@ export const LockTokensAccount: React.FC<{
 
         return a.amountDepositedNative.gt(b.amountDepositedNative) ? -1 : 0
       }),
-    [positions]
+    [positions],
   )
 
   useEffect(() => {
@@ -141,7 +136,7 @@ export const LockTokensAccount: React.FC<{
         vsrClient
       ) {
         await getPositions({
-          votingClient: votingClients('community'),  // community mint is hardcoded for getPositions
+          votingClient: votingClients('community'), // community mint is hardcoded for getPositions
           realmPk: realm.pubkey,
           communityMintPk: realm.account.communityMint,
           walletPk: tokenOwnerRecordWalletPk
@@ -174,7 +169,7 @@ export const LockTokensAccount: React.FC<{
     hasTokensInWallet && mint
       ? getMintDecimalAmount(
           mint,
-          realmTokenAccount?.account.amount as BN
+          realmTokenAccount?.account.amount as BN,
         ).toNumber()
       : 0
 
@@ -182,17 +177,17 @@ export const LockTokensAccount: React.FC<{
     async () =>
       realm
         ? await fetchJupiterPrice(realm.account.communityMint).then((x) =>
-            x.found ? x.result.price : 0
+            x.found ? x.result.price : 0,
           )
         : undefined,
-    [realm]
+    [realm],
   )
 
   const availableTokensPrice =
     hasTokensInWallet && mint && realm?.account.communityMint
       ? getMintDecimalAmountFromNatural(
           mint,
-          realmTokenAccount?.account.amount
+          realmTokenAccount?.account.amount,
         ).toNumber() * (tokenPrice ?? 0)
       : 0
 
@@ -216,14 +211,14 @@ export const LockTokensAccount: React.FC<{
         registrar: vsrRegistrar.result ?? null,
         realm,
       }),
-    [realm, vsrRegistrar.result]
+    [realm, vsrRegistrar.result],
   )
 
   const handleLockTokens = async (values: LockTokensModalFormValues) => {
     const { amount, lockupPeriodInDays, lockupKind } = values
     const amountToLock = getMintNaturalAmountFromDecimalAsBN(
       amount,
-      mint!.decimals
+      mint!.decimals,
     )
     await createPosition({
       amount: amountToLock,
@@ -234,7 +229,7 @@ export const LockTokensAccount: React.FC<{
 
     if (!error) {
       await getPositions({
-        votingClient: votingClients('community'),  // community mint is hardcoded for getPositions
+        votingClient: votingClients('community'), // community mint is hardcoded for getPositions
         realmPk: realm!.pubkey,
         communityMintPk: realm!.account.communityMint,
         walletPk: wallet!.publicKey!,

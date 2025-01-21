@@ -217,15 +217,17 @@ export function EditDiscoverPage(props: Props) {
                     </div>
                   </section>
                   <div className="space-y-12 mb-12">
-                    {([
-                      'hackathonWinners',
-                      'daoTooling',
-                      'defi',
-                      'gaming',
-                      'nftCollections',
-                      'popular',
-                      'web3',
-                    ] as const).map((key) => {
+                    {(
+                      [
+                        'hackathonWinners',
+                        'daoTooling',
+                        'defi',
+                        'gaming',
+                        'nftCollections',
+                        'popular',
+                        'web3',
+                      ] as const
+                    ).map((key) => {
                       const realms = formState?.[key] || [];
                       return (
                         <section key={key}>

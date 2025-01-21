@@ -52,13 +52,13 @@ export const withVoteRegistryWithdraw = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    client!.program.programId
+    client!.program.programId,
   )
   const { voter } = getVoterPDA(registrar, walletPk, clientProgramId)
   const { voterWeightPk } = getVoterWeightPDA(
     registrar,
     walletPk,
-    clientProgramId
+    clientProgramId,
   )
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
@@ -66,7 +66,7 @@ export const withVoteRegistryWithdraw = async ({
     TOKEN_PROGRAM_ID,
     mintPk,
     voter,
-    true
+    true,
   )
 
   const ataPk = await Token.getAssociatedTokenAddress(
@@ -74,7 +74,7 @@ export const withVoteRegistryWithdraw = async ({
     TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
     mintPk, // mint
     walletPk, // owner
-    true
+    true,
   )
   const isExistingAta = await tryGetTokenAccount(connection, ataPk)
   if (!isExistingAta) {
@@ -85,8 +85,8 @@ export const withVoteRegistryWithdraw = async ({
         mintPk, // mint
         ataPk, // ata
         walletPk, // owner of token account
-        walletPk // fee payer
-      )
+        walletPk, // fee payer
+      ),
     )
   }
   //spl governance tokenownerrecord pubkey
@@ -98,7 +98,7 @@ export const withVoteRegistryWithdraw = async ({
       realmPk,
       walletPk,
       communityMintPk,
-      walletPk
+      walletPk,
     )
   }
   const withdrawInstruction = await client?.program.methods

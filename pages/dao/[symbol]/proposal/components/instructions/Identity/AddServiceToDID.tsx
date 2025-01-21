@@ -80,10 +80,8 @@ const AddServiceToDID = ({
 
     // Realms appears to put additionalSerializedInstructions first, so reverse the order of the instructions
     // to ensure the resize function comes first.
-    const [
-      serializedInstruction,
-      ...additionalSerializedInstructions
-    ] = serializedInstructions.reverse()
+    const [serializedInstruction, ...additionalSerializedInstructions] =
+      serializedInstructions.reverse()
 
     return {
       serializedInstruction,
@@ -95,7 +93,7 @@ const AddServiceToDID = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
   }, [form])
   const schema = yup.object().shape(SchemaComponents)
@@ -104,7 +102,7 @@ const AddServiceToDID = ({
       realm,
       governance || undefined,
       assetAccounts,
-      shouldBeGoverned
+      shouldBeGoverned,
     ),
     instructionInputs.did,
     instructionInputs.serviceEndpoint,

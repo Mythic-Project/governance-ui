@@ -15,7 +15,7 @@ type TokenProgramAccount<T> = {
 
 async function getOwnedTokenAccounts(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<TokenAccount>[]> {
   const result = await connection.getTokenAccountsByOwner(publicKey, {
     programId: TOKEN_PROGRAM_ID,
@@ -31,7 +31,7 @@ async function getOwnedTokenAccounts(
 
 async function tryGetTokenAccount(
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
 ): Promise<TokenProgramAccount<TokenAccount> | undefined> {
   try {
     const result = await connection.getAccountInfo(publicKey)
@@ -81,7 +81,7 @@ export const useTokenAccountsByOwnerQuery = (pubkey: PublicKey | undefined) => {
       results.forEach((x) => {
         queryClient.setQueryData(
           tokenAccountQueryKeys.byPubkey(connection.rpcEndpoint, x.publicKey),
-          { found: true, result: x.account }
+          { found: true, result: x.account },
         )
       })
 
@@ -104,7 +104,7 @@ export const useTokenAccountByPubkeyQuery = (pubkey: PublicKey | undefined) => {
     queryFn: async () => {
       if (!enabled) throw new Error()
       return asFindable((...x: Parameters<typeof tryGetTokenAccount>) =>
-        tryGetTokenAccount(...x).then((x) => x?.account)
+        tryGetTokenAccount(...x).then((x) => x?.account),
       )(connection, pubkey)
     },
     enabled,
@@ -121,13 +121,13 @@ export const useUserTokenAccountsQuery = () => {
 
 export const fetchTokenAccountByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   return queryClient.fetchQuery({
     queryKey: tokenAccountQueryKeys.byPubkey(connection.rpcEndpoint, pubkey),
     queryFn: () =>
       asFindable((...x: Parameters<typeof tryGetTokenAccount>) =>
-        tryGetTokenAccount(...x).then((x) => x?.account)
+        tryGetTokenAccount(...x).then((x) => x?.account),
       )(connection, pubkey),
   })
 }

@@ -23,7 +23,7 @@ export default function Header(props: Props) {
         'justify-between',
         'min-h-[128px]',
         'px-8',
-        'py-4'
+        'py-4',
       )}
     >
       <div>
@@ -45,7 +45,7 @@ export default function Header(props: Props) {
                 'rounded-full',
                 'translate-x-1/2',
                 'translate-y-1/2',
-                'w-5'
+                'w-5',
               )}
             >
               <img className="h-4 w-4" src={LogoRealms.src} />

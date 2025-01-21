@@ -129,17 +129,17 @@ function entityToNode<C>(
 
   switch (entity.type) {
     case 'IMAGE':
-      return ({
+      return {
         t: InlineNodeType.Anchor,
         c: content,
         u: entity.data.src,
-      } as unknown) as AnchorNode;
+      } as unknown as AnchorNode;
     case 'LINK':
-      return ({
+      return {
         t: InlineNodeType.Anchor,
         c: content,
         u: entity.data.url,
-      } as unknown) as AnchorNode;
+      } as unknown as AnchorNode;
     default:
       return null;
   }

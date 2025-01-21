@@ -14,9 +14,8 @@ export async function refreshObligation({
   obligationOwner: PublicKey
   mintNames: SupportedMintName[]
 }): Promise<TransactionInstruction> {
-  const obligationAddress = await deriveObligationAddressFromWalletAndSeed(
-    obligationOwner
-  )
+  const obligationAddress =
+    await deriveObligationAddressFromWalletAndSeed(obligationOwner)
 
   const depositReserves = SolendConfiguration.getReserveOfGivenMints(mintNames)
 
@@ -26,6 +25,6 @@ export async function refreshObligation({
     // they are concatenate
     depositReserves,
     [],
-    SolendConfiguration.programID
+    SolendConfiguration.programID,
   )
 }

@@ -90,18 +90,16 @@ const Grant = ({
             .number()
             .required('End date required')
             .min(1, 'End date cannot be prior to start date'),
-        })
+        }),
       ),
-    [form, connection]
+    [form, connection],
   )
 
   const [governedAccount, setGovernedAccount] = useState<
     ProgramAccount<Governance> | undefined
   >(undefined)
-  const [
-    destinationAccount,
-    setDestinationAccount,
-  ] = useState<TokenProgramAccount<TokenAccount> | null>(null)
+  const [destinationAccount, setDestinationAccount] =
+    useState<TokenProgramAccount<TokenAccount> | null>(null)
   const [formErrors, setFormErrors] = useState({})
   const mintMinAmount = form.mintInfo
     ? getMintMinAmountAsDecimal(form.mintInfo)
@@ -132,8 +130,8 @@ const Grant = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -155,24 +153,24 @@ const Grant = ({
       const destinationAccount = new PublicKey(form.destinationAccount)
       const mintAmount = parseMintNaturalAmountFromDecimal(
         form.amount!,
-        form.governedTokenAccount.extensions.mint.account.decimals
+        form.governedTokenAccount.extensions.mint.account.decimals,
       )
 
       const destinationTokenOwnerRecordPk = await getTokenOwnerRecordAddress(
         realm.owner,
         realm.pubkey,
         realm.account.communityMint,
-        destinationAccount
+        destinationAccount,
       )
       const currentTokenOwnerRecord = await queryClient.fetchQuery({
         queryKey: tokenOwnerRecordQueryKeys.byPubkey(
           connection.cluster,
-          destinationTokenOwnerRecordPk
+          destinationTokenOwnerRecordPk,
         ),
         queryFn: () =>
           asFindable(getTokenOwnerRecord)(
             connection.current,
-            destinationTokenOwnerRecordPk
+            destinationTokenOwnerRecordPk,
           ),
       })
 
@@ -184,7 +182,7 @@ const Grant = ({
           realm!.pubkey,
           destinationAccount,
           realm!.account.communityMint,
-          wallet!.publicKey!
+          wallet!.publicKey!,
         )
       }
       const grantIx = await getGrantInstruction({
@@ -275,7 +273,7 @@ const Grant = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [form, governedAccount, handleSetInstructions, index, getInstruction])
 
@@ -294,12 +292,12 @@ const Grant = ({
       const { registrar } = getRegistrarPDA(
         realm!.pubkey,
         realm!.account.communityMint,
-        clientProgramId
+        clientProgramId,
       )
       const existingRegistrar = await tryGetRegistrar(registrar, vsrClient!)
       if (existingRegistrar) {
         setUseableGrantMints(
-          existingRegistrar.votingMints.map((x) => x.mint.toBase58())
+          existingRegistrar.votingMints.map((x) => x.mint.toBase58()),
         )
       }
     }
@@ -335,7 +333,9 @@ const Grant = ({
           governedTokenAccountsWithoutNfts.filter(
             (x) =>
               x.extensions.mint &&
-              useableGrantMints.includes(x.extensions.mint.publicKey.toBase58())
+              useableGrantMints.includes(
+                x.extensions.mint.publicKey.toBase58(),
+              ),
           ) as AssetAccount[]
         }
         onChange={(value) => {

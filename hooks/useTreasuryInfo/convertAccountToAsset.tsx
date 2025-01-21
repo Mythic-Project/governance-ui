@@ -15,7 +15,7 @@ import tokenPriceService from '@utils/services/tokenPrice'
 export const convertAccountToAsset = async (
   account: AssetAccount,
   councilMintAddress?: string,
-  communityMintAddress?: string
+  communityMintAddress?: string,
 ): Promise<Asset | null> => {
   const info = await getTreasuryAccountItemInfoV2Async(account)
 
@@ -48,7 +48,7 @@ export const convertAccountToAsset = async (
             : undefined,
         totalSupply: account.extensions.mint
           ? new BigNumber(
-              account.extensions.mint.account.supply.toString()
+              account.extensions.mint.account.supply.toString(),
             ).shiftedBy(-account.extensions.mint.account.decimals)
           : undefined,
       }
@@ -66,7 +66,9 @@ export const convertAccountToAsset = async (
         ),
         price: account.extensions.mint
           ? new BigNumber(
-            await tokenPriceService.fetchTokenPrice(account.extensions.mint.publicKey.toString()) ?? 0
+              (await tokenPriceService.fetchTokenPrice(
+                account.extensions.mint.publicKey.toString(),
+              )) ?? 0,
             )
           : undefined,
         raw: account,
@@ -89,7 +91,9 @@ export const convertAccountToAsset = async (
         name: info.accountName || info.info?.name || info.name || info.symbol,
         price: account.extensions.mint
           ? new BigNumber(
-              await tokenPriceService.fetchTokenPrice(account.extensions.mint.publicKey.toString()) ?? 0
+              (await tokenPriceService.fetchTokenPrice(
+                account.extensions.mint.publicKey.toString(),
+              )) ?? 0,
             )
           : undefined,
         raw: account,

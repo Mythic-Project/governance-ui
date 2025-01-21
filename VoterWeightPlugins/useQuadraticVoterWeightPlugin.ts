@@ -14,21 +14,22 @@ export type QuadraticPluginParams = {
   quadraticCoefficients: Coefficients
 }
 
-export const useQuadraticVoterWeightPlugin = (): useQuadraticVoterWeightPluginReturnType => {
-  const { isReady, plugins } = useRealmVoterWeightPlugins()
+export const useQuadraticVoterWeightPlugin =
+  (): useQuadraticVoterWeightPluginReturnType => {
+    const { isReady, plugins } = useRealmVoterWeightPlugins()
 
-  const quadraticPlugin = plugins?.voterWeight.find((plugin) =>
-    QV_PLUGINS_PKS.includes(plugin.programId.toString())
-  )
+    const quadraticPlugin = plugins?.voterWeight.find((plugin) =>
+      QV_PLUGINS_PKS.includes(plugin.programId.toString()),
+    )
 
-  const isEnabled = quadraticPlugin !== undefined
-  const coefficients = (
-    (quadraticPlugin?.params as QuadraticPluginParams) || undefined
-  )?.quadraticCoefficients
+    const isEnabled = quadraticPlugin !== undefined
+    const coefficients = (
+      (quadraticPlugin?.params as QuadraticPluginParams) || undefined
+    )?.quadraticCoefficients
 
-  return {
-    isReady,
-    coefficients,
-    isEnabled,
+    return {
+      isReady,
+      coefficients,
+      isEnabled,
+    }
   }
-}

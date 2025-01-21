@@ -9,7 +9,7 @@ export function getRulesFromAccount(
   account: AssetAccount,
   existingRules: Wallet['rules'],
   councilMint?: MintInfo,
-  communityMint?: MintInfo
+  communityMint?: MintInfo,
 ) {
   const govConfig = account.governance.account.config
   const rules = { ...existingRules }
@@ -35,7 +35,7 @@ export function getRulesFromAccount(
       vetoVoteThresholdPercentage:
         govConfig.communityVetoVoteThreshold.value ?? 'disabled',
       minTokensToCreateProposal: new BigNumber(
-        govConfig.minCommunityTokensToCreateProposal.toString()
+        govConfig.minCommunityTokensToCreateProposal.toString(),
       ).shiftedBy(communityMint ? -communityMint.decimals : 0),
     }
   }
@@ -53,7 +53,7 @@ export function getRulesFromAccount(
       vetoVoteThresholdPercentage:
         govConfig.councilVetoVoteThreshold.value ?? 'disabled',
       minTokensToCreateProposal: new BigNumber(
-        govConfig.minCouncilTokensToCreateProposal.toString()
+        govConfig.minCouncilTokensToCreateProposal.toString(),
       ).shiftedBy(councilMint ? -councilMint.decimals : 0),
     }
   }

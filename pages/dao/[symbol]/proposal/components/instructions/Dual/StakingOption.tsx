@@ -102,7 +102,7 @@ const StakingOption = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [
     form,
@@ -240,7 +240,7 @@ const StakingOption = ({
             (x) =>
               x.isSol &&
               form.baseTreasury?.governance &&
-              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey)
+              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey),
           )}
           onChange={(value) => {
             handleSetForm({ value, propertyName: 'payer' })

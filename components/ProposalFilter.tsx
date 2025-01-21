@@ -93,7 +93,7 @@ const ProposalFilter = ({ className, disabled, filters, onChange }: Props) => {
                       }
                     />
                   </div>
-                )
+                ),
               )}
             </div>
             <Button
@@ -101,7 +101,7 @@ const ProposalFilter = ({ className, disabled, filters, onChange }: Props) => {
                 const newFilters = {
                   ...Object.keys(InitialFilters).reduce(
                     (reduced, key) => ({ ...reduced, [key]: false }),
-                    {}
+                    {},
                   ),
                 }
                 onChange({ ...(newFilters as any) })

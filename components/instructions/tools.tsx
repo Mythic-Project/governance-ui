@@ -163,10 +163,10 @@ export const ACCOUNT_NAMES = {
   '6yuntQAS5gSwhhKaXG3QYbcwXPxhsbULu9Tzv9mizUUm': 'SOL Rewards Reserve',
   '6PPtCuNPxipkwATrXorGNMFsEiJK2WNwNRVdgzTJZfU8': 'LABS DeFi Rewards Vault',
   // Epicentral Labs Core Team
-  'EPTE4ewwiBdSu53NHc2Q57tyiYkcPai3VLu3BSUUN89C': 'Core Team Wallet',
+  EPTE4ewwiBdSu53NHc2Q57tyiYkcPai3VLu3BSUUN89C: 'Core Team Wallet',
   '7fGPDUx91yTASVAyt3DTUEnxMN1ghL1oQ69BVv8q8z3z': 'Admin Treasury',
-  'GpbTR5zgfgM6tJt1epcXFvNELusiacc7qKr845FRnzZv': 'SOL Admin Reserve',
-  'Auecwis4vTxvHHkqKvPiut3GzuSN85ZWM6z2WDhZtrxh': 'LABS Admin Vault',
+  GpbTR5zgfgM6tJt1epcXFvNELusiacc7qKr845FRnzZv: 'SOL Admin Reserve',
+  Auecwis4vTxvHHkqKvPiut3GzuSN85ZWM6z2WDhZtrxh: 'LABS Admin Vault',
   // Physis DAO
   '29epeLvAMyRXtpA1HaoKB1hGcAnrc1NvMCbaZ8AVRwEi': 'Physis DAO Treasury',
   '4i2Yjk5bUiLeVNwqBpkRdFSECSCvMgKoeCSdRSx1TPcz': 'DAO: Rewards (PHY)',
@@ -511,7 +511,7 @@ export interface InstructionDescriptorFactory {
   getDataUI: (
     connection: Connection,
     data: Uint8Array,
-    accounts: AccountMetaData[]
+    accounts: AccountMetaData[],
   ) => Promise<JSX.Element>
 }
 
@@ -550,7 +550,7 @@ export const INSTRUCTION_DESCRIPTORS = {
 export async function getInstructionDescriptor(
   connection: ConnectionContext,
   instruction: InstructionData,
-  realm?: ProgramAccount<Realm> | undefined
+  realm?: ProgramAccount<Realm> | undefined,
 ) {
   let descriptors: any
   let instructionToDecode = { ...instruction }
@@ -560,7 +560,7 @@ export async function getInstructionDescriptor(
   if (
     (realm && instructionToDecode.programId.equals(realm.owner)) ||
     instructionToDecode.programId.equals(
-      new PublicKey(DEFAULT_GOVERNANCE_PROGRAM_ID)
+      new PublicKey(DEFAULT_GOVERNANCE_PROGRAM_ID),
     )
   ) {
     descriptors =
@@ -569,7 +569,7 @@ export async function getInstructionDescriptor(
     instructionToDecode = {
       accounts: instructionToDecode.accounts.slice(
         2,
-        instructionToDecode.accounts.length
+        instructionToDecode.accounts.length,
       ),
       data: instructionToDecode.data.slice(8, instructionToDecode.data.length),
       programId: instructionToDecode.accounts[1].pubkey,
@@ -603,7 +603,7 @@ export async function getInstructionDescriptor(
       instructionToDecode.data,
       instructionToDecode.accounts,
       instructionToDecode.programId,
-      connection.cluster
+      connection.cluster,
     ))) ?? <>{JSON.stringify(instructionToDecode.data)}</>
 
   const dataUiWithAdditionalInfo = (

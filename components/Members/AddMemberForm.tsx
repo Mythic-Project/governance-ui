@@ -33,7 +33,7 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { DEFAULT_GOVERNANCE_PROGRAM_VERSION } from '@components/instructions/tools'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 import { resolveDomain } from '@utils/domains'
 import debounce from 'lodash/debounce'
 
@@ -54,7 +54,8 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
   const router = useRouter()
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
 
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
@@ -107,7 +108,7 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
           console.log('Attempting to resolve domain:', domain)
           const resolved = await resolveDomain(connection.current, domain)
           console.log('Domain resolved to:', resolved?.toBase58() || 'null')
-          
+
           if (resolved) {
             handleSetForm({
               value: resolved.toBase58(),
@@ -120,7 +121,7 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
           setIsResolvingDomain(false)
         }
       }, 500),
-    [connection]
+    [connection],
   )
 
   const handleDestinationAccountChange = async (event) => {
@@ -157,8 +158,8 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -199,9 +200,9 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         new PublicKey(form.destinationAccount),
         getMintNaturalAmountFromDecimalAsBN(
           form.amount ?? 1,
-          mintInfo?.result.decimals
+          mintInfo?.result.decimals,
         ),
-        true // make recipient a signer
+        true, // make recipient a signer
       )
       const ix = goofySillyArrayForBuilderPattern[0]
 
@@ -279,12 +280,12 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         })
 
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
 
         router.push(url)
       } catch (error) {
-        console.log('Error creating proposal', error);
+        console.log('Error creating proposal', error)
         notify({
           type: 'error',
           message: `${error}`,
@@ -389,12 +390,12 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
           />
 
           {shouldShowVoteByCouncilToggle && (
-              <VoteBySwitch
-                  checked={voteByCouncil}
-                  onChange={() => {
-                    setVoteByCouncil(!voteByCouncil)
-                  }}
-              ></VoteBySwitch>
+            <VoteBySwitch
+              checked={voteByCouncil}
+              onChange={() => {
+                setVoteByCouncil(!voteByCouncil)
+              }}
+            ></VoteBySwitch>
           )}
         </>
       )}
@@ -427,9 +428,9 @@ const useCouncilMintAccount = () => {
     () =>
       assetAccounts.find(
         (x) =>
-          x.pubkey.toBase58() === realm?.account.config.councilMint?.toBase58()
+          x.pubkey.toBase58() === realm?.account.config.councilMint?.toBase58(),
       ),
-    [assetAccounts, realm?.account.config.councilMint]
+    [assetAccounts, realm?.account.config.councilMint],
   )
   return councilMintAccount
 }

@@ -13,7 +13,7 @@ const useFindGovernanceByTreasury = () => {
   const findGovernanceByTreasury = async (pk: PublicKey) => {
     if (!realmPk)
       throw new Error(
-        'Race  condition, needs to be solved by making useSelectedRealmPubkey not async'
+        'Race  condition, needs to be solved by making useSelectedRealmPubkey not async',
       )
 
     const { result: realm } = await fetchRealmByPubkey(connection, realmPk)
@@ -21,7 +21,7 @@ const useFindGovernanceByTreasury = () => {
 
     const governances = await fetchRealmGovernances(connection, realmPk)
     const treasuries = await Promise.all(
-      governances.map((x) => getNativeTreasuryAddress(realm.owner, x.pubkey))
+      governances.map((x) => getNativeTreasuryAddress(realm.owner, x.pubkey)),
     )
 
     const index = treasuries.findIndex((x) => x.equals(pk))

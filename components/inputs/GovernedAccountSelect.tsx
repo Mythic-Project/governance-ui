@@ -37,7 +37,7 @@ const GovernedAccountSelect = ({
         return getTokenAccountLabelComponent(
           value.isSol
             ? getSolAccountLabel(value)
-            : getTokenAccountLabelInfo(value)
+            : getTokenAccountLabelInfo(value),
         )
       } else {
         switch (value.type) {
@@ -137,7 +137,7 @@ const GovernedAccountSelect = ({
           !shouldBeGoverned
             ? !shouldBeGoverned
             : x?.governance?.pubkey.toBase58() ===
-              governance?.pubkey?.toBase58()
+              governance?.pubkey?.toBase58(),
         )
         .map((acc) => {
           return (

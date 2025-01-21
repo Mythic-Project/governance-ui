@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     conn,
     proposal.owner,
     ProposalTransaction,
-    [pubkeyFilter(1, proposal.pubkey)!]
+    [pubkeyFilter(1, proposal.pubkey)!],
   )
 
   const decodedMangoInstruction = await Promise.all(
@@ -36,9 +36,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .filter(
         (x) =>
           x?.programId.equals(MANGO_V4_ID['mainnet-beta']) ||
-          x?.programId.equals(MANGO_BOOST_PROGRAM_ID)
+          x?.programId.equals(MANGO_BOOST_PROGRAM_ID),
       )
-      .map((x) => getDataObjectFlattened(conn, x.data))
+      .map((x) => getDataObjectFlattened(conn, x.data)),
   )
   console.log(decodedMangoInstruction)
   res.status(200).json([...decodedMangoInstruction])
@@ -48,12 +48,12 @@ export default withSentry(handler)
 
 async function getDataObjectFlattened<T>(
   connection: Connection,
-  data: Uint8Array
+  data: Uint8Array,
 ) {
   try {
     const client = await getClient(connection)
     const decodedInstructionData = new BorshInstructionCoder(
-      client.program.idl
+      client.program.idl,
     ).decode(Buffer.from(data))?.data as any
 
     //   console.log(

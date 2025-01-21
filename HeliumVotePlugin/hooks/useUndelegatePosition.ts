@@ -52,9 +52,8 @@ export const useUndelegatePosition = () => {
       } else {
         const instructions: TransactionInstruction[] = []
         const delegatedPosKey = delegatedPositionKey(position.pubkey)[0]
-        const delegatedPosAcc = await hsdProgram.account.delegatedPositionV0.fetch(
-          delegatedPosKey
-        )
+        const delegatedPosAcc =
+          await hsdProgram.account.delegatedPositionV0.fetch(delegatedPosKey)
 
         if (!tokenOwnerRecordPk) {
           await withCreateTokenOwnerRecord(
@@ -64,7 +63,7 @@ export const useUndelegatePosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -75,7 +74,7 @@ export const useUndelegatePosition = () => {
               position: position.pubkey,
               subDao: delegatedPosAcc.subDao,
             })
-            .instruction()
+            .instruction(),
         )
 
         notify({ message: 'UnDelegating' })
@@ -85,7 +84,7 @@ export const useUndelegatePosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -101,7 +100,7 @@ export const useUndelegatePosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

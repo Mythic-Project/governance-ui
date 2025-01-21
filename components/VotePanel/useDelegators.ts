@@ -18,7 +18,7 @@ const useDelegators = (role: 'community' | 'council' | undefined) => {
   const relevantDelegators =
     relevantMint &&
     torsDelegatedToUser?.filter((x) =>
-      x.account.governingTokenMint.equals(relevantMint)
+      x.account.governingTokenMint.equals(relevantMint),
     )
   return relevantDelegators
 }
@@ -39,7 +39,7 @@ const fetchDelegators = async (connection: Connection, walletPk: PublicKey, real
  * otherwise, returns []
  **/
 export const useBatchedVoteDelegators = (
-  role: 'community' | 'council' | undefined
+  role: 'community' | 'council' | undefined,
 ) => {
   const { connection } = useConnection()
   const realmPk = useSelectedRealmPubkey()
@@ -47,7 +47,7 @@ export const useBatchedVoteDelegators = (
   const { result: plugin } = useAsync(
     async () =>
       role && realmPk && determineVotingPowerType(connection, realmPk, role),
-    [connection, realmPk, role]
+    [connection, realmPk, role],
   )
   const batchVoteSupported =
     plugin && DELEGATOR_BATCH_VOTE_SUPPORT_BY_PLUGIN[plugin]
@@ -62,7 +62,7 @@ export const useBatchedVoteDelegators = (
 
   // If the user is selecting a specific delegator, we want to just use that and not count the other delegators
   const selectedDelegator = useSelectedDelegatorStore((s) =>
-    role === 'community' ? s.communityDelegator : s.councilDelegator
+    role === 'community' ? s.communityDelegator : s.councilDelegator,
   )
 
   return selectedDelegator ? [] : delegatorsIfSupported

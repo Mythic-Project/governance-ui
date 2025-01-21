@@ -1,8 +1,5 @@
-import {
-  PublicKey,
-  TransactionInstruction,
-} from '@solana/web3.js'
-import {VoterWeightPluginInfo} from "./types";
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { VoterWeightPluginInfo } from './types'
 
 interface CreateVoterWeightRecordArgs {
   walletPublicKey: PublicKey
@@ -23,16 +20,16 @@ export const createVoterWeight = async ({
     const client = plugin.client
 
     const voterWeightRecord = await client.getVoterWeightRecord(
-        realmPublicKey,
-        governanceMintPublicKey,
-        walletPublicKey
+      realmPublicKey,
+      governanceMintPublicKey,
+      walletPublicKey,
     )
 
     if (!voterWeightRecord) {
       const ix = await client.createVoterWeightRecord(
-          walletPublicKey,
-          realmPublicKey,
-          governanceMintPublicKey
+        walletPublicKey,
+        realmPublicKey,
+        governanceMintPublicKey,
       )
       if (ix) ixes.push(ix)
     }

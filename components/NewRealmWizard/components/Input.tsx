@@ -27,7 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       warning = '',
       ...props
     },
-    ref
+    ref,
   ) => {
     const hasContent = typeof value !== 'undefined' && value !== ''
     let classNames = `input-base form-control block w-full ${
@@ -101,7 +101,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         />
       </div>
     )
-  }
+  },
 )
 
 export default Input

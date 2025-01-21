@@ -67,7 +67,7 @@ const VotingMintConfig = ({
   const { wallet, anchorProvider } = useWalletDeprecated()
   const showGrantAuth = useMemo(
     () => form?.programId && !HELIUM_VSR_PLUGINS_PKS.includes(form.programId),
-    [form?.programId]
+    [form?.programId],
   )
 
   async function getInstruction(): Promise<UiInstruction> {
@@ -96,14 +96,14 @@ const VotingMintConfig = ({
     if (VSR_PLUGIN_PKS.includes(form.programId)) {
       vsrClient = await VsrClient.connect(
         anchorProvider,
-        new PublicKey(form.programId)
+        new PublicKey(form.programId),
       )
     }
 
     if (HELIUM_VSR_PLUGINS_PKS.includes(form.programId)) {
       vsrClient = await HeliumVsrClient.connect(
         anchorProvider,
-        new PublicKey(form.programId)
+        new PublicKey(form.programId),
       )
     }
 
@@ -125,14 +125,14 @@ const VotingMintConfig = ({
     const { registrar } = getRegistrarPDA(
       realm.pubkey,
       realm.account.communityMint,
-      vsrClient.program.programId
+      vsrClient.program.programId,
     )
 
     const mint = new PublicKey(form.mint)
     const baselineScaledFactor = getScaledFactor(baselineVoteWeightFactor)
     const maxLockupScaledFactor = getScaledFactor(maxLockupFactor)
     const lockupSaturationSecs = new BN(
-      yearsToSecs(lockupSaturation).toString()
+      yearsToSecs(lockupSaturation).toString(),
     )
     let remainingAccounts = [
       {
@@ -147,7 +147,7 @@ const VotingMintConfig = ({
       // Note: The registrar might not exist if we are setting this for the first time in a single proposal
       // In that case we default to 0 existing mints
       const registrarAcc = (await vsrClient?.program.account.registrar.fetch(
-        registrar
+        registrar,
       )) as Registrar
 
       const registrarMints = registrarAcc?.votingMints
@@ -191,7 +191,7 @@ const VotingMintConfig = ({
           baselineScaledFactor, // unlocked_scaled_factor
           maxLockupScaledFactor, // lockup_scaled_factor
           lockupSaturationSecs, // lockup_saturation_secs
-          grantAuthority!.governance.pubkey // grant_authority)
+          grantAuthority!.governance.pubkey, // grant_authority)
         )
         .accounts({
           registrar,
@@ -212,7 +212,7 @@ const VotingMintConfig = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -254,7 +254,7 @@ const VotingMintConfig = ({
               message: `mint address is required`,
             })
           }
-        }
+        },
       ),
     ...(showGrantAuth
       ? {
@@ -282,7 +282,7 @@ const VotingMintConfig = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
     },
     {
@@ -308,7 +308,7 @@ const VotingMintConfig = ({
             name: 'grantAuthority',
             type: InstructionInputType.GOVERNED_ACCOUNT,
             options: assetAccounts.filter(
-              (x) => x.isToken || x.isSol || x.isNft
+              (x) => x.isToken || x.isSol || x.isNft,
             ),
           },
         ]

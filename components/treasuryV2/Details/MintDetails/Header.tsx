@@ -124,7 +124,7 @@ export default function Header(props: Props) {
         'grid',
         'min-h-[128px]',
         'px-8',
-        'py-4'
+        'py-4',
       )}
     >
       <div className="grid items-center gap-4 grid-cols-[repeat(auto-fill,minmax(275px,1fr))]">
@@ -188,8 +188,8 @@ export default function Header(props: Props) {
             } else {
               router.push(
                 fmtUrlWithCluster(
-                  `/dao/${symbol}/proposal/new?i=${Instructions.Mint}&m=${props.mint.address}`
-                )
+                  `/dao/${symbol}/proposal/new?i=${Instructions.Mint}&m=${props.mint.address}`,
+                ),
               )
             }
           }}
@@ -209,8 +209,8 @@ export default function Header(props: Props) {
               onClick={() => {
                 router.push(
                   fmtUrlWithCluster(
-                    `/dao/${symbol}/proposal/new?i=${Instructions.RevokeGoverningTokens}&membershipPopulation=${props.mint.tokenRole}`
-                  )
+                    `/dao/${symbol}/proposal/new?i=${Instructions.RevokeGoverningTokens}&membershipPopulation=${props.mint.tokenRole}`,
+                  ),
                 )
               }}
             >

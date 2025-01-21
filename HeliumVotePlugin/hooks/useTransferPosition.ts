@@ -13,13 +13,13 @@ import {
 } from '@utils/sendTransactions'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmCommunityMintInfoQuery } from '@hooks/queries/mintInfo'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useTransferPosition = () => {
   const { connection, wallet, anchorProvider: provider } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
-  const {heliumClient} = useHeliumClient();
+  const { heliumClient } = useHeliumClient()
   const { error, loading, execute } = useAsyncCallback(
     async ({
       sourcePosition,
@@ -56,7 +56,7 @@ export const useTransferPosition = () => {
         const isDao = Boolean(await connection.current.getAccountInfo(dao))
         const amountToTransfer = getMintNaturalAmountFromDecimalAsBN(
           amount,
-          mint!.decimals
+          mint!.decimals,
         )
 
         if (isDao) {
@@ -71,7 +71,7 @@ export const useTransferPosition = () => {
                 depositMint: realm.account.communityMint,
                 dao: dao,
               })
-              .instruction()
+              .instruction(),
           )
         } else {
           instructions.push(
@@ -84,7 +84,7 @@ export const useTransferPosition = () => {
                 targetPosition: targetPosition.pubkey,
                 depositMint: realm.account.communityMint,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -95,7 +95,7 @@ export const useTransferPosition = () => {
               .accounts({
                 position: sourcePosition.pubkey,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -106,7 +106,7 @@ export const useTransferPosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -122,7 +122,7 @@ export const useTransferPosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

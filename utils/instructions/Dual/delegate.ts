@@ -44,7 +44,7 @@ import { fetchRealmByPubkey } from '@hooks/queries/realm'
 import { determineVotingPowerType } from '@hooks/queries/governancePower'
 
 const govProgramId = new PublicKey(
-  'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw'
+  'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw',
 )
 interface DelegateArgs {
   connection: ConnectionContext
@@ -93,7 +93,7 @@ export async function getDelegateInstruction({
   ) {
     const programVersion = await fetchProgramVersion(
       connection.current,
-      form.delegateToken?.governance.owner // governance program public key
+      form.delegateToken?.governance.owner, // governance program public key
     )
 
     await withSetGovernanceDelegate(
@@ -104,7 +104,7 @@ export async function getDelegateInstruction({
       form.delegateToken.extensions.mint.publicKey, // mint of governance token
       form.delegateToken.governance.nativeTreasuryAddress, // governingTokenOwner (walletId) publicKey of tokenOwnerRecord of this wallet
       form.delegateToken.governance.nativeTreasuryAddress, // governanceAuthority: publicKey of connected wallet
-      new PublicKey(form.delegateAccount) // public key of wallet who to delegated vote to
+      new PublicKey(form.delegateAccount), // public key of wallet who to delegated vote to
     )
     for (const ix of instructions) {
       additionalSerializedInstructions.push(serializeInstructionToBase64(ix))
@@ -150,7 +150,7 @@ export async function getVoteDepositInstruction({
   ) {
     const { result: realm } = await fetchRealmByPubkey(
       connection.current,
-      realmPk
+      realmPk,
     )
     if (!realm) {
       throw new Error('Realm not found')
@@ -158,7 +158,7 @@ export async function getVoteDepositInstruction({
     const plugin = await determineVotingPowerType(
       connection.current,
       realmPk,
-      'community'
+      'community',
     )
     if (plugin !== 'VSR') {
       throw new Error('this form currently only supports VSR')
@@ -168,18 +168,18 @@ export async function getVoteDepositInstruction({
     const daoWallet = form.delegateToken.governance.nativeTreasuryAddress
     const amount = getMintNaturalAmountFromDecimalAsBN(
       form.numTokens,
-      form.delegateToken.extensions.mint.account.decimals
+      form.delegateToken.extensions.mint.account.decimals,
     )
 
     const programVersion = await fetchProgramVersion(
       connection.current,
-      realm.owner // governance program public key
+      realm.owner, // governance program public key
     )
     const tokenOwnerRecordAddress = await getTokenOwnerRecordAddress(
       realm.owner,
       realmPk,
       form.delegateToken.extensions.mint.publicKey,
-      daoWallet
+      daoWallet,
     )
     let isExisintgTokenOwnerRecord = false
     try {
@@ -194,7 +194,7 @@ export async function getVoteDepositInstruction({
     const provider = new AnchorProvider(
       connection.current,
       new EmptyWallet(Keypair.generate()),
-      options
+      options,
     )
     const vsrClient = await VsrClient.connect(provider, DEFAULT_VSR_ID)
     const systemProgram = SystemProgram.programId
@@ -203,17 +203,17 @@ export async function getVoteDepositInstruction({
     const { registrar } = getRegistrarPDA(
       realmPk,
       communityMintPk,
-      clientProgramId
+      clientProgramId,
     )
     const { voter, voterBump } = getVoterPDA(
       registrar,
       daoWallet,
-      clientProgramId
+      clientProgramId,
     )
     const { voterWeightPk, voterWeightBump } = getVoterWeightPDA(
       registrar,
       daoWallet,
-      clientProgramId
+      clientProgramId,
     )
     const existingVoter = await tryGetVoter(voter, vsrClient)
 
@@ -222,7 +222,7 @@ export async function getVoteDepositInstruction({
       TOKEN_PROGRAM_ID,
       communityMintPk,
       voter,
-      true
+      true,
     )
 
     //spl governance tokenownerrecord pubkey
@@ -234,7 +234,7 @@ export async function getVoteDepositInstruction({
         realmPk,
         daoWallet,
         communityMintPk,
-        wallet.publicKey
+        wallet.publicKey,
       )
     }
 
@@ -257,7 +257,7 @@ export async function getVoteDepositInstruction({
     const mintCfgIdx = await getMintCfgIdx(
       registrar,
       communityMintPk,
-      vsrClient
+      vsrClient,
     )
 
     //none type deposits are used only to store tokens that will be withdrawable immediately so there is no need to create new every time and there should be one per mint
@@ -268,7 +268,7 @@ export async function getVoteDepositInstruction({
             (x) =>
               x.isUsed &&
               typeof x.lockup.kind[lockupKind] !== 'undefined' &&
-              x.votingMintConfigIdx === mintCfgIdx
+              x.votingMintConfigIdx === mintCfgIdx,
           )
         : -1
 
@@ -293,7 +293,7 @@ export async function getVoteDepositInstruction({
           //lockup starts now
           null,
           period,
-          false
+          false,
         )
         .accounts({
           registrar: registrar,
@@ -368,7 +368,7 @@ export async function getDelegateWithdrawInstruction({
   ) {
     const programVersion = await fetchProgramVersion(
       connection.current,
-      govProgramId // governance program public key
+      govProgramId, // governance program public key
     )
 
     await withSetGovernanceDelegate(
@@ -380,7 +380,7 @@ export async function getDelegateWithdrawInstruction({
       form.delegateToken.governance.nativeTreasuryAddress, // governingTokenOwner (walletId) publicKey of tokenOwnerRecord of this wallet
       form.delegateToken.governance.nativeTreasuryAddress, // governanceAuthority: publicKey of connected wallet
       // @ts-ignore
-      null // remove delegate
+      null, // remove delegate
     )
 
     await withWithdrawGoverningTokens(
@@ -390,7 +390,7 @@ export async function getDelegateWithdrawInstruction({
       new PublicKey(form.realm), // realm public key
       form.delegateToken.pubkey,
       form.delegateToken.extensions.mint.publicKey,
-      form.delegateToken.governance.nativeTreasuryAddress
+      form.delegateToken.governance.nativeTreasuryAddress,
     )
     for (const ix of instructions) {
       additionalSerializedInstructions.push(serializeInstructionToBase64(ix))

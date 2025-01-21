@@ -49,7 +49,7 @@ const LockPluginTokenBalanceCard = ({
 
   const isDepositVisible = (
     depositMint: MintInfo | undefined,
-    realmMint: PublicKey | undefined
+    realmMint: PublicKey | undefined,
   ) =>
     depositMint &&
     (!proposal ||
@@ -63,7 +63,7 @@ const LockPluginTokenBalanceCard = ({
 
   const councilDepositVisible = isDepositVisible(
     councilMint,
-    realm?.account.config.councilMint
+    realm?.account.config.councilMint,
   )
 
   const defaultMint =
@@ -81,7 +81,7 @@ const LockPluginTokenBalanceCard = ({
           realm.owner,
           realm.pubkey,
           defaultMint,
-          walletPublicKey
+          walletPublicKey,
         )
         setTokenOwnerRecordPk(tokenOwnerRecordAddress.toBase58())
       }
@@ -168,20 +168,20 @@ const TokenDepositLock = ({
   const deposits = useDepositStore((s) => s.state.deposits)
   const votingPower = useVsrGovpower().data?.result ?? new BN(0)
   const votingPowerFromDeposits = useDepositStore(
-    (s) => s.state.votingPowerFromDeposits
+    (s) => s.state.votingPowerFromDeposits,
   )
   const lockedTokensAmount = deposits
     .filter(
       (x) =>
         typeof x.lockup.kind['none'] === 'undefined' &&
-        x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58()
+        x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58(),
     )
     .reduce((curr, next) => curr.add(next.currentlyLocked), new BN(0))
 
   const depositRecord = deposits.find(
     (x) =>
       x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
-      x.lockup.kind.none
+      x.lockup.kind.none,
   )
 
   const depositTokenAccount =
