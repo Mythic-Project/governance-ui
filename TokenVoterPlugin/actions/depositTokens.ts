@@ -57,7 +57,7 @@ async function addTokensHandler(
       ixs.push(createVoterIx)
     }
 
-    let depositEntryIndex = 0
+    const depositEntryIndex = 0
 
     const depositIx = await tokenVoterClient.methods.deposit(
       depositEntryIndex, 
