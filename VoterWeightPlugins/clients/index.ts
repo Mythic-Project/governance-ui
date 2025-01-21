@@ -30,7 +30,7 @@ export const loadClient = (
   plugin: PluginName,
   programId: PublicKey,
   provider: Provider,
-  signer: Wallet
+  signer: Wallet,
 ): Promise<Client<any>> => {
   switch (plugin) {
     case 'QV':
@@ -53,7 +53,7 @@ export const loadClient = (
       return ParclVoterWeightPluginClient.connect(provider, undefined, signer)
     case 'bonk':
       return BonkClient.connect(provider, programId)
-    case 'token_voter' :
+    case 'token_voter':
       return TokenVoterClient.connect(provider)
     default:
       return UnrecognisedVoterWeightPluginClient.connect(provider, programId)
