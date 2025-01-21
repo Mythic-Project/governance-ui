@@ -8,14 +8,13 @@ export async function initObligationAccount({
 }: {
   obligationOwner: PublicKey
 }): Promise<TransactionInstruction> {
-  const obligationAddress = await deriveObligationAddressFromWalletAndSeed(
-    obligationOwner
-  )
+  const obligationAddress =
+    await deriveObligationAddressFromWalletAndSeed(obligationOwner)
 
   return initObligationInstruction(
     obligationAddress,
     SolendConfiguration.lendingMarket,
     obligationOwner,
-    SolendConfiguration.programID
+    SolendConfiguration.programID,
   )
 }

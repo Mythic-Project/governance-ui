@@ -6,11 +6,13 @@ import { TokenProgramAccount } from '@utils/tokens'
 import { MintInfo } from '@solana/spl-token'
 import { Sft } from '@metaplex-foundation/js'
 
-export type VotingMintConfig = IdlTypes<HeliumVoterStakeRegistry>['VotingMintConfigV0']
+export type VotingMintConfig =
+  IdlTypes<HeliumVoterStakeRegistry>['VotingMintConfigV0']
 type RegistrarV0 = IdlAccounts<HeliumVoterStakeRegistry>['registrar']
 export type Lockup = IdlTypes<HeliumVoterStakeRegistry>['Lockup']
 export type PositionV0 = IdlAccounts<HeliumVoterStakeRegistry>['positionV0']
-export type DelegatedPositionV0 = IdlAccounts<HeliumSubDaos>['delegatedPositionV0']
+export type DelegatedPositionV0 =
+  IdlAccounts<HeliumSubDaos>['delegatedPositionV0']
 export interface Registrar extends RegistrarV0 {
   votingMints: VotingMintConfig[]
 }

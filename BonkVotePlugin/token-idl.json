@@ -52,9 +52,7 @@
           "name": "realmAuthority",
           "isMut": false,
           "isSigner": true,
-          "docs": [
-            "realm_authority must sign and match Realm.authority"
-          ]
+          "docs": ["realm_authority must sign and match Realm.authority"]
         },
         {
           "name": "payer",
@@ -124,9 +122,7 @@
           "name": "realmAuthority",
           "isMut": false,
           "isSigner": true,
-          "docs": [
-            "realm_authority must sign and match Realm.authority"
-          ]
+          "docs": ["realm_authority must sign and match Realm.authority"]
         },
         {
           "name": "payer",
@@ -212,9 +208,7 @@
           "name": "realmGoverningTokenMint",
           "isMut": false,
           "isSigner": false,
-          "docs": [
-            "Either the realm community mint or the council mint."
-          ]
+          "docs": ["Either the realm community mint or the council mint."]
         },
         {
           "name": "payer",
@@ -257,9 +251,7 @@
           "name": "mint",
           "isMut": false,
           "isSigner": false,
-          "docs": [
-            "Tokens of this mint will be included in the Mint Configs"
-          ]
+          "docs": ["Tokens of this mint will be included in the Mint Configs"]
         },
         {
           "name": "maxVoterWeightRecord",
@@ -499,16 +491,12 @@
         "fields": [
           {
             "name": "governanceProgramId",
-            "docs": [
-              "spl-governance program the Realm belongs to"
-            ],
+            "docs": ["spl-governance program the Realm belongs to"],
             "type": "publicKey"
           },
           {
             "name": "realm",
-            "docs": [
-              "Realm of the Registrar"
-            ],
+            "docs": ["Realm of the Registrar"],
             "type": "publicKey"
           },
           {
@@ -535,21 +523,14 @@
           },
           {
             "name": "maxMints",
-            "docs": [
-              "Max mints that voters can create."
-            ],
+            "docs": ["Max mints that voters can create."],
             "type": "u8"
           },
           {
             "name": "reserved",
-            "docs": [
-              "Reserved for future upgrades"
-            ],
+            "docs": ["Reserved for future upgrades"],
             "type": {
-              "array": [
-                "u8",
-                127
-              ]
+              "array": ["u8", 127]
             }
           }
         ]
@@ -557,31 +538,23 @@
     },
     {
       "name": "Voter",
-      "docs": [
-        "User account for mint voting rights."
-      ],
+      "docs": ["User account for mint voting rights."],
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "voterAuthority",
-            "docs": [
-              "Voter Authority who owns the account tokens."
-            ],
+            "docs": ["Voter Authority who owns the account tokens."],
             "type": "publicKey"
           },
           {
             "name": "registrar",
-            "docs": [
-              "Registrar in which the voter is created in."
-            ],
+            "docs": ["Registrar in which the voter is created in."],
             "type": "publicKey"
           },
           {
             "name": "deposits",
-            "docs": [
-              "Deposit entries for a deposit for a given mint."
-            ],
+            "docs": ["Deposit entries for a deposit for a given mint."],
             "type": {
               "vec": {
                 "defined": "DepositEntry"
@@ -590,28 +563,19 @@
           },
           {
             "name": "voterBump",
-            "docs": [
-              "Voter account bump."
-            ],
+            "docs": ["Voter account bump."],
             "type": "u8"
           },
           {
             "name": "voterWeightRecordBump",
-            "docs": [
-              "Voter weight record account bump."
-            ],
+            "docs": ["Voter weight record account bump."],
             "type": "u8"
           },
           {
             "name": "reserved",
-            "docs": [
-              "Reserved for future upgrades"
-            ],
+            "docs": ["Reserved for future upgrades"],
             "type": {
-              "array": [
-                "u8",
-                94
-              ]
+              "array": ["u8", 94]
             }
           }
         ]
@@ -621,9 +585,7 @@
   "types": [
     {
       "name": "DepositEntry",
-      "docs": [
-        "Bookkeeping for a single deposit for a given mint."
-      ],
+      "docs": ["Bookkeeping for a single deposit for a given mint."],
       "type": {
         "kind": "struct",
         "fields": [
@@ -640,9 +602,7 @@
           },
           {
             "name": "votingMintConfigIdx",
-            "docs": [
-              "Points to the VotingMintConfig this deposit uses."
-            ],
+            "docs": ["Points to the VotingMintConfig this deposit uses."],
             "type": "u8"
           },
           {
@@ -659,14 +619,9 @@
           },
           {
             "name": "reserved",
-            "docs": [
-              "Reserved for future upgrades"
-            ],
+            "docs": ["Reserved for future upgrades"],
             "type": {
-              "array": [
-                "u8",
-                38
-              ]
+              "array": ["u8", 38]
             }
           }
         ]
@@ -685,9 +640,7 @@
         "fields": [
           {
             "name": "mint",
-            "docs": [
-              "Mint for this entry."
-            ],
+            "docs": ["Mint for this entry."],
             "type": "publicKey"
           },
           {
@@ -704,10 +657,7 @@
           {
             "name": "reserved1",
             "type": {
-              "array": [
-                "u8",
-                55
-              ]
+              "array": ["u8", 55]
             }
           }
         ]

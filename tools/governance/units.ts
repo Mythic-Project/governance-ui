@@ -15,7 +15,7 @@ export const parseMintMaxVoteWeight = (
   useSupplyFactor: boolean,
   communityMintDecimals: number,
   supplyFactor?: number,
-  absoluteValue?: number
+  absoluteValue?: number,
 ) => {
   if (useSupplyFactor) {
     return supplyFactor
@@ -24,7 +24,7 @@ export const parseMintMaxVoteWeight = (
           value: new BN(
             new BigNumber(supplyFactor.toString())
               .shiftedBy(MintMaxVoteWeightSource.SUPPLY_FRACTION_DECIMALS)
-              .toString()
+              .toString(),
           ),
         })
       : MintMaxVoteWeightSource.FULL_SUPPLY_FRACTION
@@ -34,7 +34,7 @@ export const parseMintMaxVoteWeight = (
       value: absoluteValue
         ? parseMintNaturalAmountFromDecimalAsBN(
             absoluteValue,
-            communityMintDecimals
+            communityMintDecimals,
           )
         : new BN(1000),
     })
@@ -50,7 +50,7 @@ export function isDisabledVoterWeight(voter_weight: BN | number | string) {
 
 export function fmtVoterWeightThresholdMintAmount(
   mint: MintInfo | undefined,
-  voter_weight: BN | number | string
+  voter_weight: BN | number | string,
 ) {
   const voter_weight_bn =
     voter_weight instanceof BN ? voter_weight : new BN(voter_weight.toString())

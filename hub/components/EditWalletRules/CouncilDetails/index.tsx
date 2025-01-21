@@ -31,9 +31,8 @@ interface Props
 }
 
 export function CouncilDetails(props: Props) {
-  const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(
-    false,
-  );
+  const [additionalOptionsExpanded, setAdditionalOptionsExpanded] =
+    useState(false);
 
   const inputProps = useMemo(
     () => ({

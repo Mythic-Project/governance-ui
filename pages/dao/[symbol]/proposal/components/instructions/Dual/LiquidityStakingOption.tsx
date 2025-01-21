@@ -56,13 +56,13 @@ const LiquidityStakingOption = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [form])
   useEffect(() => {
     setGovernedAccount(form.baseTreasury?.governance)
   }, [form.baseTreasury])
-  const schema = getDualFinanceLiquidityStakingOptionSchema({form})
+  const schema = getDualFinanceLiquidityStakingOptionSchema({ form })
 
   return (
     <>
@@ -141,7 +141,7 @@ const LiquidityStakingOption = ({
             (x) =>
               x.isSol &&
               form.baseTreasury?.governance &&
-              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey)
+              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey),
           )}
           onChange={(value) => {
             handleSetForm({ value, propertyName: 'payer' })

@@ -5,10 +5,7 @@
     "tsconfigRootDir": ".",
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint/eslint-plugin",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint/eslint-plugin", "import"],
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
@@ -18,10 +15,7 @@
     "node": true,
     "jest": true
   },
-  "ignorePatterns": [
-    ".eslintrc.js",
-    "migrations"
-  ],
+  "ignorePatterns": [".eslintrc.js", "migrations"],
   "rules": {
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -33,9 +27,7 @@
       "error",
       {
         "newlines-between": "always-and-inside-groups",
-        "pathGroupsExcludedImportTypes": [
-          "builtin"
-        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
         "pathGroups": [
           {
             "pattern": "@hub/**/**",

@@ -20,6 +20,6 @@ export default function loadData(args: {
   ]).then((results) =>
     results
       .flat()
-      .filter((strat) => strat.handledMint === args.strategyMintAddress)
+      .filter((strat) => strat.handledMint === args.strategyMintAddress),
   )
 }

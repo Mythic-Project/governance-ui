@@ -165,8 +165,8 @@ const RemoveLockup = ({
       return returnInvalid()
     }
 
-    const authorizedPubkey = form.governedTokenAccount.extensions
-      .transferAddress!
+    const authorizedPubkey =
+      form.governedTokenAccount.extensions.transferAddress!
     const stakePubkey = new PublicKey(form.stakeAccount)
 
     //greed dao test pubkey stake account pk 14SPGuYJANnAhmpKy6bwXKJ5Njqxnr8k2jZ9DnzN84de
@@ -192,7 +192,7 @@ const RemoveLockup = ({
         //any past time unixtimestamp
         unixTimestamp: 1715685793,
       },
-      data
+      data,
     )
 
     const keys = [
@@ -229,7 +229,7 @@ const RemoveLockup = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -237,7 +237,7 @@ const RemoveLockup = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form, governedAccount])
@@ -251,7 +251,7 @@ const RemoveLockup = ({
       <GovernedAccountSelect
         label="Treasury account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

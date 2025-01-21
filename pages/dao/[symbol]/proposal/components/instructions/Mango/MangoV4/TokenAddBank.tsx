@@ -40,14 +40,14 @@ const TokenAddBank = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const solAccounts = assetAccounts.filter(
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup.admin)
+      x.extensions.transferAddress?.equals(mangoGroup.admin),
   )
   const [tokens, setTokens] = useState<NamePkVal[]>([])
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -73,10 +73,10 @@ const TokenAddBank = ({
       wallet?.publicKey
     ) {
       const token = mangoGroup!.banksMapByMint.get(
-        form.token!.value.toBase58()
+        form.token!.value.toBase58(),
       )![0]
       const mintInfo = mangoGroup!.mintInfosMapByTokenIndex.get(
-        token.tokenIndex
+        token.tokenIndex,
       )
       const banks = mangoGroup!.banksMapByTokenIndex.get(token.tokenIndex)
       const ix = await mangoClient!.program.methods
@@ -109,7 +109,7 @@ const TokenAddBank = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -120,7 +120,7 @@ const TokenAddBank = ({
         (x) => ({
           name: x[0].name,
           value: x[0].mint,
-        })
+        }),
       )
       setTokens(currentTokens)
     }

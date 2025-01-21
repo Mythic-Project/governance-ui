@@ -53,7 +53,7 @@ const cache = (() => {
 
 export function useCachedValue<
   R,
-  F extends (...args: any[]) => Promise<R> = (...args: any[]) => Promise<R>
+  F extends (...args: any[]) => Promise<R> = (...args: any[]) => Promise<R>,
 >(key: string, onFetchValue: F, options?: Options) {
   const cachedValue = cache.get<R>(key, options);
   const [result, setResult] = useState<RE.Result<R>>(

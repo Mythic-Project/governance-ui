@@ -18,7 +18,7 @@ export default function Header({ onClickSendNft, collectionId }: Props) {
   const { canUseTransferInstruction } = useGovernanceAssets()
 
   const { data: collectionNft } = useDigitalAssetById(
-    collectionId !== 'none' ? collectionId : undefined
+    collectionId !== 'none' ? collectionId : undefined,
   )
   const name = collectionNft?.result?.content.metadata.name
   const imageUri =
@@ -34,7 +34,7 @@ export default function Header({ onClickSendNft, collectionId }: Props) {
         'grid',
         'min-h-[128px]',
         'px-8',
-        'py-4'
+        'py-4',
       )}
     >
       <div className={cx('grid', 'items-center')}>

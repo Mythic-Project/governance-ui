@@ -106,7 +106,7 @@ export async function signTransactions({
     transaction.recentBlockhash = recentBlockhash
     transaction.setSigners(
       wallet!.publicKey!,
-      ...signers.map((s) => s.publicKey)
+      ...signers.map((s) => s.publicKey),
     )
     if (signers?.length > 0) {
       transaction.partialSign(...signers)
@@ -116,7 +116,7 @@ export async function signTransactions({
   let signed
   try {
     signed = await wallet.signAllTransactions(
-      transactionsAndSigners.map(({ transaction }) => transaction)
+      transactionsAndSigners.map(({ transaction }) => transaction),
     )
   } catch (e) {
     console.log(e)
@@ -152,7 +152,7 @@ export async function sendSignedTransaction({
     rawTransaction,
     {
       skipPreflight: true,
-    }
+    },
   )
   console.log('notify2')
 
@@ -175,7 +175,7 @@ export async function sendSignedTransaction({
 
     console.log(
       'calling signatures confirmation',
-      await awaitTransactionSignatureConfirmation(txid, timeout, connection)
+      await awaitTransactionSignatureConfirmation(txid, timeout, connection),
     )
   } catch (err) {
     if (err.timeout) {
@@ -208,7 +208,7 @@ export async function sendSignedTransaction({
           if (line.startsWith('Program log: ')) {
             throw new TransactionError(
               'Transaction failed: ' + line.slice('Program log: '.length),
-              txid
+              txid,
             )
           }
         }
@@ -287,8 +287,8 @@ export async function sendSignedAndAdjacentTransactions({
       await awaitTransactionSignatureConfirmation(
         proposalTxId,
         timeout,
-        connection
-      )
+        connection,
+      ),
     )
   } catch (err) {
     if (err.timeout) {
@@ -321,14 +321,14 @@ export async function sendSignedAndAdjacentTransactions({
           if (line.startsWith('Program log: ')) {
             throw new TransactionError(
               'Transaction failed: ' + line.slice('Program log: '.length),
-              proposalTxId
+              proposalTxId,
             )
           }
         }
       }
       throw new TransactionError(
         JSON.stringify(simulateResult.err),
-        proposalTxId
+        proposalTxId,
       )
     }
 
@@ -348,7 +348,7 @@ export async function sendSignedAndAdjacentTransactions({
 async function awaitTransactionSignatureConfirmation(
   txid: TransactionSignature,
   timeout: number,
-  connection: Connection
+  connection: Connection,
 ) {
   let done = false
   const result = await new Promise((resolve, reject) => {
@@ -374,7 +374,7 @@ async function awaitTransactionSignatureConfirmation(
               resolve(result)
             }
           },
-          connection.commitment
+          connection.commitment,
         )
         console.log('Set up WS connection', txid)
       } catch (e) {

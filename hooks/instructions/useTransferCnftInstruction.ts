@@ -18,7 +18,7 @@ import { getNetworkFromEndpoint } from '@utils/connection'
 export const buildTransferCnftInstruction = async (
   connection: Connection,
   cnftId: PublicKey,
-  toOwner: PublicKey
+  toOwner: PublicKey,
 ) => {
   {
     const network = getNetworkFromEndpoint(connection.rpcEndpoint)
@@ -31,14 +31,14 @@ export const buildTransferCnftInstruction = async (
     const assetId = new PublicKey(cnft.id)
     const { result: assetProof } = await fetchDasAssetProofById(
       network,
-      assetId
+      assetId,
     )
     if (!assetProof) throw new Error('The asset proof is not found.')
 
     const treeAddress = new PublicKey(cnft.compression.tree)
     const treeAccount = await ConcurrentMerkleTreeAccount.fromAccountAddress(
       connection,
-      treeAddress
+      treeAddress,
     )
 
     const leafOwner = new PublicKey(cnft.ownership.owner)
@@ -79,7 +79,7 @@ export const buildTransferCnftInstruction = async (
         nonce: cnft.compression.leaf_id,
         index: cnft.compression.leaf_id,
       },
-      BUBBLEGUM_PROGRAM_ID
+      BUBBLEGUM_PROGRAM_ID,
     )
     ix.keys.forEach((x) => {
       if (x.pubkey.equals(leafDelegate)) {

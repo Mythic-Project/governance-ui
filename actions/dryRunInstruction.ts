@@ -13,7 +13,7 @@ export async function dryRunInstruction(
   wallet: WalletAdapter,
   instructionData: InstructionData | null,
   prerequisiteInstructionsToRun?: TransactionInstruction[] | undefined,
-  additionalInstructions?: InstructionData[]
+  additionalInstructions?: InstructionData[],
 ) {
   const recentBlockHash = await connection.getLatestBlockhash()
   const transaction = new Transaction({ feePayer: wallet.publicKey })
@@ -21,7 +21,7 @@ export async function dryRunInstruction(
   transaction.recentBlockhash = recentBlockHash.blockhash
 
   transaction.add(
-    ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 })
+    ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 }),
   )
 
   if (prerequisiteInstructionsToRun) {
@@ -48,7 +48,7 @@ export async function dryRunInstruction(
   const result = await connection.simulateTransaction(
     transaction,
     undefined,
-    true
+    true,
   )
 
   return { response: result.value, transaction }

@@ -15,7 +15,7 @@ const cache: Map<string, CachedData> = new Map()
 
 async function getInfo(
   address: string,
-  connection: Connection
+  connection: Connection,
 ): Promise<Result<ConfirmedSignatureInfo[]>> {
   const cachedValue = cache.get(address)
 
@@ -29,7 +29,7 @@ async function getInfo(
       {
         limit: 10,
       },
-      'confirmed'
+      'confirmed',
     )
     .then((values) => {
       cache.set(address, { values, time: Date.now() })
@@ -80,7 +80,7 @@ export default function useAccountActivity(accountAddress: string | string[]) {
             error: new Error('Unknown Error'),
           })
         }
-      }
+      },
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [addresses.join('-')])

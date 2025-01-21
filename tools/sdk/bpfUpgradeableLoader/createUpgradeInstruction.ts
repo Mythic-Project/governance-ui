@@ -10,12 +10,12 @@ export async function createUpgradeInstruction(
   programId: PublicKey,
   bufferAddress: PublicKey,
   upgradeAuthority: PublicKey,
-  spillAddress: PublicKey
+  spillAddress: PublicKey,
 ) {
   const bpfUpgradableLoaderId = BPF_UPGRADE_LOADER_ID
   const [programDataAddress] = await PublicKey.findProgramAddress(
     [programId.toBuffer()],
-    bpfUpgradableLoaderId
+    bpfUpgradableLoaderId,
   )
 
   const keys = [

@@ -35,7 +35,7 @@ export const useIsInCoolOffTime = () => {
 
 export const isInCoolOffTime = (
   proposal: Proposal | undefined,
-  governance: Governance | undefined
+  governance: Governance | undefined,
 ) => {
   const mainVotingEndedAt = proposal?.signingOffAt
     ?.addn(governance?.config.baseVotingTime || 0)

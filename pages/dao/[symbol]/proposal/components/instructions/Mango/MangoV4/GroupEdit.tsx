@@ -82,7 +82,7 @@ const GroupEdit = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup, getAdditionalLabelInfo } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const solAccounts = assetAccounts.filter(
@@ -91,7 +91,7 @@ const GroupEdit = ({
       ((mangoGroup?.admin &&
         x.extensions.transferAddress?.equals(mangoGroup.admin)) ||
         (mangoGroup?.securityAdmin &&
-          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin)))
+          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin))),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [originalFormValues, setOriginalFormValues] = useState<GroupEditForm>({
@@ -118,7 +118,7 @@ const GroupEdit = ({
       const values = getChangedValues<GroupEditForm>(
         originalFormValues,
         form,
-        forcedValues
+        forcedValues,
       )
       //Mango instruction call and serialize
       const ix = await mangoClient!.program.methods
@@ -137,9 +137,9 @@ const GroupEdit = ({
           getNullOrTransform(
             values.allowedFastListingsPerInterval,
             null,
-            Number
+            Number,
           ),
-          getNullOrTransform(values.collateralFeeInterval, BN)
+          getNullOrTransform(values.collateralFeeInterval, BN),
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -161,7 +161,7 @@ const GroupEdit = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form, forcedValues])
@@ -174,25 +174,25 @@ const GroupEdit = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     fastListingAdmin: yup
       .string()
       .required()
       .test('is-valid-address1', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     securityAdmin: yup
       .string()
       .required()
       .test('is-valid-address2', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     feesSwapMangoAccount: yup
       .string()
       .nullable()
       .test('is-valid-address3', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     testing: yup.string().required(),
     version: yup.string().required(),
@@ -209,11 +209,12 @@ const GroupEdit = ({
         version: mangoGroup!.version,
         feePayWithMngo: mangoGroup!.buybackFees,
         feesMngoBonusRate: mangoGroup!.buybackFeesMngoBonusFactor,
-        feesSwapMangoAccount: mangoGroup!.buybackFeesSwapMangoAccount?.toBase58(),
+        feesSwapMangoAccount:
+          mangoGroup!.buybackFeesSwapMangoAccount?.toBase58(),
         feesMngoTokenIndex: mangoGroup!.mngoTokenIndex,
         feesExpiryInterval: mangoGroup!.buybackFeesExpiryInterval?.toNumber(),
-        allowedFastListingsPerInterval: mangoGroup!
-          .allowedFastListingsPerInterval,
+        allowedFastListingsPerInterval:
+          mangoGroup!.allowedFastListingsPerInterval,
         collateralFeeInterval: mangoGroup!.collateralFeeInterval.toNumber(),
       }
       setForm((prevForm) => ({

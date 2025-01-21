@@ -64,18 +64,18 @@ const clawbackIx = (programId: PublicKey) => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       try {
         const options = AnchorProvider.defaultOptions()
         const provider = new AnchorProvider(
           connection,
           new EmptyWallet(Keypair.generate()),
-          options
+          options,
         )
         const vsrClient = await VsrClient.connect(provider, programId)
         const decodedInstructionData = new BorshInstructionCoder(
-          vsrClient.program.idl
+          vsrClient.program.idl,
         ).decode(Buffer.from(data))?.data as ClawbackInstruction | null
         const existingVoter = await tryGetVoter(accounts[2].pubkey, vsrClient)
         const deposit = decodedInstructionData
@@ -83,7 +83,7 @@ const clawbackIx = (programId: PublicKey) => ({
           : null
         const existingRegistrar = await tryGetRegistrar(
           accounts[0].pubkey,
-          vsrClient
+          vsrClient,
         )
         const mintPk =
           existingRegistrar?.votingMints[deposit!.votingMintConfigIdx].mint
@@ -146,7 +146,7 @@ const deposit = (programId: PublicKey) => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const tokenAccountPk = accounts[3].pubkey
       const tokenAccount = (
@@ -158,12 +158,12 @@ const deposit = (programId: PublicKey) => ({
       const provider = new AnchorProvider(
         connection,
         new EmptyWallet(Keypair.generate()),
-        options
+        options,
       )
       const vsrClient = await VsrClient.connect(provider, programId)
 
       const decodedInstructionData = new BorshInstructionCoder(
-        vsrClient.program.idl
+        vsrClient.program.idl,
       ).decode(Buffer.from(data))?.data as any
       const amount = toUiDecimals(decodedInstructionData.amount, mint!.decimals)
       return <div>Amount: {amount}</div>
@@ -185,12 +185,12 @@ const configVotingMintIx = (programId: PublicKey) => ({
         const provider = new AnchorProvider(
           connection,
           new EmptyWallet(Keypair.generate()),
-          options
+          options,
         )
         const vsrClient = await VsrClient.connect(provider, programId)
 
         const decodedInstructionData = new BorshInstructionCoder(
-          vsrClient.program.idl
+          vsrClient.program.idl,
         ).decode(Buffer.from(data))?.data as VotingMintCfgInstruction
         const {
           maxExtraLockupVoteWeightScaledFactor,
@@ -214,7 +214,7 @@ const configVotingMintIx = (programId: PublicKey) => ({
               Max lockup time:{' '}
               {decodedInstructionData &&
                 getFormattedStringFromDays(
-                  secsToDays(lockupSaturationSecs.toNumber())
+                  secsToDays(lockupSaturationSecs.toNumber()),
                 )}{' '}
               (secs: {lockupSaturationSecs.toNumber()})
             </div>
@@ -222,7 +222,8 @@ const configVotingMintIx = (programId: PublicKey) => ({
               Max multiplier:{' '}
               {calcMultiplier({
                 depositScaledFactor: baselineVoteWeightScaledFactor.toNumber(),
-                maxExtraLockupVoteWeightScaledFactor: maxExtraLockupVoteWeightScaledFactor.toNumber(),
+                maxExtraLockupVoteWeightScaledFactor:
+                  maxExtraLockupVoteWeightScaledFactor.toNumber(),
                 lockupSaturationSecs: lockupSaturationSecs.toNumber(),
                 lockupSecs: lockupSaturationSecs.toNumber(),
               })}
@@ -259,18 +260,18 @@ const grantIx = (programId: PublicKey) => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       try {
         const options = AnchorProvider.defaultOptions()
         const provider = new AnchorProvider(
           connection,
           new EmptyWallet(Keypair.generate()),
-          options
+          options,
         )
         const vsrClient = await VsrClient.connect(provider, programId)
         const decodedInstructionData = new BorshInstructionCoder(
-          vsrClient.program.idl
+          vsrClient.program.idl,
         ).decode(Buffer.from(data))?.data as GrantInstruction | null
         const mintPk = accounts[9].pubkey
         const mint = await tryGetMint(connection, mintPk!)
@@ -295,7 +296,7 @@ const grantIx = (programId: PublicKey) => ({
                     Vested:{' '}
                     {fmtMintAmount(
                       mint!.account,
-                      decodedInstructionData.amount.div(new BN(periods))
+                      decodedInstructionData.amount.div(new BN(periods)),
                     )}{' '}
                     p/m
                   </div>
@@ -305,7 +306,7 @@ const grantIx = (programId: PublicKey) => ({
                     Vested:{' '}
                     {fmtMintAmount(
                       mint!.account,
-                      decodedInstructionData.amount.div(new BN(periods))
+                      decodedInstructionData.amount.div(new BN(periods)),
                     )}{' '}
                     p/d
                   </div>
@@ -318,7 +319,7 @@ const grantIx = (programId: PublicKey) => ({
                 <div>
                   Start date:{' '}
                   {new Date(
-                    decodedInstructionData.startTs.toNumber() * 1000
+                    decodedInstructionData.startTs.toNumber() * 1000,
                   ).toDateString()}
                 </div>
                 {periods && (
@@ -328,7 +329,7 @@ const grantIx = (programId: PublicKey) => ({
                       decodedInstructionData.startTs.toNumber() * 1000 +
                         (lockupKind === 'monthly'
                           ? periods * DAYS_PER_MONTH * SECS_PER_DAY * 1000
-                          : periods * SECS_PER_DAY * 1000)
+                          : periods * SECS_PER_DAY * 1000),
                     ).toDateString()}
                   </div>
                 )}
@@ -387,12 +388,12 @@ const heliumConfigVotingMintIx = (programId: PublicKey) => ({
         const provider = new AnchorProvider(
           connection,
           new EmptyWallet(Keypair.generate()),
-          options
+          options,
         )
         const vsrClient = await VsrClient.connect(provider, programId)
 
         const decodedInstructionData = new BorshInstructionCoder(
-          vsrClient.program.idl
+          vsrClient.program.idl,
         ).decode(Buffer.from(data))?.data as HeliumVotingMintCfgInstruction
 
         const {
@@ -417,7 +418,7 @@ const heliumConfigVotingMintIx = (programId: PublicKey) => ({
               Max lockup time:{' '}
               {decodedInstructionData &&
                 getFormattedStringFromDays(
-                  secsToDays(lockupSaturationSecs.toNumber())
+                  secsToDays(lockupSaturationSecs.toNumber()),
                 )}{' '}
               (secs: {lockupSaturationSecs.toNumber()})
             </div>
@@ -461,18 +462,18 @@ const common_instructions = (programId: PublicKey) =>
       ...acc,
       ...ix(programId),
     }),
-    {}
+    {},
   )
 
 export const VOTE_STAKE_REGISTRY_INSTRUCTIONS = {
   '4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo': common_instructions(
-    new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo')
+    new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo'),
   ),
   vsr2nfGVNHmSY8uxoBGqq8AQbwz3JwaEaHqGbsTPXqQ: common_instructions(
-    new PublicKey('vsr2nfGVNHmSY8uxoBGqq8AQbwz3JwaEaHqGbsTPXqQ')
+    new PublicKey('vsr2nfGVNHmSY8uxoBGqq8AQbwz3JwaEaHqGbsTPXqQ'),
   ),
   VotEn9AWwTFtJPJSMV5F9jsMY6QwWM5qn3XP9PATGW7: common_instructions(
-    new PublicKey('VotEn9AWwTFtJPJSMV5F9jsMY6QwWM5qn3XP9PATGW7')
+    new PublicKey('VotEn9AWwTFtJPJSMV5F9jsMY6QwWM5qn3XP9PATGW7'),
   ),
   // Helium vsr has no concept of clawback or grants
   // and has slightly different accounts for voting mint config
@@ -484,15 +485,15 @@ export const VOTE_STAKE_REGISTRY_INSTRUCTIONS = {
       ...acc,
       ...ix(HELIUM_VSR_PROGRAM_ID),
     }),
-    {}
+    {},
   ),
   VoteWPk9yyGmkX4U77nEWRJWpcc8kUfrPoghxENpstL: common_instructions(
-    new PublicKey('VoteWPk9yyGmkX4U77nEWRJWpcc8kUfrPoghxENpstL')
+    new PublicKey('VoteWPk9yyGmkX4U77nEWRJWpcc8kUfrPoghxENpstL'),
   ),
   VoteMBhDCqGLRgYpp9o7DGyq81KNmwjXQRAHStjtJsS: common_instructions(
-    new PublicKey('VoteMBhDCqGLRgYpp9o7DGyq81KNmwjXQRAHStjtJsS')
+    new PublicKey('VoteMBhDCqGLRgYpp9o7DGyq81KNmwjXQRAHStjtJsS'),
   ),
   '5sWzuuYkeWLBdAv3ULrBfqA51zF7Y4rnVzereboNDCPn': common_instructions(
-    new PublicKey('5sWzuuYkeWLBdAv3ULrBfqA51zF7Y4rnVzereboNDCPn')
+    new PublicKey('5sWzuuYkeWLBdAv3ULrBfqA51zF7Y4rnVzereboNDCPn'),
   ),
 }

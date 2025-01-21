@@ -6,7 +6,7 @@ import { VsrClient } from './client'
 
 export const tryGetVoter = async (
   voterPk: PublicKey,
-  client: Pick<VsrClient, 'program'>
+  client: Pick<VsrClient, 'program'>,
 ) => {
   try {
     const voter = await client?.program.account.voter.fetch(voterPk)
@@ -19,12 +19,11 @@ export const tryGetVoter = async (
 
 export const tryGetRegistrar = async (
   registrarPk: PublicKey,
-  client: Pick<VsrClient, 'program'>
+  client: Pick<VsrClient, 'program'>,
 ) => {
   try {
-    const existingRegistrar = await client.program.account.registrar.fetch(
-      registrarPk
-    )
+    const existingRegistrar =
+      await client.program.account.registrar.fetch(registrarPk)
     return existingRegistrar as Registrar
   } catch (e) {
     return null
@@ -33,12 +32,11 @@ export const tryGetRegistrar = async (
 
 export const tryGetHeliumRegistrar = async (
   registrarPk: PublicKey,
-  client: HeliumVsrClient
+  client: HeliumVsrClient,
 ) => {
   try {
-    const existingRegistrar = await client.program.account.registrar.fetch(
-      registrarPk
-    )
+    const existingRegistrar =
+      await client.program.account.registrar.fetch(registrarPk)
 
     return existingRegistrar
   } catch (e) {
@@ -48,12 +46,11 @@ export const tryGetHeliumRegistrar = async (
 
 export const tryGetNftRegistrar = async (
   registrarPk: PublicKey,
-  client: NftVoterClient
+  client: NftVoterClient,
 ) => {
   try {
-    const existingRegistrar = await client.program.account.registrar.fetch(
-      registrarPk
-    )
+    const existingRegistrar =
+      await client.program.account.registrar.fetch(registrarPk)
     return existingRegistrar
   } catch (e) {
     return null
@@ -63,11 +60,11 @@ export const tryGetNftRegistrar = async (
 export const getMintCfgIdx = async (
   registrarPk: PublicKey,
   mintPK: PublicKey,
-  client: VsrClient
+  client: VsrClient,
 ) => {
   const existingRegistrar = await tryGetRegistrar(registrarPk, client)
   const mintCfgIdx = existingRegistrar?.votingMints.findIndex(
-    (x) => x.mint.toBase58() === mintPK.toBase58()
+    (x) => x.mint.toBase58() === mintPK.toBase58(),
   )
   if (mintCfgIdx === null || mintCfgIdx === -1) {
     throw 'mint not configured to use'

@@ -15,7 +15,6 @@ import useParclScalingFactor from './parcl/useScalingFactor'
 
 // TODO support council plugins
 export default function useProposalVotes(proposal?: Proposal) {
-
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
   const councilMint = useRealmCouncilMintInfoQuery().data?.result
@@ -23,19 +22,26 @@ export default function useProposalVotes(proposal?: Proposal) {
   const governance = useGovernanceByPubkeyQuery(proposal?.governance).data
     ?.result?.account
   // This is always undefined except for Pyth
-  const pythScalingFactor: number | undefined = usePythScalingFactor();
+  const pythScalingFactor: number | undefined = usePythScalingFactor()
   // This is always undefined except for parcl
-  const parclScalingFactor: number | undefined = useParclScalingFactor();
+  const parclScalingFactor: number | undefined = useParclScalingFactor()
 
   const programVersion = useProgramVersion()
 
   const proposalMint =
     proposal?.governingTokenMint.toBase58() ===
-      realm?.account.communityMint.toBase58()
+    realm?.account.communityMint.toBase58()
       ? mint
       : councilMint
   // TODO: optimize using memo
-  if (!realm || !proposal || !governance || !proposalMint || !programVersion || proposal.voteType != VoteType.SINGLE_CHOICE)
+  if (
+    !realm ||
+    !proposal ||
+    !governance ||
+    !proposalMint ||
+    !programVersion ||
+    proposal.voteType != VoteType.SINGLE_CHOICE
+  )
     return {
       _programVersion: undefined,
       voteThresholdPct: undefined,
@@ -59,12 +65,12 @@ export default function useProposalVotes(proposal?: Proposal) {
       ? governance.config.communityVoteThreshold.value
       : 0
     : programVersion > 2
-      ? governance.config.councilVoteThreshold.value || 0
-      : governance.config.communityVoteThreshold.value || 0
+    ? governance.config.councilVoteThreshold.value || 0
+    : governance.config.communityVoteThreshold.value || 0
 
   if (voteThresholdPct === undefined)
     throw new Error(
-      'Proposal has no vote threshold (this shouldnt be possible)'
+      'Proposal has no vote threshold (this shouldnt be possible)',
     )
 
   // note this can be WRONG if the proposal status is vetoed
@@ -107,12 +113,17 @@ export default function useProposalVotes(proposal?: Proposal) {
     voteThresholdPct,
     yesVotePct,
     yesVoteProgress,
-    yesVoteCount: Math.floor(yesVoteCount * (pythScalingFactor || parclScalingFactor || 1)),
-    noVoteCount: Math.floor(noVoteCount * (pythScalingFactor || parclScalingFactor || 1)),
+    yesVoteCount: Math.floor(
+      yesVoteCount * (pythScalingFactor || parclScalingFactor || 1),
+    ),
+    noVoteCount: Math.floor(
+      noVoteCount * (pythScalingFactor || parclScalingFactor || 1),
+    ),
     relativeYesVotes,
     relativeNoVotes,
     minimumYesVotes,
-    yesVotesRequired: yesVotesRequired * (pythScalingFactor || parclScalingFactor || 1),
+    yesVotesRequired:
+      yesVotesRequired * (pythScalingFactor || parclScalingFactor || 1),
   }
 
   // @asktree: you may be asking yourself, "is this different from the more succinct way to write this?"
@@ -155,7 +166,7 @@ export default function useProposalVotes(proposal?: Proposal) {
 
   const vetoVoteCount = fmtTokenAmount(
     proposal.vetoVoteWeight,
-    vetoMintInfo.decimals
+    vetoMintInfo.decimals,
   )
   // its impossible to accurately know the veto votes required for a finalized, non-vetoed proposal
   if (proposal.isVoteFinalized() && proposal.state !== ProposalState.Vetoed)
@@ -173,15 +184,15 @@ export default function useProposalVotes(proposal?: Proposal) {
   const vetoMaxVoteWeight = isPluginCommunityVeto
     ? maxVoteRecord.account.maxVoterWeight
     : getProposalMaxVoteWeight(
-      realm.account,
-      proposal,
-      vetoMintInfo,
-      vetoMintPk
-    )
+        realm.account,
+        proposal,
+        vetoMintInfo,
+        vetoMintPk,
+      )
 
   const vetoVoteProgress = calculatePct(
     proposal.vetoVoteWeight,
-    vetoMaxVoteWeight
+    vetoMaxVoteWeight,
   )
 
   const minimumVetoVotes = vetoMaxVoteWeight

@@ -2,7 +2,7 @@ import {
   getTokenOwnerRecordAddress,
   getVoteRecordAddress,
   GovernanceAccountType,
-  VoteType
+  VoteType,
 } from '@solana/spl-governance'
 import { ThumbUpIcon, ThumbDownIcon } from '@heroicons/react/solid'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
@@ -38,7 +38,7 @@ const Comment = ({ chatMessage }: { chatMessage: ChatMessage }) => {
 
   const proposal = useRouteProposalQuery().data?.result
   const proposalMint = useMintInfoByPubkeyQuery(
-    proposal?.account.governingTokenMint
+    proposal?.account.governingTokenMint,
   ).data?.result
 
   const realmPk = useSelectedRealmPubkey()
@@ -50,16 +50,17 @@ const Comment = ({ chatMessage }: { chatMessage: ChatMessage }) => {
       proposal.owner,
       realmPk,
       tokenPk,
-      author
+      author,
     )
     return getVoteRecordAddress(proposal.owner, proposal.pubkey, torPk)
   }, [proposal, realmPk, author])
-  const voteRecord = useVoteRecordByPubkeyQuery(voteRecordPk).data?.result
-    ?.account
+  const voteRecord =
+    useVoteRecordByPubkeyQuery(voteRecordPk).data?.result?.account
 
-  const isMulti = proposal?.account.voteType !== VoteType.SINGLE_CHOICE
-    && proposal?.account.accountType === GovernanceAccountType.ProposalV2
-    
+  const isMulti =
+    proposal?.account.voteType !== VoteType.SINGLE_CHOICE &&
+    proposal?.account.accountType === GovernanceAccountType.ProposalV2
+
   return (
     <div className="border-b border-fgd-4 mt-4 pb-4 last:pb-0 last:border-b-0">
       <div className="flex items-center justify-between mb-4">
@@ -99,13 +100,13 @@ const Comment = ({ chatMessage }: { chatMessage: ChatMessage }) => {
               ) : (
                 <ThumbDownIcon className="h-4 mr-2 fill-[#FF7C7C] w-4" />
               )}
-              {isYesVote(voteRecord) ? isMulti ? 'Voted' : 'Yes' : 'No'}
+              {isYesVote(voteRecord) ? (isMulti ? 'Voted' : 'Yes') : 'No'}
             </div>
             <span className="text-fgd-4">|</span>
             <span className="pl-2 text-xs">
               {`${fmtTokenAmount(
                 getVoteWeight(voteRecord)!,
-                proposalMint?.decimals
+                proposalMint?.decimals,
               ).toLocaleString()} ${voteSymbol}`}
             </span>
           </div>

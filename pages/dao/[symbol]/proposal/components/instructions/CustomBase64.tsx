@@ -63,7 +63,7 @@ const CustomBase64 = ({
           programId: ix.programId,
         })
         serializedInstruction = serializeInstructionToBase64(
-          forwarderProgramHelpers.withForwarderWrapper(tx)
+          forwarderProgramHelpers.withForwarderWrapper(tx),
         )
       } else {
         serializedInstruction = form.base64
@@ -80,7 +80,7 @@ const CustomBase64 = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -112,7 +112,7 @@ const CustomBase64 = ({
               message: `Instruction is required`,
             })
           }
-        }
+        },
       ),
   })
   const validateAmountOnBlur = () => {
@@ -122,8 +122,8 @@ const CustomBase64 = ({
       value: parseFloat(
         Math.max(
           Number(0),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed()
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(),
       ),
       propertyName: 'holdUpTime',
     })
@@ -132,8 +132,8 @@ const CustomBase64 = ({
     <>
       <GovernedAccountSelect
         label="Governance"
-        governedAccounts={assetAccounts.filter((x) =>
-          ownVoterWeight?.canCreateProposal(x.governance.account.config)
+        governedAccounts={assetAccounts.filter(
+          (x) => ownVoterWeight?.canCreateProposal(x.governance.account.config),
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedAccount' })

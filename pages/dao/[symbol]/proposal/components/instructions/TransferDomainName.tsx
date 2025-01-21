@@ -43,12 +43,12 @@ const TransferDomainName = ({
   })
 
   const { data: accountDomains, status } = useDomainQuery(
-    form.governedAccount?.pubkey
+    form.governedAccount?.pubkey,
   )
 
   const selectedDomain = useMemo(
     () => accountDomains?.find((d) => d.domainAddress === form.domainAddress),
-    [accountDomains, form.domainAddress]
+    [accountDomains, form.domainAddress],
   )
 
   const handleSetForm = ({ propertyName, value }) => {
@@ -84,7 +84,7 @@ const TransferDomainName = ({
         nameProgramId,
         nameAccountKey,
         newOwnerKey,
-        nameOwner
+        nameOwner,
       )
 
       obj.serializedInstruction = serializeInstructionToBase64(transferIx)
@@ -104,7 +104,7 @@ const TransferDomainName = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -187,7 +187,7 @@ const TransferDomainName = ({
                   <div className="text-fgd-1 mb-2">{domain.domainName}.sol</div>
                   <div className="">{domain.domainAddress}</div>
                 </Select.Option>
-              )
+              ),
           )}
         </Select>
       )}

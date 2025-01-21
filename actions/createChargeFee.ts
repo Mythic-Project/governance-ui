@@ -13,10 +13,10 @@ import {
 } from '@solana/spl-token-new'
 
 export const AUTOBAHN_PROGRAM_ID = new PublicKey(
-  'AutobNFLMzX1rFCDgwWpwr3ztG5c1oDbSrGq7Jj2LgE'
+  'AutobNFLMzX1rFCDgwWpwr3ztG5c1oDbSrGq7Jj2LgE',
 )
 export const REALMS_TODAY_ATA = new PublicKey(
-  '6bUaUqnkEoCKFkRrbT89vkeBSY9w4EE29WHtj56y49EN'
+  '6bUaUqnkEoCKFkRrbT89vkeBSY9w4EE29WHtj56y49EN',
 )
 export function createChargeFeeIx(
   payer: PublicKey,
@@ -24,7 +24,7 @@ export function createChargeFeeIx(
   platformFeeAta: PublicKey,
   feeAmount: number,
   platformFeePct: number,
-  splittedFeeAta?: PublicKey
+  splittedFeeAta?: PublicKey,
 ) {
   const keys = [
     {
@@ -96,7 +96,7 @@ export const chargeFee = (payer: PublicKey, fee: number) => {
     payer,
     payerAta,
     payer,
-    feeMint
+    feeMint,
   )
   const solTransferIx = SystemProgram.transfer({
     fromPubkey: payer,
@@ -110,7 +110,7 @@ export const chargeFee = (payer: PublicKey, fee: number) => {
     solTransferIx,
     syncNative,
     createChargeFeeIx(payer, payerAta, REALMS_TODAY_ATA, fee, 100),
-    close
+    close,
   )
   return instructions
 }

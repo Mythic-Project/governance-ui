@@ -37,8 +37,8 @@ const Domain: React.FC<Props> = (props) => {
 
   const canCreateProposal =
     realm &&
-    governanceItems?.some((g) =>
-      ownVoterWeight?.canCreateProposal(g.account.config)
+    governanceItems?.some(
+      (g) => ownVoterWeight?.canCreateProposal(g.account.config),
     ) &&
     !toManyCommunityOutstandingProposalsForUser &&
     !toManyCouncilOutstandingProposalsForUse
@@ -47,8 +47,8 @@ const Domain: React.FC<Props> = (props) => {
     ? 'Connect your wallet to create new proposal'
     : governanceItems?.length === 0
     ? 'There is no governance configuration to create a new proposal'
-    : !governanceItems?.some((g) =>
-        ownVoterWeight?.canCreateProposal(g.account.config)
+    : !governanceItems?.some(
+        (g) => ownVoterWeight?.canCreateProposal(g.account.config),
       )
     ? "You don't have enough governance power to create a new proposal"
     : toManyCommunityOutstandingProposalsForUser
@@ -75,7 +75,7 @@ const Domain: React.FC<Props> = (props) => {
               'flex',
               'text-xs',
               'items-center',
-              'gap-1'
+              'gap-1',
             )}
           >
             <ExternalLinkIcon className="h-3 w-3" />
@@ -95,7 +95,7 @@ const Domain: React.FC<Props> = (props) => {
                 <a
                   className={cx(
                     !canCreateProposal ? 'pointer-events-none' : '',
-                    'flex items-center text-fgd-3 hover:text-fgd-2 gap-2 text-sm'
+                    'flex items-center text-fgd-3 hover:text-fgd-2 gap-2 text-sm',
                   )}
                 >
                   <ArrowsHorizontal className="h-4 w-4" />

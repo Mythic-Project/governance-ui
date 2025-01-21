@@ -43,7 +43,7 @@ export default function TotalValueTitle(props: Props) {
                 className: cx(
                   props.data.data.realm.icon.props.className,
                   'w-4',
-                  'h-4'
+                  'h-4',
                 ),
               })}
             <span className="ml-1 text-white/50">

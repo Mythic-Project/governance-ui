@@ -12,7 +12,7 @@ import useUserOrDelegator from '@hooks/useUserOrDelegator'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useVotingNfts } from '@hooks/queries/plugins/nftVoter'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
-import {useJoinRealm} from "@hooks/useJoinRealm";
+import { useJoinRealm } from '@hooks/useJoinRealm'
 
 interface Props {
   className?: string
@@ -26,12 +26,16 @@ const Join = () => {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
   const realm = useRealmQuery().data?.result
-  const { userNeedsTokenOwnerRecord, userNeedsVoterWeightRecords, handleRegister } = useJoinRealm();
+  const {
+    userNeedsTokenOwnerRecord,
+    userNeedsVoterWeightRecords,
+    handleRegister,
+  } = useJoinRealm()
 
   const join = async () => {
     if (!realm || !wallet?.publicKey) throw new Error()
 
-    const instructions = await handleRegister();
+    const instructions = await handleRegister()
     const transaction = new Transaction()
     transaction.add(...instructions)
 
@@ -48,7 +52,7 @@ const Join = () => {
   return (
     (actingAsWalletPk?.toString() === wallet?.publicKey?.toString() &&
       connected &&
-        (userNeedsTokenOwnerRecord || userNeedsVoterWeightRecords) && (
+      (userNeedsTokenOwnerRecord || userNeedsVoterWeightRecords) && (
         <Button className="w-full mt-3" onClick={join}>
           Join
         </Button>
@@ -61,23 +65,24 @@ export default function NftVotingPower(props: Props) {
   const userPk = useUserOrDelegator()
   const nfts = useVotingNfts(userPk)
 
-  const { isReady, totalCalculatedVoterWeight, calculatedMaxVoterWeight } = useRealmVoterWeightPlugins(
-    'community',
-  )
+  const { isReady, totalCalculatedVoterWeight, calculatedMaxVoterWeight } =
+    useRealmVoterWeightPlugins('community')
 
   const displayNfts = (nfts ?? []).slice(0, 3)
   const remainingCount = Math.max((nfts ?? []).length - 3, 0)
   const max = calculatedMaxVoterWeight?.value
     ? new BigNumber(calculatedMaxVoterWeight.value.toString())
     : null
-  const amount = new BigNumber((totalCalculatedVoterWeight?.value ?? 0).toString())
+  const amount = new BigNumber(
+    (totalCalculatedVoterWeight?.value ?? 0).toString(),
+  )
 
   if (!isReady || nfts === undefined) {
     return (
       <div
         className={classNames(
           props.className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )

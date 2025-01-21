@@ -18,7 +18,7 @@ export const AddCouncilSchema = {
     .boolean()
     .oneOf(
       [true, false],
-      'You must specify whether you would like to add a council or not'
+      'You must specify whether you would like to add a council or not',
     )
     .required('Required'),
   useExistingCouncilToken: yup
@@ -37,13 +37,13 @@ export const AddCouncilSchema = {
       otherwise: yup.string().optional(),
     })
     .test('is-valid-address', 'Please enter a valid Solana address', (value) =>
-      value ? validatePubkey(value) : true
+      value ? validatePubkey(value) : true,
     ),
   transferCouncilMintAuthority: yup
     .boolean()
     .oneOf(
       [true, false],
-      'You must specify whether you which to transfer mint authority'
+      'You must specify whether you which to transfer mint authority',
     )
     .when('useExistingCouncilToken', {
       is: (val) => val == true,

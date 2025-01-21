@@ -31,7 +31,7 @@ export default function NFTList({ governance, ...props }: Props) {
         .map((x) => x.group_value)
         .filter(onlyUnique)
         .map((x) => new PublicKey(x)),
-    [nfts]
+    [nfts],
   )
 
   const hasNftWithoutCollection = nfts?.find((x) => x.grouping.length < 1)

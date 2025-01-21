@@ -39,7 +39,7 @@ const Realms = () => {
   const routeHasClusterInPath = router.asPath.includes('cluster')
   const programs = useMemo(
     () => new PublicKey(DEFAULT_GOVERNANCE_PROGRAM_ID),
-    []
+    [],
   )
   const { data: queryRealms } = useRealmsByProgramQuery(programs)
 
@@ -54,14 +54,14 @@ const Realms = () => {
       const unchartedRealms =
         queryRealms
           ?.filter(
-            (x) => !certifiedRealms.find((y) => y.realmId.equals(x.pubkey))
+            (x) => !certifiedRealms.find((y) => y.realmId.equals(x.pubkey)),
           )
           .map((x) =>
             createUnchartedRealmInfo({
               name: x.account.name,
               programId: x.owner.toBase58(),
               address: x.pubkey.toBase58(),
-            })
+            }),
           ) ?? []
       const allRealms = [...certifiedRealms, ...unchartedRealms]
       setRealms(sortDaos(allRealms))
@@ -102,7 +102,7 @@ const Realms = () => {
       const filtered = realms.filter(
         (r) =>
           r.displayName?.toLowerCase().includes(v.toLowerCase()) ||
-          r.symbol?.toLowerCase().includes(v.toLowerCase())
+          r.symbol?.toLowerCase().includes(v.toLowerCase()),
       )
       setFilteredRealms(filtered)
     } else {

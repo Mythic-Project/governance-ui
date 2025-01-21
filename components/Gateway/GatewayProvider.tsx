@@ -3,7 +3,7 @@ import { GatewayProvider as InternalGatewayProvider } from '@civic/solana-gatewa
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useGatewayVoterWeightPlugin } from 'VoterWeightPlugins'
 import { useConnection } from '@solana/wallet-adapter-react'
-import {getNetworkFromEndpoint} from "@utils/connection";
+import { getNetworkFromEndpoint } from '@utils/connection'
 
 /**
  * Wrapper for the Civic Gateway Provider react component. This component is responsible for
@@ -16,10 +16,8 @@ export const GatewayProvider: FC = ({ children }) => {
   const wallet = useWalletOnePointOh()
   const { gatekeeperNetwork, isReady } = useGatewayVoterWeightPlugin()
   const { connection } = useConnection()
-    const network = getNetworkFromEndpoint(connection.rpcEndpoint);
-    const cluster = network === 'mainnet'
-      ? 'mainnet-beta'
-      : network
+  const network = getNetworkFromEndpoint(connection.rpcEndpoint)
+  const cluster = network === 'mainnet' ? 'mainnet-beta' : network
 
   if (!wallet || !wallet.publicKey || !isReady || !gatekeeperNetwork)
     return <>{children}</>

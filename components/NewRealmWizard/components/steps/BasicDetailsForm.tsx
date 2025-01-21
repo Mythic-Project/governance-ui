@@ -28,7 +28,7 @@ export const BasicDetailsSchema = {
   programId: yup
     .string()
     .test('is-valid-address', 'Please enter a valid Solana address', (value) =>
-      value ? validateSolAddress(value) : true
+      value ? validateSolAddress(value) : true,
     ),
 }
 

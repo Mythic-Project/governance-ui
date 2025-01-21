@@ -73,14 +73,14 @@ const PerpCreate = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup, getAdditionalLabelInfo } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const solAccounts = assetAccounts.filter(
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup?.admin)
+      x.extensions.transferAddress?.equals(mangoGroup?.admin),
   )
   const connection = useLegacyConnectionContext()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -142,37 +142,40 @@ const PerpCreate = ({
       const eventQueue = new Keypair()
 
       const bookSideSize = mangoClient!.program.coder.accounts.size(
-        (mangoClient!.program.account.bookSide as any)._idlAccount
+        (mangoClient!.program.account.bookSide as any)._idlAccount,
       )
       const eventQueueSize = mangoClient!.program.coder.accounts.size(
-        (mangoClient!.program.account.eventQueue as any)._idlAccount
+        (mangoClient!.program.account.eventQueue as any)._idlAccount,
       )
       prerequisiteInstructionsSigners = [bids, asks, eventQueue]
       prerequisiteInstructions = [
         SystemProgram.createAccount({
           programId: mangoClient!.program.programId,
           space: bookSideSize,
-          lamports: await connection.current.getMinimumBalanceForRentExemption(
-            bookSideSize
-          ),
+          lamports:
+            await connection.current.getMinimumBalanceForRentExemption(
+              bookSideSize,
+            ),
           fromPubkey: wallet.publicKey,
           newAccountPubkey: bids.publicKey,
         }),
         SystemProgram.createAccount({
           programId: mangoClient!.program.programId,
           space: bookSideSize,
-          lamports: await connection.current.getMinimumBalanceForRentExemption(
-            bookSideSize
-          ),
+          lamports:
+            await connection.current.getMinimumBalanceForRentExemption(
+              bookSideSize,
+            ),
           fromPubkey: wallet.publicKey,
           newAccountPubkey: asks.publicKey,
         }),
         SystemProgram.createAccount({
           programId: mangoClient!.program.programId,
           space: eventQueueSize,
-          lamports: await connection.current.getMinimumBalanceForRentExemption(
-            eventQueueSize
-          ),
+          lamports:
+            await connection.current.getMinimumBalanceForRentExemption(
+              eventQueueSize,
+            ),
           fromPubkey: wallet.publicKey,
           newAccountPubkey: eventQueue.publicKey,
         }),
@@ -212,7 +215,7 @@ const PerpCreate = ({
           Number(form.settlePnlLimitFactor),
           new BN(form.settlePnlLimitWindowSize),
           Number(form.positivePnlLiquidationFee),
-          Number(form.platformLiquidationFee)
+          Number(form.platformLiquidationFee),
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -227,7 +230,7 @@ const PerpCreate = ({
         .instruction()
 
       serializedInstruction = serializeInstructionToBase64(
-        forwarderProgramHelpers.withForwarderWrapper(ix)
+        forwarderProgramHelpers.withForwarderWrapper(ix),
       )
     }
     const obj: UiInstruction = {
@@ -245,7 +248,7 @@ const PerpCreate = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -264,7 +267,7 @@ const PerpCreate = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
   })
 

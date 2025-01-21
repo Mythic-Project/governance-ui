@@ -64,13 +64,14 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
   const [deposits, setDeposits] = useState<DepositWithMintAccount[]>([])
   const votingPower = useVsrGovpower().data?.result ?? new BN(0)
   const [votingPowerFromDeposits, setVotingPowerFromDeposits] = useState<BN>(
-    new BN(0)
+    new BN(0),
   )
   const [isOwnerOfDeposits, setIsOwnerOfDeposits] = useState(true)
 
-  const lol = useMemo(() => new PublicKey(tokenOwnerRecordPk), [
-    tokenOwnerRecordPk,
-  ])
+  const lol = useMemo(
+    () => new PublicKey(tokenOwnerRecordPk),
+    [tokenOwnerRecordPk],
+  )
   const { data: tokenOwnerRecord } = useTokenOwnerRecordByPubkeyQuery(lol)
 
   const tokenOwnerRecordWalletPk =
@@ -97,13 +98,13 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
       const options = AnchorProvider.defaultOptions()
       const provider = new AnchorProvider(
         connection.current,
-        (wallet as unknown) as Wallet,
-        options
+        wallet as unknown as Wallet,
+        options,
       )
       const vsrClient = await VsrClient.connect(
         provider,
         programId,
-        connection.cluster === 'devnet'
+        connection.cluster === 'devnet',
       )
       const ownDeposits = await getOwnedDeposits({
         realmPk: realm!.pubkey,
@@ -115,7 +116,7 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
       setClient(vsrClient)
       setOwnDeposits(ownDeposits)
     },
-    [realm, tokenOwnerRecordWalletPk]
+    [realm, tokenOwnerRecordWalletPk],
   )
 
   const getOwnedDeposits = async ({
@@ -170,7 +171,7 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
                 x.currentAmount = x.currentAmount.add(
                   unlockedTypes.includes(x.lockUpKind)
                     ? next.available
-                    : next.currentlyLocked
+                    : next.currentlyLocked,
                 )
               }
               return x
@@ -223,7 +224,7 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
       handleSetVsrClient(
         wallet,
         connnectionContext,
-        new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo')
+        new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo'),
       )
     }
   }, [connnectionContext, handleSetVsrClient, realm?.pubkey, wallet])
@@ -250,10 +251,10 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
           realm.owner,
           realm.pubkey,
           defaultMintOwnerRecordMint,
-          walletPubkey
+          walletPubkey,
         )
         setIsOwnerOfDeposits(
-          tokenOwnerRecordAddress.toBase58() === tokenOwnerRecordPk
+          tokenOwnerRecordAddress.toBase58() === tokenOwnerRecordPk,
         )
       }
       getTokenOwnerRecord()
@@ -328,12 +329,12 @@ const LockTokensAccount = ({ tokenOwnerRecordPk }) => {
                   {reducedDeposits?.map((x, idx) => {
                     const availableTokens = fmtMintAmount(
                       x.mint,
-                      x.currentAmount
+                      x.currentAmount,
                     )
                     const price =
                       getMintDecimalAmountFromNatural(
                         x.mint,
-                        x.currentAmount
+                        x.currentAmount,
                       ).toNumber() *
                       tokenPriceService.getUSDTokenPrice(x.mintPk.toBase58())
                     const tokenName =

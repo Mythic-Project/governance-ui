@@ -4,7 +4,6 @@ import { PublicKey } from '@solana/web3.js'
 import createNFTRealm from 'actions/createNFTRealm'
 import { DEFAULT_GOVERNANCE_PROGRAM_ID } from '@components/instructions/tools'
 
-
 import useQueryContext from '@hooks/useQueryContext'
 
 import { notify } from '@utils/notifications'
@@ -163,7 +162,7 @@ export default function NFTWizard() {
         push(
           fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`),
           undefined,
-          { shallow: true }
+          { shallow: true },
         )
       } else {
         throw new Error('Something bad happened during this request.')

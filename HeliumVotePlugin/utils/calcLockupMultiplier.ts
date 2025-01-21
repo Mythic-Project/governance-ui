@@ -36,7 +36,7 @@ export const calcLockupMultiplier = ({
   let multiplier = 0
   const mintCfgs = registrar?.votingMints || []
   const mintCfg = mintCfgs?.find((cfg) =>
-    cfg.mint.equals(realm?.account.communityMint || PublicKey.default)
+    cfg.mint.equals(realm?.account.communityMint || PublicKey.default),
   )
 
   if (mintCfg && !mintCfg.mint.equals(PublicKey.default)) {
@@ -48,7 +48,8 @@ export const calcLockupMultiplier = ({
       // genesisVotePowerMultiplierExpirationTs
     } = mintCfg as VotingMintConfig
     const baselineScaledFactorNum = baselineVoteWeightScaledFactor.toNumber()
-    const maxExtraLockupVoteWeightScaledFactorNum = maxExtraLockupVoteWeightScaledFactor.toNumber()
+    const maxExtraLockupVoteWeightScaledFactorNum =
+      maxExtraLockupVoteWeightScaledFactor.toNumber()
     const lockupSaturationSecsNum = lockupSaturationSecs.toNumber()
 
     multiplier = calcMultiplier({

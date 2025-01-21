@@ -18,10 +18,10 @@ interface Domain {
 
 export const resolveDomain = async (
   connection: Connection,
-  domainName: string
+  domainName: string,
 ) => {
   try {
-    const [tld] = splitDomainTld(domainName);
+    const [tld] = splitDomainTld(domainName)
     // Get the public key for the domain
     if (tld === '.sol') {
       const { pubkey } = await getDomainKey(domainName)
@@ -29,12 +29,11 @@ export const resolveDomain = async (
       // Check if the domain is an NFT
       const [nftMintAddress] = await PublicKey.findProgramAddress(
         [MINT_PREFIX, pubkey.toBuffer()],
-        NAME_TOKENIZER_ID
+        NAME_TOKENIZER_ID,
       )
 
-      const nftAccountData = await connection.getParsedAccountInfo(
-        nftMintAddress
-      )
+      const nftAccountData =
+        await connection.getParsedAccountInfo(nftMintAddress)
 
       if (
         nftAccountData.value?.data &&
@@ -46,9 +45,8 @@ export const resolveDomain = async (
           parsedData.parsed.info.supply === '1' &&
           parsedData.parsed.info.isInitialized
         ) {
-          const { value } = await connection.getTokenLargestAccounts(
-            nftMintAddress
-          )
+          const { value } =
+            await connection.getTokenLargestAccounts(nftMintAddress)
           const nftHolder = value.find((e) => e.amount === '1')?.address
 
           if (!nftHolder) return undefined
@@ -80,12 +78,12 @@ export const resolveDomain = async (
 
 export const fetchDomainsByPubkey = async (
   connection: Connection,
-  pubkey: PublicKey | undefined
+  pubkey: PublicKey | undefined,
 ) => {
   if (!pubkey) return []
   const sns_domains = await getAllDomains(connection, pubkey)
   const results: Domain[] = []
-  
+
   if (sns_domains.length > 0) {
     const reverse = await performReverseLookupBatch(connection, sns_domains)
 

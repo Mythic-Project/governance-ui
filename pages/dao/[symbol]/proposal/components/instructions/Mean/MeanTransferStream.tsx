@@ -52,7 +52,7 @@ const MeanTransferStreamComponent = ({ index, governance }: Props) => {
         governedAccount: form.governedTokenAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form])
@@ -66,7 +66,7 @@ const MeanTransferStreamComponent = ({ index, governance }: Props) => {
 
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   const governedTokenAccountsWithoutNftsJson = JSON.stringify(
-    governedTokenAccountsWithoutNfts
+    governedTokenAccountsWithoutNfts,
   )
   useEffect(() => {
     const value =
@@ -74,7 +74,7 @@ const MeanTransferStreamComponent = ({ index, governance }: Props) => {
       governedTokenAccountsWithoutNfts.find(
         (acc) =>
           acc.extensions?.transferAddress?.toBase58() ===
-            formStream.beneficiary.toString() && acc.isSol
+            formStream.beneficiary.toString() && acc.isSol,
       )
     setForm((prevForm) => ({
       ...prevForm,

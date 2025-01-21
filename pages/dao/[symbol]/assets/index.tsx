@@ -34,7 +34,7 @@ const Assets = () => {
     connected,
     canCreateGovernance,
     toManyCommunityOutstandingProposalsForUser,
-    toManyCouncilOutstandingProposalsForUse
+    toManyCouncilOutstandingProposalsForUse,
   )
 
   // const addNewAssetTooltip = !connected
@@ -82,7 +82,7 @@ export const renderAddNewAssetTooltip = (
   connected,
   canCreateGovernance,
   toManyCommunityOutstandingProposalsForUser,
-  toManyCouncilOutstandingProposalsForUse
+  toManyCouncilOutstandingProposalsForUse,
 ) => {
   return !connected
     ? 'Connect your wallet to create new asset'

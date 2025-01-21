@@ -30,7 +30,7 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { AssetAccount } from '@utils/uiTypes/assets'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 interface UpgradeProgramCompactForm extends ProgramUpgradeForm {
   description: string
@@ -45,7 +45,7 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
   const realm = useRealmQuery().data?.result
-  const { realmInfo} = useRealm()
+  const { realmInfo } = useRealm()
   const programId: PublicKey | undefined = realmInfo?.programId
   const [form, setForm] = useState<UpgradeProgramCompactForm>({
     governedAccount: program,
@@ -55,7 +55,8 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
     description: '',
     title: '',
   })
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
@@ -75,7 +76,7 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
             await validateBuffer(
               connection,
               val,
-              form.governedAccount?.extensions.program?.authority
+              form.governedAccount?.extensions.program?.authority,
             )
             return true
           } catch (e) {
@@ -91,10 +92,14 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
       }),
     bufferSpillAddress: yup
       .string()
-      .required("Spill account is required")
-      .test('is-spill-account-valid', 'Invalid Spill Account', function (val: string) {
-        return val ? validatePubkey(val) : true
-      }),
+      .required('Spill account is required')
+      .test(
+        'is-spill-account-valid',
+        'Invalid Spill Account',
+        function (val: string) {
+          return val ? validatePubkey(val) : true
+        },
+      ),
     governedAccount: yup
       .object()
       .nullable()
@@ -113,7 +118,7 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
         form.governedAccount.pubkey,
         new PublicKey(form.bufferAddress),
         form.governedAccount.extensions.program!.authority,
-        new PublicKey(form.bufferSpillAddress!)
+        new PublicKey(form.bufferSpillAddress!),
       )
       serializedInstruction = serializeInstructionToBase64(upgradeIx)
     }
@@ -152,7 +157,7 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
           isDraft: false,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -254,12 +259,12 @@ const UpgradeProgram = ({ program }: { program: AssetAccount }) => {
               }
             />
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

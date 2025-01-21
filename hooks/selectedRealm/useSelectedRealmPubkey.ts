@@ -18,7 +18,7 @@ export const useRealmPubkeyByPkOrSymbol = (symbol: string | undefined) => {
 
   const parsed = useMemo(
     () => (typeof symbol === 'string' ? tryParsePublicKey(symbol) : undefined),
-    [symbol]
+    [symbol],
   )
 
   // if we cant just parse the realm pk from the url, look it up.
@@ -38,7 +38,7 @@ export const useRealmPubkeyByPkOrSymbol = (symbol: string | undefined) => {
         cluster === 'devnet' ? DEVNET_REALMS : MAINNET_REALMS
 
       const realmPk = realms.find(
-        (x) => x.symbol.toLowerCase() === symbol.toLowerCase()
+        (x) => x.symbol.toLowerCase() === symbol.toLowerCase(),
       )?.realmId
 
       if (realmPk) return new PublicKey(realmPk)

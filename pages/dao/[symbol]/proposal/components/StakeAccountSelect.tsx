@@ -70,12 +70,13 @@ const StakeAccountSelect = ({
           </div>
         </div>
         <div className="flex space-x-3 text-xs text-fgd-3">
-          {delegatedValidator && delegatedValidator != web3.PublicKey.default && (
-            <div>
-              Vote Key:
-              <span className="ml-1 text-fgd-1">{delegatedValidator}</span>
-            </div>
-          )}
+          {delegatedValidator &&
+            delegatedValidator != web3.PublicKey.default && (
+              <div>
+                Vote Key:
+                <span className="ml-1 text-fgd-1">{delegatedValidator}</span>
+              </div>
+            )}
         </div>
       </div>
     )

@@ -30,11 +30,11 @@ const Collection = ({
             .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
             .filter((x) =>
               (x.grouping as any[]).find(
-                (y) => y.group_value === collectionId.toString()
-              )
+                (y) => y.group_value === collectionId.toString(),
+              ),
             ).length
         : undefined,
-    [collectionId, governanceNfts, treasuryNfts]
+    [collectionId, governanceNfts, treasuryNfts],
   )
 
   const { data: collectionNft } = useDigitalAssetById(collectionId)
@@ -89,7 +89,7 @@ const UncollectedNfts = ({ governance }: Omit<Props, 'collectionId'>) => {
             .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
             .filter((x) => x.grouping.length < 1).length
         : undefined,
-    [governanceNfts, treasuryNfts]
+    [governanceNfts, treasuryNfts],
   )
 
   const [treasurySelect, setTreasurySelect] = useTreasurySelectState()

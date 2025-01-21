@@ -67,9 +67,9 @@ export default async function createNFTRealm({
 
   console.log('NFT REALM realm public-key', realmPk.toBase58())
   const { registrar } = getRegistrarPDA(
-      realmPk,
-      communityMintPk,
-      nftClient!.program.programId
+    realmPk,
+    communityMintPk,
+    nftClient!.program.programId,
   )
   const instructionCR = await nftClient!.program.methods
     .createRegistrar(10) // Max collections
@@ -88,13 +88,13 @@ export default async function createNFTRealm({
   console.log(
     'CREATE NFT REALM registrar PDA',
     registrar.toBase58(),
-    instructionCR
+    instructionCR,
   )
 
   const { maxVoterWeightRecord } = await getMaxVoterWeightRecord(
     realmPk,
     communityMintPk,
-    nftClient!.program.programId
+    nftClient!.program.programId,
   )
   const instructionMVWR = await nftClient!.program.methods
     .createMaxVoterWeightRecord()
@@ -110,13 +110,13 @@ export default async function createNFTRealm({
   console.log(
     'CREATE NFT REALM max voter weight record',
     maxVoterWeightRecord.toBase58(),
-    instructionMVWR
+    instructionMVWR,
   )
 
   const instructionCC = await nftClient!.program.methods
     .configureCollection(
       minCommunityTokensToCreateAsMintValue,
-      nftCollectionCount
+      nftCollectionCount,
     )
     .accounts({
       registrar,
@@ -131,7 +131,7 @@ export default async function createNFTRealm({
   console.log(
     'CREATE NFT REALM configure collection',
     minCommunityTokensToCreateAsMintValue,
-    instructionCC
+    instructionCC,
   )
 
   const nftConfigurationInstructions: TransactionInstruction[] = [
@@ -148,14 +148,14 @@ export default async function createNFTRealm({
     realmPk,
     walletPk,
     mainGovernancePk,
-    SetRealmAuthorityAction.SetChecked
+    SetRealmAuthorityAction.SetChecked,
   )
 
   const { voterWeightPk } = await getVoterWeightRecord(
     realmPk,
     communityMintPk,
     walletPk,
-    nftClient.program.programId
+    nftClient.program.programId,
   )
   console.log('NFT realm voter weight', voterWeightPk.toBase58())
   const createVoterWeightRecord = await nftClient.program.methods
@@ -171,7 +171,7 @@ export default async function createNFTRealm({
     .instruction()
   console.log(
     'NFT realm voter weight record instruction',
-    createVoterWeightRecord
+    createVoterWeightRecord,
   )
   nftConfigurationInstructions.push(createVoterWeightRecord)
   await withCreateTokenOwnerRecord(
@@ -181,14 +181,14 @@ export default async function createNFTRealm({
     realmPk,
     walletPk,
     communityMintPk,
-    walletPk
+    walletPk,
   )
 
   try {
     const councilMembersChunks = chunks(councilMembersInstructions, 10)
     // only walletPk needs to sign the minting instructions and it's a signer by default and we don't have to include any more signers
     const councilMembersSignersChunks = Array(councilMembersChunks.length).fill(
-      []
+      [],
     )
     const nftSigners: Keypair[] = []
     console.log('CREATE NFT REALM: sending transactions')
@@ -208,7 +208,7 @@ export default async function createNFTRealm({
         instructionsSet: txBatchesToInstructionSetWithSigners(
           txBatch,
           signers,
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Sequential,
       }

@@ -36,7 +36,7 @@ const ProgramUpgrade = ({
   const { realmInfo } = useRealm()
   const { assetAccounts } = useGovernanceAssets()
   const governedProgramAccounts = assetAccounts.filter(
-    (x) => x.type === AccountType.PROGRAM
+    (x) => x.type === AccountType.PROGRAM,
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const programId: PublicKey | undefined = realmInfo?.programId
@@ -69,7 +69,7 @@ const ProgramUpgrade = ({
         form.governedAccount.pubkey,
         new PublicKey(form.bufferAddress),
         form.governedAccount.extensions.program!.authority!,
-        bufferSpillAddress
+        bufferSpillAddress,
       )
       serializedInstruction = serializeInstructionToBase64(upgradeIx)
     }
@@ -109,7 +109,7 @@ const ProgramUpgrade = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -123,7 +123,7 @@ const ProgramUpgrade = ({
             await validateBuffer(
               connection,
               val,
-              form.governedAccount?.governance?.pubkey
+              form.governedAccount?.governance?.pubkey,
             )
             return true
           } catch (e) {
@@ -163,7 +163,7 @@ const ProgramUpgrade = ({
               message: `Buffer spill address is required`,
             })
           }
-        }
+        },
       ),
   })
 
@@ -171,7 +171,7 @@ const ProgramUpgrade = ({
     <>
       <GovernedAccountSelect
         label="Program"
-        type='program'
+        type="program"
         governedAccounts={governedProgramAccounts}
         onChange={(value) => {
           handleSetForm({

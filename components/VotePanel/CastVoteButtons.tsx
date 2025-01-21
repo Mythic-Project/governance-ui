@@ -63,14 +63,14 @@ export const CastVoteButtons = () => {
           const pda = await getVoteRecordAddress(
             proposal.owner,
             proposal.pubkey,
-            delegator.pubkey
+            delegator.pubkey,
           )
           const voteRecord = await fetchVoteRecordByPubkey(
             connection.connection,
-            pda
+            pda,
           )
           return !!voteRecord.found
-        })
+        }),
       )
 
       // check if there is any delegator without a vote. If so, return false

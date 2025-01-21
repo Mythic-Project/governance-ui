@@ -14,9 +14,8 @@ const AccountItemNFT = ({
   className?: string
   border?: boolean
 }) => {
-  const { result: treasuryAddress } = useTreasuryAddressForGovernance(
-    governance
-  )
+  const { result: treasuryAddress } =
+    useTreasuryAddressForGovernance(governance)
 
   const { data: nfts } = useRealmDigitalAssetsQuery()
 
@@ -27,9 +26,9 @@ const AccountItemNFT = ({
         .filter(
           (x) =>
             x.ownership.owner === governance.toString() ||
-            x.ownership.owner === treasuryAddress?.toString()
+            x.ownership.owner === treasuryAddress?.toString(),
         ).length,
-    [governance, nfts, treasuryAddress]
+    [governance, nfts, treasuryAddress],
   )
   return (
     <div

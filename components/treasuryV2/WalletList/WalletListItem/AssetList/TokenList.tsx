@@ -31,9 +31,9 @@ export default function TokenList(props: Props) {
 
   const expandCutoff = Math.max(
     tokens.findIndex((token) =>
-      token.value.multipliedBy(token.count).isEqualTo(0)
+      token.value.multipliedBy(token.count).isEqualTo(0),
     ),
-    3
+    3,
   )
 
   return (

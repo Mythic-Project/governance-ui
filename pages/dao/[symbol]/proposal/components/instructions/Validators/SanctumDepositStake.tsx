@@ -55,7 +55,7 @@ const SanctumDepositStake = ({
   const connection = useLegacyConnectionContext()
   const stakeProgramId: PublicKey = StakeProgram.programId
   const sanctumStakeProgramId = new PublicKey(
-    'SP12tWFxD9oJsVWNavTTBZvMbA6gkAmxtVgxdqvyvhY'
+    'SP12tWFxD9oJsVWNavTTBZvMbA6gkAmxtVgxdqvyvhY',
   )
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -122,12 +122,12 @@ const SanctumDepositStake = ({
             bytes: bs58.encode([255, 255, 255, 255, 255, 255, 255, 255]), // equivalent to u64::max for deactivation epoch / not deactivated yet
           },
         },
-      ]
+      ],
     )
 
     return stakingAccounts.map((x) => {
       const validatorPk = web3.PublicKey.decode(
-        x.accountInfo.data.slice(124, 124 + 32)
+        x.accountInfo.data.slice(124, 124 + 32),
       )
       return {
         stakeAccount: x.publicKey,
@@ -181,19 +181,19 @@ const SanctumDepositStake = ({
 
     const stakePool = await getStakePoolAccount(
       connection.current,
-      new PublicKey(form.stakePool)
+      new PublicKey(form.stakePool),
     )
     const ataAddress = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
       stakePool.account.data.poolMint,
       form.governedTokenAccount.pubkey,
-      true
+      true,
     )
     const ataAccount = await tryGetAta(
       connection.current,
       stakePool.account.data.poolMint,
-      form.governedTokenAccount.pubkey
+      form.governedTokenAccount.pubkey,
     )
 
     if (!ataAccount) {
@@ -204,21 +204,21 @@ const SanctumDepositStake = ({
           stakePool.account.data.poolMint, // mint
           ataAddress, // ata
           form.governedTokenAccount.pubkey, // owner of token account
-          wallet!.publicKey! // fee payer
-        )
+          wallet!.publicKey!, // fee payer
+        ),
       )
     }
 
     const [withdrawAuthPk] = await PublicKey.findProgramAddress(
       [new PublicKey(form.stakePool).toBuffer(), Buffer.from('withdraw')],
-      sanctumStakeProgramId
+      sanctumStakeProgramId,
     )
     const [validatorStake] = await PublicKey.findProgramAddress(
       [
         new PublicKey(form.voteAccount).toBuffer(),
         new PublicKey(form.stakePool).toBuffer(),
       ],
-      sanctumStakeProgramId
+      sanctumStakeProgramId,
     )
     const authorizeWithdrawIx = StakeProgram.authorize({
       stakePubkey: form.stakingAccount.stakeAccount,
@@ -284,7 +284,7 @@ const SanctumDepositStake = ({
             programId: sanctumStakeProgramId,
             keys: stakeIx.keys,
             data: stakeIx.data,
-          })
+          }),
         ),
       ],
       isValid: true,
@@ -298,7 +298,7 @@ const SanctumDepositStake = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -306,7 +306,7 @@ const SanctumDepositStake = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -323,7 +323,7 @@ const SanctumDepositStake = ({
       <GovernedAccountSelect
         label="Treasury account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

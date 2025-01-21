@@ -15,13 +15,10 @@ const NewProposalBtn = () => {
 
   const realm = useRealmQuery().data?.result
   // const { result: ownVoterWeight } = useLegacyVoterWeight()
-  const {
-    ownVoterWeight: communityOwnVoterWeight,
-  } = useRealmVoterWeightPlugins('community')
-  const {
-    isReady,
-    ownVoterWeight: councilOwnVoterWeight,
-  } = useRealmVoterWeightPlugins('council')
+  const { ownVoterWeight: communityOwnVoterWeight } =
+    useRealmVoterWeightPlugins('community')
+  const { isReady, ownVoterWeight: councilOwnVoterWeight } =
+    useRealmVoterWeightPlugins('council')
   const {
     symbol,
     toManyCommunityOutstandingProposalsForUser,

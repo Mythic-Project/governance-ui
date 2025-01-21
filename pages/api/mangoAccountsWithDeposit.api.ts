@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json('BACKEND_MAINNET_RPC not provided in env')
     const conn = new Connection(process.env.BACKEND_MAINNET_RPC, 'recent')
     const MAINNET_GROUP = new PublicKey(
-      '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX'
+      '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX',
     )
     const clientCluster = conn.rpcEndpoint.includes('devnet')
       ? 'devnet'
@@ -26,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const adminProvider = new AnchorProvider(
       conn,
       new EmptyWallet(Keypair.generate()),
-      options
+      options,
     )
     const client = await MangoClient.connect(
       adminProvider,
@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       MANGO_V4_ID[clientCluster],
       {
         idsSource: 'api',
-      }
+      },
     )
     const group = await client.getGroup(MAINNET_GROUP)
 

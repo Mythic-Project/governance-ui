@@ -74,7 +74,7 @@ export default function Config(props: Props) {
               'text-primary-light',
               'text-sm',
               'disabled:cursor-not-allowed',
-              'disabled:opacity-50'
+              'disabled:opacity-50',
             )}
             disabled={!canUseAuthorityInstruction}
             onClick={() =>
@@ -96,8 +96,8 @@ export default function Config(props: Props) {
                 .type === MintMaxVoteWeightSourceType.Absolute
                 ? formatNumber(
                     new BigNumber(
-                      props.realmAuthority.config.communityMintMaxVoteWeightSource.value.toString()
-                    ).shiftedBy(-(mint ? mint.decimals : 0))
+                      props.realmAuthority.config.communityMintMaxVoteWeightSource.value.toString(),
+                    ).shiftedBy(-(mint ? mint.decimals : 0)),
                   )
                 : `${props.realmAuthority.config.communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage()}%`
             }
@@ -108,14 +108,14 @@ export default function Config(props: Props) {
           icon={<DocumentAddIcon />}
           value={
             DISABLED.shiftedBy(-(mint ? mint.decimals : 0)).isLessThanOrEqualTo(
-              props.realmAuthority.config.minCommunityTokensToCreateGovernance
+              props.realmAuthority.config.minCommunityTokensToCreateGovernance,
             )
               ? 'Disabled'
               : formatNumber(
                   props.realmAuthority.config
                     .minCommunityTokensToCreateGovernance,
                   undefined,
-                  { maximumFractionDigits: 2 }
+                  { maximumFractionDigits: 2 },
                 )
           }
         />
@@ -123,7 +123,7 @@ export default function Config(props: Props) {
       <div
         className={clsx(
           'grid gap-8 mt-12',
-          councilRulesSupported ? 'grid-cols-2' : 'grid-cols-1'
+          councilRulesSupported ? 'grid-cols-2' : 'grid-cols-1',
         )}
       >
         <div>
@@ -137,7 +137,7 @@ export default function Config(props: Props) {
           <div
             className={clsx(
               'grid gap-8',
-              councilRulesSupported ? 'grid-cols-1' : 'grid-cols-2'
+              councilRulesSupported ? 'grid-cols-1' : 'grid-cols-2',
             )}
           >
             {(programVersion ?? DEFAULT_GOVERNANCE_PROGRAM_VERSION) >= 3 && (

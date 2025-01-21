@@ -35,7 +35,7 @@ function filterAndMapVerifiedCollections(nfts: DasNftObject[]) {
     .filter((nft) => ON_NFT_VOTER_V2 || !nft.compression.compressed)
     .reduce((prev, curr) => {
       const collectionKey = curr.grouping.find(
-        (x) => x.group_key === 'collection'
+        (x) => x.group_key === 'collection',
       )?.group_value
       if (typeof collectionKey === 'undefined') return prev
 
@@ -64,7 +64,7 @@ export const useOwnerVerifiedCollections = (owner: PublicKey) => {
         const { result: collection } = await queryClient.fetchQuery({
           queryKey: digitalAssetsQueryKeys.byId(
             network,
-            new PublicKey(collectionKey)
+            new PublicKey(collectionKey),
           ),
           queryFn: () => dasByIdQueryFn(network, new PublicKey(collectionKey)),
           staleTime: Infinity,
@@ -78,7 +78,7 @@ export const useOwnerVerifiedCollections = (owner: PublicKey) => {
         } else {
           return null
         }
-      })
+      }),
     )
 
     return verifiedCollections.filter((x) => x !== null)
@@ -113,7 +113,7 @@ export default function NFTCollectionModal({
           type: 'error',
           message: 'Current wallet has no verified collection',
         },
-        { shouldFocus: true }
+        { shouldFocus: true },
       )
     } else {
       setShow(isShow)

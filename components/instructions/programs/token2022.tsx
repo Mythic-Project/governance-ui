@@ -32,7 +32,7 @@ const MINT_METADATA = {
 }
 
 export function getMintMetadata(
-  tokenMintPk: PublicKey | undefined
+  tokenMintPk: PublicKey | undefined,
 ): TokenMintMetadata {
   const tokenMintAddress = tokenMintPk ? tokenMintPk.toBase58() : ''
   const tokenInfo = tokenMintAddress
@@ -56,7 +56,7 @@ export const TOKEN_2022_INST = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenMint = await tryGetMint(connection, accounts[1].pubkey)
         const tokenMintDescriptor = getMintMetadata(accounts[1].pubkey)
@@ -66,13 +66,13 @@ export const TOKEN_2022_INST = {
             data: Buffer.from(data),
             programId: TOKEN_2022_PROGRAM_ID,
           }),
-          TOKEN_2022_PROGRAM_ID
+          TOKEN_2022_PROGRAM_ID,
         )
 
         const tokenAmount = tokenMint
           ? toUiDecimals(
               Number(transferChecked.data.amount),
-              transferChecked.data.decimals
+              transferChecked.data.decimals,
             )
           : transferChecked.data.amount.toString()
 

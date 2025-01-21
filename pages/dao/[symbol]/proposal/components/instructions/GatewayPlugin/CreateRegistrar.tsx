@@ -18,9 +18,9 @@ import { InformationCircleIcon } from '@heroicons/react/outline'
 import Tooltip from '@components/Tooltip'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {availablePasses} from "../../../../../../../GatewayPlugin/config";
-import {createCivicRegistrarIx} from "../../../../../../../GatewayPlugin/sdk/api";
-import {useGatewayVoterWeightPlugin} from "../../../../../../../VoterWeightPlugins";
+import { availablePasses } from '../../../../../../../GatewayPlugin/config'
+import { createCivicRegistrarIx } from '../../../../../../../GatewayPlugin/sdk/api'
+import { useGatewayVoterWeightPlugin } from '../../../../../../../VoterWeightPlugins'
 
 interface CreateGatewayRegistrarForm {
   governedAccount: AssetAccount | undefined
@@ -37,7 +37,7 @@ const CreateGatewayPluginRegistrar = ({
   governance: ProgramAccount<Governance> | null
 }) => {
   const realm = useRealmQuery().data?.result
-  const { gatewayClient } = useGatewayVoterWeightPlugin();
+  const { gatewayClient } = useGatewayVoterWeightPlugin()
   const { assetAccounts } = useGovernanceAssets()
   const wallet = useWalletOnePointOh()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -59,13 +59,15 @@ const CreateGatewayPluginRegistrar = ({
     if (
       isValid &&
       form!.governedAccount?.governance?.account &&
-      wallet?.publicKey && realm && gatewayClient
+      wallet?.publicKey &&
+      realm &&
+      gatewayClient
     ) {
       const createRegistrarIx = await createCivicRegistrarIx(
         realm,
-          wallet.publicKey,
-          gatewayClient,
-          chosenGatekeeperNetwork!,
+        wallet.publicKey,
+        gatewayClient,
+        chosenGatekeeperNetwork!,
       )
       serializedInstruction = serializeInstructionToBase64(createRegistrarIx)
     }
@@ -78,7 +80,7 @@ const CreateGatewayPluginRegistrar = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -99,7 +101,7 @@ const CreateGatewayPluginRegistrar = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
     },
     {

@@ -59,7 +59,7 @@ export function ExecuteInstructionButton({
     getProgramVersionForRealm(realmInfo!),
     wallet!,
     connection.current,
-    connection.endpoint
+    connection.endpoint,
   )
 
   useEffect(() => {

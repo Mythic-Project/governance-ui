@@ -72,7 +72,7 @@ const NewProgramForm = () => {
         const transferUpgradeAuthIx = await createSetUpgradeAuthority(
           new PublicKey(form.programId),
           wallet!.publicKey!,
-          form.authority!.governance.nativeTreasuryAddress!
+          form.authority!.governance.nativeTreasuryAddress!,
         )
         const transaction = new Transaction()
         transaction.add(transferUpgradeAuthIx)
@@ -116,9 +116,8 @@ const NewProgramForm = () => {
                   })
                 }
 
-                const accountData = await connection.current.getParsedAccountInfo(
-                  pubKey
-                )
+                const accountData =
+                  await connection.current.getParsedAccountInfo(pubKey)
                 if (!accountData || !accountData.value) {
                   return this.createError({
                     message: `Account not found`,
@@ -135,7 +134,7 @@ const NewProgramForm = () => {
                 message: `Program id is required`,
               })
             }
-          }
+          },
         ),
     })
   }, [connection])
@@ -153,7 +152,7 @@ const NewProgramForm = () => {
   useEffect(() => {
     const wallet = assetAccounts.find(
       (x) =>
-        x.governance.nativeTreasuryAddress?.toBase58() === router.query?.wallet
+        x.governance.nativeTreasuryAddress?.toBase58() === router.query?.wallet,
     )
     if (wallet && router.query?.wallet) {
       handleSetForm({ value: wallet, propertyName: 'authority' })

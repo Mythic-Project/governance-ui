@@ -29,12 +29,12 @@ export default function TokenOwnerRecordsList({ governance, ...props }: Props) {
   const { result: tors } = useAsync(
     // TODO get same for the native treasuries !
     async () => fetchTokenOwnerRecordsByOwnerAnyRealm(connection, governance),
-    [connection, governance]
+    [connection, governance],
   )
 
   const validTokenOwnerRecords = useMemo(() => {
     return tors?.filter((a) =>
-      a.account.governingTokenDepositAmount.gt(BN_ZERO)
+      a.account.governingTokenDepositAmount.gt(BN_ZERO),
     )
   }, [tors])
 

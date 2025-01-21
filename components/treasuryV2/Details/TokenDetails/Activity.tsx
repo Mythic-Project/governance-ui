@@ -69,7 +69,7 @@ export default function Activity(props: Props) {
                   'py-4',
                   'rounded',
                   'text-sm',
-                  'text-white/50'
+                  'text-white/50',
                 )}
               >
                 No activity
@@ -85,7 +85,7 @@ export default function Activity(props: Props) {
                   'items-center',
                   'justify-between',
                   'px-4',
-                  'rounded-md'
+                  'rounded-md',
                 )}
                 key={item.signature + i}
                 href={
@@ -103,7 +103,7 @@ export default function Activity(props: Props) {
                     'text-ellipsis',
                     'text-fgd-1',
                     'text-sm',
-                    'whitespace-nowrap'
+                    'whitespace-nowrap',
                   )}
                 >
                   {item.signature}

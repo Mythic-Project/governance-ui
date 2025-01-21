@@ -74,7 +74,7 @@ export type PsyAmerican = {
           name: 'clock'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -92,7 +92,7 @@ export type PsyAmerican = {
         {
           name: 'bumpSeed'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -172,13 +172,13 @@ export type PsyAmerican = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -233,13 +233,13 @@ export type PsyAmerican = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -309,13 +309,13 @@ export type PsyAmerican = {
           name: 'clock'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -370,13 +370,13 @@ export type PsyAmerican = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -421,13 +421,13 @@ export type PsyAmerican = {
           name: 'clock'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -477,13 +477,13 @@ export type PsyAmerican = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -523,13 +523,13 @@ export type PsyAmerican = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'size'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -619,7 +619,7 @@ export type PsyAmerican = {
           name: 'marketAuthority'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -641,9 +641,9 @@ export type PsyAmerican = {
         {
           name: 'pcDustThreshold'
           type: 'u64'
-        }
+        },
       ]
-    }
+    },
   ]
   accounts: [
     {
@@ -702,10 +702,10 @@ export type PsyAmerican = {
           {
             name: 'bumpSeed'
             type: 'u8'
-          }
+          },
         ]
       }
-    }
+    },
   ]
   errors: [
     {
@@ -847,7 +847,7 @@ export type PsyAmerican = {
       code: 6027
       name: 'NumberOverflow'
       msg: 'Numberical overflow'
-    }
+    },
   ]
 }
 
@@ -1624,8 +1624,7 @@ export const PsyAmericanIdl: PsyAmerican = {
     {
       code: 6012,
       name: 'UnderlyingPoolAccountDoesNotMatchMarket',
-      msg:
-        'Underlying pool account does not match the value on the OptionMarket',
+      msg: 'Underlying pool account does not match the value on the OptionMarket',
     },
     {
       code: 6013,
@@ -1660,8 +1659,7 @@ export const PsyAmericanIdl: PsyAmerican = {
     {
       code: 6019,
       name: 'UnderlyingDestMintDoesNotMatchUnderlyingAsset',
-      msg:
-        'Underlying destination mint must match underlying asset mint address',
+      msg: 'Underlying destination mint must match underlying asset mint address',
     },
     {
       code: 6020,

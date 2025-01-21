@@ -14,12 +14,12 @@ const DelegatorCheckbox = ({
   const [checked, setChecked] = useState(false)
 
   const formatAmount = useFormatTokenAmount(
-    tokenOwnerRecord.account.governingTokenMint
+    tokenOwnerRecord.account.governingTokenMint,
   )
 
   // TODO just dont bother showing this for plugins i think ?
   const amount = formatAmount?.(
-    tokenOwnerRecord.account.governingTokenDepositAmount
+    tokenOwnerRecord.account.governingTokenDepositAmount,
   )
 
   return (
@@ -45,9 +45,9 @@ const DelegatorsList = () => {
       realm === undefined
         ? undefined
         : delegatesArray?.filter((x) =>
-            x.account.governingTokenMint.equals(realm.account.communityMint)
+            x.account.governingTokenMint.equals(realm.account.communityMint),
           ),
-    [delegatesArray, realm]
+    [delegatesArray, realm],
   )
 
   const councilMintAddr = realm?.account.config.councilMint
@@ -58,9 +58,9 @@ const DelegatorsList = () => {
       councilMintAddr === undefined
         ? undefined
         : delegatesArray?.filter((x) =>
-            x.account.governingTokenMint.equals(councilMintAddr)
+            x.account.governingTokenMint.equals(councilMintAddr),
           ),
-    [delegatesArray, councilMintAddr]
+    [delegatesArray, councilMintAddr],
   )
 
   return (

@@ -90,7 +90,7 @@ const DaoVote = ({
         proposal: yup.string().required(),
         voteOption: yup.string().required(),
       }),
-    []
+    [],
   )
   const validateInstruction = useCallback(async () => {
     const { isValid, validationErrors } = await isFormValid(schema, form)
@@ -122,14 +122,14 @@ const DaoVote = ({
 
         const { result: proposal } = await fetchProposalByPubkeyQuery(
           connection.current,
-          proposalPk
+          proposalPk,
         )
         if (proposal === undefined) {
           throw new Error('Proposal not found')
         }
         const { result: proposalGovernance } = await fetchGovernanceByPubkey(
           connection.current,
-          proposal.account.governance
+          proposal.account.governance,
         )
         if (proposalGovernance === undefined) {
           throw new Error('Governance not found')
@@ -137,7 +137,7 @@ const DaoVote = ({
         const realmPk = proposalGovernance.account.realm
         const { result: realm } = await fetchRealmByPubkey(
           connection.current,
-          realmPk
+          realmPk,
         )
         if (realm === undefined) {
           throw new Error('Realm not found')
@@ -151,19 +151,19 @@ const DaoVote = ({
           programId,
           realmPk,
           governingMint,
-          walletPk
+          walletPk,
         )
 
         const options = AnchorProvider.defaultOptions()
         const provider = new AnchorProvider(
           connection.current,
           new EmptyWallet(Keypair.generate()),
-          options
+          options,
         )
 
         const { result: realmConfig } = await fetchRealmConfigQuery(
           connection.current,
-          realmPk
+          realmPk,
         )
         const votingPop =
           governingMint.toString() === realm.account.communityMint.toString()
@@ -188,11 +188,14 @@ const DaoVote = ({
           const { registrar } = getRegistrarPDA(
             realmPk,
             governingMint,
-            pluginPk
+            pluginPk,
           )
           const { voter } = getVoterPDA(registrar, walletPk, pluginPk)
-          voterWeightPk = getVoterWeightPDA(registrar, walletPk, pluginPk)
-            .voterWeightPk
+          voterWeightPk = getVoterWeightPDA(
+            registrar,
+            walletPk,
+            pluginPk,
+          ).voterWeightPk
 
           const updateVoterWeightRecordIx = await vsrClient.program.methods
             .updateVoterWeightRecord()
@@ -228,7 +231,7 @@ const DaoVote = ({
 
         const programVersion = await fetchProgramVersion(
           connection.current,
-          programId
+          programId,
         )
 
         await withCastVote(
@@ -245,7 +248,7 @@ const DaoVote = ({
           vote,
           payer,
           voterWeightPk,
-          undefined
+          undefined,
         )
 
         serializedInstruction = ''
@@ -253,7 +256,7 @@ const DaoVote = ({
       const obj: UiInstruction = {
         signers: signers,
         additionalSerializedInstructions: instructions.map((x) =>
-          serializeInstructionToBase64(x)
+          serializeInstructionToBase64(x),
         ),
         serializedInstruction: serializedInstruction,
         isValid,
@@ -263,7 +266,7 @@ const DaoVote = ({
     }
     handleSetInstructions(
       { governedAccount: form.delegateToken?.governance, getInstruction },
-      index
+      index,
     )
   }, [
     form,

@@ -13,7 +13,7 @@ import {
   getMinDurationFmt,
   getTimeLeftFromNowFmt,
 } from '@utils/dateTools'
-import {PositionWithMeta, Registrar, SubDaoWithMeta} from '../sdk/types'
+import { PositionWithMeta, Registrar, SubDaoWithMeta } from '../sdk/types'
 import useHeliumVsrStore from '../hooks/useHeliumVsrStore'
 import {
   LockTokensModal,
@@ -38,9 +38,9 @@ import { useRealmCommunityMintInfoQuery } from '@hooks/queries/mintInfo'
 import queryClient from '@hooks/queries/queryClient'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
-import {useVotingClients} from "@hooks/useVotingClients";
-import {useAsync} from "react-async-hook";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
+import { useVotingClients } from '@hooks/useVotingClients'
+import { useAsync } from 'react-async-hook'
 
 interface PositionCardProps {
   subDaos?: SubDaoWithMeta[]
@@ -67,17 +67,17 @@ export const PositionCard: React.FC<PositionCardProps> = ({
     s.state.positions,
     s.getPositions,
   ])
-  const { heliumClient: vsrClient } = useHeliumClient();
-  const votingClients = useVotingClients();
+  const { heliumClient: vsrClient } = useHeliumClient()
+  const votingClients = useVotingClients()
 
-  const vsrRegistrar = useAsync<Registrar | undefined>(
-      async () => {
-        if (realm && vsrClient) {
-          return vsrClient.getRegistrarAccount(realm?.pubkey, realm?.account.communityMint) as Promise<Registrar>
-        }
-      },
-      [realm, vsrClient]
-  )
+  const vsrRegistrar = useAsync<Registrar | undefined>(async () => {
+    if (realm && vsrClient) {
+      return vsrClient.getRegistrarAccount(
+        realm?.pubkey,
+        realm?.account.communityMint,
+      ) as Promise<Registrar>
+    }
+  }, [realm, vsrClient])
 
   const transferablePositions: PositionWithMeta[] = useMemo(() => {
     if (!unixNow || !positions.length) {
@@ -89,7 +89,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
     const positionLockupPeriodInDays = secsToDays(
       lockupKind === 'constant'
         ? lockup.endTs.sub(lockup.startTs).toNumber()
-        : lockup.endTs.sub(new BN(unixNow || 0)).toNumber()
+        : lockup.endTs.sub(new BN(unixNow || 0)).toNumber(),
     )
 
     return positions.filter((pos) => {
@@ -98,7 +98,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
       const lockupPeriodInDays = secsToDays(
         lockupKind === 'constant'
           ? lockup.endTs.sub(lockup.startTs).toNumber()
-          : lockup.endTs.sub(new BN(unixNow)).toNumber()
+          : lockup.endTs.sub(new BN(unixNow)).toNumber(),
       )
 
       return (
@@ -172,7 +172,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
 
   const lockedTokens = fmtMintAmount(
     position.votingMint.mint.account,
-    position.amountDepositedNative
+    position.amountDepositedNative,
   )
 
   const isRealmCommunityMint =
@@ -186,7 +186,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
     isRealmCommunityMint && realm.account.communityMint.equals(HNT_MINT)
 
   const tokenInfo = tokenPriceService.getTokenInfo(
-    position.votingMint.mint.publicKey.toBase58()
+    position.votingMint.mint.publicKey.toBase58(),
   )
 
   const handleCalcLockupMultiplier = useCallback(
@@ -196,7 +196,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         registrar: vsrRegistrar.result ?? null,
         realm,
       }),
-    [realm, vsrRegistrar.result]
+    [realm, vsrRegistrar.result],
   )
 
   const refetchState = async () => {
@@ -204,7 +204,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
       queryKey: tokenAccountQueryKeys.all(connection.endpoint),
     })
     await getPositions({
-      votingClient: votingClients('community'),  // community mint is hardcoded for getPositions
+      votingClient: votingClients('community'), // community mint is hardcoded for getPositions
       realmPk: realm!.pubkey,
       communityMintPk: realm!.account.communityMint,
       walletPk: wallet!.publicKey!,
@@ -259,7 +259,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
 
   const handleTransferTokens = async (
     targetPosition: PositionWithMeta,
-    amount: number
+    amount: number,
   ) => {
     await transferPosition({
       sourcePosition: position,
@@ -416,7 +416,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                   isConstant
                     ? getMinDurationFmt(
                         position.lockup.startTs,
-                        position.lockup.endTs
+                        position.lockup.endTs,
                       )
                     : getTimeLeftFromNowFmt(position.lockup.endTs)
                 }
@@ -548,17 +548,17 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                   secsToDays(
                     position.lockup.endTs
                       .sub(position.lockup.startTs)
-                      .toNumber()
-                  )
+                      .toNumber(),
+                  ),
                 )
               : Math.ceil(
                   secsToDays(
-                    position.lockup.endTs.sub(new BN(unixNow)).toNumber()
-                  )
+                    position.lockup.endTs.sub(new BN(unixNow)).toNumber(),
+                  ),
                 )
           }
           maxLockupTimeInDays={secsToDays(
-            votingMint.lockupSaturationSecs.toNumber()
+            votingMint.lockupSaturationSecs.toNumber(),
           )}
           maxLockupAmount={maxActionableAmount}
           calcMultiplierFn={handleCalcLockupMultiplier}
@@ -577,17 +577,17 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                     secsToDays(
                       position.lockup.endTs
                         .sub(position.lockup.startTs)
-                        .toNumber()
-                    )
+                        .toNumber(),
+                    ),
                   )
                 : Math.ceil(
                     secsToDays(
-                      position.lockup.endTs.sub(new BN(unixNow)).toNumber()
-                    )
+                      position.lockup.endTs.sub(new BN(unixNow)).toNumber(),
+                    ),
                   )
             }
             maxLockupTimeInDays={secsToDays(
-              votingMint.lockupSaturationSecs.toNumber()
+              votingMint.lockupSaturationSecs.toNumber(),
             )}
             maxLockupAmount={maxActionableAmount}
             calcMultiplierFn={handleCalcLockupMultiplier}

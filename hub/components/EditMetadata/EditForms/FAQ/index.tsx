@@ -47,17 +47,18 @@ interface Props {
 
 export function FAQ(props: Props) {
   const [keyCounter, setKeyCounter] = useState(0);
-  const items = (props.faq.length
-    ? [...props.faq]
-    : [
-        {
-          answer: {
-            attachments: [],
-            content: [],
+  const items = (
+    props.faq.length
+      ? [...props.faq]
+      : [
+          {
+            answer: {
+              attachments: [],
+              content: [],
+            },
+            question: '',
           },
-          question: '',
-        },
-      ]
+        ]
   ).concat({
     answer: {
       attachments: [],

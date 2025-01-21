@@ -78,8 +78,8 @@ const MultiChoiceForm = ({
     <div className="mt-8 mb-8">
       <GovernedAccountSelect
         label="Which wallet’s rules should this proposal follow?"
-        governedAccounts={assetAccounts.filter((x) =>
-          ownVoterWeight?.canCreateProposal(x.governance.account.config)
+        governedAccounts={assetAccounts.filter(
+          (x) => ownVoterWeight?.canCreateProposal(x.governance.account.config),
         )}
         onChange={(value: AssetAccount) => {
           handleMultiForm({
@@ -92,7 +92,7 @@ const MultiChoiceForm = ({
             ? assetAccounts.find(
                 (x) =>
                   x.governance.pubkey.equals(governance) &&
-                  x.type === AccountType.SOL
+                  x.type === AccountType.SOL,
               )
             : null
         }

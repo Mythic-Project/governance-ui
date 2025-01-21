@@ -19,13 +19,13 @@ const AccountHeader = () => {
             x.ownership.owner ===
               currentAccount?.governance.pubkey.toString() ||
             x.ownership.owner ===
-              currentAccount?.extensions.transferAddress?.toString()
+              currentAccount?.extensions.transferAddress?.toString(),
         ).length ?? 0,
     [
       currentAccount?.extensions.transferAddress,
       currentAccount?.governance.pubkey,
       nfts,
-    ]
+    ],
   )
   const isNFT = currentAccount?.isNft
   const tokenInfo = useTreasuryAccountStore((s) => s.tokenInfo)
@@ -36,8 +36,8 @@ const AccountHeader = () => {
           new BN(
             !currentAccount.isSol
               ? currentAccount.extensions.token!.account.amount
-              : currentAccount.extensions.solAccount!.lamports
-          )
+              : currentAccount.extensions.solAccount!.lamports,
+          ),
         ).toNumber()
       : 0
   const amountFormatted = new BigNumber(amount).toFormat()

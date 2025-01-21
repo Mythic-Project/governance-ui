@@ -106,7 +106,7 @@ const MeanCreateAccountComponent = ({ index, governance }: Props) => {
         governedAccount: form.governedTokenAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form])
@@ -135,8 +135,8 @@ const MeanCreateAccountComponent = ({ index, governance }: Props) => {
       value: parseFloat(
         Math.max(
           mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)
-        ).toFixed(currentPrecision)
+          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -167,7 +167,7 @@ const MeanCreateAccountComponent = ({ index, governance }: Props) => {
       <GovernedAccountSelect
         label="Select source of funds"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (a) => !a.isSol
+          (a) => !a.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

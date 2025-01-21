@@ -191,7 +191,7 @@ export default function CommunityTokenWizard() {
         push(
           fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`),
           undefined,
-          { shallow: true }
+          { shallow: true },
         )
       } else {
         throw new Error('Something bad happened during this request.')

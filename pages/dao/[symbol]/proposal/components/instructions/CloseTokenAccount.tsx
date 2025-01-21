@@ -79,7 +79,7 @@ const CloseTokenAccount = ({
               message: `Funds destination address is required`,
             })
           }
-        }
+        },
       ),
     solRentDestination: yup
       .string()
@@ -101,7 +101,7 @@ const CloseTokenAccount = ({
               message: `Sol rent destination address  is required`,
             })
           }
-        }
+        },
       ),
   })
   async function getInstruction(): Promise<UiInstruction> {
@@ -122,26 +122,25 @@ const CloseTokenAccount = ({
         const amount = form!.governedAccount.extensions.token!.account.amount
 
         //we find true receiver address if its wallet and we need to create ATA the ata address will be the receiver
-        const {
-          currentAddress: receiverAddress,
-          needToCreateAta,
-        } = await getATA({
-          connection: connection,
-          receiverAddress: destinationAccount,
-          mintPK,
-          wallet: wallet!,
-        })
+        const { currentAddress: receiverAddress, needToCreateAta } =
+          await getATA({
+            connection: connection,
+            receiverAddress: destinationAccount,
+            mintPK,
+            wallet: wallet!,
+          })
         //we push this createATA instruction to transactions to create right before creating proposal
         //we don't want to create ata only when instruction is serialized
         if (needToCreateAta) {
-          const createAtaInstruction = Token.createAssociatedTokenAccountInstruction(
-            ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-            TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-            mintPK, // mint
-            receiverAddress, // ata
-            destinationAccount, // owner of token account
-            wallet!.publicKey! // fee payer
-          )
+          const createAtaInstruction =
+            Token.createAssociatedTokenAccountInstruction(
+              ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+              TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+              mintPK, // mint
+              receiverAddress, // ata
+              destinationAccount, // owner of token account
+              wallet!.publicKey!, // fee payer
+            )
           //ata needs to be created before otherwise simulations will throw errors.
           //createCloseAccountInstruction has check if ata is existing its not like in transfer where we can run
           //simulation without created ata and we create it on the fly before proposal
@@ -166,10 +165,10 @@ const CloseTokenAccount = ({
           receiverAddress,
           form!.governedAccount!.extensions!.token!.account.owner,
           [],
-          amount
+          amount,
         )
         additionalSerializedInstructions.push(
-          serializeInstructionToBase64(transferIx)
+          serializeInstructionToBase64(transferIx),
         )
       }
 
@@ -178,11 +177,10 @@ const CloseTokenAccount = ({
         form!.governedAccount.extensions.token!.publicKey!,
         new PublicKey(form!.solRentDestination),
         form!.governedAccount.extensions.token!.account.owner!,
-        []
+        [],
       )
-      serializedInstructionClose = serializeInstructionToBase64(
-        closeInstruction
-      )
+      serializedInstructionClose =
+        serializeInstructionToBase64(closeInstruction)
       additionalSerializedInstructions.push(serializedInstructionClose)
     }
     const obj: UiInstruction = {
@@ -198,7 +196,7 @@ const CloseTokenAccount = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

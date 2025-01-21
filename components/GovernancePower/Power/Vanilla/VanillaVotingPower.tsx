@@ -5,7 +5,10 @@ import { useTokenOwnerRecordsDelegatedToUser } from '@hooks/queries/tokenOwnerRe
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useMintInfoByPubkeyQuery } from '@hooks/queries/mintInfo'
 import { useConnection } from '@solana/wallet-adapter-react'
-import { getVanillaGovpower, useVanillaGovpower } from '@hooks/queries/governancePower'
+import {
+  getVanillaGovpower,
+  useVanillaGovpower,
+} from '@hooks/queries/governancePower'
 import {
   useAddressQuery_CommunityTokenOwner,
   useAddressQuery_CouncilTokenOwner,
@@ -19,8 +22,11 @@ import { abbreviateAddress } from '@utils/formatting'
 import clsx from 'clsx'
 import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import { GoverningTokenType } from '@solana/spl-governance'
-import {ExclamationIcon, QuestionMarkCircleIcon} from "@heroicons/react/outline";
-import Tooltip from "@components/Tooltip";
+import {
+  ExclamationIcon,
+  QuestionMarkCircleIcon,
+} from '@heroicons/react/outline'
+import Tooltip from '@components/Tooltip'
 
 interface Props {
   className?: string
@@ -57,7 +63,7 @@ export default function VanillaVotingPower({
 
   // If the user is using a delegator, we want to show that and not count the other delegators
   const selectedDelegator = useSelectedDelegatorStore((s) =>
-    role === 'community' ? s.communityDelegator : s.councilDelegator
+    role === 'community' ? s.communityDelegator : s.councilDelegator,
   )
 
   const { data: torsDelegatedToUser } = useTokenOwnerRecordsDelegatedToUser()
@@ -72,16 +78,16 @@ export default function VanillaVotingPower({
             await Promise.all(
               torsDelegatedToUser
                 .filter((x) =>
-                  x.account.governingTokenMint.equals(relevantMint)
+                  x.account.governingTokenMint.equals(relevantMint),
                 )
-                .map((x) => getVanillaGovpower(connection, x.pubkey))
+                .map((x) => getVanillaGovpower(connection, x.pubkey)),
             )
           ).reduce((partialSum, a) => partialSum.add(a), new BN(0)),
-    [connection, relevantMint, selectedDelegator, torsDelegatedToUser]
+    [connection, relevantMint, selectedDelegator, torsDelegatedToUser],
   )
 
   const totalAmount = (delegatorsAmount ?? new BN(0)).add(
-    personalAmount ?? new BN(0)
+    personalAmount ?? new BN(0),
   )
 
   const formattedTotal = useMemo(
@@ -91,7 +97,7 @@ export default function VanillaVotingPower({
             .shiftedBy(-mintInfo.decimals)
             .toString()
         : undefined,
-    [totalAmount, mintInfo]
+    [totalAmount, mintInfo],
   )
 
   const formattedDelegatorsAmount = useMemo(
@@ -101,7 +107,7 @@ export default function VanillaVotingPower({
             .shiftedBy(-mintInfo.decimals)
             .toString()
         : undefined,
-    [delegatorsAmount, mintInfo]
+    [delegatorsAmount, mintInfo],
   )
 
   const tokenName =
@@ -119,16 +125,18 @@ export default function VanillaVotingPower({
       className={clsx(
         props.className,
         hideIfZero && totalAmount.isZero() && 'hidden',
-        disabled && 'hidden'
+        disabled && 'hidden',
       )}
     >
-      {unrecognizedPlugin && <div className="flex text-sm  text-orange mb-1">
-        <ExclamationIcon className="flex-shrink-0 h-5 w-5 mr-2" />
-        Unrecognized plugin
-        <Tooltip content="This DAO uses an unrecognised vote weight plugin - your vote weight may be shown incorrectly in the UI">
-          <QuestionMarkCircleIcon className="cursor-help h-5 ml-1 w-4" />
-        </Tooltip>
-      </div>}
+      {unrecognizedPlugin && (
+        <div className="flex text-sm  text-orange mb-1">
+          <ExclamationIcon className="flex-shrink-0 h-5 w-5 mr-2" />
+          Unrecognized plugin
+          <Tooltip content="This DAO uses an unrecognised vote weight plugin - your vote weight may be shown incorrectly in the UI">
+            <QuestionMarkCircleIcon className="cursor-help h-5 ml-1 w-4" />
+          </Tooltip>
+        </div>
+      )}
       <div className={'p-3 rounded-md bg-bkg-1'}>
         <div className="text-fgd-3 text-xs">
           {tokenName}

@@ -21,7 +21,7 @@ export const STAKE_SANCTUM_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         return (
           <>

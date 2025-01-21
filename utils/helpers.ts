@@ -53,7 +53,7 @@ export function preventNegativeNumberInput(ev) {
 }
 
 export const firstOrNull = <T>(
-  arr: ReadonlyArray<T> | null | undefined
+  arr: ReadonlyArray<T> | null | undefined,
 ): T | null => {
   if (arr !== null && arr !== undefined) {
     return arr[0] ?? null
@@ -64,7 +64,7 @@ export const firstOrNull = <T>(
 export async function getFilteredProgramAccounts(
   connection: Connection,
   programId: PublicKey,
-  filters
+  filters,
 ): Promise<{ publicKey: PublicKey; accountInfo: AccountInfo<Buffer> }[]> {
   // @ts-ignore
   const resp = await connection._rpcRequest('getProgramAccounts', [
@@ -87,14 +87,14 @@ export async function getFilteredProgramAccounts(
         owner: new PublicKey(owner),
         lamports,
       },
-    })
+    }),
   )
 }
 
 export const getProposalDepositPk = (
   proposal: PublicKey,
   proposalOwnerWallet: PublicKey,
-  programId: PublicKey
+  programId: PublicKey,
 ) => {
   const [proposalDeposit] = PublicKey.findProgramAddressSync(
     [
@@ -102,7 +102,7 @@ export const getProposalDepositPk = (
       proposal.toBuffer(),
       proposalOwnerWallet.toBuffer(),
     ],
-    programId
+    programId,
   )
   return proposalDeposit
 }

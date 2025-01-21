@@ -29,7 +29,7 @@ import useGovernanceAssets from '@hooks/useGovernanceAssets'
 
 const formReducer = (
   state: PsyFinanceExerciseOption,
-  action: Partial<PsyFinanceExerciseOption>
+  action: Partial<PsyFinanceExerciseOption>,
 ) => ({
   ...state,
   ...action,
@@ -58,22 +58,23 @@ const ExerciseOption = ({
       options?.find((optionAcct) =>
         optionAcct.account.optionMint.equals(
           form.optionTokenAccount?.extensions.token?.account.mint ??
-            PublicKey.default
-        )
+            PublicKey.default,
+        ),
       ),
-    [form.optionTokenAccount?.extensions.token?.account.mint, options]
+    [form.optionTokenAccount?.extensions.token?.account.mint, options],
   )
   const quoteAssetAccounts = useMemo(
     () =>
-      governedTokenAccountsWithoutNfts.filter((govAcct) =>
-        govAcct.extensions.token?.account.mint.equals(
-          selectedOptionAccount?.account.quoteAssetMint ?? PublicKey.default
-        )
+      governedTokenAccountsWithoutNfts.filter(
+        (govAcct) =>
+          govAcct.extensions.token?.account.mint.equals(
+            selectedOptionAccount?.account.quoteAssetMint ?? PublicKey.default,
+          ),
       ),
     [
       governedTokenAccountsWithoutNfts,
       selectedOptionAccount?.account.quoteAssetMint,
-    ]
+    ],
   )
 
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -85,7 +86,7 @@ const ExerciseOption = ({
     const program = new Program(
       PsyAmericanIdl,
       PSY_AMERICAN_PROGRAM_ID,
-      anchorProvider
+      anchorProvider,
     )
 
     const prerequisiteInstructions: TransactionInstruction[] = []
@@ -94,15 +95,14 @@ const ExerciseOption = ({
       throw new Error('Invalid option from writer token account')
     }
 
-    const {
-      currentAddress: underlyingDestination,
-      needToCreateAta,
-    } = await getATA({
-      connection,
-      receiverAddress: form.optionTokenAccount!.extensions.token!.account.owner,
-      mintPK: selectedOptionAccount.account.underlyingAssetMint,
-      wallet,
-    })
+    const { currentAddress: underlyingDestination, needToCreateAta } =
+      await getATA({
+        connection,
+        receiverAddress:
+          form.optionTokenAccount!.extensions.token!.account.owner,
+        mintPK: selectedOptionAccount.account.underlyingAssetMint,
+        wallet,
+      })
     if (needToCreateAta) {
       prerequisiteInstructions.push(
         Token.createAssociatedTokenAccountInstruction(
@@ -111,20 +111,20 @@ const ExerciseOption = ({
           selectedOptionAccount.account.underlyingAssetMint,
           underlyingDestination,
           form.optionTokenAccount!.extensions.token!.account.owner,
-          wallet?.publicKey as PublicKey
-        )
+          wallet?.publicKey as PublicKey,
+        ),
       )
     }
 
     const ix = program.instruction.exerciseOptionV2(new BN(form.size), {
       accounts: {
         userAuthority: form.optionTokenAccount.extensions.token!.account.owner,
-        optionAuthority: form.optionTokenAccount.extensions.token!.account
-          .owner,
+        optionAuthority:
+          form.optionTokenAccount.extensions.token!.account.owner,
         optionMarket: selectedOptionAccount.publicKey,
         optionMint: selectedOptionAccount.account.optionMint,
-        exerciserOptionTokenSrc: form.optionTokenAccount.extensions.token!
-          .account.address,
+        exerciserOptionTokenSrc:
+          form.optionTokenAccount.extensions.token!.account.address,
         underlyingAssetPool: selectedOptionAccount.account.underlyingAssetPool,
         underlyingAssetDest: underlyingDestination,
         quoteAssetPool: selectedOptionAccount.account.quoteAssetPool,
@@ -144,7 +144,7 @@ const ExerciseOption = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.optionTokenAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, handleSetInstructions, index])

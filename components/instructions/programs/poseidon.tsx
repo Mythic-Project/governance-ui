@@ -25,7 +25,7 @@ const common_instructions = (): Record<
     getDataUI: async (
       connection: web3.Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const tokenList = tokenPriceService._tokenList
       const _transferAmount = new BN(data.slice(8, 16), 'le')
@@ -35,45 +35,43 @@ const common_instructions = (): Record<
 
       // Get the mint information from the source token. This assumes the destination account was created in a prerequisite instruction
       const destinationTokenAccountInfo = await connection.getAccountInfo(
-        accounts[5].pubkey
+        accounts[5].pubkey,
       )
       const destinationTokenAccount = parseTokenAccountData(
         accounts[5].pubkey,
-        destinationTokenAccountInfo!.data
+        destinationTokenAccountInfo!.data,
       )
 
       // Get the mint information from the destination token
-      const [
-        sourceMintInfo,
-        destinationMintInfo,
-      ] = await connection.getMultipleAccountsInfo([
-        accounts[2].pubkey,
-        destinationTokenAccount.mint,
-      ])
+      const [sourceMintInfo, destinationMintInfo] =
+        await connection.getMultipleAccountsInfo([
+          accounts[2].pubkey,
+          destinationTokenAccount.mint,
+        ])
       const sourceMint = parseMintAccountData(sourceMintInfo!.data)
       const destinationMint = parseMintAccountData(destinationMintInfo!.data)
 
       const transferAmount = getMintDecimalAmountFromNatural(
         sourceMint,
-        _transferAmount
+        _transferAmount,
       )
       const boundedPriceNumerator = getMintDecimalAmountFromNatural(
         sourceMint,
-        _boundedPriceNumerator
+        _boundedPriceNumerator,
       )
       const boundedPriceDenominator = getMintDecimalAmountFromNatural(
         destinationMint,
-        _boundedPriceDenominator
+        _boundedPriceDenominator,
       )
       const limitPrice = boundedPriceDenominator.dividedBy(
-        boundedPriceNumerator
+        boundedPriceNumerator,
       )
 
       const sourceToken = tokenList.find(
-        (x) => x.address === accounts[2].pubkey.toString()
+        (x) => x.address === accounts[2].pubkey.toString(),
       )
       const destinationToken = tokenList.find(
-        (x) => x.address === destinationTokenAccount.mint.toString()
+        (x) => x.address === destinationTokenAccount.mint.toString(),
       )
 
       const reclaimDate = new Date(_reclaimDate.toNumber() * 1_000)

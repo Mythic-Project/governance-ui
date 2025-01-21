@@ -5,4 +5,4 @@ export interface EndpointInfo {
   url: string
 }
 
-export type GovernanceRole = 'council' | 'community';
+export type GovernanceRole = 'council' | 'community'

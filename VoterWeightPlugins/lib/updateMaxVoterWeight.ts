@@ -1,8 +1,5 @@
-import {
-  PublicKey,
-  TransactionInstruction,
-} from '@solana/web3.js'
-import {VoterWeightPluginInfo} from "./types";
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { VoterWeightPluginInfo } from './types'
 
 interface UpdateMaxVoterWeightRecordArgs {
   realmPublicKey: PublicKey
@@ -18,10 +15,11 @@ export const updateMaxVoterWeight = async ({
   const ixes: TransactionInstruction[] = []
 
   for (const plugin of plugins) {
-    const updateMaxVoterWeightRecordIx = await plugin.client.updateMaxVoterWeightRecord(
-      realmPublicKey,
-      governanceMintPublicKey
-    )
+    const updateMaxVoterWeightRecordIx =
+      await plugin.client.updateMaxVoterWeightRecord(
+        realmPublicKey,
+        governanceMintPublicKey,
+      )
     if (updateMaxVoterWeightRecordIx) ixes.push(updateMaxVoterWeightRecordIx)
   }
   return ixes

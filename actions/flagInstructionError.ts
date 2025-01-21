@@ -12,7 +12,7 @@ import { sendTransactionsV3 } from '@utils/sendTransactions'
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
-  proposalInstruction: PublicKey
+  proposalInstruction: PublicKey,
 ) => {
   const governanceAuthority = walletPubkey
 
@@ -30,7 +30,7 @@ export const flagInstructionError = async (
     proposal.pubkey,
     proposal.account.tokenOwnerRecord,
     governanceAuthority,
-    proposalInstruction
+    proposalInstruction,
   )
 
   const txes = [instructions].map((txBatch) => {

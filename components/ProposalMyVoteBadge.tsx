@@ -1,4 +1,9 @@
-import { Proposal, ProgramAccount, VoteType, GovernanceAccountType } from '@solana/spl-governance'
+import {
+  Proposal,
+  ProgramAccount,
+  VoteType,
+  GovernanceAccountType,
+} from '@solana/spl-governance'
 import classNames from 'classnames'
 import { ThumbUpIcon, ThumbDownIcon } from '@heroicons/react/solid'
 import { isYesVote } from '@models/voteRecords'
@@ -17,19 +22,20 @@ interface Props {
 export default function ProposalMyVoteBadge(props: Props) {
   const realm = useRealmQuery().data?.result
   const wallet = useWalletOnePointOh()
-  const isMulti = props.proposal.account.voteType !== VoteType.SINGLE_CHOICE
-   && props.proposal.account.accountType === GovernanceAccountType.ProposalV2
+  const isMulti =
+    props.proposal.account.voteType !== VoteType.SINGLE_CHOICE &&
+    props.proposal.account.accountType === GovernanceAccountType.ProposalV2
 
   const { data: tokenOwnerRecordPk } = useAddressQuery_TokenOwnerRecord(
     realm?.owner,
     realm?.pubkey,
     props.proposal.account.governingTokenMint,
-    wallet?.publicKey ?? undefined
+    wallet?.publicKey ?? undefined,
   )
   const { data: voteRecordPk } = useAddressQuery_VoteRecord(
     realm?.owner,
     props.proposal.pubkey,
-    tokenOwnerRecordPk
+    tokenOwnerRecordPk,
   )
   const { data: ownVoteRecord } = useVoteRecordByPubkeyQuery(voteRecordPk)
 
@@ -39,7 +45,15 @@ export default function ProposalMyVoteBadge(props: Props) {
 
   const isYes = isYesVote(ownVoteRecord?.result?.account)
   return (
-    <Tooltip content={isYes ? isMulti ? 'You have already voted on this proposal' : 'You voted "Yes"' : 'You voted "No"'}>
+    <Tooltip
+      content={
+        isYes
+          ? isMulti
+            ? 'You have already voted on this proposal'
+            : 'You voted "Yes"'
+          : 'You voted "No"'
+      }
+    >
       <div
         className={classNames(
           props.className,
@@ -52,7 +66,7 @@ export default function ProposalMyVoteBadge(props: Props) {
           'p-[6px]',
           'text-white',
           'text-xs',
-          isYes ? 'border-[#8EFFDD]' : 'border-[#FF7C7C]'
+          isYes ? 'border-[#8EFFDD]' : 'border-[#FF7C7C]',
         )}
       >
         {isYes ? (

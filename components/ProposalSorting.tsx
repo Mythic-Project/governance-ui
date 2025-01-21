@@ -40,7 +40,7 @@ interface Props {
 
 const ProposalSorting = ({ className, disabled, onChange, sorting }: Props) => {
   const hiddenCount = Object.values(sorting).filter(
-    (x) => x !== SORTING_OPTIONS.NONE
+    (x) => x !== SORTING_OPTIONS.NONE,
   ).length
   return (
     <Disclosure as="div" className={classNames('relative', className)}>

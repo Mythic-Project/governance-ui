@@ -52,7 +52,7 @@ const useCountdown = ({
 
     const totalSecondsRemaining = Math.max(
       0,
-      maxVotingTime - totalSecondsElapsed
+      maxVotingTime - totalSecondsElapsed,
     )
     if (totalSecondsRemaining <= 0) {
       return { state: 'done' } as const
@@ -158,14 +158,14 @@ export const TimerBar = ({
     <div
       /** The colored bar */ className={clsx(
         'flex',
-        size === 'xs' ? 'h-[1.5px]' : 'h-[4px]'
+        size === 'xs' ? 'h-[1.5px]' : 'h-[4px]',
       )}
     >
       <div
         /** Unrestricted voting time elapsed */ style={{
           flex: Math.min(
             countdown.total.secondsElapsed,
-            governance.config.baseVotingTime
+            governance.config.baseVotingTime,
           ),
         }}
         className="bg-sky-900"
@@ -182,7 +182,7 @@ export const TimerBar = ({
         /** Unrestricted voting time remaining */ style={{
           flex: Math.max(
             0,
-            governance.config.baseVotingTime - countdown.total.secondsElapsed
+            governance.config.baseVotingTime - countdown.total.secondsElapsed,
           ),
         }}
         className="bg-sky-500"
@@ -193,7 +193,7 @@ export const TimerBar = ({
           flex: Math.min(
             countdown.total.secondsElapsed - governance.config.baseVotingTime,
             governance.config.baseVotingTime +
-              governance.config.votingCoolOffTime
+              governance.config.votingCoolOffTime,
           ),
         }}
         className="bg-[#665425]"
@@ -216,8 +216,8 @@ export const TimerBar = ({
               Math.max(
                 0,
                 countdown.total.secondsElapsed -
-                  governance.config.baseVotingTime
-              )
+                  governance.config.baseVotingTime,
+              ),
           ),
         }}
         className="bg-amber-500"
@@ -238,7 +238,7 @@ const Notch = ({
       size={20}
       className={clsx(
         'absolute text-white left-1/2 -translate-x-1/2',
-        size === 'xs' ? 'top-[-13px] scale-50' : 'top-[-16px]'
+        size === 'xs' ? 'top-[-13px] scale-50' : 'top-[-16px]',
       )}
     />
   </div>

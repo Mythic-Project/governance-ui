@@ -64,7 +64,7 @@ const RealmBox = React.forwardRef<HTMLDivElement, IRealmBox>(
         </div>
       )}
     </div>
-  )
+  ),
 )
 
 function RealmsGrid({
@@ -101,7 +101,7 @@ function RealmsGrid({
     setGridRealms((array) => arrayMove(array, oldIndex, newIndex))
     localStorage.setItem(
       STORAGE_REALMS,
-      JSON.stringify(arrayMove(gridRealms, oldIndex, newIndex))
+      JSON.stringify(arrayMove(gridRealms, oldIndex, newIndex)),
     )
   }
 
@@ -133,8 +133,8 @@ function RealmsGrid({
     // grid inserts random blank space for an empty scroll element, so we dont display it
     Array.from(
       document.getElementsByClassName(
-        'erd_scroll_detection_container'
-      ) as HTMLCollectionOf<HTMLElement>
+        'erd_scroll_detection_container',
+      ) as HTMLCollectionOf<HTMLElement>,
     ).forEach((el) => (el.style['display'] = 'none'))
   })
 
@@ -165,7 +165,7 @@ function RealmsGrid({
     if (
       draggedItem &&
       !newGridRealms.find(
-        (r) => r.realmId.toString() == draggedItem.realmId.toString()
+        (r) => r.realmId.toString() == draggedItem.realmId.toString(),
       )
     )
       newGridRealms.push(draggedItem)
@@ -204,7 +204,7 @@ function RealmsGrid({
               gridRealms.map(
                 (realm) =>
                   filteredRealms.find(
-                    (r) => r.realmId.toString() === realm.realmId.toString()
+                    (r) => r.realmId.toString() === realm.realmId.toString(),
                   ) && (
                     <SortableItem key={realm?.realmId.toString()}>
                       <RealmBox
@@ -216,7 +216,7 @@ function RealmsGrid({
                         inGrid={true}
                       />
                     </SortableItem>
-                  )
+                  ),
               )}
           </SortableList>
           {editing && gridRealms?.length === 0 && (
@@ -234,7 +234,7 @@ function RealmsGrid({
               filteredRealms.map(
                 (realm) =>
                   !gridRealms?.find(
-                    (r) => r.realmId.toString() == realm.realmId.toString()
+                    (r) => r.realmId.toString() == realm.realmId.toString(),
                   ) && (
                     <div
                       draggable={editing}
@@ -264,7 +264,7 @@ function RealmsGrid({
                         theme={theme}
                       />
                     </div>
-                  )
+                  ),
               )}
           </div>
         </div>
@@ -276,7 +276,7 @@ function RealmsGrid({
               certifiedRealms.map(
                 (realm) =>
                   !gridRealms?.find(
-                    (r) => r.realmId.toString() == realm.realmId.toString()
+                    (r) => r.realmId.toString() == realm.realmId.toString(),
                   ) && (
                     <div key={realm?.realmId.toString()}>
                       <RealmBox
@@ -287,7 +287,7 @@ function RealmsGrid({
                         theme={theme}
                       />
                     </div>
-                  )
+                  ),
               )}
           </div>
           <h2 className="pt-12 mb-4">Uncharted DAOs</h2>
@@ -296,7 +296,7 @@ function RealmsGrid({
               unchartedRealms.map(
                 (realm) =>
                   !gridRealms?.find(
-                    (r) => r.realmId.toString() == realm.realmId.toString()
+                    (r) => r.realmId.toString() == realm.realmId.toString(),
                   ) && (
                     <div key={realm?.realmId.toString()}>
                       <RealmBox
@@ -307,7 +307,7 @@ function RealmsGrid({
                         theme={theme}
                       />
                     </div>
-                  )
+                  ),
               )}
           </div>
         </div>

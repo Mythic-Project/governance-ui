@@ -5,8 +5,8 @@ export function getAllSplGovernanceProgramIds(cluster = 'mainnet') {
   return [
     ...new Set(
       getCertifiedRealmInfos(getConnectionContext(cluster)).map((info) =>
-        info.programId.toBase58()
-      )
+        info.programId.toBase58(),
+      ),
     ),
   ]
 }

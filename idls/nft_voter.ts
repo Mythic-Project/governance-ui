@@ -1,1127 +1,1103 @@
 export type NftVoter = {
-  "version": "0.0.0",
-  "name": "nft_voter",
-  "instructions": [
+  version: '0.0.0'
+  name: 'nft_voter'
+  instructions: [
     {
-      "name": "createRegistrar",
-      "accounts": [
+      name: 'createRegistrar'
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": true,
-          "isSigner": false
+          name: 'registrar'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "governingTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'governingTokenMint'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realmAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'realmAuthority'
+          isMut: false
+          isSigner: true
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer'
+          isMut: true
+          isSigner: true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
+          name: 'systemProgram'
+          isMut: false
+          isSigner: false
+        },
+      ]
+      args: [
         {
-          "name": "maxCollections",
-          "type": "u8"
-        }
+          name: 'maxCollections'
+          type: 'u8'
+        },
       ]
     },
     {
-      "name": "createVoterWeightRecord",
-      "accounts": [
+      name: 'createVoterWeightRecord'
+      accounts: [
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realmGoverningTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'realmGoverningTokenMint'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer'
+          isMut: true
+          isSigner: true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
+          name: 'systemProgram'
+          isMut: false
+          isSigner: false
+        },
+      ]
+      args: [
         {
-          "name": "governingTokenOwner",
-          "type": "publicKey"
-        }
+          name: 'governingTokenOwner'
+          type: 'publicKey'
+        },
       ]
     },
     {
-      "name": "createMaxVoterWeightRecord",
-      "accounts": [
+      name: 'createMaxVoterWeightRecord'
+      accounts: [
         {
-          "name": "maxVoterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'maxVoterWeightRecord'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realmGoverningTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'realmGoverningTokenMint'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer'
+          isMut: true
+          isSigner: true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
+          name: 'systemProgram'
+          isMut: false
+          isSigner: false
+        },
+      ]
+      args: []
     },
     {
-      "name": "updateVoterWeightRecord",
-      "accounts": [
+      name: 'updateVoterWeightRecord'
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
+          name: 'voterWeightRecord'
+          isMut: true
+          isSigner: false
+        },
+      ]
+      args: [
         {
-          "name": "voterWeightAction",
-          "type": {
-            "defined": "VoterWeightAction"
+          name: 'voterWeightAction'
+          type: {
+            defined: 'VoterWeightAction'
           }
-        }
+        },
       ]
     },
     {
-      "name": "relinquishNftVote",
-      "accounts": [
+      name: 'relinquishNftVote'
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "governance",
-          "isMut": false,
-          "isSigner": false
+          name: 'governance'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "proposal",
-          "isMut": false,
-          "isSigner": false
+          name: 'proposal'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterTokenOwnerRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voterTokenOwnerRecord'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'voterAuthority'
+          isMut: false
+          isSigner: true
         },
         {
-          "name": "voteRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voteRecord'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "beneficiary",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": []
+          name: 'beneficiary'
+          isMut: true
+          isSigner: false
+        },
+      ]
+      args: []
     },
     {
-      "name": "configureCollection",
-      "accounts": [
+      name: 'configureCollection'
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": true,
-          "isSigner": false
+          name: 'registrar'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "realmAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'realmAuthority'
+          isMut: false
+          isSigner: true
         },
         {
-          "name": "collection",
-          "isMut": false,
-          "isSigner": false
+          name: 'collection'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "maxVoterWeightRecord",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
+          name: 'maxVoterWeightRecord'
+          isMut: true
+          isSigner: false
+        },
+      ]
+      args: [
         {
-          "name": "weight",
-          "type": "u64"
+          name: 'weight'
+          type: 'u64'
         },
         {
-          "name": "size",
-          "type": "u32"
-        }
+          name: 'size'
+          type: 'u32'
+        },
       ]
     },
     {
-      "name": "castNftVote",
-      "accounts": [
+      name: 'castNftVote'
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord'
+          isMut: true
+          isSigner: false
         },
         {
-          "name": "voterTokenOwnerRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voterTokenOwnerRecord'
+          isMut: false
+          isSigner: false
         },
         {
-          "name": "voterAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'voterAuthority'
+          isMut: false
+          isSigner: true
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer'
+          isMut: true
+          isSigner: true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "proposal",
-          "type": "publicKey"
-        }
+          name: 'systemProgram'
+          isMut: false
+          isSigner: false
+        },
       ]
-    }
-  ],
-  "accounts": [
-    {
-      "name": "nftVoteRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "proposal",
-            "type": "publicKey"
-          },
-          {
-            "name": "nftMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "governingTokenOwner",
-            "type": "publicKey"
-          }
-        ]
-      }
+      args: [
+        {
+          name: 'proposal'
+          type: 'publicKey'
+        },
+      ]
     },
-    {
-      "name": "maxVoterWeightRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "realm",
-            "type": "publicKey"
-          },
-          {
-            "name": "governingTokenMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "maxVoterWeight",
-            "type": "u64"
-          },
-          {
-            "name": "maxVoterWeightExpiry",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "registrar",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "governanceProgramId",
-            "type": "publicKey"
-          },
-          {
-            "name": "realm",
-            "type": "publicKey"
-          },
-          {
-            "name": "governingTokenMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "collectionConfigs",
-            "type": {
-              "vec": {
-                "defined": "CollectionConfig"
-              }
-            }
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                128
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "voterWeightRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "realm",
-            "type": "publicKey"
-          },
-          {
-            "name": "governingTokenMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "governingTokenOwner",
-            "type": "publicKey"
-          },
-          {
-            "name": "voterWeight",
-            "type": "u64"
-          },
-          {
-            "name": "voterWeightExpiry",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "weightAction",
-            "type": {
-              "option": {
-                "defined": "VoterWeightAction"
-              }
-            }
-          },
-          {
-            "name": "weightActionTarget",
-            "type": {
-              "option": "publicKey"
-            }
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ],
-  "types": [
-    {
-      "name": "CollectionConfig",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "collection",
-            "type": "publicKey"
-          },
-          {
-            "name": "size",
-            "type": "u32"
-          },
-          {
-            "name": "weight",
-            "type": "u64"
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "NftVoterError",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "InvalidRealmAuthority"
-          },
-          {
-            "name": "InvalidRealmForRegistrar"
-          },
-          {
-            "name": "InvalidCollectionSize"
-          },
-          {
-            "name": "InvalidMaxVoterWeightRecordRealm"
-          },
-          {
-            "name": "InvalidMaxVoterWeightRecordMint"
-          },
-          {
-            "name": "CastVoteIsNotAllowed"
-          },
-          {
-            "name": "InvalidVoterWeightRecordRealm"
-          },
-          {
-            "name": "InvalidVoterWeightRecordMint"
-          },
-          {
-            "name": "InvalidTokenOwnerForVoterWeightRecord"
-          },
-          {
-            "name": "CollectionMustBeVerified"
-          },
-          {
-            "name": "VoterDoesNotOwnNft"
-          },
-          {
-            "name": "CollectionNotFound"
-          },
-          {
-            "name": "MissingMetadataCollection"
-          },
-          {
-            "name": "TokenMetadataDoesNotMatch"
-          },
-          {
-            "name": "InvalidAccountOwner"
-          },
-          {
-            "name": "InvalidTokenMetadataAccount"
-          },
-          {
-            "name": "DuplicatedNftDetected"
-          },
-          {
-            "name": "InvalidNftAmount"
-          },
-          {
-            "name": "NftAlreadyVoted"
-          },
-          {
-            "name": "InvalidProposalForNftVoteRecord"
-          },
-          {
-            "name": "InvalidTokenOwnerForNftVoteRecord"
-          },
-          {
-            "name": "VoteRecordMustBeWithdrawn"
-          },
-          {
-            "name": "InvalidVoteRecordForNftVoteRecord"
-          },
-          {
-            "name": "VoterWeightRecordMustBeExpired"
-          },
-          {
-            "name": "CannotConfigureCollectionWithVotingProposals"
-          }
-        ]
-      }
-    },
-    {
-      "name": "VoterWeightAction",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "CastVote"
-          },
-          {
-            "name": "CommentProposal"
-          },
-          {
-            "name": "CreateGovernance"
-          },
-          {
-            "name": "CreateProposal"
-          },
-          {
-            "name": "SignOffProposal"
-          }
-        ]
-      }
-    }
   ]
-};
+  accounts: [
+    {
+      name: 'nftVoteRecord'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'proposal'
+            type: 'publicKey'
+          },
+          {
+            name: 'nftMint'
+            type: 'publicKey'
+          },
+          {
+            name: 'governingTokenOwner'
+            type: 'publicKey'
+          },
+        ]
+      }
+    },
+    {
+      name: 'maxVoterWeightRecord'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'realm'
+            type: 'publicKey'
+          },
+          {
+            name: 'governingTokenMint'
+            type: 'publicKey'
+          },
+          {
+            name: 'maxVoterWeight'
+            type: 'u64'
+          },
+          {
+            name: 'maxVoterWeightExpiry'
+            type: {
+              option: 'u64'
+            }
+          },
+          {
+            name: 'reserved'
+            type: {
+              array: ['u8', 8]
+            }
+          },
+        ]
+      }
+    },
+    {
+      name: 'registrar'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'governanceProgramId'
+            type: 'publicKey'
+          },
+          {
+            name: 'realm'
+            type: 'publicKey'
+          },
+          {
+            name: 'governingTokenMint'
+            type: 'publicKey'
+          },
+          {
+            name: 'collectionConfigs'
+            type: {
+              vec: {
+                defined: 'CollectionConfig'
+              }
+            }
+          },
+          {
+            name: 'reserved'
+            type: {
+              array: ['u8', 128]
+            }
+          },
+        ]
+      }
+    },
+    {
+      name: 'voterWeightRecord'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'realm'
+            type: 'publicKey'
+          },
+          {
+            name: 'governingTokenMint'
+            type: 'publicKey'
+          },
+          {
+            name: 'governingTokenOwner'
+            type: 'publicKey'
+          },
+          {
+            name: 'voterWeight'
+            type: 'u64'
+          },
+          {
+            name: 'voterWeightExpiry'
+            type: {
+              option: 'u64'
+            }
+          },
+          {
+            name: 'weightAction'
+            type: {
+              option: {
+                defined: 'VoterWeightAction'
+              }
+            }
+          },
+          {
+            name: 'weightActionTarget'
+            type: {
+              option: 'publicKey'
+            }
+          },
+          {
+            name: 'reserved'
+            type: {
+              array: ['u8', 8]
+            }
+          },
+        ]
+      }
+    },
+  ]
+  types: [
+    {
+      name: 'CollectionConfig'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'collection'
+            type: 'publicKey'
+          },
+          {
+            name: 'size'
+            type: 'u32'
+          },
+          {
+            name: 'weight'
+            type: 'u64'
+          },
+          {
+            name: 'reserved'
+            type: {
+              array: ['u8', 8]
+            }
+          },
+        ]
+      }
+    },
+    {
+      name: 'NftVoterError'
+      type: {
+        kind: 'enum'
+        variants: [
+          {
+            name: 'InvalidRealmAuthority'
+          },
+          {
+            name: 'InvalidRealmForRegistrar'
+          },
+          {
+            name: 'InvalidCollectionSize'
+          },
+          {
+            name: 'InvalidMaxVoterWeightRecordRealm'
+          },
+          {
+            name: 'InvalidMaxVoterWeightRecordMint'
+          },
+          {
+            name: 'CastVoteIsNotAllowed'
+          },
+          {
+            name: 'InvalidVoterWeightRecordRealm'
+          },
+          {
+            name: 'InvalidVoterWeightRecordMint'
+          },
+          {
+            name: 'InvalidTokenOwnerForVoterWeightRecord'
+          },
+          {
+            name: 'CollectionMustBeVerified'
+          },
+          {
+            name: 'VoterDoesNotOwnNft'
+          },
+          {
+            name: 'CollectionNotFound'
+          },
+          {
+            name: 'MissingMetadataCollection'
+          },
+          {
+            name: 'TokenMetadataDoesNotMatch'
+          },
+          {
+            name: 'InvalidAccountOwner'
+          },
+          {
+            name: 'InvalidTokenMetadataAccount'
+          },
+          {
+            name: 'DuplicatedNftDetected'
+          },
+          {
+            name: 'InvalidNftAmount'
+          },
+          {
+            name: 'NftAlreadyVoted'
+          },
+          {
+            name: 'InvalidProposalForNftVoteRecord'
+          },
+          {
+            name: 'InvalidTokenOwnerForNftVoteRecord'
+          },
+          {
+            name: 'VoteRecordMustBeWithdrawn'
+          },
+          {
+            name: 'InvalidVoteRecordForNftVoteRecord'
+          },
+          {
+            name: 'VoterWeightRecordMustBeExpired'
+          },
+          {
+            name: 'CannotConfigureCollectionWithVotingProposals'
+          },
+        ]
+      }
+    },
+    {
+      name: 'VoterWeightAction'
+      type: {
+        kind: 'enum'
+        variants: [
+          {
+            name: 'CastVote'
+          },
+          {
+            name: 'CommentProposal'
+          },
+          {
+            name: 'CreateGovernance'
+          },
+          {
+            name: 'CreateProposal'
+          },
+          {
+            name: 'SignOffProposal'
+          },
+        ]
+      }
+    },
+  ]
+}
 
 export const IDL: NftVoter = {
-  "version": "0.0.0",
-  "name": "nft_voter",
-  "instructions": [
+  version: '0.0.0',
+  name: 'nft_voter',
+  instructions: [
     {
-      "name": "createRegistrar",
-      "accounts": [
+      name: 'createRegistrar',
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": true,
-          "isSigner": false
+          name: 'registrar',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "governingTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'governingTokenMint',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realmAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'realmAuthority',
+          isMut: false,
+          isSigner: true,
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer',
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "maxCollections",
-          "type": "u8"
-        }
-      ]
+          name: 'maxCollections',
+          type: 'u8',
+        },
+      ],
     },
     {
-      "name": "createVoterWeightRecord",
-      "accounts": [
+      name: 'createVoterWeightRecord',
+      accounts: [
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realmGoverningTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'realmGoverningTokenMint',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer',
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "governingTokenOwner",
-          "type": "publicKey"
-        }
-      ]
+          name: 'governingTokenOwner',
+          type: 'publicKey',
+        },
+      ],
     },
     {
-      "name": "createMaxVoterWeightRecord",
-      "accounts": [
+      name: 'createMaxVoterWeightRecord',
+      accounts: [
         {
-          "name": "maxVoterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'maxVoterWeightRecord',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "governanceProgramId",
-          "isMut": false,
-          "isSigner": false
+          name: 'governanceProgramId',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realmGoverningTokenMint",
-          "isMut": false,
-          "isSigner": false
+          name: 'realmGoverningTokenMint',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer',
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": []
+      args: [],
     },
     {
-      "name": "updateVoterWeightRecord",
-      "accounts": [
+      name: 'updateVoterWeightRecord',
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
-        }
+          name: 'voterWeightRecord',
+          isMut: true,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "voterWeightAction",
-          "type": {
-            "defined": "VoterWeightAction"
-          }
-        }
-      ]
+          name: 'voterWeightAction',
+          type: {
+            defined: 'VoterWeightAction',
+          },
+        },
+      ],
     },
     {
-      "name": "relinquishNftVote",
-      "accounts": [
+      name: 'relinquishNftVote',
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "governance",
-          "isMut": false,
-          "isSigner": false
+          name: 'governance',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "proposal",
-          "isMut": false,
-          "isSigner": false
+          name: 'proposal',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterTokenOwnerRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voterTokenOwnerRecord',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'voterAuthority',
+          isMut: false,
+          isSigner: true,
         },
         {
-          "name": "voteRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voteRecord',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "beneficiary",
-          "isMut": true,
-          "isSigner": false
-        }
+          name: 'beneficiary',
+          isMut: true,
+          isSigner: false,
+        },
       ],
-      "args": []
+      args: [],
     },
     {
-      "name": "configureCollection",
-      "accounts": [
+      name: 'configureCollection',
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": true,
-          "isSigner": false
+          name: 'registrar',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "realm",
-          "isMut": false,
-          "isSigner": false
+          name: 'realm',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "realmAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'realmAuthority',
+          isMut: false,
+          isSigner: true,
         },
         {
-          "name": "collection",
-          "isMut": false,
-          "isSigner": false
+          name: 'collection',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "maxVoterWeightRecord",
-          "isMut": true,
-          "isSigner": false
-        }
+          name: 'maxVoterWeightRecord',
+          isMut: true,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "weight",
-          "type": "u64"
+          name: 'weight',
+          type: 'u64',
         },
         {
-          "name": "size",
-          "type": "u32"
-        }
-      ]
+          name: 'size',
+          type: 'u32',
+        },
+      ],
     },
     {
-      "name": "castNftVote",
-      "accounts": [
+      name: 'castNftVote',
+      accounts: [
         {
-          "name": "registrar",
-          "isMut": false,
-          "isSigner": false
+          name: 'registrar',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterWeightRecord",
-          "isMut": true,
-          "isSigner": false
+          name: 'voterWeightRecord',
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "voterTokenOwnerRecord",
-          "isMut": false,
-          "isSigner": false
+          name: 'voterTokenOwnerRecord',
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "voterAuthority",
-          "isMut": false,
-          "isSigner": true
+          name: 'voterAuthority',
+          isMut: false,
+          isSigner: true,
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
+          name: 'payer',
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "proposal",
-          "type": "publicKey"
-        }
-      ]
-    }
+          name: 'proposal',
+          type: 'publicKey',
+        },
+      ],
+    },
   ],
-  "accounts": [
+  accounts: [
     {
-      "name": "nftVoteRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: 'nftVoteRecord',
+      type: {
+        kind: 'struct',
+        fields: [
           {
-            "name": "proposal",
-            "type": "publicKey"
+            name: 'proposal',
+            type: 'publicKey',
           },
           {
-            "name": "nftMint",
-            "type": "publicKey"
+            name: 'nftMint',
+            type: 'publicKey',
           },
           {
-            "name": "governingTokenOwner",
-            "type": "publicKey"
-          }
-        ]
-      }
+            name: 'governingTokenOwner',
+            type: 'publicKey',
+          },
+        ],
+      },
     },
     {
-      "name": "maxVoterWeightRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: 'maxVoterWeightRecord',
+      type: {
+        kind: 'struct',
+        fields: [
           {
-            "name": "realm",
-            "type": "publicKey"
+            name: 'realm',
+            type: 'publicKey',
           },
           {
-            "name": "governingTokenMint",
-            "type": "publicKey"
+            name: 'governingTokenMint',
+            type: 'publicKey',
           },
           {
-            "name": "maxVoterWeight",
-            "type": "u64"
+            name: 'maxVoterWeight',
+            type: 'u64',
           },
           {
-            "name": "maxVoterWeightExpiry",
-            "type": {
-              "option": "u64"
-            }
+            name: 'maxVoterWeightExpiry',
+            type: {
+              option: 'u64',
+            },
           },
           {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
+            name: 'reserved',
+            type: {
+              array: ['u8', 8],
+            },
+          },
+        ],
+      },
     },
     {
-      "name": "registrar",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: 'registrar',
+      type: {
+        kind: 'struct',
+        fields: [
           {
-            "name": "governanceProgramId",
-            "type": "publicKey"
+            name: 'governanceProgramId',
+            type: 'publicKey',
           },
           {
-            "name": "realm",
-            "type": "publicKey"
+            name: 'realm',
+            type: 'publicKey',
           },
           {
-            "name": "governingTokenMint",
-            "type": "publicKey"
+            name: 'governingTokenMint',
+            type: 'publicKey',
           },
           {
-            "name": "collectionConfigs",
-            "type": {
-              "vec": {
-                "defined": "CollectionConfig"
-              }
-            }
+            name: 'collectionConfigs',
+            type: {
+              vec: {
+                defined: 'CollectionConfig',
+              },
+            },
           },
           {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                128
-              ]
-            }
-          }
-        ]
-      }
+            name: 'reserved',
+            type: {
+              array: ['u8', 128],
+            },
+          },
+        ],
+      },
     },
     {
-      "name": "voterWeightRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: 'voterWeightRecord',
+      type: {
+        kind: 'struct',
+        fields: [
           {
-            "name": "realm",
-            "type": "publicKey"
+            name: 'realm',
+            type: 'publicKey',
           },
           {
-            "name": "governingTokenMint",
-            "type": "publicKey"
+            name: 'governingTokenMint',
+            type: 'publicKey',
           },
           {
-            "name": "governingTokenOwner",
-            "type": "publicKey"
+            name: 'governingTokenOwner',
+            type: 'publicKey',
           },
           {
-            "name": "voterWeight",
-            "type": "u64"
+            name: 'voterWeight',
+            type: 'u64',
           },
           {
-            "name": "voterWeightExpiry",
-            "type": {
-              "option": "u64"
-            }
+            name: 'voterWeightExpiry',
+            type: {
+              option: 'u64',
+            },
           },
           {
-            "name": "weightAction",
-            "type": {
-              "option": {
-                "defined": "VoterWeightAction"
-              }
-            }
+            name: 'weightAction',
+            type: {
+              option: {
+                defined: 'VoterWeightAction',
+              },
+            },
           },
           {
-            "name": "weightActionTarget",
-            "type": {
-              "option": "publicKey"
-            }
+            name: 'weightActionTarget',
+            type: {
+              option: 'publicKey',
+            },
           },
           {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
-    }
+            name: 'reserved',
+            type: {
+              array: ['u8', 8],
+            },
+          },
+        ],
+      },
+    },
   ],
-  "types": [
+  types: [
     {
-      "name": "CollectionConfig",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: 'CollectionConfig',
+      type: {
+        kind: 'struct',
+        fields: [
           {
-            "name": "collection",
-            "type": "publicKey"
+            name: 'collection',
+            type: 'publicKey',
           },
           {
-            "name": "size",
-            "type": "u32"
+            name: 'size',
+            type: 'u32',
           },
           {
-            "name": "weight",
-            "type": "u64"
+            name: 'weight',
+            type: 'u64',
           },
           {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          }
-        ]
-      }
+            name: 'reserved',
+            type: {
+              array: ['u8', 8],
+            },
+          },
+        ],
+      },
     },
     {
-      "name": "NftVoterError",
-      "type": {
-        "kind": "enum",
-        "variants": [
+      name: 'NftVoterError',
+      type: {
+        kind: 'enum',
+        variants: [
           {
-            "name": "InvalidRealmAuthority"
+            name: 'InvalidRealmAuthority',
           },
           {
-            "name": "InvalidRealmForRegistrar"
+            name: 'InvalidRealmForRegistrar',
           },
           {
-            "name": "InvalidCollectionSize"
+            name: 'InvalidCollectionSize',
           },
           {
-            "name": "InvalidMaxVoterWeightRecordRealm"
+            name: 'InvalidMaxVoterWeightRecordRealm',
           },
           {
-            "name": "InvalidMaxVoterWeightRecordMint"
+            name: 'InvalidMaxVoterWeightRecordMint',
           },
           {
-            "name": "CastVoteIsNotAllowed"
+            name: 'CastVoteIsNotAllowed',
           },
           {
-            "name": "InvalidVoterWeightRecordRealm"
+            name: 'InvalidVoterWeightRecordRealm',
           },
           {
-            "name": "InvalidVoterWeightRecordMint"
+            name: 'InvalidVoterWeightRecordMint',
           },
           {
-            "name": "InvalidTokenOwnerForVoterWeightRecord"
+            name: 'InvalidTokenOwnerForVoterWeightRecord',
           },
           {
-            "name": "CollectionMustBeVerified"
+            name: 'CollectionMustBeVerified',
           },
           {
-            "name": "VoterDoesNotOwnNft"
+            name: 'VoterDoesNotOwnNft',
           },
           {
-            "name": "CollectionNotFound"
+            name: 'CollectionNotFound',
           },
           {
-            "name": "MissingMetadataCollection"
+            name: 'MissingMetadataCollection',
           },
           {
-            "name": "TokenMetadataDoesNotMatch"
+            name: 'TokenMetadataDoesNotMatch',
           },
           {
-            "name": "InvalidAccountOwner"
+            name: 'InvalidAccountOwner',
           },
           {
-            "name": "InvalidTokenMetadataAccount"
+            name: 'InvalidTokenMetadataAccount',
           },
           {
-            "name": "DuplicatedNftDetected"
+            name: 'DuplicatedNftDetected',
           },
           {
-            "name": "InvalidNftAmount"
+            name: 'InvalidNftAmount',
           },
           {
-            "name": "NftAlreadyVoted"
+            name: 'NftAlreadyVoted',
           },
           {
-            "name": "InvalidProposalForNftVoteRecord"
+            name: 'InvalidProposalForNftVoteRecord',
           },
           {
-            "name": "InvalidTokenOwnerForNftVoteRecord"
+            name: 'InvalidTokenOwnerForNftVoteRecord',
           },
           {
-            "name": "VoteRecordMustBeWithdrawn"
+            name: 'VoteRecordMustBeWithdrawn',
           },
           {
-            "name": "InvalidVoteRecordForNftVoteRecord"
+            name: 'InvalidVoteRecordForNftVoteRecord',
           },
           {
-            "name": "VoterWeightRecordMustBeExpired"
+            name: 'VoterWeightRecordMustBeExpired',
           },
           {
-            "name": "CannotConfigureCollectionWithVotingProposals"
-          }
-        ]
-      }
+            name: 'CannotConfigureCollectionWithVotingProposals',
+          },
+        ],
+      },
     },
     {
-      "name": "VoterWeightAction",
-      "type": {
-        "kind": "enum",
-        "variants": [
+      name: 'VoterWeightAction',
+      type: {
+        kind: 'enum',
+        variants: [
           {
-            "name": "CastVote"
+            name: 'CastVote',
           },
           {
-            "name": "CommentProposal"
+            name: 'CommentProposal',
           },
           {
-            "name": "CreateGovernance"
+            name: 'CreateGovernance',
           },
           {
-            "name": "CreateProposal"
+            name: 'CreateProposal',
           },
           {
-            "name": "SignOffProposal"
-          }
-        ]
-      }
-    }
-  ]
-};
+            name: 'SignOffProposal',
+          },
+        ],
+      },
+    },
+  ],
+}

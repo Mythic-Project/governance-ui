@@ -1,8 +1,5 @@
-import {
-  PublicKey,
-  TransactionInstruction,
-} from '@solana/web3.js'
-import {VoterWeightPluginInfo} from "./types";
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { VoterWeightPluginInfo } from './types'
 
 interface CreateMaxVoterWeightRecordArgs {
   realmPublicKey: PublicKey
@@ -28,19 +25,19 @@ export const createMaxVoterWeight = async ({
     if (!voterWeightRecord) {
       const ix = await client.createMaxVoterWeightRecord(
         realmPublicKey,
-        governanceMintPublicKey
+        governanceMintPublicKey,
       )
       if (ix) ixes.push(ix)
     }
 
     const maxVoterWeightRecord = await client.getMaxVoterWeightRecord(
       realmPublicKey,
-      governanceMintPublicKey
+      governanceMintPublicKey,
     )
     if (!maxVoterWeightRecord) {
       const ix = await client.createMaxVoterWeightRecord(
         realmPublicKey,
-        governanceMintPublicKey
+        governanceMintPublicKey,
       )
       if (ix) ixes.push(ix)
     }

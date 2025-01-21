@@ -6,13 +6,13 @@ import base58 from 'bs58'
 export function getExplorerUrl(
   endpoint: string,
   viewTypeOrItemAddress: 'inspector' | PublicKey | string,
-  itemType = 'address'
+  itemType = 'address',
 ) {
   const getClusterUrlParam = () => {
     let cluster = ''
     if (endpoint === 'localnet') {
       cluster = `custom&customUrl=${encodeURIComponent(
-        'http://127.0.0.1:8899'
+        'http://127.0.0.1:8899',
       )}`
     } else if (endpoint === 'https://api.devnet.solana.com') {
       // if the default free RPC for devnet is used
@@ -33,16 +33,16 @@ export async function getExplorerInspectorUrl(
   connection: ConnectionContext,
   transaction: TransactionOrVersionedTransaction<
     ReadonlySet<TransactionVersion>
-  >
+  >,
 ) {
   const SIGNATURE_LENGTH = 64
 
   const explorerUrl = new URL(
-    getExplorerUrl(connection.endpoint, 'inspector', 'tx')
+    getExplorerUrl(connection.endpoint, 'inspector', 'tx'),
   )
 
   const signatures = transaction.signatures.map((s) =>
-    base58.encode(s.signature ?? Buffer.alloc(SIGNATURE_LENGTH))
+    base58.encode(s.signature ?? Buffer.alloc(SIGNATURE_LENGTH)),
   )
   explorerUrl.searchParams.append('signatures', JSON.stringify(signatures))
 

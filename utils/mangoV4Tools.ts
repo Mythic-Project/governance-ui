@@ -7,7 +7,7 @@ import EmptyWallet from './Mango/listingTools'
 export function getChangedValues<T extends Record<keyof T, any>>(
   originalValues: T,
   newValues: T,
-  ignoredFields?: string[]
+  ignoredFields?: string[],
 ) {
   const values: any = {}
   for (const key of Object.keys(originalValues)) {
@@ -31,7 +31,7 @@ export function getChangedValues<T extends Record<keyof T, any>>(
 export function getNullOrTransform<T>(
   val: any,
   classTransformer: (new (val: any) => T) | null,
-  functionTransformer?: (val) => T
+  functionTransformer?: (val) => T,
 ): T | null {
   if (val === null) {
     return null
@@ -53,7 +53,7 @@ export const getClient = async (connection: Connection) => {
       const adminProvider = new AnchorProvider(
         connection,
         new EmptyWallet(Keypair.generate()),
-        options
+        options,
       )
       const client = MangoClient.connect(
         adminProvider,
@@ -61,7 +61,7 @@ export const getClient = async (connection: Connection) => {
         MANGO_V4_ID['mainnet-beta'],
         {
           idsSource: 'api',
-        }
+        },
       )
 
       return client
@@ -71,7 +71,7 @@ export const getClient = async (connection: Connection) => {
 }
 export const getGroupForClient = async (
   client: MangoClient,
-  groupPk: PublicKey
+  groupPk: PublicKey,
 ) => {
   const group = await queryClient.fetchQuery({
     queryKey: ['mangoGroup', groupPk.toBase58(), client.connection.rpcEndpoint],

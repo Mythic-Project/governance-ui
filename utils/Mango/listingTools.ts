@@ -39,7 +39,7 @@ export const REDUCE_ONLY_OPTIONS = [
 ]
 
 const MAINNET_PYTH_PROGRAM = new PublicKey(
-  'FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH'
+  'FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH',
 )
 
 export type FlatListingArgs = {
@@ -220,12 +220,12 @@ type ProposedListingPresets = {
 export const getFormattedListingPresets = (
   uiDeposits?: number,
   decimals?: number,
-  tokenPrice?: number
+  tokenPrice?: number,
 ) => {
   const PRESETS = LISTING_PRESETS
 
   const PROPOSED_LISTING_PRESETS: ProposedListingPresets = Object.keys(
-    PRESETS
+    PRESETS,
   ).reduce((accumulator, key) => {
     let adjustedPreset = PRESETS[key]
     try {
@@ -234,7 +234,7 @@ export const getFormattedListingPresets = (
           PRESETS[key],
           uiDeposits,
           tokenPrice,
-          toUiDecimals(PRESETS[key].netBorrowLimitPerWindowQuote, 6)
+          toUiDecimals(PRESETS[key].netBorrowLimitPerWindowQuote, 6),
         )
       }
 
@@ -242,7 +242,7 @@ export const getFormattedListingPresets = (
         adjustedPreset = getPresetWithAdjustedDepositLimit(
           adjustedPreset,
           tokenPrice,
-          decimals
+          decimals,
         )
       }
     } catch (e) {
@@ -260,7 +260,7 @@ const fetchJupiterRoutes = async (
   amount = 0,
   swapMode = 'ExactIn',
   slippage = 50,
-  feeBps = 0
+  feeBps = 0,
 ) => {
   {
     try {
@@ -277,7 +277,7 @@ const fetchJupiterRoutes = async (
         process.env.NEXT_PUBLIC_JUPTER_SWAP_API_ENDPOINT ||
         'https://quote-api.jup.ag/v6'
       const response = await fetch(
-        `${jupiterSwapBaseUrl}/quote?${paramsString}`
+        `${jupiterSwapBaseUrl}/quote?${paramsString}`,
       )
 
       const res = await response.json()
@@ -301,68 +301,68 @@ export const getSuggestedCoinPresetInfo = async (outputMint: string) => {
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
-        toNative(250000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
-        toNative(100000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
-        toNative(20000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
-        toNative(10000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
-        toNative(5000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
-        toNative(1000, 6).toNumber()
-      ),
-      fetchJupiterRoutes(
-        USDC_MINT.toBase58(),
-        outputMint,
         toNative(250000, 6).toNumber(),
-        'ExactOut'
       ),
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
         toNative(100000, 6).toNumber(),
-        'ExactOut'
       ),
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
         toNative(20000, 6).toNumber(),
-        'ExactOut'
       ),
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
-        toNative(20000, 6).toNumber(),
-        'ExactOut'
+        toNative(10000, 6).toNumber(),
       ),
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
         toNative(5000, 6).toNumber(),
-        'ExactOut'
       ),
       fetchJupiterRoutes(
         USDC_MINT.toBase58(),
         outputMint,
         toNative(1000, 6).toNumber(),
-        'ExactOut'
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(250000, 6).toNumber(),
+        'ExactOut',
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(100000, 6).toNumber(),
+        'ExactOut',
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(20000, 6).toNumber(),
+        'ExactOut',
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(20000, 6).toNumber(),
+        'ExactOut',
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(5000, 6).toNumber(),
+        'ExactOut',
+      ),
+      fetchJupiterRoutes(
+        USDC_MINT.toBase58(),
+        outputMint,
+        toNative(1000, 6).toNumber(),
+        'ExactOut',
       ),
     ])
     const bestRoutesSwaps = swaps
@@ -373,7 +373,7 @@ export const getSuggestedCoinPresetInfo = async (outputMint: string) => {
       (acc: { amount: string; priceImpactPct: number }[], val) => {
         if (val.swapMode === 'ExactIn') {
           const exactOutRoute = bestRoutesSwaps.find(
-            (x) => x.outAmount === val.inAmount && x.swapMode === 'ExactOut'
+            (x) => x.outAmount === val.inAmount && x.swapMode === 'ExactOut',
           )
 
           acc.push({
@@ -387,11 +387,11 @@ export const getSuggestedCoinPresetInfo = async (outputMint: string) => {
         }
         return acc
       },
-      []
+      [],
     )
 
     const indexForTargetAmount = averageSwaps.findIndex(
-      (x) => x?.priceImpactPct && x?.priceImpactPct * 100 < 1
+      (x) => x?.priceImpactPct && x?.priceImpactPct * 100 < 1,
     )
 
     const targetAmount =
@@ -401,7 +401,7 @@ export const getSuggestedCoinPresetInfo = async (outputMint: string) => {
 
     const preset: LISTING_PRESET =
       Object.values(PRESETS).find(
-        (x) => x.preset_target_amount === targetAmount
+        (x) => x.preset_target_amount === targetAmount,
       ) || PRESETS.UNTRUSTED
 
     return {
@@ -422,7 +422,7 @@ export const getSuggestedCoinPresetInfo = async (outputMint: string) => {
 
 export const compareObjectsAndGetDifferentKeys = <T extends object>(
   object1: T,
-  object2: T
+  object2: T,
 ): (keyof T)[] => {
   const diffKeys: string[] = []
 
@@ -437,7 +437,7 @@ export const compareObjectsAndGetDifferentKeys = <T extends object>(
 
 const isSwitchboardOracle = async (
   connection: Connection,
-  feedPk: PublicKey
+  feedPk: PublicKey,
 ) => {
   const SWITCHBOARD_PROGRAM_ID = 'SW1TCH7qEPTdLsDHRgPuMQjbQxKdH2aBStViMFnt64f'
 
@@ -445,16 +445,16 @@ const isSwitchboardOracle = async (
   const provider = new AnchorProvider(
     connection,
     new EmptyWallet(Keypair.generate()),
-    options
+    options,
   )
   const idl = await Program.fetchIdl(
     new PublicKey(SWITCHBOARD_PROGRAM_ID),
-    provider
+    provider,
   )
   const switchboardProgram = new Program(
     idl!,
     new PublicKey(SWITCHBOARD_PROGRAM_ID),
-    provider
+    provider,
   )
   const feeds = await switchboardProgram.account.aggregatorAccountData.all()
   const feed = feeds.find((x) => x.publicKey.equals(feedPk))
@@ -466,12 +466,12 @@ const isSwitchboardOracle = async (
 
 export const isPythOracle = async (
   connection: Connection,
-  feedPk: PublicKey
+  feedPk: PublicKey,
 ) => {
   const pythClient = new PythHttpClient(connection, MAINNET_PYTH_PROGRAM)
   const pythAccounts = await pythClient.getData()
   const feed = pythAccounts.products.find(
-    (x) => x.price_account === feedPk.toBase58()
+    (x) => x.price_account === feedPk.toBase58(),
   )
 
   if (feed) {
@@ -505,7 +505,7 @@ export default class EmptyWallet implements Wallet {
   constructor(readonly payer: Keypair) {}
 
   async signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
+    tx: T,
   ): Promise<T> {
     if (tx instanceof Transaction) {
       tx.partialSign(this.payer)
@@ -515,7 +515,7 @@ export default class EmptyWallet implements Wallet {
   }
 
   async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
+    txs: T[],
   ): Promise<T[]> {
     return txs.map((t) => {
       if (t instanceof Transaction) {
@@ -548,7 +548,7 @@ export const getBestMarket = async ({
       connection,
       new PublicKey(baseMint),
       new PublicKey(quoteMint),
-      dexProgramPk
+      dexProgramPk,
     )
 
     if (!markets.length) {
@@ -556,7 +556,7 @@ export const getBestMarket = async ({
     }
     const marketsDataJsons = await Promise.all([
       ...markets.map((x) =>
-        fetch(`/openSerumApi/market/${x.publicKey.toBase58()}`)
+        fetch(`/openSerumApi/market/${x.publicKey.toBase58()}`),
       ),
     ])
     const marketsData = await Promise.all([
@@ -570,7 +570,7 @@ export const getBestMarket = async ({
       error = 'Openbook market had 0 volume in last 24h check it carefully'
     }
     sortedMarkets = sortedMarkets.sort(
-      (a, b) => b.quoteDepositsTotal - a.quoteDepositsTotal
+      (a, b) => b.quoteDepositsTotal - a.quoteDepositsTotal,
     )
     firstBestMarket = sortedMarkets[0]
 
@@ -588,7 +588,7 @@ export const getBestMarket = async ({
 export const decodePriceFromOracleAi = async (
   ai: AccountInfo<Buffer>,
   connection: Connection,
-  type: string
+  type: string,
 ): Promise<{
   uiPrice: number
   lastUpdatedSlot: number
@@ -612,7 +612,7 @@ export const decodePriceFromOracleAi = async (
         .latestConfirmedRound!.roundOpenSlot!.toNumber()
       deviation = (
         (switchboardDecimalToBig(
-          program.decodeAggregator(ai).latestConfirmedRound.stdDeviation
+          program.decodeAggregator(ai).latestConfirmedRound.stdDeviation,
         ).toNumber() /
           uiPrice) *
         100
@@ -646,11 +646,11 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
     fallbackOracle: bank.fallbackOracle.toBase58(),
     stablePrice: toUiDecimals(
       I80F48.fromNumber(bank.stablePriceModel.stablePrice),
-      bank.mintDecimals
+      bank.mintDecimals,
     ),
     maxStalenessSlots: bank.oracleConfig.maxStalenessSlots.toNumber(),
     lastStablePriceUpdated: new Date(
-      1000 * bank.stablePriceModel.lastUpdateTimestamp.toNumber()
+      1000 * bank.stablePriceModel.lastUpdateTimestamp.toNumber(),
     ).toUTCString(),
     stablePriceGrowthLimitsDelay: (
       100 * bank.stablePriceModel.delayGrowthLimit
@@ -664,7 +664,7 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
     ).toFixed(2),
     collectedFeesNative: toUiDecimals(
       bank.collectedFeesNative.toNumber(),
-      bank.mintDecimals
+      bank.mintDecimals,
     ).toFixed(2),
     collectedFeesNativePrice: (
       toUiDecimals(bank.collectedFeesNative.toNumber(), bank.mintDecimals) *
@@ -673,22 +673,22 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
     dust: bank.dust.toNumber(),
     deposits: toUiDecimals(
       bank.indexedDeposits.mul(bank.depositIndex).toNumber(),
-      bank.mintDecimals
+      bank.mintDecimals,
     ),
     depositsPrice: (
       toUiDecimals(
         bank.indexedDeposits.mul(bank.depositIndex).toNumber(),
-        bank.mintDecimals
+        bank.mintDecimals,
       ) * bank.uiPrice
     ).toFixed(2),
     borrows: toUiDecimals(
       bank.indexedBorrows.mul(bank.borrowIndex).toNumber(),
-      bank.mintDecimals
+      bank.mintDecimals,
     ),
     borrowsPrice: (
       toUiDecimals(
         bank.indexedBorrows.mul(bank.borrowIndex).toNumber(),
-        bank.mintDecimals
+        bank.mintDecimals,
       ) * bank.uiPrice
     ).toFixed(2),
     avgUtilization: bank.avgUtilization.toNumber() * 100,
@@ -699,10 +699,10 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
     scaledInitAssetWeight: bank.scaledInitAssetWeight(bank.price).toFixed(2),
     scaledInitLiabWeight: bank.scaledInitLiabWeight(bank.price).toFixed(2),
     depositWeightScaleStartQuote: toUiDecimalsForQuote(
-      bank.depositWeightScaleStartQuote
+      bank.depositWeightScaleStartQuote,
     ),
     borrowWeightScaleStartQuote: toUiDecimalsForQuote(
-      bank.borrowWeightScaleStartQuote
+      bank.borrowWeightScaleStartQuote,
     ),
     rate0: (100 * bank.rate0.toNumber()).toFixed(2),
     util0: (100 * bank.util0.toNumber()).toFixed(),
@@ -713,10 +713,10 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
     depositRate: bank.getDepositRateUi(),
     borrowRate: bank.getBorrowRateUi(),
     lastIndexUpdate: new Date(
-      1000 * bank.indexLastUpdated.toNumber()
+      1000 * bank.indexLastUpdated.toNumber(),
     ).toUTCString(),
     lastRatesUpdate: new Date(
-      1000 * bank.bankRateLastUpdated.toNumber()
+      1000 * bank.bankRateLastUpdated.toNumber(),
     ).toUTCString(),
     oracleConfFilter:
       bank.oracleConfig.confFilter.toNumber() === Number.MAX_SAFE_INTEGER
@@ -724,18 +724,18 @@ export const getFormattedBankValues = (group: Group, bank: Bank) => {
         : (100 * bank.oracleConfig.confFilter.toNumber()).toFixed(2),
     minVaultToDepositsRatio: bank.minVaultToDepositsRatio * 100,
     netBorrowsInWindow: toUiDecimalsForQuote(
-      I80F48.fromI64(bank.netBorrowsInWindow).mul(bank.price)
+      I80F48.fromI64(bank.netBorrowsInWindow).mul(bank.price),
     ).toFixed(2),
     netBorrowLimitPerWindowQuote: toUiDecimals(
       bank.netBorrowLimitPerWindowQuote,
-      6
+      6,
     ),
     liquidationFee: (bank.liquidationFee.toNumber() * 100).toFixed(2),
     platformLiquidationFee: (
       bank.platformLiquidationFee.toNumber() * 100
     ).toFixed(2),
     netBorrowLimitWindowSizeTs: secondsToHours(
-      bank.netBorrowLimitWindowSizeTs.toNumber()
+      bank.netBorrowLimitWindowSizeTs.toNumber(),
     ),
     depositLimit: bank.depositLimit.toString(),
     interestTargetUtilization: bank.interestTargetUtilization,

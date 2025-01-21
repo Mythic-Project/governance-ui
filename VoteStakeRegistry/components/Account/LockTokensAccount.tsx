@@ -17,7 +17,10 @@ import { MintInfo } from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
 import tokenPriceService from '@utils/services/tokenPrice'
 import { getDeposits } from 'VoteStakeRegistry/tools/deposits'
-import {DepositWithMintAccount, Registrar} from 'VoteStakeRegistry/sdk/accounts'
+import {
+  DepositWithMintAccount,
+  Registrar,
+} from 'VoteStakeRegistry/sdk/accounts'
 import useDepositStore from 'VoteStakeRegistry/stores/useDepositStore'
 import { notify } from '@utils/notifications'
 import {
@@ -43,7 +46,7 @@ import {
 } from '@hooks/queries/mintInfo'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useVsrGovpower } from '@hooks/queries/plugins/vsr'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
 
 interface DepositBox {
   mintPk: PublicKey
@@ -63,11 +66,11 @@ const LockTokensAccount: React.FC<{
   const councilMint = useRealmCouncilMintInfoQuery().data?.result
   const { realmInfo } = useRealm()
   const [isLockModalOpen, setIsLockModalOpen] = useState(false)
-  const { vsrClient: client, plugin } = useVsrClient();
-  const registrar = plugin?.params as Registrar | undefined;
+  const { vsrClient: client, plugin } = useVsrClient()
+  const registrar = plugin?.params as Registrar | undefined
 
   const isZeroMultiplierConfig = !registrar?.votingMints.filter(
-    (x) => !x.maxExtraLockupVoteWeightScaledFactor.isZero()
+    (x) => !x.maxExtraLockupVoteWeightScaledFactor.isZero(),
   ).length
 
   const [reducedDeposits, setReducedDeposits] = useState<DepositBox[]>([])
@@ -75,13 +78,12 @@ const LockTokensAccount: React.FC<{
   const [deposits, setDeposits] = useState<DepositWithMintAccount[]>([])
   const votingPower = useVsrGovpower().data?.result ?? new BN(0)
   const [votingPowerFromDeposits, setVotingPowerFromDeposits] = useState<BN>(
-    new BN(0)
+    new BN(0),
   )
   const [isOwnerOfDeposits, setIsOwnerOfDeposits] = useState(true)
 
-  const { data: tokenOwnerRecord } = useTokenOwnerRecordByPubkeyQuery(
-    tokenOwnerRecordPk
-  )
+  const { data: tokenOwnerRecord } =
+    useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk)
   const tokenOwnerRecordWalletPk =
     tokenOwnerRecord?.result?.account.governingTokenOwner
 
@@ -140,7 +142,7 @@ const LockTokensAccount: React.FC<{
                 x.currentAmount = x.currentAmount.add(
                   unlockedTypes.includes(x.lockUpKind)
                     ? next.available
-                    : next.currentlyLocked
+                    : next.currentlyLocked,
                 )
               }
               return x
@@ -200,7 +202,7 @@ const LockTokensAccount: React.FC<{
           realm.owner,
           realm.pubkey,
           depositMint,
-          publicKey
+          publicKey,
         )
         setIsOwnerOfDeposits(tokenOwnerRecordAddress.equals(tokenOwnerRecordPk))
       }
@@ -226,8 +228,8 @@ const LockTokensAccount: React.FC<{
                   realm?.account.communityMint.toBase58() &&
                 depo.isUsed &&
                 !depo.allowClawback &&
-                depo.isUsed
-            )?.index
+                depo.isUsed,
+            )?.index,
         )
     )
   }, [deposits, realm?.account.communityMint])
@@ -292,12 +294,12 @@ const LockTokensAccount: React.FC<{
                   {reducedDeposits?.map((x, idx) => {
                     const availableTokens = fmtMintAmount(
                       x.mint,
-                      x.currentAmount
+                      x.currentAmount,
                     )
                     const price =
                       getMintDecimalAmountFromNatural(
                         x.mint,
-                        x.currentAmount
+                        x.currentAmount,
                       ).toNumber() *
                       tokenPriceService.getUSDTokenPrice(x.mintPk.toBase58())
                     const tokenName =
@@ -361,11 +363,15 @@ const LockTokensAccount: React.FC<{
                             realm?.account.communityMint.toBase58() &&
                           depo.isUsed &&
                           !depo.allowClawback &&
-                          depo.isUsed
-                      )?.index
+                          depo.isUsed,
+                      )?.index,
                   )
                   ?.map((x, idx) => (
-                    <DepositCard deposit={x} key={idx} registrar={registrar}></DepositCard>
+                    <DepositCard
+                      deposit={x}
+                      key={idx}
+                      registrar={registrar}
+                    ></DepositCard>
                   ))}
                 {!isZeroMultiplierConfig && (
                   <div className="border border-fgd-4 flex flex-col items-center justify-center p-6 rounded-lg">

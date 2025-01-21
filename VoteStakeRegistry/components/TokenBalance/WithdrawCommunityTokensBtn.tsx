@@ -50,7 +50,7 @@ const WithDrawCommunityTokens = () => {
   const depositRecord = deposits.find(
     (x) =>
       x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
-      x.lockup.kind.none
+      x.lockup.kind.none,
   )
   const withdrawAllTokens = async function () {
     setIsLoading(true)
@@ -60,19 +60,19 @@ const WithDrawCommunityTokens = () => {
       const voteRecords = await getUnrelinquishedVoteRecords(
         connection,
         realmInfo!.programId,
-        ownTokenRecord!.account!.governingTokenOwner
+        ownTokenRecord!.account!.governingTokenOwner,
       )
 
       for (const voteRecord of Object.values(voteRecords)) {
         const proposalQuery = await queryClient.fetchQuery({
           queryKey: proposalQueryKeys.byPubkey(
             connection.rpcEndpoint,
-            voteRecord.account.proposal
+            voteRecord.account.proposal,
           ),
           staleTime: 0,
           queryFn: () =>
             asFindable(() =>
-              getProposal(connection, voteRecord.account.proposal)
+              getProposal(connection, voteRecord.account.proposal),
             )(),
         })
         const proposal = proposalQuery.result
@@ -87,7 +87,7 @@ const WithDrawCommunityTokens = () => {
             const governance = (
               await fetchGovernanceByPubkey(
                 connection,
-                proposal.account.governance
+                proposal.account.governance,
               )
             ).result
             if (!governance) throw new Error('failed to fetch governance')
@@ -102,7 +102,7 @@ const WithDrawCommunityTokens = () => {
                 message: `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
               })
               throw new Error(
-                `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`
+                `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
               )
             } else {
               // finalize proposal before withdrawing tokens so we don't stop the vote from succeeding
@@ -115,7 +115,7 @@ const WithDrawCommunityTokens = () => {
                 proposal.pubkey,
                 proposal.account.tokenOwnerRecord,
                 proposal.account.governingTokenMint,
-                maxVoterWeight
+                maxVoterWeight,
               )
             }
           }
@@ -135,7 +135,7 @@ const WithDrawCommunityTokens = () => {
           proposal.account.governingTokenMint,
           voteRecord.pubkey,
           ownTokenRecord!.account.governingTokenOwner,
-          wallet!.publicKey!
+          wallet!.publicKey!,
         )
       }
     }
@@ -185,13 +185,13 @@ const WithDrawCommunityTokens = () => {
       queryClient.invalidateQueries(
         tokenAccountQueryKeys.byOwner(
           connection.rpcEndpoint,
-          wallet!.publicKey!
-        )
+          wallet!.publicKey!,
+        ),
       )
     } catch (ex) {
       console.error(
         "Can't withdraw tokens, go to my proposals in account view to check outstanding proposals",
-        ex
+        ex,
       )
     }
     setIsLoading(false)

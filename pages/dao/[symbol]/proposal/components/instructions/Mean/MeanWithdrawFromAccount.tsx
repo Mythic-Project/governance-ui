@@ -61,7 +61,7 @@ const MeanWithdrawFromAccountComponent = ({ index, governance }: Props) => {
         governedAccount: form.governedTokenAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
   }, [form])
 
@@ -74,8 +74,8 @@ const MeanWithdrawFromAccountComponent = ({ index, governance }: Props) => {
       value: parseFloat(
         Math.max(
           mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)
-        ).toFixed(currentPrecision)
+          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -101,7 +101,7 @@ const MeanWithdrawFromAccountComponent = ({ index, governance }: Props) => {
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
 
   const governedTokenAccountsWithoutNftsJson = JSON.stringify(
-    governedTokenAccountsWithoutNfts
+    governedTokenAccountsWithoutNfts,
   )
   useEffect(() => {
     const value =
@@ -109,7 +109,7 @@ const MeanWithdrawFromAccountComponent = ({ index, governance }: Props) => {
       governedTokenAccountsWithoutNfts.find(
         (acc) =>
           acc.governance.pubkey.toBase58() ===
-            formPaymentStreamingAccount.owner.toString() && acc.isSol
+            formPaymentStreamingAccount.owner.toString() && acc.isSol,
       )
     setForm((prevForm) => ({
       ...prevForm,

@@ -42,7 +42,7 @@ export async function getMerkleAirdropInstruction({
 
     const amountNatural: BN = getMintNaturalAmountFromDecimalAsBN(
       form.amount,
-      form.treasury.extensions.mint?.account.decimals
+      form.treasury.extensions.mint?.account.decimals,
     )
 
     let root: number[] = []
@@ -53,21 +53,24 @@ export async function getMerkleAirdropInstruction({
         return parseInt(item, 10)
       })
     }
-    const airdropTransactionContext: AirdropConfigureContext = await airdrop.createConfigMerkleTransaction(
-      form.treasury.pubkey, // source
-      wallet.publicKey,
-      new BN(0),
-      root,
-      undefined,
-      form.treasury.extensions.token!.account.owner!, // close authority
-    )
+    const airdropTransactionContext: AirdropConfigureContext =
+      await airdrop.createConfigMerkleTransaction(
+        form.treasury.pubkey, // source
+        wallet.publicKey,
+        new BN(0),
+        root,
+        undefined,
+        form.treasury.extensions.token!.account.owner!, // close authority
+      )
     const prerequisiteInstructions: TransactionInstruction[] = []
     for (const instruction of airdropTransactionContext.transaction
       .instructions) {
       prerequisiteInstructions.push(instruction)
     }
 
-    const vaultAddress = airdrop.getVaultAddress(airdropTransactionContext.airdropState);
+    const vaultAddress = airdrop.getVaultAddress(
+      airdropTransactionContext.airdropState,
+    )
     const transferIx = Token.createTransferInstruction(
       TOKEN_PROGRAM_ID,
       form.treasury.pubkey,
@@ -114,28 +117,29 @@ export async function getGovernanceAirdropInstruction({
 
     const totalAmountNatural: BN = getMintNaturalAmountFromDecimalAsBN(
       form.amount,
-      form.treasury.extensions.mint?.account.decimals
+      form.treasury.extensions.mint?.account.decimals,
     )
 
     const amountPerVoterNatural: BN = getMintNaturalAmountFromDecimalAsBN(
       form.amountPerVoter,
-      form.treasury.extensions.mint?.account.decimals
+      form.treasury.extensions.mint?.account.decimals,
     )
 
-    const airdropTransactionContext: AirdropConfigureContext = await airdrop.createConfigGovernanceTransaction(
-      form.treasury.pubkey, // source
-      form.treasury.extensions.token!.account.owner!, // authority
-      totalAmountNatural,
-      amountPerVoterNatural,
-      new BN(form.eligibilityStart),
-      new BN(form.eligibilityEnd),
-      form.treasury.governance.pubkey, // reward voters of the treasury's governance
-    )
+    const airdropTransactionContext: AirdropConfigureContext =
+      await airdrop.createConfigGovernanceTransaction(
+        form.treasury.pubkey, // source
+        form.treasury.extensions.token!.account.owner!, // authority
+        totalAmountNatural,
+        amountPerVoterNatural,
+        new BN(form.eligibilityStart),
+        new BN(form.eligibilityEnd),
+        form.treasury.governance.pubkey, // reward voters of the treasury's governance
+      )
 
     for (const instruction of airdropTransactionContext.transaction
       .instructions) {
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(instruction)
+        serializeInstructionToBase64(instruction),
       )
     }
 

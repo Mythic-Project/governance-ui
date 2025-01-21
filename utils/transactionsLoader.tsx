@@ -20,7 +20,7 @@ export function closeTransactionProcessUi() {
 export function showTransactionError(
   retryCallback: () => Promise<void>,
   e: any,
-  txid: string
+  txid: string,
 ) {
   const { showTransactionError } = useTransactionsStore.getState()
   showTransactionError(retryCallback, e, txid)

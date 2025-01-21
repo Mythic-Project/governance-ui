@@ -29,7 +29,7 @@ interface HeliumVsrStore extends State {
   state: HeliumVsrStoreState
   resetState: () => void
   setMaxVoterWeight: (
-    maxVoterRecord: ProgramAccount<MaxVoterWeightRecord> | null
+    maxVoterRecord: ProgramAccount<MaxVoterWeightRecord> | null,
   ) => void
   getPositions: (args: GetPositionsArgs) => Promise<void>
   propagatePositions: (args: PropagatePositionsArgs) => void

@@ -125,7 +125,7 @@ const awaitTransactionSignatureConfirmation = async ({
               resolve(result)
             }
           },
-          confirmLevel
+          confirmLevel,
         )
       } catch (e) {
         done = true
@@ -140,16 +140,15 @@ const awaitTransactionSignatureConfirmation = async ({
           try {
             const promises: [
               Promise<RpcResponseAndContext<(SignatureStatus | null)[]>>,
-              Promise<number>?
+              Promise<number>?,
             ] = [connection.getSignatureStatuses([txid])]
             //if startTimeoutThreshold passed we start to check if
             //current blocks are did not passed timeoutBlockHeight threshold
             if (startTimeoutCheck) {
               promises.push(connection.getBlockHeight('confirmed'))
             }
-            const [signatureStatuses, currentBlockHeight] = await Promise.all(
-              promises
-            )
+            const [signatureStatuses, currentBlockHeight] =
+              await Promise.all(promises)
             if (
               typeof currentBlockHeight !== undefined &&
               timeoutBlockHeight <= currentBlockHeight!
@@ -308,7 +307,7 @@ export const sendAndConfirmSignedTransaction = async ({
           connection,
           signedTransaction,
           'single',
-          config?.logFlowInfo
+          config?.logFlowInfo,
         )
       ).value
     } catch (e) {
@@ -354,7 +353,7 @@ export type sendSignAndConfirmTransactionsProps = {
     onError?: (
       e: any,
       notProcessedTransactions: TransactionInstructionWithType[],
-      originalProps: sendSignAndConfirmTransactionsProps
+      originalProps: sendSignAndConfirmTransactionsProps,
     ) => void
   }
   config?: {
@@ -424,7 +423,7 @@ export const sendSignAndConfirmTransactions = async ({
   const maxTransactionsInBath = config.maxTxesInBatch
   const currentTransactions = transactionInstructions.slice(
     0,
-    maxTransactionsInBath
+    maxTransactionsInBath,
   )
 
   // see NOTE 1 for explanation of how these transactions are used (they aren't signed)
@@ -486,21 +485,21 @@ export const sendSignAndConfirmTransactions = async ({
           payerKey: walletPk,
           instructions: tx.instructions,
           recentBlockhash: block.blockhash,
-        }).compileToV0Message(lookupTableAccounts)
-      )
+        }).compileToV0Message(lookupTableAccounts),
+      ),
   )
 
   const signers = currentTransactions.map((x) =>
-    x.instructionsSet.flatMap((y) => y.signers ?? [])
+    x.instructionsSet.flatMap((y) => y.signers ?? []),
   )
 
   versionedTxs.forEach((tx, i) => tx.sign(signers[i]))
 
   logger.log(transactionCallOrchestrator)
-  const signedTxns = ((await wallet.signAllTransactions(
+  const signedTxns = (await wallet.signAllTransactions(
     //@ts-ignore
-    versionedTxs
-  )) as unknown) as VersionedTransaction[]
+    versionedTxs,
+  )) as unknown as VersionedTransaction[]
   if (callbacks?.afterFirstBatchSign) {
     callbacks.afterFirstBatchSign(signedTxns.length)
   } else if (callbacks?.afterBatchSign) {
@@ -517,7 +516,7 @@ export const sendSignAndConfirmTransactions = async ({
             ? SequenceType[Number(x.sequenceType)]
             : 'Parallel',
       }
-    })
+    }),
   )
   logger.log('Signed transactions', signedTxns)
   try {
@@ -559,7 +558,7 @@ export const sendSignAndConfirmTransactions = async ({
                 }
               }
             })
-          })
+          }),
         )
       }
       if (fcn.sequenceType === SequenceType.Sequential) {
@@ -599,7 +598,7 @@ export const sendSignAndConfirmTransactions = async ({
     if (transactionInstructions.length > maxTransactionsInBath) {
       const forwardedTransactions = transactionInstructions.slice(
         maxTransactionsInBath,
-        transactionInstructions.length
+        transactionInstructions.length,
       )
       await sendSignAndConfirmTransactions({
         connection,
@@ -627,7 +626,7 @@ export const sendSignAndConfirmTransactions = async ({
         const idx = (e as any).txInstructionIdx
         const txInstructionForRetry = transactionInstructions.slice(
           idx,
-          transactionInstructions.length
+          transactionInstructions.length,
         )
         callbacks.onError(e, txInstructionForRetry, {
           connection,
@@ -656,7 +655,7 @@ export const sendSignAndConfirmTransactions = async ({
         config.retried++
         const txInstructionForRetry = transactionInstructions.slice(
           idx,
-          transactionInstructions.length
+          transactionInstructions.length,
         )
         await sendSignAndConfirmTransactions({
           connection,
@@ -680,7 +679,7 @@ async function simulateTransaction(
   connection: Connection,
   transaction: VersionedTransaction,
   commitment: Commitment,
-  logInfo?: boolean
+  logInfo?: boolean,
 ): Promise<RpcResponseAndContext<SimulatedTransactionResponse>> {
   const logger = new Logger({ logFlowInfo: !!logInfo })
   /* 
@@ -708,7 +707,7 @@ async function simulateTransaction(
   logger.log('res simulating transaction', res)
   if (res.value.err) {
     throw new Error(
-      'failed to simulate transaction: ' + JSON.stringify(res.value.err)
+      'failed to simulate transaction: ' + JSON.stringify(res.value.err),
     )
   }
   return res

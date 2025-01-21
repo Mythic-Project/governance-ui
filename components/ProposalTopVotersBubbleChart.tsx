@@ -76,7 +76,7 @@ function Content(props: Props) {
         .descendants()
         .slice(
           1,
-          props.maxNumBubbles
+          props.maxNumBubbles,
         ) as HierarchyCircularNode<VoterDisplayData>[]
 
       const group = parent
@@ -116,7 +116,7 @@ function Content(props: Props) {
         .style('pointer-events', 'none')
         .style('opacity', (d) => (d.data.key === props.highlighted ? 1 : 0.2))
         .style('transform', (d) =>
-          d.data.key === props.highlighted ? 'scale(1.5)' : 'scale(1)'
+          d.data.key === props.highlighted ? 'scale(1.5)' : 'scale(1)',
         )
         .attr('y', '0.5em')
         .text((d) => abbreviateAddress(d.data.name))
@@ -138,7 +138,7 @@ function Content(props: Props) {
 }
 
 export default function ProposalTopVotersBubbleChart(
-  props: Omit<Props, 'height' | 'width'>
+  props: Omit<Props, 'height' | 'width'>,
 ) {
   return (
     <div className={props.className}>

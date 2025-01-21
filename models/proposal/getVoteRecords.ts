@@ -31,6 +31,6 @@ export async function getVoteRecords({
 
   return pipe(
     accounts,
-    map((accounts) => Object.values(accounts))
+    map((accounts) => Object.values(accounts)),
   )
 }

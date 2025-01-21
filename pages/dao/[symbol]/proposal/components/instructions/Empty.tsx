@@ -42,7 +42,7 @@ const Empty = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -55,8 +55,8 @@ const Empty = ({
   return (
     <GovernedAccountSelect
       label="Wallet"
-      governedAccounts={assetAccounts.filter((x) =>
-        ownVoterWeight?.canCreateProposal(x.governance.account.config)
+      governedAccounts={assetAccounts.filter(
+        (x) => ownVoterWeight?.canCreateProposal(x.governance.account.config),
       )}
       onChange={(value) => {
         handleSetForm({ value, propertyName: 'governedAccount' })

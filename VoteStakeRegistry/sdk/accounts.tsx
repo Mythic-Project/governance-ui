@@ -66,11 +66,11 @@ export const emptyPk = '11111111111111111111111111111111'
 export const getRegistrarPDA = (
   realmPk: PublicKey,
   mint: PublicKey,
-  clientProgramId: PublicKey
+  clientProgramId: PublicKey,
 ) => {
   const [registrar, registrarBump] = PublicKey.findProgramAddressSync(
     [realmPk.toBuffer(), Buffer.from('registrar'), mint.toBuffer()],
-    clientProgramId
+    clientProgramId,
   )
   return {
     registrar,
@@ -81,11 +81,11 @@ export const getRegistrarPDA = (
 export const getVoterPDA = (
   registrar: PublicKey,
   walletPk: PublicKey,
-  clientProgramId: PublicKey
+  clientProgramId: PublicKey,
 ) => {
   const [voter, voterBump] = PublicKey.findProgramAddressSync(
     [registrar.toBuffer(), Buffer.from('voter'), walletPk.toBuffer()],
-    clientProgramId
+    clientProgramId,
   )
 
   return {
@@ -97,7 +97,7 @@ export const getVoterPDA = (
 export const getVoterWeightPDA = (
   registrar: PublicKey,
   walletPk: PublicKey,
-  clientProgramId: PublicKey
+  clientProgramId: PublicKey,
 ) => {
   const [voterWeightPk, voterWeightBump] = PublicKey.findProgramAddressSync(
     [
@@ -105,7 +105,7 @@ export const getVoterWeightPDA = (
       Buffer.from('voter-weight-record'),
       walletPk.toBuffer(),
     ],
-    clientProgramId
+    clientProgramId,
   )
 
   return {

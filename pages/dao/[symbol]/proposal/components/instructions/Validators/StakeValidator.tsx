@@ -143,11 +143,11 @@ const StakeValidator = ({
         signAllTransactions: wallet.signAllTransactions,
         signTransaction: wallet.signTransaction,
       },
-      { commitment: 'confirmed' }
+      { commitment: 'confirmed' },
     )
     const idl = await anchor.Program.fetchIdl(
       SOLANA_VALIDATOR_DAO_PROGRAM_ID,
-      provider
+      provider,
     )
     if (!idl) {
       console.log('idl is null')
@@ -156,7 +156,7 @@ const StakeValidator = ({
     const program = new anchor.Program(
       idl,
       SOLANA_VALIDATOR_DAO_PROGRAM_ID,
-      provider
+      provider,
     )
     const validatorVotePK = new PublicKey(form.validatorVoteKey)
     const governanceProgramId = realmInfo.programId
@@ -172,7 +172,7 @@ const StakeValidator = ({
         validatorVotePK.toBuffer(),
         seedBuffer,
       ],
-      SOLANA_VALIDATOR_DAO_PROGRAM_ID
+      SOLANA_VALIDATOR_DAO_PROGRAM_ID,
     )
 
     const stakeAmount = parseMintNaturalAmountFromDecimal(form.amount!, 9)
@@ -207,7 +207,7 @@ const StakeValidator = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -221,7 +221,7 @@ const StakeValidator = ({
       <GovernedAccountSelect
         label="Source account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

@@ -9,7 +9,7 @@ import { fetchDigitalAssetById } from '@hooks/queries/digitalAssets'
 import { getNetworkFromEndpoint } from '@utils/connection'
 import { useMintInfoByPubkeyQuery } from '@hooks/queries/mintInfo'
 import BigNumber from 'bignumber.js'
-import {useNftRegistrar} from "@hooks/useNftRegistrar";
+import { useNftRegistrar } from '@hooks/useNftRegistrar'
 
 interface CollectionConfig {
   collection: PublicKey
@@ -23,7 +23,7 @@ interface Props {
 
 export function NFTVotePluginSettingsDisplay(props: Props) {
   const { connection } = useConnection()
-  const registrar = useNftRegistrar();
+  const registrar = useNftRegistrar()
 
   const { result: configsWithNames } = useAsync(async () => {
     const collectionConfigs = (registrar?.collectionConfigs ||
@@ -35,11 +35,11 @@ export function NFTVotePluginSettingsDisplay(props: Props) {
       collectionConfigs.map(async (collectionConfig) => {
         const collectionNft = await fetchDigitalAssetById(
           network,
-          collectionConfig.collection
+          collectionConfig.collection,
         )
         const name = collectionNft?.result?.content.metadata.name
         return { name: name ?? 'Unknown Collection', ...collectionConfig }
-      })
+      }),
     )
   }, [connection.rpcEndpoint, registrar?.collectionConfigs])
 
@@ -79,7 +79,7 @@ export function NFTVotePluginSettingsDisplay(props: Props) {
                   'grid',
                   'mt-4',
                   'text-fgd-2',
-                  'text-sm'
+                  'text-sm',
                 )}
               >
                 <div className="text-white/50"># NFTs in Collection:</div>

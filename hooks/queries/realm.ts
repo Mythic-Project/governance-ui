@@ -32,7 +32,7 @@ export const useRealmsByProgramQuery = (program: PublicKey) => {
     queryFn: async () => {
       if (!enabled) throw new Error()
       const realms = (await getRealms(connection, program)).filter(
-        (x) => !HIDDEN_REALMS.includes(x.pubkey.toBase58())
+        (x) => !HIDDEN_REALMS.includes(x.pubkey.toBase58()),
       )
       return realms
     },
@@ -69,7 +69,7 @@ export const useRealmQuery = () => {
 
 export const fetchRealmByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   const endpoint = getNetworkFromEndpoint(connection.rpcEndpoint)
   return queryClient.fetchQuery({

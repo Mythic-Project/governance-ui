@@ -61,7 +61,7 @@ const DiscussionForm = () => {
       getProgramVersionForRealm(realmInfo),
       wallet,
       connection.current,
-      connection.endpoint
+      connection.endpoint,
     )
 
     const msg = new ChatMessageBody({
@@ -78,7 +78,7 @@ const DiscussionForm = () => {
         commenterVoterTokenRecord,
         msg,
         undefined,
-        ownTokenRecord ? votingClient : undefined // use votingClient only if the community TOR is used for commenting
+        ownTokenRecord ? votingClient : undefined, // use votingClient only if the community TOR is used for commenting
       )
 
       setComment('')

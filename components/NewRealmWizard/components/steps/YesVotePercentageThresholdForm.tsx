@@ -39,7 +39,7 @@ export const CouncilYesVotePercentageSchema = {
         if (_programVersion >= 3 && addCouncil) {
           return schema.required('Council yes threshold is required')
         }
-      }
+      },
     ),
 }
 
@@ -62,7 +62,7 @@ export default function YesVotePercentageForm({
     .object(
       forCommunity
         ? CommunityYesVotePercentageSchema
-        : CouncilYesVotePercentageSchema
+        : CouncilYesVotePercentageSchema,
     )
     .required()
   const {
@@ -90,7 +90,7 @@ export default function YesVotePercentageForm({
       forCommunity
         ? CommunityYesVotePercentageSchema
         : CouncilYesVotePercentageSchema,
-      setValue
+      setValue,
     )
   }, [forCommunity, formData, setValue])
 
@@ -156,7 +156,7 @@ export default function YesVotePercentageForm({
             </Text>
             <Text level="1" className="md:pt-2">
               {Math.ceil(
-                (yesVotePercentage * formData.memberAddresses.length) / 100
+                (yesVotePercentage * formData.memberAddresses.length) / 100,
               )}{' '}
               members would need to approve a proposal for it to pass.
             </Text>

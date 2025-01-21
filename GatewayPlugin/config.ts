@@ -36,9 +36,8 @@ export const availablePasses: {
 ]
 
 // Infer the types from the available passes, giving type safety on the `other` and `default` pass types
-type ArrayElement<
-  ArrayType extends readonly unknown[]
-> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never
+type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
 export type CivicPass = ArrayElement<typeof availablePasses>
 
 // Use this when populating a dropdown

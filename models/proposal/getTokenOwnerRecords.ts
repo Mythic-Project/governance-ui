@@ -34,6 +34,6 @@ export async function getTokenOwnerRecords({
 
   return pipe(
     accounts,
-    map((accounts) => Object.values(accounts))
+    map((accounts) => Object.values(accounts)),
   )
 }

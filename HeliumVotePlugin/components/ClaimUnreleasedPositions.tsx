@@ -18,7 +18,7 @@ import { useAddressQuery_CommunityTokenOwner } from '@hooks/queries/addresses/to
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmProposalsQuery } from '@hooks/queries/proposal'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 const NFT_SOL_BALANCE = 0.0014616
 
@@ -33,39 +33,39 @@ const ClaimUnreleasedPositions = ({
   const [ownVoteRecords, setOwnVoteRecords] = useState<any[]>([])
   const [solToBeClaimed, setSolToBeClaimed] = useState(0)
   const realm = useRealmQuery().data?.result
-  const { heliumClient } = useHeliumClient();
+  const { heliumClient } = useHeliumClient()
   const { data: proposalsArray } = useRealmProposalsQuery()
   const { data: tokenOwnerRecord } = useAddressQuery_CommunityTokenOwner()
-  const isHeliumVsr = !!heliumClient;
+  const isHeliumVsr = !!heliumClient
 
   const releasePositions = async () => {
     if (!wallet?.publicKey) throw new Error('no wallet')
     if (!realm) throw new Error()
     if (!tokenOwnerRecord) throw new Error()
-    if (!heliumClient) throw new Error("No Helium client")
+    if (!heliumClient) throw new Error('No Helium client')
 
     setIsLoading(true)
     const instructions: TransactionInstruction[] = []
     const [registrar] = registrarKey(
       realm.pubkey,
       realm.account.communityMint,
-      heliumClient!.program.programId
+      heliumClient!.program.programId,
     )
 
     const [voterWeightPk] = voterWeightRecordKey(
       registrar,
       wallet.publicKey,
-      heliumClient!.program.programId
+      heliumClient!.program.programId,
     )
 
     const voteRecords = ownVoteRecords
     for (const i of voteRecords) {
       const proposal = proposalsArray?.find((x) =>
-        x.pubkey.equals(i.account.proposal)
+        x.pubkey.equals(i.account.proposal),
       )
       const [posKey] = positionKey(
         i.account.nftMint,
-        heliumClient.program.programId
+        heliumClient.program.programId,
       )
       if (
         proposal === undefined ||
@@ -100,7 +100,7 @@ const ClaimUnreleasedPositions = ({
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }
@@ -118,7 +118,7 @@ const ClaimUnreleasedPositions = ({
     }
   }
   const getVoteRecords = async () => {
-    const currentClient = heliumClient;
+    const currentClient = heliumClient
     if (!currentClient) return
     const voteRecords =
       (await currentClient.program.account['nftVoteRecord']?.all([
@@ -132,7 +132,7 @@ const ClaimUnreleasedPositions = ({
 
     const voteRecordsFiltered = voteRecords.filter((x) => {
       const proposal = proposalsArray?.find((p) =>
-        p.pubkey.equals(x.account.proposal)
+        p.pubkey.equals(x.account.proposal),
       )
 
       return (

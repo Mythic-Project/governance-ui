@@ -54,7 +54,7 @@ const RealmConfig = ({
   const { assetAccounts } = useGovernanceAssets()
   const realmAuthority = assetAccounts.find(
     (x) =>
-      x.governance.pubkey.toBase58() === realm?.account.authority?.toBase58()
+      x.governance.pubkey.toBase58() === realm?.account.authority?.toBase58(),
   )
   const [form, setForm] = useState<RealmConfigForm>()
   const [formErrors, setFormErrors] = useState({})
@@ -75,12 +75,12 @@ const RealmConfig = ({
       realm
     ) {
       const mintAmount = isDisabledVoterWeight(
-        form!.minCommunityTokensToCreateGovernance
+        form!.minCommunityTokensToCreateGovernance,
       )
         ? DISABLED_VOTER_WEIGHT
         : parseMintNaturalAmountFromDecimalAsBN(
             form!.minCommunityTokensToCreateGovernance!,
-            mint!.decimals!
+            mint!.decimals!,
           )
       const instruction = await createSetRealmConfig(
         realmInfo!.programId,
@@ -100,7 +100,7 @@ const RealmConfig = ({
           tokenType: GoverningTokenType.Liquid,
         }),
         undefined,
-        wallet.publicKey
+        wallet.publicKey,
       )
       serializedInstruction = serializeInstructionToBase64(instruction)
     }
@@ -114,7 +114,7 @@ const RealmConfig = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

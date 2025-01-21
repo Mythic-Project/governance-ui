@@ -58,18 +58,18 @@ import { useVotingClients } from '@hooks/useVotingClients'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 
 const AccountsCompactWrapper = dynamic(
-  () => import('@components/TreasuryAccount/AccountsCompactWrapper')
+  () => import('@components/TreasuryAccount/AccountsCompactWrapper'),
 )
 const AssetsCompactWrapper = dynamic(
-  () => import('@components/AssetsList/AssetsCompactWrapper')
+  () => import('@components/AssetsList/AssetsCompactWrapper'),
 )
 const NFTSCompactWrapper = dynamic(
-  () => import('@components/NFTS/NFTSCompactWrapper')
+  () => import('@components/NFTS/NFTSCompactWrapper'),
 )
 const ProposalCard = dynamic(() => import('components/ProposalCard'))
 const RealmHeader = dynamic(() => import('components/RealmHeader'))
 const DepositLabel = dynamic(
-  () => import('@components/TreasuryAccount/DepositLabel')
+  () => import('@components/TreasuryAccount/DepositLabel'),
 )
 
 const REALM = () => {
@@ -105,7 +105,7 @@ const REALM = () => {
     () =>
       governancesArray &&
       Object.fromEntries(governancesArray.map((x) => [x.pubkey.toString(), x])),
-    [governancesArray]
+    [governancesArray],
   )
   const { data: proposalsArray } = useRealmProposalsQuery()
   const proposalsByProposal = useMemo(
@@ -113,9 +113,9 @@ const REALM = () => {
       proposalsArray === undefined
         ? undefined
         : Object.fromEntries(
-            proposalsArray.map((x) => [x.pubkey.toString(), x])
+            proposalsArray.map((x) => [x.pubkey.toString(), x]),
           ),
-    [proposalsArray]
+    [proposalsArray],
   )
 
   const allProposals = useMemo(
@@ -125,11 +125,11 @@ const REALM = () => {
             compareProposals(
               b[1].account,
               a[1].account,
-              governancesByGovernance
-            )
+              governancesByGovernance,
+            ),
           )
         : [],
-    [governancesByGovernance, proposalsByProposal]
+    [governancesByGovernance, proposalsByProposal],
   )
 
   const onProposalPageChange = (page) => {
@@ -142,7 +142,7 @@ const REALM = () => {
   const handleSetSorting = (sorting: Sorting) => {
     localStorage.setItem(
       PROPOSAL_SORTING_LOCAL_STORAGE_KEY,
-      JSON.stringify(sorting)
+      JSON.stringify(sorting),
     )
     setSorting(sorting)
   }
@@ -160,7 +160,7 @@ const REALM = () => {
           !v.account.hasVoteTimeEnded(governance)
         )
       }),
-    [allProposals, governancesByGovernance]
+    [allProposals, governancesByGovernance],
   )
 
   const filteredProposals = useMemo(() => {
@@ -173,14 +173,14 @@ const REALM = () => {
       realmQuery.data?.result,
       governancesByGovernance ?? {},
       councilMint,
-      mint
+      mint,
     )
 
     if (proposalSearch) {
       proposals = proposals.filter(([, v]) =>
         v.account.name
           .toLowerCase()
-          .includes(proposalSearch.toLocaleLowerCase())
+          .includes(proposalSearch.toLocaleLowerCase()),
       )
     }
     return proposals
@@ -201,10 +201,10 @@ const REALM = () => {
     (page) => {
       return filteredProposals.slice(
         page * proposalsPerPage,
-        (page + 1) * proposalsPerPage
+        (page + 1) * proposalsPerPage,
       )
     },
-    [filteredProposals]
+    [filteredProposals],
   )
 
   // TODO stop using side effects
@@ -223,12 +223,10 @@ const REALM = () => {
     }
   }, [])
 
-  const {
-    ownVoterWeight: communityOwnVoterWeight,
-  } = useRealmVoterWeightPlugins('community')
-  const { ownVoterWeight: councilOwnVoterWeight } = useRealmVoterWeightPlugins(
-    'council'
-  )
+  const { ownVoterWeight: communityOwnVoterWeight } =
+    useRealmVoterWeightPlugins('community')
+  const { ownVoterWeight: councilOwnVoterWeight } =
+    useRealmVoterWeightPlugins('council')
 
   const allVotingProposalsSelected =
     selectedProposals.length === votingProposals?.length
@@ -250,7 +248,7 @@ const REALM = () => {
         votingProposals?.map(([k, v]) => ({
           proposal: v.account,
           proposalPk: new PublicKey(k),
-        })) ?? []
+        })) ?? [],
       )
     }
   }
@@ -296,7 +294,7 @@ const REALM = () => {
             pubkey: selectedProposal.proposalPk,
             owner: realm.pubkey,
           },
-          relevantTokenRecord.pubkey
+          relevantTokenRecord.pubkey,
         )
         if (!nftClient) {
           await withCastVote(
@@ -313,7 +311,7 @@ const REALM = () => {
             Vote.fromYesNoVote(vote),
             payer,
             plugin?.voterWeightPk,
-            plugin?.maxVoterWeightRecord
+            plugin?.maxVoterWeightRecord,
           )
         }
 
@@ -323,15 +321,15 @@ const REALM = () => {
         transaction.feePayer = wallet.publicKey!
         transaction.setSigners(
           // fee payed by the wallet owner
-          wallet.publicKey!
+          wallet.publicKey!,
         )
         transactions.push(transaction)
       }
       const signedTXs = await wallet.signAllTransactions(transactions)
       await Promise.all(
         signedTXs.map((transaction) =>
-          sendSignedTransaction({ signedTransaction: transaction, connection })
-        )
+          sendSignedTransaction({ signedTransaction: transaction, connection }),
+        ),
       )
       queryClient.invalidateQueries({
         queryKey: proposalQueryKeys.all(connection.rpcEndpoint),
@@ -515,12 +513,12 @@ const REALM = () => {
                                 proposalPk={new PublicKey(k)}
                                 proposal={v.account}
                               />
-                            )
+                            ),
                           )}
                           <PaginationComponent
                             ref={pagination}
                             totalPages={Math.ceil(
-                              filteredProposals.length / proposalsPerPage
+                              filteredProposals.length / proposalsPerPage,
                             )}
                             onPageChange={onProposalPageChange}
                           ></PaginationComponent>

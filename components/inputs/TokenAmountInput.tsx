@@ -34,8 +34,8 @@ const TokenAmountInput: FC<Props> = ({
     setValue(
       Math.max(
         1,
-        Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-      ).toFixed(0)
+        Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+      ).toFixed(0),
     )
   }
 

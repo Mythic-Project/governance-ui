@@ -60,7 +60,7 @@ function getBorderColor(proposalState: ProposalState, otherState: OtherState) {
 
 function getLabel(
   proposalState: ProposalState,
-  otherState: Pick<OtherState, 'proposal' | 'votingEnded' | 'coolOff'>
+  otherState: Pick<OtherState, 'proposal' | 'votingEnded' | 'coolOff'>,
 ) {
   switch (proposalState) {
     case ProposalState.Cancelled:
@@ -94,7 +94,7 @@ function getLabel(
 
 function getOpacity(
   proposalState: ProposalState,
-  otherState: Pick<OtherState, 'isCreator' | 'isSignatory' | 'proposal'>
+  otherState: Pick<OtherState, 'isCreator' | 'isSignatory' | 'proposal'>,
 ) {
   switch (proposalState) {
     case ProposalState.Cancelled:
@@ -119,7 +119,7 @@ function getOpacity(
 
 function getTextColor(
   proposalState: ProposalState,
-  otherState: Pick<OtherState, 'proposal' | 'votingEnded'>
+  otherState: Pick<OtherState, 'proposal' | 'votingEnded'>,
 ) {
   switch (proposalState) {
     case ProposalState.Cancelled:
@@ -195,7 +195,7 @@ export default function ProposalStateBadge(props: Props) {
           'text-xs',
           getBorderColor(props.proposal.state, otherState),
           getOpacity(props.proposal.state, otherState),
-          getTextColor(props.proposal.state, otherState)
+          getTextColor(props.proposal.state, otherState),
         )}
       >
         {getLabel(props.proposal.state, otherState)}

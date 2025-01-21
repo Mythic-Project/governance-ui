@@ -30,7 +30,7 @@ export default function RealmAuthorityListItem(props: Props) {
               'h-6',
               'rounded-sm',
               'stroke-fgd-1',
-              'w-6'
+              'w-6',
             ),
           })}
           <div
@@ -46,7 +46,7 @@ export default function RealmAuthorityListItem(props: Props) {
               'rounded-full',
               'translate-x-1/2',
               'translate-y-1/2',
-              'w-5'
+              'w-5',
             )}
           >
             <img className="h-4 w-4" src={LogoRealms.src} />

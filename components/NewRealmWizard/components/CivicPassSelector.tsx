@@ -24,7 +24,7 @@ const itemStyles = cx(
   'transition-colors',
   'dark:bg-neutral-800',
   'dark:border-neutral-700',
-  'dark:hover:bg-neutral-700'
+  'dark:hover:bg-neutral-700',
 )
 
 const labelStyles = cx('font-700', 'dark:text-neutral-50', 'w-full')
@@ -50,7 +50,7 @@ export default function CivicPassSelector({
             className={cx(
               itemStyles,
               className,
-              open && 'border dark:border-white/40'
+              open && 'border dark:border-white/40',
             )}
           >
             <div className={labelStyles}>
@@ -74,7 +74,7 @@ export default function CivicPassSelector({
                     itemStyles,
                     'w-full',
                     'focus:outline-none',
-                    'dark:focus:bg-neutral-700'
+                    'dark:focus:bg-neutral-700',
                   )}
                   key={i}
                   onClick={() => {

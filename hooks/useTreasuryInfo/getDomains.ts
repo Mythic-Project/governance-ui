@@ -8,7 +8,7 @@ import { Domain } from '@models/treasury/Domain'
 
 const getAccountDomains = async (
   account: AssetAccount,
-  connection: Connection
+  connection: Connection,
 ): Promise<Domain[]> => {
   try {
     const domains = await getAllDomains(connection, account.pubkey)
@@ -31,10 +31,10 @@ const getAccountDomains = async (
 
 export const getDomains = async (
   accounts: AssetAccount[],
-  connection: Connection
+  connection: Connection,
 ): Promise<Domain[]> => {
   const accountsDomains = await Promise.all(
-    accounts.map((account) => getAccountDomains(account, connection))
+    accounts.map((account) => getAccountDomains(account, connection)),
   )
 
   return accountsDomains.flat()

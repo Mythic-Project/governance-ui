@@ -11,7 +11,7 @@ import { getGraphqlJsonSchema } from '@hub/lib/getGraphqlJsonSchema'
 
 class RealmsDocument extends Document {
   static async getInitialProps(
-    ctx: DocumentContext
+    ctx: DocumentContext,
   ): Promise<DocumentInitialProps> {
     const originalRenderPage = ctx.renderPage
     const schema = await getGraphqlJsonSchema()

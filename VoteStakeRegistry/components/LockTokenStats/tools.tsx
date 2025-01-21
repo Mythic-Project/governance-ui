@@ -23,7 +23,7 @@ export interface DepositWithWallet {
 export const getProposalsTransactions = async (
   pubkeys: PublicKey[],
   connection: ConnectionContext,
-  programId: PublicKey
+  programId: PublicKey,
 ) => {
   const getTransactions = await axios.request({
     url: connection.endpoint,
@@ -50,7 +50,7 @@ export const getProposalsTransactions = async (
                     bytes: bs58.encode(
                       Uint8Array.from([
                         GovernanceAccountType.ProposalTransactionV2,
-                      ])
+                      ]),
                     ), // base58 encoded string
                   },
                 },
@@ -77,14 +77,14 @@ export const getProposalsTransactions = async (
       const getSchema = getGovernanceSchemaForAccount
       const data = Buffer.from(rawAccount.account.data[0], 'base64')
       const accountTypes = getAccountTypes(
-        (ProposalTransaction as any) as GovernanceAccountClass
+        ProposalTransaction as any as GovernanceAccountClass,
       )
       const account: ProgramAccount<ProposalTransaction> = {
         pubkey: new PublicKey(rawAccount.pubkey),
         account: deserializeBorsh(
           getSchema(accountTypes[1]),
           ProposalTransaction,
-          data
+          data,
         ),
         owner: new PublicKey(rawAccount.account.owner),
       }

@@ -5,7 +5,7 @@ import {
   VoterWeightPluginInfo,
 } from '../lib/types'
 import { calculateVoterWeight } from '../lib/calculateVoterWeights'
-import {PublicKey} from "@solana/web3.js";
+import { PublicKey } from '@solana/web3.js'
 import { useAsync, UseAsyncReturn } from 'react-async-hook'
 
 type Args = UseVoterWeightPluginsArgs & {
@@ -17,29 +17,35 @@ type Args = UseVoterWeightPluginsArgs & {
 }
 
 const argsAreSet = (args: Args): args is Required<Args> =>
-    args.realmPublicKey !== undefined && args.governanceMintPublicKey !== undefined && args.walletPublicKeys !== undefined &&
-    args.plugins !== undefined && args.tokenOwnerRecords !== undefined
+  args.realmPublicKey !== undefined &&
+  args.governanceMintPublicKey !== undefined &&
+  args.walletPublicKeys !== undefined &&
+  args.plugins !== undefined &&
+  args.tokenOwnerRecords !== undefined
 
-export const useCalculatedVoterWeights = (args: Args) : UseAsyncReturn<CalculatedWeight[] | undefined> =>
-    useAsync(
-        async () => {
-            if (!argsAreSet(args)) return undefined;
+export const useCalculatedVoterWeights = (
+  args: Args,
+): UseAsyncReturn<CalculatedWeight[] | undefined> =>
+  useAsync(async () => {
+    if (!argsAreSet(args)) return undefined
 
-            const voterWeights = args.walletPublicKeys?.map(wallet => {
-                const tokenOwnerRecord = args.tokenOwnerRecords?.find(tor => tor.account.governingTokenOwner.equals(wallet));
-                return calculateVoterWeight({
-                    ...args as Required<Args>,
-                    walletPublicKey: wallet,
-                    tokenOwnerRecord,
-                });
-            });
-            return Promise.all(voterWeights);
-        },
-        [
-            args.realmPublicKey?.toString(),
-            args.governanceMintPublicKey?.toString(),
-            args.walletPublicKeys?.map(pubkey => pubkey.toString()).join(","),
-            args.tokenOwnerRecords?.map(tor => tor.account.governingTokenDepositAmount).join(","),
-            args.plugins?.length
-        ]
-    )
+    const voterWeights = args.walletPublicKeys?.map((wallet) => {
+      const tokenOwnerRecord = args.tokenOwnerRecords?.find((tor) =>
+        tor.account.governingTokenOwner.equals(wallet),
+      )
+      return calculateVoterWeight({
+        ...(args as Required<Args>),
+        walletPublicKey: wallet,
+        tokenOwnerRecord,
+      })
+    })
+    return Promise.all(voterWeights)
+  }, [
+    args.realmPublicKey?.toString(),
+    args.governanceMintPublicKey?.toString(),
+    args.walletPublicKeys?.map((pubkey) => pubkey.toString()).join(','),
+    args.tokenOwnerRecords
+      ?.map((tor) => tor.account.governingTokenDepositAmount)
+      .join(','),
+    args.plugins?.length,
+  ])

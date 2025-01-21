@@ -18,7 +18,7 @@ export default function Section(props: Props) {
             'h-3',
             'mt-[1.5px]',
             'w-3',
-            'stroke-white/50'
+            'stroke-white/50',
           ),
         })}
         <div className="text-white/50 text-xs">{props.name}</div>

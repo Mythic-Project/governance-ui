@@ -58,8 +58,8 @@ export default function VoteProposalModal({
 
   const { handleCreateProposal } = useCreateProposal()
 
-  const currentGovernance = useGovernanceByPubkeyQuery(currentGovernancePk).data
-    ?.result
+  const currentGovernance =
+    useGovernanceByPubkeyQuery(currentGovernancePk).data?.result
 
   const submitVote = async (vote: YesNoVote) => {
     if (!wallet || !wallet.publicKey) {
@@ -81,7 +81,7 @@ export default function VoteProposalModal({
 
       const programVersion = await fetchProgramVersion(
         connection.current,
-        programId
+        programId,
       )
 
       await withCastVote(
@@ -96,7 +96,7 @@ export default function VoteProposalModal({
         governanceAuthority,
         proposal.account.governingTokenMint,
         Vote.fromYesNoVote(vote),
-        governanceAuthority
+        governanceAuthority,
       )
 
       // if (comment.length > 0) {
@@ -149,7 +149,7 @@ export default function VoteProposalModal({
       })
 
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       await router.push(url)
     } catch (e) {

@@ -28,7 +28,7 @@ export class BonkClient extends Client<BonkPlugin> {
   constructor(
     public program: Program<BonkPlugin>,
     tokenVoterProgram: Program<TokenVoter>,
-    splTokenProgram: Program<SplTokenStaking>,
+    splTokenProgram: Program<SplTokenStaking>
   ) {
     super(program)
     this.tokenPlugin = tokenVoterProgram

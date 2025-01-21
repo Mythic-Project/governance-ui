@@ -28,9 +28,8 @@ interface Props
 }
 
 export function CommunityDetails(props: Props) {
-  const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(
-    false,
-  );
+  const [additionalOptionsExpanded, setAdditionalOptionsExpanded] =
+    useState(false);
 
   const inputProps = useMemo(
     () => ({

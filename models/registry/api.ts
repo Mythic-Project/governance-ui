@@ -87,7 +87,7 @@ export function getCertifiedRealmInfos({ cluster }: ConnectionContext) {
 
 export function getCertifiedRealmInfo(
   realmId: string,
-  connection: ConnectionContext
+  connection: ConnectionContext,
 ) {
   if (!realmId) {
     return undefined
@@ -96,7 +96,7 @@ export function getCertifiedRealmInfo(
   const realmInfo = getCertifiedRealmInfos(connection).find(
     (r) =>
       equalsIgnoreCase(r.realmId.toBase58(), realmId) ||
-      equalsIgnoreCase(r.symbol, realmId)
+      equalsIgnoreCase(r.symbol, realmId),
   )
 
   return realmInfo

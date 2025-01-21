@@ -23,9 +23,9 @@ export default function useRpcContext() {
             getProgramVersionForRealm(realmInfo),
             wallet,
             connection.current,
-            connection.endpoint
+            connection.endpoint,
           ),
-    [connection, realm?.owner, realmInfo, wallet]
+    [connection, realm?.owner, realmInfo, wallet],
   )
 
   return {

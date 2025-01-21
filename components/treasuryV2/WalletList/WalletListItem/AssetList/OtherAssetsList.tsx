@@ -38,7 +38,7 @@ interface Props {
   selectedAssetId?: string | null
   itemsToHide: string[]
   onSelect?(
-    asset: Mint | Domains | Programs | RealmAuthority | Unknown | Stake | Mango
+    asset: Mint | Domains | Programs | RealmAuthority | Unknown | Stake | Mango,
   ): void
   onToggleExpand?(): void
 }
@@ -63,7 +63,7 @@ export default function OtherAssetsList(props: Props) {
         .filter((x) =>
           showHiddenItems
             ? true
-            : !props.itemsToHide.includes((x as any).address)
+            : !props.itemsToHide.includes((x as any).address),
         )
         .map((asset, i) => {
           switch (asset.type) {

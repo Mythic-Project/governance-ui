@@ -49,24 +49,20 @@ export const getGrantInstruction = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    clientProgramId
+    clientProgramId,
   )
-  const { voter, voterBump } = getVoterPDA(
-    registrar,
-    toPk,
-    clientProgramId
-  )
+  const { voter, voterBump } = getVoterPDA(registrar, toPk, clientProgramId)
   const { voterWeightPk, voterWeightBump } = getVoterWeightPDA(
     registrar,
     toPk,
-    clientProgramId
+    clientProgramId,
   )
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
     grantMintPk,
     voter,
-    true
+    true,
   )
 
   const grantIx = await client?.program.methods
@@ -77,7 +73,7 @@ export const getGrantInstruction = async ({
       new BN(startTime),
       lockupPeriod,
       allowClawback,
-      new BN(amount)
+      new BN(amount),
     )
     .accounts({
       registrar,

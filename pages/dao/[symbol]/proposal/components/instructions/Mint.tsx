@@ -44,7 +44,7 @@ const Mint = ({
         ? config?.account?.councilTokenConfig?.tokenType === undefined ||
           config?.account.councilTokenConfig.tokenType ===
             GoverningTokenType.Liquid
-        : true
+        : true,
     )
 
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -73,7 +73,7 @@ const Mint = ({
   }
   const { destinationAccount, destinationAddress } = useDestination(
     connection.current,
-    address
+    address,
   )
 
   const setAmount = (event) => {
@@ -90,8 +90,8 @@ const Mint = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -131,7 +131,7 @@ const Mint = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form, governedAccount])
@@ -142,7 +142,7 @@ const Mint = ({
     destinationAccount?.publicKey &&
     getAccountName(destinationAccount?.account.address)
 
-  let isDomain = address.length >= 4 && address.split(".").length === 2
+  const isDomain = address.length >= 4 && address.split('.').length === 2
   const destinationAddressParsed = isDomain
     ? form.destinationAccount
     : undefined

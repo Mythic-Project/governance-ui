@@ -22,13 +22,13 @@ function filterVerifiedCollections(nfts, usedCollectionsPks) {
 
 const ProposalVoterNftChart = (props: Props) => {
   const { data: nfts, isLoading } = useDigitalAssetsByOwner(
-    props.highlighted ? new PublicKey(props.highlighted) : undefined
+    props.highlighted ? new PublicKey(props.highlighted) : undefined,
   )
 
   const usedCollectionsPks = useNftRegistrarCollection()
   const verifiedNfts = useMemo(
     () => filterVerifiedCollections(nfts, usedCollectionsPks),
-    [nfts, usedCollectionsPks]
+    [nfts, usedCollectionsPks],
   )
 
   return (

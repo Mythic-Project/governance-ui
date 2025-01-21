@@ -62,10 +62,8 @@ const ChangeDonation = ({
   const [governedAccount, setGovernedAccount] = useState<
     ProgramAccount<Governance> | undefined
   >(undefined)
-  const [
-    destinationAccount,
-    setDestinationAccount,
-  ] = useState<TokenProgramAccount<TokenAccount> | null>(null)
+  const [destinationAccount, setDestinationAccount] =
+    useState<TokenProgramAccount<TokenAccount> | null>(null)
   const [formErrors, setFormErrors] = useState({})
   const mintMinAmount = form.mintInfo
     ? getMintMinAmountAsDecimal(form.mintInfo)
@@ -89,7 +87,7 @@ const ChangeDonation = ({
 
   const handleSelectNonProfit = (selectedNonprofit: string): void => {
     const selectedNonprofitDetail = searchResults.find(
-      (nonprofit) => nonprofit.name === selectedNonprofit
+      (nonprofit) => nonprofit.name === selectedNonprofit,
     )
     handleSetForm({
       value: selectedNonprofitDetail?.crypto.solana_address,
@@ -107,8 +105,8 @@ const ChangeDonation = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -139,13 +137,13 @@ const ChangeDonation = ({
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     )
       .then((response) => response.json())
       .then((response) => {
         // Some nonprofits do not have crypto addresses; filter these out.
         return response.nonprofits.filter(
-          (n: any) => n.crypto !== undefined
+          (n: any) => n.crypto !== undefined,
         ) as ChangeNonprofit[]
       })
       .then((nonprofits) => {
@@ -208,7 +206,7 @@ const ChangeDonation = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -230,7 +228,7 @@ const ChangeDonation = ({
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
           (governedTokenAccount) => {
             return governedTokenAccount.isSol
-          }
+          },
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

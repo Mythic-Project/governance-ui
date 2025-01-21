@@ -52,7 +52,7 @@ const DualWithdraw = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [form, governedAccount, handleSetInstructions, index, connection, wallet])
   useEffect(() => {

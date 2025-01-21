@@ -21,7 +21,7 @@ export const getUpdateVoterWeightRecordInstruction = async (
   registrar: PublicKey,
   voterWeightPk: PublicKey,
   votingNfts: DasNftObject[],
-  type: UpdateVoterWeightRecordTypes
+  type: UpdateVoterWeightRecordTypes,
 ) => {
   console.log('getUpdateVoterWeightRecordInstruction')
   const remainingAccounts: AccountData[] = []
@@ -31,17 +31,17 @@ export const getUpdateVoterWeightRecordInstruction = async (
     const tokenAccount = await getAssociatedTokenAddress(
       new PublicKey(nft.id),
       walletPk,
-      true
+      true,
     )
 
     const metadata = await fetchNFTbyMint(
       program.provider.connection,
-      new PublicKey(nft.id)
+      new PublicKey(nft.id),
     )
 
     remainingAccounts.push(
       new AccountData(tokenAccount),
-      new AccountData(metadata?.result?.metadataAddress || '')
+      new AccountData(metadata?.result?.metadataAddress || ''),
     )
   }
   const updateVoterWeightRecordIx = await program.methods
@@ -62,7 +62,7 @@ export const getUpdateVoterWeightRecordInstructionV2 = async (
   registrar: PublicKey,
   voterWeightPk: PublicKey,
   votingNfts: DasNftObject[],
-  type: UpdateVoterWeightRecordTypes
+  type: UpdateVoterWeightRecordTypes,
 ) => {
   console.log('getUpdateVoterWeightRecordInstructionV2')
   const createNftTicketIxs: TransactionInstruction[] = []
@@ -79,22 +79,22 @@ export const getUpdateVoterWeightRecordInstructionV2 = async (
       registrar,
       walletPk,
       nft.id,
-      clientProgramId
+      clientProgramId,
     )
 
     const tokenAccount = await getAssociatedTokenAddress(
       new PublicKey(nft.id),
       walletPk,
-      true
+      true,
     )
     const metadata = await fetchNFTbyMint(
       program.provider.connection,
-      new PublicKey(nft.id)
+      new PublicKey(nft.id),
     )
     nftRemainingAccounts.push(
       new AccountData(tokenAccount),
       new AccountData(metadata?.result?.metadataAddress || ''),
-      new AccountData(nftActionTicket, false, true)
+      new AccountData(nftActionTicket, false, true),
     )
 
     nftActionTicketAccounts.push(new AccountData(nftActionTicket, false, true))
@@ -114,7 +114,7 @@ export const getUpdateVoterWeightRecordInstructionV2 = async (
           systemProgram: SYSTEM_PROGRAM_ID,
         })
         .remainingAccounts(chunk)
-        .instruction()
+        .instruction(),
     )
   }
 
@@ -125,20 +125,24 @@ export const getUpdateVoterWeightRecordInstructionV2 = async (
       registrar,
       walletPk,
       cnft.id,
-      clientProgramId
+      clientProgramId,
     )
 
     const { param, additionalAccounts } = await getCnftParamAndProof(
       program.provider.connection,
-      cnft
+      cnft,
     )
 
     // CreateCnftActionTicket requires a non-null collection,
     // but getCnftParamAndProof returns a nullable one
-    if (!param.collection.key) throw new Error("Collection key not found");
+    if (!param.collection.key) throw new Error('Collection key not found')
     // Typescript doesn't infer this in its current version, but this is basically
     // casting the collection key to non-null.
-    const typesafeParams = [param as typeof param & { collection: typeof param.collection & { key : PublicKey }}]
+    const typesafeParams = [
+      param as typeof param & {
+        collection: typeof param.collection & { key: PublicKey }
+      },
+    ]
 
     const instruction = await program.methods
       // The cast to any works around an anchor issue with interpreting enums

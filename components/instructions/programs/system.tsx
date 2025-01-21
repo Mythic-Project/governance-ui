@@ -60,7 +60,7 @@ export const SYSTEM_INSTRUCTIONS = {
       getDataUI: (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         return <p>No Instruction data</p>
       },
@@ -71,7 +71,7 @@ export const SYSTEM_INSTRUCTIONS = {
       getDataUI: (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         return <p></p>
       },

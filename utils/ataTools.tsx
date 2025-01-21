@@ -14,14 +14,14 @@ export async function createATA(
   wallet,
   mintPubkey: PublicKey,
   owner: PublicKey,
-  feePayer: PublicKey
+  feePayer: PublicKey,
 ) {
   const ata = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
     TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
     mintPubkey, // mint
     owner, // owner
-    true
+    true,
   )
 
   const transaction = new Transaction()
@@ -32,8 +32,8 @@ export async function createATA(
       mintPubkey, // mint
       ata, // ata
       owner, // owner of token account
-      feePayer // fee payer
-    )
+      feePayer, // fee payer
+    ),
   )
   await sendTransaction({
     connection,
@@ -62,13 +62,13 @@ export async function getATA({
   let needToCreateAta = false
   const isExistingAccount = await isExistingTokenAccount(
     connection,
-    receiverAddress
+    receiverAddress,
   )
   if (!isExistingAccount) {
     const existingAta = await tryGetAta(
       connection.current,
       mintPK,
-      currentAddress
+      currentAddress,
     )
     if (!existingAta) {
       const ata = await Token.getAssociatedTokenAddress(
@@ -76,7 +76,7 @@ export async function getATA({
         TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
         mintPK, // mint
         receiverAddress, // owner
-        true
+        true,
       )
       needToCreateAta = true
       currentAddress = ata
@@ -92,7 +92,7 @@ export async function getATA({
 
 export function findATAAddrSync(
   wallet: PublicKey,
-  mintAddress: PublicKey
+  mintAddress: PublicKey,
 ): [PublicKey, number] {
   const seeds = [
     wallet.toBuffer(),

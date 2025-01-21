@@ -51,7 +51,7 @@ const InstructionForm = ({
     setInnerForm({ ...outerForm, [propertyName]: value })
   }
   const previousInitialValue = usePrevious(
-    JSON.stringify(inputs.map((x) => x.initialValue))
+    JSON.stringify(inputs.map((x) => x.initialValue)),
   )
 
   useEffect(() => {
@@ -154,17 +154,17 @@ const InstructionInput = ({
                   Number(
                     typeof input.max !== 'undefined'
                       ? input.max
-                      : Number.MAX_SAFE_INTEGER
+                      : Number.MAX_SAFE_INTEGER,
                   ),
-                  Number(value)
-                )
+                  Number(value),
+                ),
               ).toFixed(
                 input.precision
                   ? input.precision
                   : precisionFromMin
                   ? precisionFromMin
-                  : 0
-              )
+                  : 0,
+              ),
             ),
             propertyName: input.name,
           })
@@ -258,17 +258,17 @@ const InstructionInput = ({
                   Number(
                     typeof input.max !== 'undefined'
                       ? input.max
-                      : Number.MAX_SAFE_INTEGER
+                      : Number.MAX_SAFE_INTEGER,
                   ),
-                  Number(value)
-                )
+                  Number(value),
+                ),
               ).toFixed(
                 input.precision
                   ? input.precision
                   : precisionFromMin
                   ? precisionFromMin
-                  : 0
-              )
+                  : 0,
+              ),
             ),
             propertyName: input.name,
           })

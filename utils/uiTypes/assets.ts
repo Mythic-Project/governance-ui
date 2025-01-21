@@ -20,9 +20,10 @@ interface AccountExtension {
   stake?: StakeAccount
 }
 
-export type GovernanceProgramAccountWithNativeTreasuryAddress = ProgramAccount<Governance> & {
-  nativeTreasuryAddress: PublicKey
-}
+export type GovernanceProgramAccountWithNativeTreasuryAddress =
+  ProgramAccount<Governance> & {
+    nativeTreasuryAddress: PublicKey
+  }
 export interface AssetAccount {
   governance: GovernanceProgramAccountWithNativeTreasuryAddress
   pubkey: PublicKey
@@ -53,7 +54,7 @@ export class AccountTypeToken implements AssetAccount {
   constructor(
     tokenAccount: TokenProgramAccount<TokenAccount>,
     mint: TokenProgramAccount<MintInfo>,
-    governance: GovernanceProgramAccountWithNativeTreasuryAddress
+    governance: GovernanceProgramAccountWithNativeTreasuryAddress,
   ) {
     this.governance = governance
     this.pubkey = tokenAccount.publicKey
@@ -75,7 +76,7 @@ export class AccountTypeAuxiliaryToken implements AssetAccount {
   pubkey: PublicKey
   constructor(
     tokenAccount: TokenProgramAccount<TokenAccount>,
-    mint: TokenProgramAccount<MintInfo>
+    mint: TokenProgramAccount<MintInfo>,
   ) {
     this.governance = {} as any
     this.pubkey = tokenAccount.publicKey
@@ -97,7 +98,7 @@ export class AccountTypeProgram implements AssetAccount {
   constructor(
     governance: GovernanceProgramAccountWithNativeTreasuryAddress,
     programId: PublicKey,
-    owner: PublicKey
+    owner: PublicKey,
   ) {
     this.governance = governance
     this.pubkey = programId
@@ -120,7 +121,7 @@ export class AccountTypeStake implements AssetAccount {
     stakePk: PublicKey,
     state: StakeState,
     delegatedValidator: PublicKey | null,
-    amount: number
+    amount: number,
   ) {
     this.governance = governance
     this.pubkey = stakePk
@@ -143,7 +144,7 @@ export class AccountTypeMint implements AssetAccount {
   pubkey: PublicKey
   constructor(
     governance: GovernanceProgramAccountWithNativeTreasuryAddress,
-    account: MintInfo & { publicKey: PublicKey }
+    account: MintInfo & { publicKey: PublicKey },
   ) {
     this.governance = governance
     this.pubkey = account.publicKey
@@ -166,7 +167,7 @@ export class AccountTypeNFT implements AssetAccount {
   constructor(
     tokenAccount: TokenProgramAccount<TokenAccount>,
     mint: TokenProgramAccount<MintInfo>,
-    governance: GovernanceProgramAccountWithNativeTreasuryAddress
+    governance: GovernanceProgramAccountWithNativeTreasuryAddress,
   ) {
     this.governance = governance
     this.pubkey = tokenAccount.publicKey
@@ -191,7 +192,7 @@ export class AccountTypeSol implements AssetAccount {
     mint: TokenProgramAccount<MintInfo>,
     solAddress: PublicKey,
     solAccount: AccountInfoGen<Buffer | ParsedAccountData>,
-    governance: GovernanceProgramAccountWithNativeTreasuryAddress
+    governance: GovernanceProgramAccountWithNativeTreasuryAddress,
   ) {
     this.governance = governance
     this.type = AccountType.SOL
@@ -233,7 +234,7 @@ export interface StakeAccount {
 }
 
 export function isToken2022(
-  tokenAccount: TokenAccount
+  tokenAccount: TokenAccount,
 ): tokenAccount is TokenAccount {
   return !!tokenAccount.isToken2022
 }

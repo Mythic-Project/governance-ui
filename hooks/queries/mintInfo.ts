@@ -27,7 +27,7 @@ export const useMintInfoByPubkeyQuery = (pubkey: PublicKey | undefined) => {
     queryFn: async () => {
       if (!enabled) throw new Error()
       return asFindable((...x: Parameters<typeof tryGetMint>) =>
-        tryGetMint(...x).then((x) => x?.account)
+        tryGetMint(...x).then((x) => x?.account),
       )(connection.current, pubkey)
     },
     enabled,
@@ -50,14 +50,14 @@ export const useRealmCommunityMintInfoQuery = () => {
 
 export const fetchMintInfoByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   const cluster = getNetworkFromEndpoint(connection.rpcEndpoint)
   return queryClient.fetchQuery({
     queryKey: mintInfoQueryKeys.byPubkey(cluster, pubkey),
     queryFn: () =>
       asFindable((...x: Parameters<typeof tryGetMint>) =>
-        tryGetMint(...x).then((x) => x?.account)
+        tryGetMint(...x).then((x) => x?.account),
       )(connection, pubkey),
   })
 }

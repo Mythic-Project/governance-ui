@@ -69,7 +69,7 @@ export default function WalletList(props: Props) {
             'h-full',
             'grid',
             'grid-rows-[28px_1fr]',
-            'gap-5'
+            'gap-5',
           )}
         >
           <div className="flex items-center justify-between">
@@ -106,7 +106,7 @@ export default function WalletList(props: Props) {
                   setExpanded((list) => {
                     if (list.includes(wallet.address)) {
                       return list.filter(
-                        (address) => address !== wallet.address
+                        (address) => address !== wallet.address,
                       )
                     } else {
                       return list.concat(wallet.address)

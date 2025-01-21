@@ -25,7 +25,7 @@ export default function WalletListItem(props: Props) {
 
   const governance = useMemo(
     () => new PublicKey(props.wallet.governanceAddress!), // @asktree: I have no idea why this would ever be undefined ?
-    [props.wallet.governanceAddress]
+    [props.wallet.governanceAddress],
   )
 
   return (
@@ -37,7 +37,7 @@ export default function WalletListItem(props: Props) {
         'overflow-hidden',
         'relative',
         'rounded',
-        isOpen ? 'h-fit' : 'h-[104px]'
+        isOpen ? 'h-fit' : 'h-[104px]',
       )}
     >
       <div
@@ -50,7 +50,7 @@ export default function WalletListItem(props: Props) {
           'w-1',
           props.selected && !props.expanded
             ? 'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
-            : 'bg-transparent'
+            : 'bg-transparent',
         )}
       />
       <div
@@ -61,7 +61,7 @@ export default function WalletListItem(props: Props) {
           props.selected &&
             !props.expanded &&
             !props.selectedAsset &&
-            'bg-bkg-1'
+            'bg-bkg-1',
         )}
       >
         <SummaryButton

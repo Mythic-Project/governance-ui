@@ -33,7 +33,7 @@ export const executeTransaction = async (
   proposal: ProgramAccount<Proposal>,
   instruction: ProgramAccount<ProposalTransaction>,
   adjacentTransaction?: Transaction,
-  preExecutionTransactions?: Transaction[]
+  preExecutionTransactions?: Transaction[],
 ) => {
   const signers: Keypair[] = []
   const instructions: TransactionInstruction[] = []
@@ -49,13 +49,13 @@ export const executeTransaction = async (
     proposal.account.governance,
     proposal.pubkey,
     instruction.pubkey,
-    [...instruction.account.getAllInstructions()]
+    [...instruction.account.getAllInstructions()],
   )
 
   // Create proposal transaction
   const proposalTransaction = new Transaction().add(
     ComputeBudgetProgram.setComputeUnitLimit({ units: 1000000 }),
-    ...instructions
+    ...instructions,
   )
 
   // Sign and send all pre-execution transactions
@@ -68,8 +68,8 @@ export const executeTransaction = async (
           connection,
           sendingMessage: 'Sending pre-execution transaction',
           successMessage: 'Sent pre-execution transaction',
-        })
-      )
+        }),
+      ),
     )
   }
 
@@ -80,7 +80,7 @@ export const executeTransaction = async (
         { transaction: proposalTransaction },
         { transaction: adjacentTransaction },
       ],
-      wallet: (wallet as unknown) as Wallet,
+      wallet: wallet as unknown as Wallet,
       connection,
     })
     // Send proposal transaction with prepended adjacent transaction

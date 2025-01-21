@@ -46,13 +46,13 @@ import { useRealmProposalsQuery } from '@hooks/queries/proposal'
 import { useQuery } from '@tanstack/react-query'
 import { IDL } from 'VoteStakeRegistry/sdk/voter_stake_registry'
 import { ProfileImage, ProfileName } from '@components/Profile'
-import {useVsrClient} from "../../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../../VoterWeightPlugins/useVsrClient'
 
 const VestingVsTime = dynamic(
   () => import('VoteStakeRegistry/components/LockTokenStats/VestingVsTime'),
   {
     ssr: false,
-  }
+  },
 )
 const isBetween = require('dayjs/plugin/isBetween')
 dayjs.extend(isBetween)
@@ -70,9 +70,9 @@ const useGivenGrantsTokenAmounts = () => {
       proposals?.filter(
         (x) =>
           x.account.governance.toBase58() === MANGO_DAO_TREASURY &&
-          x.account.accountType === GovernanceAccountType.ProposalV2
+          x.account.accountType === GovernanceAccountType.ProposalV2,
       ),
-    [proposals]
+    [proposals],
   )
 
   const enabled =
@@ -90,7 +90,7 @@ const useGivenGrantsTokenAmounts = () => {
       return getProposalsTransactions(
         possibleGrantProposals.map((x) => x.pubkey) ?? [],
         connection,
-        realmInfo.programId
+        realmInfo.programId,
       )
     },
   })
@@ -100,7 +100,7 @@ const useGivenGrantsTokenAmounts = () => {
       proposalTxs
         ?.filter(
           (x) =>
-            x.account.executionStatus === InstructionExecutionStatus.Success
+            x.account.executionStatus === InstructionExecutionStatus.Success,
         )
         .flatMap((x) =>
           x.account.instructions
@@ -108,20 +108,20 @@ const useGivenGrantsTokenAmounts = () => {
               (x) =>
                 x.data[0] === 145 &&
                 x.accounts[9].pubkey.toBase58() ===
-                  realm?.account.communityMint.toBase58()
+                  realm?.account.communityMint.toBase58(),
             )
             .map((instruction) => {
               const data = new BorshInstructionCoder(IDL).decode(
-                Buffer.from(instruction.data)
+                Buffer.from(instruction.data),
               )?.data as GrantInstruction | null
               return {
                 voterPk: instruction.accounts[1].pubkey,
                 amount: data?.amount,
                 startTs: data?.startTs,
               }
-            })
+            }),
         ),
-    [proposalTxs, realm?.account.communityMint]
+    [proposalTxs, realm?.account.communityMint],
   )
 
   return givenGrantsTokenAmounts
@@ -134,12 +134,12 @@ const LockTokenStats = () => {
   const mint = useRealmCommunityMintInfoQuery().data?.result
   const { symbol } = useRouter().query
   const { realmInfo } = useRealm()
-  const { vsrClient, plugin } = useVsrClient();
-  const voteStakeRegistryRegistrar = plugin?.params as Registrar | undefined;
-  const voteStakeRegistryRegistrarPk = plugin?.registrarPublicKey;
+  const { vsrClient, plugin } = useVsrClient()
+  const voteStakeRegistryRegistrar = plugin?.params as Registrar | undefined
+  const voteStakeRegistryRegistrarPk = plugin?.registrarPublicKey
 
   const governedTokenAccounts = useGovernanceAssetsStore(
-    (s) => s.governedTokenAccounts
+    (s) => s.governedTokenAccounts,
   )
   const [search, setSearch] = useState('')
   const [voters, setVoters] = useState<
@@ -154,7 +154,7 @@ const LockTokenStats = () => {
 
   const [statsMonths, setStatsMonths] = useState<string[]>([])
   const [paginatedWallets, setPaginatedWallets] = useState<DepositWithWallet[]>(
-    []
+    [],
   )
 
   const givenGrantsTokenAmounts = useGivenGrantsTokenAmounts()
@@ -170,8 +170,8 @@ const LockTokenStats = () => {
             voteStakeRegistryRegistrar?.votingMints.findIndex(
               (votingMint) =>
                 votingMint.mint.toBase58() ===
-                realm?.account.communityMint.toBase58()
-            )
+                realm?.account.communityMint.toBase58(),
+            ),
       )
       for (const deposit of deposits) {
         const depositWithWallet = {
@@ -187,7 +187,7 @@ const LockTokenStats = () => {
         ? 0
         : a.deposit.amountDepositedNative.lt(b.deposit.amountDepositedNative)
         ? 1
-        : -1
+        : -1,
     )
   }, [
     realm?.account.communityMint,
@@ -196,19 +196,19 @@ const LockTokenStats = () => {
   ])
 
   const filteredDepositWithWallets = depositsWithWallets.filter((x) =>
-    search ? x.wallet.toBase58().includes(search) : x
+    search ? x.wallet.toBase58().includes(search) : x,
   )
 
   const givenGrantsTokenAmount = givenGrantsTokenAmounts?.reduce(
     (acc, curr) => acc.add(curr.amount!),
-    new BN(0)
+    new BN(0),
   )
   const calcVestingAmountsPerLastXMonths = useCallback(
     (monthsNumber: number) => {
       const depositsWithWalletsSortedByDate = [...depositsWithWallets].sort(
         (x, y) =>
           x.deposit.lockup.startTs.toNumber() * 1000 -
-          y.deposit.lockup.startTs.toNumber() * 1000
+          y.deposit.lockup.startTs.toNumber() * 1000,
       )
 
       const months: dayjs.Dayjs[] = []
@@ -251,24 +251,25 @@ const LockTokenStats = () => {
           let vestingAmount = new BN(0)
           if (depositType === 'monthly') {
             const vestingCount = Math.ceil(
-              dayjs(unixLockupEnd).diff(unixLockupStart, 'month', true)
+              dayjs(unixLockupEnd).diff(unixLockupStart, 'month', true),
             )
-            vestingAmount = depositWithWallet.deposit.amountInitiallyLockedNative.divn(
-              vestingCount
-            )
+            vestingAmount =
+              depositWithWallet.deposit.amountInitiallyLockedNative.divn(
+                vestingCount,
+              )
             // Monthly vesting needs to be calculated over time
             for (let i = 1; i <= vestingCount; i++) {
               const nextVestinDays = i * DAYS_PER_MONTH
               const vestingDate = dayjs(unixLockupStart).add(
                 nextVestinDays,
-                'day'
+                'day',
               )
               for (const date of months) {
                 if (
                   //@ts-ignore
                   vestingDate.isBetween(
                     date.startOf('month'),
-                    date.endOf('month')
+                    date.endOf('month'),
                   )
                 ) {
                   vestingPerMonth[date.format('MMM')] = [
@@ -290,7 +291,7 @@ const LockTokenStats = () => {
                 // @ts-ignore
                 finalUnlockDate.isBetween(
                   date.startOf('month'),
-                  date.endOf('month')
+                  date.endOf('month'),
                 )
               ) {
                 vestingPerMonth[date.format('MMM')] = [
@@ -308,12 +309,12 @@ const LockTokenStats = () => {
       }
       return { vestingPerMonth, months }
     },
-    [depositsWithWallets]
+    [depositsWithWallets],
   )
 
   const vestPerMonthStats = useMemo(
     () => calcVestingAmountsPerLastXMonths(6).vestingPerMonth,
-    [calcVestingAmountsPerLastXMonths]
+    [calcVestingAmountsPerLastXMonths],
   )
 
   const currentMonthName = statsMonths.length ? statsMonths[0] : ''
@@ -321,7 +322,7 @@ const LockTokenStats = () => {
     currentMonthName && vestPerMonthStats[currentMonthName]
       ? vestPerMonthStats[currentMonthName].reduce(
           (acc, val) => acc.add(val.vestingAmount),
-          new BN(0)
+          new BN(0),
         )
       : undefined
 
@@ -332,11 +333,11 @@ const LockTokenStats = () => {
     (x) =>
       x.extensions.mint?.publicKey.toBase58() ===
         realm?.account.communityMint.toBase58() &&
-      x.extensions.transferAddress?.toBase58() === mainMangoVaultPk
+      x.extensions.transferAddress?.toBase58() === mainMangoVaultPk,
   )
   const mngoLocked = depositsWithWallets.reduce(
     (acc, curr) => acc.add(curr.deposit.amountDepositedNative),
-    new BN(0)
+    new BN(0),
   )
 
   const circulatingSupply =
@@ -347,7 +348,7 @@ const LockTokenStats = () => {
     .filter((x) => x.deposit.allowClawback)
     .reduce(
       (acc, curr) => acc.add(curr.deposit.amountDepositedNative),
-      new BN(0)
+      new BN(0),
     )
 
   const fmtAmount = (val) => {
@@ -391,7 +392,7 @@ const LockTokenStats = () => {
         const grantDeposit = depositsWithWallets.find((x) => {
           return (
             x.deposit.amountInitiallyLockedNative.cmp(
-              depostiWithVoter.amount!
+              depostiWithVoter.amount!,
             ) === 0 &&
             x.deposit.lockup.startTs.cmp(depostiWithVoter.startTs!) === 0 &&
             x.voter.toBase58() === depostiWithVoter.voterPk.toBase58()
@@ -400,8 +401,8 @@ const LockTokenStats = () => {
         if (grantDeposit) {
           currentlyUnlocked.iadd(
             grantDeposit.deposit.amountInitiallyLockedNative.sub(
-              grantDeposit.deposit.amountDepositedNative
-            )
+              grantDeposit.deposit.amountDepositedNative,
+            ),
           )
         } else {
           currentlyUnlocked.iadd(depostiWithVoter.amount!)
@@ -424,7 +425,7 @@ const LockTokenStats = () => {
   const paginateWallets = (page) => {
     return filteredDepositWithWallets.slice(
       page * walletsPerPage,
-      (page + 1) * walletsPerPage
+      (page + 1) * walletsPerPage,
     )
   }
   const parsedSymbol =
@@ -589,12 +590,12 @@ const LockTokenStats = () => {
                       : '0'
                   }
                   const type = Object.keys(
-                    x.deposit.lockup.kind
+                    x.deposit.lockup.kind,
                   )[0] as LockupType
                   const typeName = type !== 'monthly' ? type : 'Vested'
                   const isConstant = type === 'constant'
                   const lockedTokens = fmtMangoAmount(
-                    x.deposit.amountDepositedNative
+                    x.deposit.amountDepositedNative,
                   )
                   return (
                     <TrBody key={`${x.deposit}${index}`}>
@@ -613,7 +614,7 @@ const LockTokenStats = () => {
                         {isConstant
                           ? getMinDurationFmt(
                               x.deposit.lockup.startTs,
-                              x.deposit.lockup.endTs
+                              x.deposit.lockup.endTs,
                             )
                           : getTimeLeftFromNowFmt(x.deposit.lockup.endTs)}
                       </Td>
@@ -669,7 +670,7 @@ const LockTokenStats = () => {
                           {isConstant
                             ? getMinDurationFmt(
                                 x.deposit.lockup.startTs,
-                                x.deposit.lockup.endTs
+                                x.deposit.lockup.endTs,
                               )
                             : getTimeLeftFromNowFmt(x.deposit.lockup.endTs)}
                         </div>
@@ -683,7 +684,7 @@ const LockTokenStats = () => {
           <PaginationComponent
             ref={pagination}
             totalPages={Math.ceil(
-              filteredDepositWithWallets.length / walletsPerPage
+              filteredDepositWithWallets.length / walletsPerPage,
             )}
             onPageChange={onPageChange}
           ></PaginationComponent>

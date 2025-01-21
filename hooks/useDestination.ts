@@ -13,15 +13,15 @@ const getDestination = async (connection: Connection, address: string) => {
   let pubKey: PublicKey | null = null
   let account: TokenProgramAccount<TokenAccount> | undefined = undefined
 
-  if (address.length >= 4 && address.split(".").length === 2) {
-    const [tld] = splitDomainTld(address);
+  if (address.length >= 4 && address.split('.').length === 2) {
+    const [tld] = splitDomainTld(address)
     if (tld === '.sol') {
       pubKey = await tryParseDomain(address)
-    }  else {
+    } else {
       const parser = new TldParser(connection)
       try {
         const owner = await parser.getOwnerFromDomainTld(address)
-        pubKey = owner ?? null;
+        pubKey = owner ?? null
       } catch (error) {
         console.warn('Error resolving domain:', error)
         pubKey = null
@@ -40,9 +40,8 @@ const getDestination = async (connection: Connection, address: string) => {
 
 export const useDestination = (connection: Connection, address: string) => {
   const [destinationAddress, setDestinationAddress] = useState<PublicKey>()
-  const [destinationAccount, setDestinationAccount] = useState<
-    TokenProgramAccount<TokenAccount>
-  >()
+  const [destinationAccount, setDestinationAccount] =
+    useState<TokenProgramAccount<TokenAccount>>()
 
   useEffect(() => {
     if (address) {

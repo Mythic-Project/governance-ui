@@ -34,7 +34,7 @@ import { deposit } from './actions/deposit'
 
 export const getVaultInfos = async (): Promise<VaultInfo[]> => {
   const res = await axios.get(
-    `https://us-central1-psyfi-api.cloudfunctions.net/vaults?env=mainnet`
+    `https://us-central1-psyfi-api.cloudfunctions.net/vaults?env=mainnet`,
   )
   const vaultInfos = Object.values(res.data.vaults as any) as VaultInfo[]
   return vaultInfos
@@ -52,7 +52,7 @@ const handleVaultAction: CreatePsyFiStrategy = async (
   proposalIndex: number,
   isDraft: boolean,
   connection: ConnectionContext,
-  client?: VotingClient
+  client?: VotingClient,
 ) => {
   const owner = treasuryAssetAccount.isSol
     ? treasuryAssetAccount!.pubkey
@@ -69,7 +69,7 @@ const handleVaultAction: CreatePsyFiStrategy = async (
       psyFiStrategyInfo,
       form,
       owner,
-      transferAddress
+      transferAddress,
     )
   }
 
@@ -86,15 +86,15 @@ const handleVaultAction: CreatePsyFiStrategy = async (
     proposalIndex,
     instructions,
     isDraft,
-    ["Approve"],
-    client
+    ['Approve'],
+    client,
   )
   return proposalAddress
 }
 
 export const convertVaultInfoToStrategy = async (
   vaultInfo: VaultInfo,
-  otherStrategies: PsyFiStrategy[] | undefined
+  otherStrategies: PsyFiStrategy[] | undefined,
 ): Promise<PsyFiStrategy | undefined> => {
   let strategyName = ''
   if (vaultInfo.strategyType === Strategy.Call) {
@@ -111,7 +111,7 @@ export const convertVaultInfoToStrategy = async (
   const vaultPubkey = new PublicKey(vaultInfo.accounts.vaultAddress)
   const [collateralAccountKey] = await deriveVaultCollateralAccount(
     MAINNET_PROGRAM_KEYS.PSYFI_V2,
-    vaultPubkey
+    vaultPubkey,
   )
   const strategy: PsyFiStrategy = {
     liquidity: vaultInfo.deposits.current,
@@ -151,7 +151,7 @@ export const getPsyFiStrategies = async (): Promise<PsyFiStrategy[]> => {
 }
 
 const psyFiVestingStrategies = async (
-  groupedVaults: TokenGroupedVaults
+  groupedVaults: TokenGroupedVaults,
 ): Promise<PsyFiStrategy[]> => {
   const res = await Promise.all(
     Object.keys(groupedVaults).map(async (collateralTokenAddress) => {
@@ -163,15 +163,15 @@ const psyFiVestingStrategies = async (
       }
       const otherStrategies = await Promise.all(
         strategies.map(
-          async (x) => await convertVaultInfoToStrategy(x, undefined)
-        )
+          async (x) => await convertVaultInfoToStrategy(x, undefined),
+        ),
       )
       return convertVaultInfoToStrategy(
         topVault,
         // @ts-ignore:
-        otherStrategies.filter((x) => !!x)
+        otherStrategies.filter((x) => !!x),
       )
-    })
+    }),
   )
 
   // @ts-ignore

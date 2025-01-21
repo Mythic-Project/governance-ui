@@ -90,7 +90,7 @@ export const TokenDeposit = ({
     depositTokenRecord && mint
       ? fmtMintAmount(
           mint,
-          depositTokenRecord.account.governingTokenDepositAmount
+          depositTokenRecord.account.governingTokenDepositAmount,
         )
       : '0'
 

@@ -41,8 +41,8 @@ import {
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { useRealmProposalsQuery } from '@hooks/queries/proposal'
 import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
-import {useVotingClients} from "@hooks/useVotingClients";
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVotingClients } from '@hooks/useVotingClients'
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const SOL_BUFFER = 0.02
 
@@ -71,8 +71,8 @@ const SolendDeposit = ({
   const [deposits, setDeposits] = useState<{
     [reserveAddress: string]: number
   }>({})
-  const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle();
-  const votingClients = useVotingClients();
+  const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle()
+  const votingClients = useVotingClients()
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
   const tokenInfo = tokenPriceService.getTokenInfo(handledMint)
@@ -85,11 +85,11 @@ const SolendDeposit = ({
   const treasuryAmount = new BN(
     governedTokenAccount.isSol
       ? governedTokenAccount.extensions.amount!.toNumber()
-      : governedTokenAccount.extensions.token!.account.amount
+      : governedTokenAccount.extensions.token!.account.amount,
   )
   const mintInfo = governedTokenAccount.extensions?.mint?.account
   const tokenSymbol = tokenPriceService.getTokenInfo(
-    governedTokenAccount.extensions.mint!.publicKey.toBase58()
+    governedTokenAccount.extensions.mint!.publicKey.toBase58(),
   )?.symbol
   const [form, setForm] = useState<{
     title: string
@@ -128,8 +128,8 @@ const SolendDeposit = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(form.amount))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(form.amount)),
+        ).toFixed(currentPrecision),
       ),
     })
   }
@@ -162,7 +162,7 @@ const SolendDeposit = ({
             (reserve) =>
               reserve.mintAddress === handledMint &&
               reserve.collateralMintAddress ===
-                acc.extensions.mint?.publicKey.toBase58()
+                acc.extensions.mint?.publicKey.toBase58(),
           )
           if (!reserve || !proposedInvestment) return null
 
@@ -174,7 +174,7 @@ const SolendDeposit = ({
         .filter(Boolean)
 
       const reserveStats = await getReserveData(
-        relevantAccs.map((data) => data!.reserve.reserveAddress)
+        relevantAccs.map((data) => data!.reserve.reserveAddress),
       )
 
       const results = Object.fromEntries(
@@ -183,7 +183,7 @@ const SolendDeposit = ({
           const account = data!.acc
 
           const stat = reserveStats.find(
-            (stat) => stat.reserve.lendingMarket === reserve.marketAddress
+            (stat) => stat.reserve.lendingMarket === reserve.marketAddress,
           )!
 
           return [
@@ -192,7 +192,7 @@ const SolendDeposit = ({
               cTokenExchangeRate(stat)) /
               10 ** reserve.decimals,
           ]
-        })
+        }),
       )
       setDeposits(results)
     }
@@ -214,11 +214,11 @@ const SolendDeposit = ({
         getProgramVersionForRealm(realmInfo!),
         wallet!,
         connection.current,
-        connection.endpoint
+        connection.endpoint,
       )
       const ownTokenRecord = ownVoterWeight.getTokenRecordToCreateProposal(
         governedTokenAccount!.governance!.account.config,
-        voteByCouncil
+        voteByCouncil,
       )
       const defaultProposalMint = voteByCouncil
         ? realm?.account.config.councilMint
@@ -236,7 +236,7 @@ const SolendDeposit = ({
           amountFmt: form.amount!.toFixed(4),
           bnAmount: getMintNaturalAmountFromDecimalAsBN(
             form.amount as number,
-            governedTokenAccount.extensions.mint!.account.decimals
+            governedTokenAccount.extensions.mint!.account.decimals,
           ),
           proposalCount: proposals.length,
           action: 'Deposit',
@@ -248,10 +248,10 @@ const SolendDeposit = ({
         governedTokenAccount!.governance!.account!.proposalCount,
         false,
         connection,
-        votingClients(voteByCouncil? 'council' : 'community')
+        votingClients(voteByCouncil ? 'council' : 'community'),
       )
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       router.push(url)
     } catch (e) {
@@ -274,15 +274,14 @@ const SolendDeposit = ({
       <Select
         className="mb-3"
         label="Pool"
-        value={`${
-          form.reserve?.marketName
-        } - APY: ${form.reserve?.supplyApy.toFixed(2)}%`}
+        value={`${form.reserve
+          ?.marketName} - APY: ${form.reserve?.supplyApy.toFixed(2)}%`}
         placeholder="Please select..."
         onChange={(val) =>
           handleSetForm({
             propertyName: 'reserve',
             value: proposedInvestment.reserves.find(
-              (reserve) => reserve.marketName === val
+              (reserve) => reserve.marketName === val,
             ),
           })
         }

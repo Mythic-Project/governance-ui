@@ -21,7 +21,7 @@ export const DelegateTokensModal: React.FC<DelegateTokensModalProps> = ({
   const { loading, error, result: subDaos } = useSubDaos()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedSubDaoPk, setSelectedSubDaoPk] = useState<PublicKey | null>(
-    null
+    null,
   )
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export const DelegateTokensModal: React.FC<DelegateTokensModalProps> = ({
     try {
       setIsSubmitting(true)
       await onSubmit(
-        subDaos!.find((subDao) => subDao.pubkey.equals(selectedSubDaoPk!))!
+        subDaos!.find((subDao) => subDao.pubkey.equals(selectedSubDaoPk!))!,
       )
       onClose()
     } catch (e) {

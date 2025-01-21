@@ -13,14 +13,14 @@ import {
 } from '@utils/sendTransactions'
 import { withCreateTokenOwnerRecord } from '@solana/spl-governance'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useClosePosition = () => {
   const { unixNow } = useSolanaUnixNow()
   const { connection, wallet } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const { realmInfo } = useRealm()
-  const { heliumClient } = useHeliumClient();
+  const { heliumClient } = useHeliumClient()
   const { error, loading, execute } = useAsyncCallback(
     async ({
       position,
@@ -60,7 +60,7 @@ export const useClosePosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -73,7 +73,7 @@ export const useClosePosition = () => {
               position: position.pubkey,
               depositMint: realm.account.communityMint,
             })
-            .instruction()
+            .instruction(),
         )
 
         instructions.push(
@@ -82,7 +82,7 @@ export const useClosePosition = () => {
             .accounts({
               position: position.pubkey,
             })
-            .instruction()
+            .instruction(),
         )
 
         notify({ message: 'Closing' })
@@ -92,7 +92,7 @@ export const useClosePosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -108,7 +108,7 @@ export const useClosePosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

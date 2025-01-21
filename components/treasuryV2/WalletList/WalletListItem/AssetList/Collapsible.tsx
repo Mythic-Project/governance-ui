@@ -41,7 +41,7 @@ export default function Collapsible(props: Props) {
             'w-full',
             'px-[18px]',
             props.onToggleHiddenItems ? 'pr-[10px]' : '',
-            !props.disableCollapse ? 'cursor-pointer' : 'cursor-default'
+            !props.disableCollapse ? 'cursor-pointer' : 'cursor-default',
           )}
           disabled={props.disableCollapse}
           onClick={(e) => {
@@ -68,7 +68,7 @@ export default function Collapsible(props: Props) {
                 'text-[10px]',
                 'text-white/50',
                 'min-w-[16px]',
-                'px-1'
+                'px-1',
               )}
             >
               {props.count}
@@ -81,7 +81,7 @@ export default function Collapsible(props: Props) {
                 'text-white/50',
                 'transition-all',
                 'w-4',
-                open ? '' : '-rotate-90'
+                open ? '' : '-rotate-90',
               )}
             />
           )}
@@ -106,7 +106,7 @@ export default function Collapsible(props: Props) {
       {open && children && (
         <div className="space-y-1 mt-3">
           {children.map((child, i) =>
-            React.cloneElement(child, { key: child.key || i })
+            React.cloneElement(child, { key: child.key || i }),
           )}
         </div>
       )}

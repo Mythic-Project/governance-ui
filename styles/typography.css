@@ -86,7 +86,10 @@ h4.heading-sm {
 }
 
 .neon-text {
-  text-shadow: 0 0 20px #4deeea, 0 0 30px #4deeea, 0 0 40px #4deeea;
+  text-shadow:
+    0 0 20px #4deeea,
+    0 0 30px #4deeea,
+    0 0 40px #4deeea;
 }
 
 .neon-box {

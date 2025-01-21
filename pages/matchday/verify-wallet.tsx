@@ -3,7 +3,7 @@ import VerifyPage from '@verify-wallet/components'
 
 const MatchdayVerifyPage = () => {
   const parsedLocationHash = new URLSearchParams(
-    window.location.search.substring(1)
+    window.location.search.substring(1),
   )
 
   return (

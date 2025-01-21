@@ -45,7 +45,7 @@ const OpenBookRegisterMarket = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const forwarderProgramHelpers = useForwarderProgramHelpers()
@@ -53,7 +53,7 @@ const OpenBookRegisterMarket = ({
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup.admin)
+      x.extensions.transferAddress?.equals(mangoGroup.admin),
   )
   const connection = useLegacyConnectionContext()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -63,9 +63,10 @@ const OpenBookRegisterMarket = ({
     baseBankPk: '',
     quoteBankPk: '',
     marketIndex: 0,
-    openBookProgram: OPENBOOK_PROGRAM_ID[
-      connection.cluster === 'mainnet' ? 'mainnet-beta' : 'devnet'
-    ].toBase58(),
+    openBookProgram:
+      OPENBOOK_PROGRAM_ID[
+        connection.cluster === 'mainnet' ? 'mainnet-beta' : 'devnet'
+      ].toBase58(),
     name: '',
     holdupTime: 0,
     oraclePriceBand: 0,
@@ -90,7 +91,7 @@ const OpenBookRegisterMarket = ({
         .serum3RegisterMarket(
           Number(form.marketIndex),
           form.name,
-          form.oraclePriceBand
+          form.oraclePriceBand,
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -104,7 +105,7 @@ const OpenBookRegisterMarket = ({
         .instruction()
 
       serializedInstruction = serializeInstructionToBase64(
-        forwarderProgramHelpers.withForwarderWrapper(ix)
+        forwarderProgramHelpers.withForwarderWrapper(ix),
       )
     }
     const obj: UiInstruction = {
@@ -119,7 +120,7 @@ const OpenBookRegisterMarket = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -139,25 +140,25 @@ const OpenBookRegisterMarket = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     baseBankPk: yup
       .string()
       .required()
       .test('is-valid-address1', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     quoteBankPk: yup
       .string()
       .required()
       .test('is-valid-address2', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
     openBookProgram: yup
       .string()
       .required()
       .test('is-valid-address3', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
   })
 

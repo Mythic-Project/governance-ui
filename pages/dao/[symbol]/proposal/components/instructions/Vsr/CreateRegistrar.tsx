@@ -92,14 +92,14 @@ const CreateVsrRegistrar = ({
     if (VSR_PLUGIN_PKS.includes(form.programId)) {
       vsrClient = await VsrClient.connect(
         anchorProvider,
-        new PublicKey(form.programId)
+        new PublicKey(form.programId),
       )
     }
 
     if (HELIUM_VSR_PLUGINS_PKS.includes(form.programId)) {
       vsrClient = await HeliumVsrClient.connect(
         anchorProvider,
-        new PublicKey(form.programId)
+        new PublicKey(form.programId),
       )
     }
 
@@ -110,7 +110,7 @@ const CreateVsrRegistrar = ({
     const { registrar, registrarBump } = getRegistrarPDA(
       realm.pubkey,
       realm.account.communityMint,
-      vsrClient.program.programId
+      vsrClient.program.programId,
     )
 
     if (vsrClient instanceof HeliumVsrClient) {
@@ -154,7 +154,7 @@ const CreateVsrRegistrar = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -170,7 +170,7 @@ const CreateVsrRegistrar = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
     },
     {

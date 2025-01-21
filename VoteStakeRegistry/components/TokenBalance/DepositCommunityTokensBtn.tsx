@@ -15,7 +15,7 @@ import { useUserCommunityTokenOwnerRecord } from '@hooks/queries/tokenOwnerRecor
 import { useConnection } from '@solana/wallet-adapter-react'
 import queryClient from '@hooks/queries/queryClient'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
 
 const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
   const { getOwnedDeposits } = useDepositStore()
@@ -27,9 +27,9 @@ const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
   const connected = !!wallet?.connected
   const { connection } = useConnection()
   const endpoint = connection.rpcEndpoint
-  const currentTokenOwnerRecord = useUserCommunityTokenOwnerRecord().data
-    ?.result
-  const {vsrClient} = useVsrClient();
+  const currentTokenOwnerRecord =
+    useUserCommunityTokenOwnerRecord().data?.result
+  const { vsrClient } = useVsrClient()
 
   const depositAllTokens = async function () {
     if (!realm) {
@@ -45,7 +45,7 @@ const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection,
-      endpoint
+      endpoint,
     )
     try {
       await voteRegistryDepositWithoutLockup({
@@ -70,8 +70,8 @@ const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
       queryClient.invalidateQueries(
         tokenAccountQueryKeys.byOwner(
           connection.rpcEndpoint,
-          wallet!.publicKey!
-        )
+          wallet!.publicKey!,
+        ),
       )
     } catch (e) {
       console.log(e)

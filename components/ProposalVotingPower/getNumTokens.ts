@@ -21,12 +21,12 @@ export default function getNumTokens(
   _ownVoterWeight: OwnVoterWeight,
   depositTokenRecord?: ProgramAccount<TokenOwnerRecord>,
   mint?: MintInfo,
-  _realmInfo?: RealmInfo
+  _realmInfo?: RealmInfo,
 ) {
   if (depositTokenRecord && mint) {
     return getMintDecimalAmount(
       mint,
-      depositTokenRecord.account.governingTokenDepositAmount
+      depositTokenRecord.account.governingTokenDepositAmount,
     )
   }
 

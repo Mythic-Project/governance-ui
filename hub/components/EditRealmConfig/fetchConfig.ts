@@ -56,35 +56,35 @@ export async function fetchConfig(
   );
 
   const realmConfig = realm.account.config;
-  const configAccountInfo = await connection.getAccountInfo(
-    realmConfigPublicKey,
-  );
+  const configAccountInfo =
+    await connection.getAccountInfo(realmConfigPublicKey);
 
-  const configProgramAccount: ProgramAccount<RealmConfigAccount> = configAccountInfo
-    ? GovernanceAccountParser(RealmConfigAccount)(
-        realmConfigPublicKey,
-        configAccountInfo,
-      )
-    : {
-        pubkey: realmConfigPublicKey,
-        owner: programPublicKey,
-        account: new RealmConfigAccount({
-          realm: realmPublicKey,
-          communityTokenConfig: new GoverningTokenConfig({
-            voterWeightAddin: undefined,
-            maxVoterWeightAddin: undefined,
-            tokenType: GoverningTokenType.Liquid,
+  const configProgramAccount: ProgramAccount<RealmConfigAccount> =
+    configAccountInfo
+      ? GovernanceAccountParser(RealmConfigAccount)(
+          realmConfigPublicKey,
+          configAccountInfo,
+        )
+      : {
+          pubkey: realmConfigPublicKey,
+          owner: programPublicKey,
+          account: new RealmConfigAccount({
+            realm: realmPublicKey,
+            communityTokenConfig: new GoverningTokenConfig({
+              voterWeightAddin: undefined,
+              maxVoterWeightAddin: undefined,
+              tokenType: GoverningTokenType.Liquid,
+              reserved: new Uint8Array(),
+            }),
+            councilTokenConfig: new GoverningTokenConfig({
+              voterWeightAddin: undefined,
+              maxVoterWeightAddin: undefined,
+              tokenType: GoverningTokenType.Liquid,
+              reserved: new Uint8Array(),
+            }),
             reserved: new Uint8Array(),
           }),
-          councilTokenConfig: new GoverningTokenConfig({
-            voterWeightAddin: undefined,
-            maxVoterWeightAddin: undefined,
-            tokenType: GoverningTokenType.Liquid,
-            reserved: new Uint8Array(),
-          }),
-          reserved: new Uint8Array(),
-        }),
-      };
+        };
 
   let nftCollection: PublicKey | undefined = undefined;
   let nftCollectionSize = 0;
@@ -129,9 +129,9 @@ export async function fetchConfig(
   }
 
   if (quadraticPlugin && realm.account.communityMint) {
-    const anchorCoefficients = (quadraticPlugin?.params as
-      | AnchorParams
-      | undefined)?.quadraticCoefficients;
+    const anchorCoefficients = (
+      quadraticPlugin?.params as AnchorParams | undefined
+    )?.quadraticCoefficients;
     qvCoefficients = anchorCoefficients
       ? QuadraticClient.convertCoefficientsFromAnchorType(anchorCoefficients)
       : undefined;

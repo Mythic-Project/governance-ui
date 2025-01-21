@@ -19,7 +19,7 @@ const useGovernanceNfts = (governance: PublicKey | undefined) => {
             .flat()
             .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
         : undefined,
-    [governanceNfts, treasuryNfts]
+    [governanceNfts, treasuryNfts],
   )
 
   return nfts

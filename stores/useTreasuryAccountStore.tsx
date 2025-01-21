@@ -66,7 +66,7 @@ const useTreasuryAccountStore = create<TreasuryAccountStore>((set, _get) => ({
         {
           limit: 5,
         },
-        'confirmed'
+        'confirmed',
       )
     } catch (e) {
       notify({

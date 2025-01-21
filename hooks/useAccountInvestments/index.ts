@@ -57,7 +57,7 @@ export function useAccountInvestments(args: Args) {
     args.asset.type === AssetType.Sol ? WSOL_MINT : args.asset.mintAddress
 
   const visibleInvestments = strategies.filter(
-    (strat) => strat.handledMint === strategyMintAddress
+    (strat) => strat.handledMint === strategyMintAddress,
   )
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export function useAccountInvestments(args: Args) {
         wallet: args.wallet,
         connection: connection.current,
         loadSolend: !!visibleInvestments.filter(
-          (x) => x.protocolName === SOLEND
+          (x) => x.protocolName === SOLEND,
         ).length,
         owner,
       })
@@ -95,7 +95,7 @@ export function useAccountInvestments(args: Args) {
             _tag: Status.Ok,
             data: {
               activeInvestments: activeInvestments.filter(
-                (i) => !!i.investedAmount
+                (i) => !!i.investedAmount,
               ),
               potentialInvestments: strategies
                 .filter((strat) => strat.handledMint === strategyMintAddress)
@@ -105,7 +105,7 @@ export function useAccountInvestments(args: Args) {
                     : []),
                   ...(args.asset.type === AssetType.Token
                     ? staticInvestments.getTokenInvestments(
-                        args.asset.logo || ''
+                        args.asset.logo || '',
                       )
                     : []),
                 ]),
@@ -119,7 +119,7 @@ export function useAccountInvestments(args: Args) {
           setResult({
             _tag: Status.Failed,
             error: e instanceof Error ? e : new Error(e),
-          })
+          }),
         )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree

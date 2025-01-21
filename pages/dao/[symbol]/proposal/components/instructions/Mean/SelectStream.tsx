@@ -49,14 +49,14 @@ const SelectStream = ({
             !shouldBeGoverned
               ? !shouldBeGoverned
               : x?.governance?.pubkey.toBase58() ===
-                governance?.pubkey?.toBase58()
+                governance?.pubkey?.toBase58(),
           )
           .filter((a) => a.isSol)
           .map((a) =>
             paymentStreaming.listStreams({
               beneficiary: a.extensions.transferAddress,
-            })
-          )
+            }),
+          ),
       )
       setStreams(nextStreams.flat())
     })()

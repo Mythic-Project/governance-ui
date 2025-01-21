@@ -26,29 +26,31 @@ export const ProfileImage: FC<Props> = ({ publicKey, expanded, className }) => {
 
   // No civic profile - show placeholder
   if (!profile || !profile.image) {
-    return<a
+    return (
+      <a
         className="underline"
         target="_blank"
         href={'https://civic.me/' + publicKey?.toString()}
         rel="noreferrer"
-    >
-      <UserCircleIcon className={classes}/>
-    </a>
+      >
+        <UserCircleIcon className={classes} />
+      </a>
+    )
   }
 
   // Show civic profile image with loader as image loads
   return (
-      <a
-          className="underline"
-          target="_blank"
-          href={'https://civic.me/' + publicKey?.toString()}
-          rel="noreferrer"
-      >
-        <ImgWithLoader
-            src={profile.image.url}
-            className={classes}
-            alt="Profile pic"
-        />
-      </a>
+    <a
+      className="underline"
+      target="_blank"
+      href={'https://civic.me/' + publicKey?.toString()}
+      rel="noreferrer"
+    >
+      <ImgWithLoader
+        src={profile.image.url}
+        className={classes}
+        alt="Profile pic"
+      />
+    </a>
   )
 }

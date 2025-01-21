@@ -11,7 +11,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         const { lamports } = BufferLayout.struct<any['Split']>([
           BufferLayout.u32('instruction'),
@@ -19,7 +19,7 @@ export const STAKE_INSTRUCTIONS = {
         ]).decode(Buffer.from(_data))
 
         // const rent = await _connection.getMinimumBalanceForRentExemption(200)
-        
+
         // > solana rent 200 --lamports
         // Rent-exempt minimum: 2282880 lamports
         const rent = 2282880
@@ -41,7 +41,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         const { lamports } = BufferLayout.struct<any['Withdraw']>([
           BufferLayout.u32('instruction'),
@@ -61,7 +61,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         return <></>
       },
@@ -72,7 +72,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         try {
           const layout = BufferLayout.struct<any['Unlock']>([
@@ -87,7 +87,7 @@ export const STAKE_INSTRUCTIONS = {
           // decode
           const data = layout.decode(Buffer.from(_data))
           const accData = await _connection.getParsedAccountInfo(
-            _accounts[0].pubkey
+            _accounts[0].pubkey,
           )
           const stakeMeta = accData.value?.data['parsed'].info.meta
           return (
@@ -123,7 +123,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         const layout = BufferLayout.struct<any['Authorize']>([
           BufferLayout.u32('instruction'),
@@ -161,7 +161,7 @@ export const STAKE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         _data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         return <></>
       },

@@ -68,11 +68,11 @@ const WithdrawFromOracle = ({
       const program = await SwitchboardProgram.load(connection.current)
       const [oracle, oracleAccountData] = await AggregatorAccount.load(
         program,
-        form.oraclePublicKey
+        form.oraclePublicKey,
       )
 
       const [leaseAccount] = await oracle.getLeaseAccount(
-        oracleAccountData.queuePubkey
+        oracleAccountData.queuePubkey,
       )
 
       const wsolAddress = await Token.getAssociatedTokenAddress(
@@ -80,19 +80,20 @@ const WithdrawFromOracle = ({
         TOKEN_PROGRAM_ID,
         new PublicKey(WSOL_MINT),
         form.governedAccount.extensions.transferAddress!,
-        true
+        true,
       )
       const wsolAccount = await connection.current.getAccountInfo(wsolAddress)
 
       if (!wsolAccount) {
-        const createWsolacc = await Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          new PublicKey(WSOL_MINT),
-          wsolAddress,
-          form.governedAccount.extensions.transferAddress!,
-          wallet.publicKey
-        )
+        const createWsolacc =
+          await Token.createAssociatedTokenAccountInstruction(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_PROGRAM_ID,
+            new PublicKey(WSOL_MINT),
+            wsolAddress,
+            form.governedAccount.extensions.transferAddress!,
+            wallet.publicKey,
+          )
         prerequisiteInstructions.push(createWsolacc)
       }
 
@@ -102,22 +103,22 @@ const WithdrawFromOracle = ({
           withdrawWallet: wsolAddress!,
           amount: 'all',
           unwrap: false,
-        }
+        },
       )
       const closeWSOLAccountIx = Token.createCloseAccountInstruction(
         TOKEN_PROGRAM_ID,
         wsolAddress,
         form.governedAccount.extensions.transferAddress!,
         form.governedAccount.extensions.transferAddress!,
-        []
+        [],
       )
 
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(ix!.ixns[0])
+        serializeInstructionToBase64(ix!.ixns[0]),
       )
 
       additionalSerializedInstructions.push(
-        serializeInstructionToBase64(closeWSOLAccountIx)
+        serializeInstructionToBase64(closeWSOLAccountIx),
       )
 
       serializedInstruction = ''
@@ -137,7 +138,7 @@ const WithdrawFromOracle = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

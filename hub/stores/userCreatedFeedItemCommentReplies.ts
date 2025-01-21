@@ -10,8 +10,8 @@ interface UserCreatedFeedItemCommentRepliesStore extends State {
   updateComment: (parentCommentId: string, comment: FeedItemComment) => void;
 }
 
-export const useUserCreatedFeedItemCommentRepliesStore = create<UserCreatedFeedItemCommentRepliesStore>(
-  (set, get) => ({
+export const useUserCreatedFeedItemCommentRepliesStore =
+  create<UserCreatedFeedItemCommentRepliesStore>((set, get) => ({
     comments: {},
     addReply: (parentCommentId, comment) => {
       const comments = get().comments;
@@ -38,5 +38,4 @@ export const useUserCreatedFeedItemCommentRepliesStore = create<UserCreatedFeedI
         });
       }
     },
-  }),
-);
+  }));

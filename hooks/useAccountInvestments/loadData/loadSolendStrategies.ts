@@ -9,7 +9,7 @@ import { Wallet } from '@models/treasury/Wallet'
 import { Token } from '@models/treasury/Asset'
 
 function isSolendStrategy(
-  strategy: TreasuryStrategy
+  strategy: TreasuryStrategy,
 ): strategy is SolendStrategy {
   return strategy.protocolName === SOLEND
 }
@@ -22,25 +22,27 @@ export default async function loadSolendStrategies(args: {
 }): Promise<(TreasuryStrategy & { investedAmount: number })[]> {
   const solendStrategy: SolendStrategy | undefined = args.strategies.filter(
     (arg) =>
-      isSolendStrategy(arg) && arg.handledMint === args.strategyMintAddress
+      isSolendStrategy(arg) && arg.handledMint === args.strategyMintAddress,
   )[0] as SolendStrategy
 
   const reserveStats = solendStrategy
     ? await getReserveData(
-        solendStrategy.reserves.map((strat) => strat.reserveAddress) ?? []
+        solendStrategy.reserves.map((strat) => strat.reserveAddress) ?? [],
       )
     : []
 
   return (
     solendStrategy?.reserves.map((res) => {
       const stat = reserveStats.find(
-        (stat) => stat.reserve.lendingMarket === res.marketAddress
+        (stat) => stat.reserve.lendingMarket === res.marketAddress,
       )!
 
       const cTokenBalance =
-        (args.wallet?.assets.find(
-          (ass: Token) => ass.mintAddress === res.collateralMintAddress
-        ) as Token)?.count.toNumber() ?? 0
+        (
+          args.wallet?.assets.find(
+            (ass: Token) => ass.mintAddress === res.collateralMintAddress,
+          ) as Token
+        )?.count.toNumber() ?? 0
 
       return {
         ...solendStrategy,

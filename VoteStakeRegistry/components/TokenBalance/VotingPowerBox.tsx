@@ -5,7 +5,7 @@ import { getMintDecimalAmount } from '@tools/sdk/units'
 import { LightningBoltIcon } from '@heroicons/react/solid'
 import Tooltip from '@components/Tooltip'
 import VotingPowerPct from '@components/ProposalVotingPower/VotingPowerPct'
-import clsx from "clsx";
+import clsx from 'clsx'
 
 const VotingPowerBox = ({
   votingPower,
@@ -41,8 +41,15 @@ const VotingPowerBox = ({
         style={style}
       >
         <div>
-          <p className="text-fgd-3">{ isLastPlugin ? 'Votes' : 'Token Power via Locking'}</p>
-          <span className={clsx("mb-0 flex font-bold items-center", (isLastPlugin ? "hero-text" : "text-xs"))}>
+          <p className="text-fgd-3">
+            {isLastPlugin ? 'Votes' : 'Token Power via Locking'}
+          </p>
+          <span
+            className={clsx(
+              'mb-0 flex font-bold items-center',
+              isLastPlugin ? 'hero-text' : 'text-xs',
+            )}
+          >
             {votingPowerBigNum.toFormat(2)}{' '}
             {!votingPowerFromDeposits.isZero() && !votingPower.isZero() && (
               <Tooltip content="Vote Weight Multiplier – Increase your vote weight by locking tokens">

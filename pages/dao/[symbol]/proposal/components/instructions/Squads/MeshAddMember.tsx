@@ -47,7 +47,7 @@ const MeshAddMember = ({
           console.log('Attempting to resolve domain:', domain)
           const resolved = await resolveDomain(connection.current, domain)
           console.log('Domain resolved to:', resolved?.toBase58() || 'null')
-          
+
           if (resolved) {
             setForm((prevForm) => ({
               ...prevForm,
@@ -60,7 +60,7 @@ const MeshAddMember = ({
           setIsResolvingDomain(false)
         }
       }, 500),
-    [connection]
+    [connection],
   )
 
   const validateInstruction = async (): Promise<boolean> => {
@@ -84,7 +84,7 @@ const MeshAddMember = ({
       const instruction = await squads.buildAddMember(
         new PublicKey(form.vault),
         form.governedAccount.governance.pubkey,
-        new PublicKey(form.member)
+        new PublicKey(form.member),
       )
       return {
         serializedInstruction: serializeInstructionToBase64(instruction),
@@ -105,7 +105,7 @@ const MeshAddMember = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -129,7 +129,7 @@ const MeshAddMember = ({
         'Invalid Member Account',
         function (val: string) {
           return val ? validatePubkey(val) : true
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [
@@ -166,7 +166,7 @@ const MeshAddMember = ({
           setIsResolvingDomain(true)
           resolveDomainDebounced(form.member)
         }
-      }
+      },
     },
   ]
 

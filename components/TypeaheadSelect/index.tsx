@@ -19,7 +19,7 @@ interface Props<O extends Option> {
 export default function TypeaheadSelect<O extends Option>(props: Props<O>) {
   const [query, setQuery] = useState('')
   const value = props.options.find(
-    (option) => option.key === props.selected?.key
+    (option) => option.key === props.selected?.key,
   )
   const list = props.options.filter((option) => {
     if (!query) {
@@ -67,7 +67,7 @@ export default function TypeaheadSelect<O extends Option>(props: Props<O>) {
                 'disabled:hover:border-bkg-4',
                 'focus:border-primary-light',
                 'focus:outline-none',
-                'hover:border-primary-light'
+                'hover:border-primary-light',
               )}
               displayValue={(option: O) => option?.text || ''}
               placeholder={props.placeholder}
@@ -86,7 +86,7 @@ export default function TypeaheadSelect<O extends Option>(props: Props<O>) {
                 'text-primary-light',
                 'top-1/2',
                 'w-5',
-                isOpen ? 'transform rotate-180' : 'transform rotate-360'
+                isOpen ? 'transform rotate-180' : 'transform rotate-360',
               )}
             />
             {isOpen && (
@@ -99,7 +99,7 @@ export default function TypeaheadSelect<O extends Option>(props: Props<O>) {
                   'py-2',
                   'rounded-md',
                   'w-full',
-                  'z-10'
+                  'z-10',
                 )}
               >
                 <div
@@ -116,7 +116,7 @@ export default function TypeaheadSelect<O extends Option>(props: Props<O>) {
                             'px-3',
                             'py-2',
                             active && 'bg-bkg-3',
-                            selected && 'border-light-theme-primary-light'
+                            selected && 'border-light-theme-primary-light',
                           )}
                         >
                           {option.text}

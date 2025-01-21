@@ -7,7 +7,7 @@ import { GovernanceVoteTipping } from '@hub/types/decoders/GovernanceVoteTipping
 import { PublicKey } from '@hub/types/decoders/PublicKey';
 
 export const getRealm = gql`
-  query($realmUrlId: String!) {
+  query ($realmUrlId: String!) {
     me {
       publicKey
     }
@@ -20,7 +20,7 @@ export const getRealm = gql`
 `;
 
 export const getGovernance = gql`
-  query($realmUrlId: String!, $governancePublicKey: PublicKey!) {
+  query ($realmUrlId: String!, $governancePublicKey: PublicKey!) {
     realmByUrlId(urlId: $realmUrlId) {
       publicKey
       governance(governance: $governancePublicKey) {
@@ -102,7 +102,7 @@ export const getGovernanceResp = IT.type({
       maxVoteDays: IT.number,
       minInstructionHoldupDays: IT.number,
       version: IT.number,
-      walletAddress: PublicKey
+      walletAddress: PublicKey,
     }),
   }),
 });

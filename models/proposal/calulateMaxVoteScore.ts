@@ -7,7 +7,7 @@ import { calculateMintMaxVoteWeight } from '@models/proposal'
 export function calculateMaxVoteScore(
   realm: ProgramAccount<Realm>,
   proposal: ProgramAccount<Proposal>,
-  governingTokenMint: MintInfo
+  governingTokenMint: MintInfo,
 ) {
   if (proposal.account.isVoteFinalized() && proposal.account.maxVoteWeight) {
     return proposal.account.maxVoteWeight
@@ -22,6 +22,6 @@ export function calculateMaxVoteScore(
 
   return calculateMintMaxVoteWeight(
     governingTokenMint,
-    realm.account.config.communityMintMaxVoteWeightSource
+    realm.account.config.communityMintMaxVoteWeightSource,
   )
 }

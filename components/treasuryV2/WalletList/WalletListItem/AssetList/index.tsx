@@ -48,7 +48,7 @@ function isTokenLike(asset: Asset): asset is Token | Sol {
 }
 
 function isOther(
-  asset: Asset
+  asset: Asset,
 ): asset is
   | Mint
   | Programs
@@ -89,12 +89,12 @@ export default function AssetList(props: Props) {
     (token) =>
       token.type != AssetType.Sol &&
       token.logo == undefined &&
-      token.mintAddress
+      token.mintAddress,
   ) as Token[]
   // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   const othersFromProps = useMemo(() => props.assets.filter(isOther), [])
   const otherFromPropsFiltred = othersFromProps.filter((token) =>
-    isMint(token)
+    isMint(token),
   ) as Mint[]
 
   const { data } = useTokensMetadata([
@@ -155,13 +155,14 @@ export default function AssetList(props: Props) {
             .flat()
             .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
         : undefined,
-    [governanceNfts, treasuryNfts]
+    [governanceNfts, treasuryNfts],
   )
 
   // NOTE possible source of bugs, state wont update if props do.
-  const [others, setOthers] = useState<
-    (Mint | Programs | Unknown | Domains | RealmAuthority | Stake | Mango)[]
-  >(othersFromProps)
+  const [others, setOthers] =
+    useState<
+      (Mint | Programs | Unknown | Domains | RealmAuthority | Stake | Mango)[]
+    >(othersFromProps)
   const [itemsToHide, setItemsToHide] = useState<string[]>([])
   useEffect(() => {
     const newItemsToHide: string[] = []

@@ -31,7 +31,7 @@ function WalletQRCode(props: Props & { width: number }) {
             imageOptions: { crossOrigin: 'anonymous', margin: 5 },
             type: 'svg',
             width: props.width,
-          })
+          }),
         )
       })
     }

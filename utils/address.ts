@@ -2,13 +2,13 @@ import { Connection, PublicKey } from '@solana/web3.js'
 
 export const shortenAddress = (address: string, chars = 5): string =>
   `${address.substring(0, chars)}...${address.substring(
-    address.length - chars
+    address.length - chars,
   )}`
 
 export const genShortestUnusedSeed = async (
   connection: Connection,
   basePubkey: PublicKey,
-  programId: PublicKey
+  programId: PublicKey,
 ) => {
   const MAX_SEED_LEN = 32
   const ASCII_MAX = 127
@@ -23,7 +23,7 @@ export const genShortestUnusedSeed = async (
       const derived = await PublicKey.createWithSeed(
         basePubkey,
         seed,
-        programId
+        programId,
       )
       // eslint-disable-next-line no-await-in-loop
       const balance = await connection.getBalance(derived)

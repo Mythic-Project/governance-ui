@@ -76,11 +76,8 @@ const SendTokens = () => {
     title: '',
     description: '',
   })
-  const {
-    voteByCouncil,
-    shouldShowVoteByCouncilToggle,
-    setVoteByCouncil,
-  } = useVoteByCouncilToggle()
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [showOptions, setShowOptions] = useState(false)
   const [destinationAccount, setDestinationAccount] = useState<
     (TokenProgramAccount<TokenAccount> | null)[]
@@ -89,12 +86,12 @@ const SendTokens = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
   const destinationAccountName = destinationAccount.map(
-    (acc) => acc?.publicKey && getAccountName(acc?.account.address)
+    (acc) => acc?.publicKey && getAccountName(acc?.account.address),
   )
 
   const mintMinAmount = form.governedTokenAccount?.extensions?.mint
     ? getMintMinAmountAsDecimal(
-        form.governedTokenAccount.extensions.mint.account
+        form.governedTokenAccount.extensions.mint.account,
       )
     : 1
   const currentPrecision = precision(mintMinAmount)
@@ -144,8 +141,8 @@ const SendTokens = () => {
     const newVal = parseFloat(
       Math.max(
         Number(mintMinAmount),
-        Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-      ).toFixed(currentPrecision)
+        Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+      ).toFixed(currentPrecision),
     )
 
     newAmounts[idx] = newVal
@@ -214,7 +211,7 @@ const SendTokens = () => {
           governance: governance!,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -228,7 +225,7 @@ const SendTokens = () => {
     try {
       const mintValue = getMintNaturalAmountFromDecimalAsBN(
         form.amount[idx]!,
-        form.governedTokenAccount!.extensions.mint!.account.decimals
+        form.governedTokenAccount!.extensions.mint!.account.decimals,
       )
       let gte: boolean | undefined = false
       gte = form.governedTokenAccount!.extensions.amount?.gte(mintValue)

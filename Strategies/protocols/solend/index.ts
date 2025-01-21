@@ -60,7 +60,7 @@ export type CreateSolendStrategyParams = (
   proposalIndex: number,
   isDraft: boolean,
   connection: ConnectionContext,
-  client?: VotingClient
+  client?: VotingClient,
 ) => Promise<PublicKey>
 
 type Config = Array<MarketConfig>
@@ -138,7 +138,7 @@ export type SolendSubStrategy = {
 }
 
 export async function getReserveData(
-  reserveIds: Array<string>
+  reserveIds: Array<string>,
 ): Promise<Array<ReserveStat>> {
   if (!reserveIds.length) return []
 
@@ -151,19 +151,21 @@ export async function getReserveData(
 
   const stats = await Promise.all(
     res.map((reserveIds) =>
-      axios.get(`${SOLEND_ENDPOINT}/v1/reserves?ids=${reserveIds.join(',')}`)
-    )
+      axios.get(`${SOLEND_ENDPOINT}/v1/reserves?ids=${reserveIds.join(',')}`),
+    ),
   )
 
   return (await Promise.all(stats.map((stat) => stat.data))).flatMap(
-    (stat) => stat.results
+    (stat) => stat.results,
   )
 }
 
 export function cTokenExchangeRate(reserve: ReserveStat) {
   return new BigNumber(reserve.reserve.liquidity.availableAmount ?? '0')
     .plus(
-      new BigNumber(reserve.reserve.liquidity.borrowedAmountWads).shiftedBy(-18)
+      new BigNumber(reserve.reserve.liquidity.borrowedAmountWads).shiftedBy(
+        -18,
+      ),
     )
     .dividedBy(new BigNumber(reserve.reserve.collateral.mintTotalSupply))
     .toNumber()
@@ -185,7 +187,7 @@ export async function getReserves(): Promise<Config[0]['reserves']> {
       marketPrimary: market.isPrimary,
       marketAuthorityAddress: market.authorityAddress,
       ...reserve,
-    }))
+    })),
   )
 
   return reserves
@@ -204,7 +206,7 @@ export async function getSolendStrategies() {
       marketPrimary: market.isPrimary,
       marketAuthorityAddress: market.authorityAddress,
       ...reserve,
-    }))
+    })),
   )
 
   const stats = await getReserveData(reserves.map((reserve) => reserve.address))
@@ -236,7 +238,7 @@ export async function getSolendStrategies() {
     }),
     {} as {
       [symbol: string]: typeof mergedData
-    }
+    },
   )
 
   for (const [symbol, reserves] of Object.entries(aggregatedData)) {
@@ -244,7 +246,7 @@ export async function getSolendStrategies() {
     const maxApy = Math.max(...reserves.map((reserve) => reserve.supplyApy))
     const totalLiquidity = reserves.reduce(
       (acc, reserve) => acc + reserve.liquidity,
-      0
+      0,
     )
 
     strats.push({
@@ -288,7 +290,7 @@ async function handleSolendAction(
   proposalIndex: number,
   isDraft: boolean,
   connection: ConnectionContext,
-  client?: VotingClient
+  client?: VotingClient,
 ) {
   const isSol = matchedTreasury.isSol
   const insts: InstructionDataWithHoldUpTime[] = []
@@ -304,7 +306,7 @@ async function handleSolendAction(
     TOKEN_PROGRAM_ID,
     new PublicKey(form.reserve.collateralMintAddress),
     owner,
-    true
+    true,
   )
 
   const liquidityATA = await Token.getAssociatedTokenAddress(
@@ -312,15 +314,14 @@ async function handleSolendAction(
     TOKEN_PROGRAM_ID,
     new PublicKey(form.reserve.mintAddress),
     owner,
-    true
+    true,
   )
 
   let createAtaInst
 
   if (form.action === 'Deposit') {
-    const depositAccountInfo = await connection.current.getAccountInfo(
-      ctokenATA
-    )
+    const depositAccountInfo =
+      await connection.current.getAccountInfo(ctokenATA)
     if (!depositAccountInfo) {
       // generate the instruction for creating the ATA
       createAtaInst = Token.createAssociatedTokenAccountInstruction(
@@ -329,13 +330,12 @@ async function handleSolendAction(
         new PublicKey(form.reserve.collateralMintAddress),
         ctokenATA,
         owner,
-        owner
+        owner,
       )
     }
   } else {
-    const withdrawAccountInfo = await connection.current.getAccountInfo(
-      liquidityATA
-    )
+    const withdrawAccountInfo =
+      await connection.current.getAccountInfo(liquidityATA)
     if (!withdrawAccountInfo && !isSol) {
       // generate the instruction for creating the ATA
       createAtaInst = Token.createAssociatedTokenAccountInstruction(
@@ -344,7 +344,7 @@ async function handleSolendAction(
         matchedTreasury.extensions.token!.publicKey,
         liquidityATA,
         owner,
-        owner
+        owner,
       )
     }
   }
@@ -352,10 +352,10 @@ async function handleSolendAction(
   if (createAtaInst) {
     const createAtaInstObj = {
       data: getInstructionDataFromBase64(
-        serializeInstructionToBase64(createAtaInst)
+        serializeInstructionToBase64(createAtaInst),
       ),
-      holdUpTime: matchedTreasury.governance!.account!.config
-        .minInstructionHoldUpTime,
+      holdUpTime:
+        matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
       prerequisiteInstructions: [],
     }
     insts.push(createAtaInstObj)
@@ -365,12 +365,11 @@ async function handleSolendAction(
   const cleanupInsts: InstructionDataWithHoldUpTime[] = []
 
   if (isSol) {
-    const userWSOLAccountInfo = await connection.current.getAccountInfo(
-      liquidityATA
-    )
+    const userWSOLAccountInfo =
+      await connection.current.getAccountInfo(liquidityATA)
 
     const rentExempt = await Token.getMinBalanceRentForExemptAccount(
-      connection.current
+      connection.current,
     )
 
     const sendAction = form.action === 'Deposit'
@@ -385,10 +384,10 @@ async function handleSolendAction(
 
     const transferLamportInst = {
       data: getInstructionDataFromBase64(
-        serializeInstructionToBase64(transferLamportsIx)
+        serializeInstructionToBase64(transferLamportsIx),
       ),
-      holdUpTime: matchedTreasury.governance!.account!.config
-        .minInstructionHoldUpTime,
+      holdUpTime:
+        matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
       prerequisiteInstructions: [],
     }
 
@@ -399,15 +398,15 @@ async function handleSolendAction(
       liquidityATA,
       owner,
       owner,
-      []
+      [],
     )
 
     const closeWSOLInst = {
       data: getInstructionDataFromBase64(
-        serializeInstructionToBase64(closeWSOLAccountIx)
+        serializeInstructionToBase64(closeWSOLAccountIx),
       ),
-      holdUpTime: matchedTreasury.governance!.account!.config
-        .minInstructionHoldUpTime,
+      holdUpTime:
+        matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
       prerequisiteInstructions: [],
     }
 
@@ -415,10 +414,10 @@ async function handleSolendAction(
       const syncIx = syncNative(liquidityATA)
       const syncInst = {
         data: getInstructionDataFromBase64(
-          serializeInstructionToBase64(syncIx)
+          serializeInstructionToBase64(syncIx),
         ),
-        holdUpTime: matchedTreasury.governance!.account!.config
-          .minInstructionHoldUpTime,
+        holdUpTime:
+          matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
         prerequisiteInstructions: [],
       }
       if (sendAction) {
@@ -427,20 +426,21 @@ async function handleSolendAction(
         cleanupInsts.push(closeWSOLInst)
       }
     } else {
-      const createUserWSOLAccountIx = Token.createAssociatedTokenAccountInstruction(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        NATIVE_MINT,
-        liquidityATA,
-        owner,
-        owner
-      )
+      const createUserWSOLAccountIx =
+        Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          NATIVE_MINT,
+          liquidityATA,
+          owner,
+          owner,
+        )
       const createUserWSOLAccountInst = {
         data: getInstructionDataFromBase64(
-          serializeInstructionToBase64(createUserWSOLAccountIx)
+          serializeInstructionToBase64(createUserWSOLAccountIx),
         ),
-        holdUpTime: matchedTreasury.governance!.account!.config
-          .minInstructionHoldUpTime,
+        holdUpTime:
+          matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
         prerequisiteInstructions: [],
       }
       setupInsts.push(createUserWSOLAccountInst)
@@ -460,7 +460,7 @@ async function handleSolendAction(
           new PublicKey(form.reserve.marketAddress),
           new PublicKey(form.reserve.marketAuthorityAddress),
           owner,
-          new PublicKey(slndProgramAddress)
+          new PublicKey(slndProgramAddress),
         )
       : redeemReserveCollateralInstruction(
           form.bnAmount,
@@ -472,13 +472,13 @@ async function handleSolendAction(
           new PublicKey(form.reserve.marketAddress),
           new PublicKey(form.reserve.marketAuthorityAddress),
           owner,
-          new PublicKey(slndProgramAddress)
+          new PublicKey(slndProgramAddress),
         )
 
   const depositSolendInsObj = {
     data: getInstructionDataFromBase64(serializeInstructionToBase64(actionIx)),
-    holdUpTime: matchedTreasury.governance!.account!.config
-      .minInstructionHoldUpTime,
+    holdUpTime:
+      matchedTreasury.governance!.account!.config.minInstructionHoldUpTime,
     prerequisiteInstructions: [],
   }
   insts.push(depositSolendInsObj)
@@ -491,7 +491,7 @@ async function handleSolendAction(
     form.title ||
       `${form.action} ${form.amountFmt} ${
         tokenPriceService.getTokenInfo(
-          matchedTreasury.extensions.mint!.publicKey.toBase58()
+          matchedTreasury.extensions.mint!.publicKey.toBase58(),
         )?.symbol || 'tokens'
       } ${form.action === 'Deposit' ? 'into' : 'from'} the Solend ${
         form.reserve.marketName
@@ -501,8 +501,8 @@ async function handleSolendAction(
     proposalIndex,
     [...setupInsts, ...insts, ...cleanupInsts],
     isDraft,
-    ["Approve"],
-    client
+    ['Approve'],
+    client,
   )
   return proposalAddress
 }

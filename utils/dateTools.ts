@@ -8,7 +8,7 @@ export const MINS_PER_HOUR = 60
 
 export function getFormattedStringFromDays(
   numberOfDays: number,
-  fullFormat = false
+  fullFormat = false,
 ) {
   const years = Math.floor(numberOfDays / DAYS_PER_YEAR)
   const months = Math.floor((numberOfDays % DAYS_PER_YEAR) / DAYS_PER_MONTH)
@@ -61,7 +61,7 @@ export const getMinDurationFmt = (startTs: BN, endTs: BN) => {
 export const getTimeLeftFromNowFmt = (ts: BN) => {
   const dateNowSecTimeStampBN = new BN(new Date().getTime() / 1000)
   return getFormattedStringFromDays(
-    ts.sub(dateNowSecTimeStampBN).toNumber() / SECS_PER_DAY
+    ts.sub(dateNowSecTimeStampBN).toNumber() / SECS_PER_DAY,
   )
 }
 

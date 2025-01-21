@@ -46,7 +46,7 @@ export function fmtMintAmount(mint: MintInfo | undefined, mintAmount: BN) {
 export function fmtTokenInfoWithMint(
   amount: BN,
   mintInfo: ProgramAccount<MintInfo>,
-  tokenInfo: TokenInfoWithoutDecimals | undefined = undefined
+  tokenInfo: TokenInfoWithoutDecimals | undefined = undefined,
 ) {
   return `${fmtBnMintDecimals(amount, mintInfo.account.decimals)} ${
     tokenInfo?.symbol
@@ -69,7 +69,7 @@ function getBigNumberAmount(amount: BN | number) {
 // If the input is already a number then converts it to mint natural amount
 export function parseMintNaturalAmountFromDecimal(
   decimalAmount: string | number,
-  mintDecimals: number
+  mintDecimals: number,
 ) {
   if (typeof decimalAmount === 'number') {
     return getMintNaturalAmountFromDecimal(decimalAmount, mintDecimals)
@@ -85,17 +85,17 @@ export function parseMintNaturalAmountFromDecimal(
 
 export function parseMintNaturalAmountFromDecimalAsBN(
   decimalAmount: string | number,
-  mintDecimals: number
+  mintDecimals: number,
 ) {
   return new BN(
-    parseMintNaturalAmountFromDecimal(decimalAmount, mintDecimals).toString()
+    parseMintNaturalAmountFromDecimal(decimalAmount, mintDecimals).toString(),
   )
 }
 
 // Converts amount in decimals to mint amount (natural units)
 export function getMintNaturalAmountFromDecimal(
   decimalAmount: number,
-  decimals: number
+  decimals: number,
 ) {
   return new BigNumber(decimalAmount).shiftedBy(decimals).toNumber()
 }
@@ -103,7 +103,7 @@ export function getMintNaturalAmountFromDecimal(
 // Converts amount in decimals to mint amount (natural units)
 export function getMintNaturalAmountFromDecimalAsBN(
   decimalAmount: number,
-  decimals: number
+  decimals: number,
 ) {
   return new BN(new BigNumber(decimalAmount).shiftedBy(decimals).toString())
 }
@@ -115,14 +115,14 @@ export function getMintMinAmountAsDecimal(mint: MintInfo) {
 
 export function formatMintNaturalAmountAsDecimal(
   mint: MintInfo,
-  naturalAmount: BN
+  naturalAmount: BN,
 ) {
   return getMintDecimalAmountFromNatural(mint, naturalAmount).toFormat()
 }
 
 export function getMintDecimalAmountFromNatural(
   mint: MintInfo,
-  naturalAmount: BN
+  naturalAmount: BN,
 ) {
   return new BigNumber(naturalAmount.toString()).shiftedBy(-mint.decimals)
 }
@@ -138,17 +138,17 @@ export function getMintSupplyAsDecimal(mint: MintInfo) {
 /** @deprecated why? why would you use a BigNumber for the range 0-100 */
 function getMintSupplyPercentageAsBigNumber(
   mint: MintInfo,
-  percentage: number
+  percentage: number,
 ) {
   return new BigNumber(
-    mint.supply.mul(new BN(percentage)).toString()
+    mint.supply.mul(new BN(percentage)).toString(),
   ).shiftedBy(-(mint.decimals + 2))
 }
 
 // Calculates percentage (provided as 0-100) of mint supply as decimal amount
 export function getMintSupplyPercentageAsDecimal(
   mint: MintInfo,
-  percentage: number
+  percentage: number,
 ) {
   return getMintSupplyPercentageAsBigNumber(mint, percentage).toNumber()
 }
@@ -173,7 +173,7 @@ export function fmtPercentage(percentage: number) {
 // Calculates mint supply fraction for the given natural amount as decimal amount
 export function getMintSupplyFractionAsDecimalPercentage(
   mint: MintInfo,
-  naturalAmount: BN | number
+  naturalAmount: BN | number,
 ) {
   return getBigNumberAmount(naturalAmount)
     .multipliedBy(100)

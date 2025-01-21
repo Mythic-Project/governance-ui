@@ -33,7 +33,7 @@ function NFTSelector({
                   onClick={() =>
                     setSelectedNfts((prev) => {
                       const alreadyIncluded = prev.find(
-                        (x) => x.toString() === nft.id
+                        (x) => x.toString() === nft.id,
                       )
                       return alreadyIncluded
                         ? prev.filter((x) => x.toString() !== nft.id)
@@ -45,7 +45,7 @@ function NFTSelector({
                     `bg-bkg-2 flex-shrink-0 flex items-center justify-center cursor-pointer default-transition rounded-lg relative overflow-hidden`,
                     selectedNfts.find((k) => k.toString() === nft.id)
                       ? 'border-4 border-green'
-                      : 'border border-transparent hover:border-primary-dark '
+                      : 'border border-transparent hover:border-primary-dark ',
                   )}
                   style={{
                     width: nftWidth,

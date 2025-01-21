@@ -56,35 +56,31 @@ export const voteRegistryLockDeposit = async ({
     throw 'no wallet connected'
   }
   const fromWalletTransferAmount = totalTransferAmount.sub(
-    amountFromVoteRegistryDeposit
+    amountFromVoteRegistryDeposit,
   )
   const instructions: TransactionInstruction[] = []
-  const {
-    depositIdx,
-    voter,
-    registrar,
-    voterATAPk,
-  } = await withCreateNewDeposit({
-    instructions,
-    walletPk: rpcContext.walletPubkey,
-    mintPk,
-    realmPk,
-    programId,
-    programVersion,
-    tokenOwnerRecordPk,
-    lockUpPeriodInDays,
-    lockupKind,
-    communityMintPk,
-    client,
-    allowClawback,
-  })
+  const { depositIdx, voter, registrar, voterATAPk } =
+    await withCreateNewDeposit({
+      instructions,
+      walletPk: rpcContext.walletPubkey,
+      mintPk,
+      realmPk,
+      programId,
+      programVersion,
+      tokenOwnerRecordPk,
+      lockUpPeriodInDays,
+      lockupKind,
+      communityMintPk,
+      client,
+      allowClawback,
+    })
 
   if (!amountFromVoteRegistryDeposit.isZero()) {
     const internalTransferUnlockedInstruction = await client?.program.methods
       .internalTransferUnlocked(
         sourceDepositIdx!,
         depositIdx,
-        amountFromVoteRegistryDeposit
+        amountFromVoteRegistryDeposit,
       )
       .accounts({
         registrar: registrar,
@@ -114,7 +110,7 @@ export const voteRegistryLockDeposit = async ({
   if (!amountFromVoteRegistryDeposit.isZero()) {
     const period = getPeriod(lockUpPeriodInDays, lockupKind)
     const resetLockup = await client?.program.methods
-        // The cast to any works around an anchor issue with interpreting enums
+      // The cast to any works around an anchor issue with interpreting enums
       .resetLockup(depositIdx, { [lockupKind]: {} } as any, period)
       .accounts({
         registrar: registrar,

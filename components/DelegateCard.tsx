@@ -23,7 +23,7 @@ import {
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { fetchProgramVersion } from '@hooks/queries/useProgramVersionQuery'
-import { ProfileName } from "@components/Profile";
+import { ProfileName } from '@components/Profile'
 
 const DelegateCard = () => {
   const ownTokenRecord = useUserCommunityTokenOwnerRecord().data?.result
@@ -50,7 +50,7 @@ const DelegateCard = () => {
       setLoading(true)
       const programVersion = await fetchProgramVersion(
         connection,
-        realm.owner // governance program public key
+        realm.owner, // governance program public key
       )
 
       // if checkbox is checked + connected wallet has a token record to delegate
@@ -67,7 +67,7 @@ const DelegateCard = () => {
           realm?.account?.config?.councilMint, // mint of governance token
           wallet?.publicKey, // governingTokenOwner (walletId) publicKey of tokenOwnerRecord of this wallet
           wallet?.publicKey, // governanceAuthority: publicKey of connected wallet
-          new PublicKey(delegateKey) // public key of wallet who to delegated vote to
+          new PublicKey(delegateKey), // public key of wallet who to delegated vote to
         )
       }
 
@@ -81,7 +81,7 @@ const DelegateCard = () => {
           realm.account.communityMint, // mint of governance token
           wallet?.publicKey, // governingTokenOwner (walletId) publicKey of tokenOwnerRecord of this wallet
           wallet?.publicKey, // governanceAuthority: publicKey of connected wallet
-          new PublicKey(delegateKey) // public key of wallet who to delegated vote to
+          new PublicKey(delegateKey), // public key of wallet who to delegated vote to
         )
       }
 
@@ -109,7 +109,7 @@ const DelegateCard = () => {
     try {
       const programVersion = await fetchProgramVersion(
         connection,
-        realm.owner // governance program public key
+        realm.owner, // governance program public key
       )
 
       await withSetGovernanceDelegate(
@@ -123,7 +123,7 @@ const DelegateCard = () => {
         wallet?.publicKey, // governingTokenOwner (walletId) publicKey of tokenOwnerRecord of this wallet
         wallet?.publicKey, // governanceAuthority: publicKey of connected wallet
         // @ts-ignore
-        null // public key of wallet who to delegated vote to
+        null, // public key of wallet who to delegated vote to
       )
 
       const transaction = new Transaction()
@@ -162,10 +162,12 @@ const DelegateCard = () => {
               {ownCouncilTokenRecord?.account.governanceDelegate && (
                 <div className="flex items-center content-center">
                   <ProfileName
-                      publicKey={ownCouncilTokenRecord?.account.governanceDelegate}
-                      height="12px"
-                      width="100px"
-                      dark={true}
+                    publicKey={
+                      ownCouncilTokenRecord?.account.governanceDelegate
+                    }
+                    height="12px"
+                    width="100px"
+                    dark={true}
                   />
                   <Tooltip content={'Remove Delegate'}>
                     <XCircleIcon

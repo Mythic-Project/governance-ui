@@ -57,17 +57,13 @@ export const withCreateNewDeposit = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    clientProgramId
+    clientProgramId,
   )
-  const { voter } = getVoterPDA(
-    registrar,
-    walletPk,
-    clientProgramId
-  )
+  const { voter } = getVoterPDA(registrar, walletPk, clientProgramId)
   const { voterWeightPk } = getVoterWeightPDA(
     registrar,
     walletPk,
-    clientProgramId
+    clientProgramId,
   )
   const existingVoter = await tryGetVoter(voter, client)
 
@@ -76,7 +72,7 @@ export const withCreateNewDeposit = async ({
     TOKEN_PROGRAM_ID,
     mintPk,
     voter,
-    true
+    true,
   )
 
   //spl governance tokenownerrecord pubkey
@@ -88,12 +84,16 @@ export const withCreateNewDeposit = async ({
       realmPk,
       walletPk,
       communityMintPk,
-      walletPk
+      walletPk,
     )
   }
 
   if (!existingVoter) {
-    const createVoterIx = await client?.createVoterWeightRecord(walletPk, realmPk, communityMintPk)
+    const createVoterIx = await client?.createVoterWeightRecord(
+      walletPk,
+      realmPk,
+      communityMintPk,
+    )
     instructions.push(createVoterIx)
   }
   const mintCfgIdx = await getMintCfgIdx(registrar, mintPk, client)
@@ -106,7 +106,7 @@ export const withCreateNewDeposit = async ({
           (x) =>
             x.isUsed &&
             typeof x.lockup.kind[lockupKind] !== 'undefined' &&
-            x.votingMintConfigIdx === mintCfgIdx
+            x.votingMintConfigIdx === mintCfgIdx,
         )
       : -1
 
@@ -130,7 +130,7 @@ export const withCreateNewDeposit = async ({
         //lockup starts now
         null,
         period,
-        allowClawback
+        allowClawback,
       )
       .accounts({
         registrar: registrar,

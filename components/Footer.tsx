@@ -7,9 +7,8 @@ import { useEffect, useState } from 'react'
 
 const Footer = () => {
   const { REALM } = process.env
-  const [usingRealmFromProcessEnv, setUsingRealmFromProcessEnv] = useState(
-    false
-  )
+  const [usingRealmFromProcessEnv, setUsingRealmFromProcessEnv] =
+    useState(false)
 
   useEffect(() => {
     setUsingRealmFromProcessEnv(!!REALM)
@@ -35,7 +34,7 @@ const Footer = () => {
         'lg:pb-24',
         'gap-y-8',
         'md:gap-y-0',
-        'z-[1]'
+        'z-[1]',
       )}
     >
       <div
@@ -58,7 +57,7 @@ const Footer = () => {
           'lg:translate-y-0',
           'lg:left-0',
           'lg:top-0',
-          'w-fit'
+          'w-fit',
         )}
       >
         <div
@@ -66,9 +65,7 @@ const Footer = () => {
         >
           <SocialIcons className="mb-5" />
           <div className="flex flex-col justify-center sm:space-x-2 text-center text-sm opacity-70 sm:flex-row sm:text-sm sm:text-left">
-            <div className="flex-shrink-0">
-              © 2024 Realms Today Ltd
-            </div>
+            <div className="flex-shrink-0">© 2024 Realms Today Ltd</div>
             <span className="hidden sm:block mx-2">|</span>
             <Link href="https://realms.today/terms" passHref>
               <a className="flex-shrink-0 whitespace-nowrap">Terms</a>
@@ -90,7 +87,7 @@ const Footer = () => {
             'focus:opacity-[.80]',
             'hover:opacity-[.80]',
             'mr-2',
-            'text-sm'
+            'text-sm',
           )}
           href="https://docs.realms.today/"
         >

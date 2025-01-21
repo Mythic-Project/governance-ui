@@ -16,7 +16,7 @@ export const executeInstructions = async (
   { connection, wallet, programId, programVersion }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   proposalInstructions: ProgramAccount<ProposalTransaction>[],
-  multiTransactionMode = false
+  multiTransactionMode = false,
 ) => {
   const instructions: TransactionInstruction[] = []
 
@@ -30,9 +30,9 @@ export const executeInstructions = async (
         proposal.account.governance,
         proposal.pubkey,
         instruction.pubkey,
-        [...instruction.account.getAllInstructions()]
-      )
-    )
+        [...instruction.account.getAllInstructions()],
+      ),
+    ),
   )
   if (multiTransactionMode) {
     const txes = [...instructions.map((x) => [x])].map((txBatch, batchIdx) => {
@@ -44,7 +44,7 @@ export const executeInstructions = async (
         instructionsSet: txBatchesToInstructionSetWithSigners(
           batchWithComputeBudget,
           [],
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Sequential,
       }

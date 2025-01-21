@@ -69,14 +69,26 @@ export const DepositTokensButton = ({
             <label>
               Amount to deposit
               <span>
-                &nbsp;-&nbsp;<a href="#" onClick={() => { setAmount(humanReadableMax ? humanReadableMax.toString() : '') }}>Max</a>
+                &nbsp;-&nbsp;
+                <a
+                  href="#"
+                  onClick={() => {
+                    setAmount(
+                      humanReadableMax ? humanReadableMax.toString() : '',
+                    )
+                  }}
+                >
+                  Max
+                </a>
               </span>
             </label>
             <Input
               placeholder={humanReadableMax?.toString() + ' (max)'}
               type="number"
               value={amount}
-              onChange={(e) => { setAmount(e.target.value) }}
+              onChange={(e) => {
+                setAmount(e.target.value)
+              }}
               max={humanReadableMax}
             />
             <Button
@@ -89,12 +101,16 @@ export const DepositTokensButton = ({
                     : new BN(
                         new BigNumber(amount)
                           .shiftedBy(mintInfo.decimals)
-                          .toString()
+                          .toString(),
                       )
                 await deposit(nativeAmount)
                 setOpenModal(false)
               }}
-              disabled={humanReadableMax !== undefined && (parseFloat(amount) > humanReadableMax || parseFloat(amount)<= 0)}
+              disabled={
+                humanReadableMax !== undefined &&
+                (parseFloat(amount) > humanReadableMax ||
+                  parseFloat(amount) <= 0)
+              }
             >
               Confirm
             </Button>

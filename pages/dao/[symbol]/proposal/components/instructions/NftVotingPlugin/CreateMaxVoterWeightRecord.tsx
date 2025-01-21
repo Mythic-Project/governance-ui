@@ -18,7 +18,7 @@ import { AssetAccount } from '@utils/uiTypes/assets'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useNftClient} from "../../../../../../../VoterWeightPlugins/useNftClient";
+import { useNftClient } from '../../../../../../../VoterWeightPlugins/useNftClient'
 
 interface CreateNftMaxVoterWeightRecord {
   governedAccount: AssetAccount | undefined
@@ -34,7 +34,7 @@ const CreateNftPluginMaxVoterWeightRecord = ({
   const realm = useRealmQuery().data?.result
 
   const { realmInfo } = useRealm()
-  const {nftClient} = useNftClient()
+  const { nftClient } = useNftClient()
   const { assetAccounts } = useGovernanceAssets()
   const wallet = useWalletOnePointOh()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -52,7 +52,7 @@ const CreateNftPluginMaxVoterWeightRecord = ({
       const { maxVoterWeightRecord } = await getMaxVoterWeightRecord(
         realm!.pubkey!,
         realm!.account.communityMint,
-        nftClient!.program.programId
+        nftClient!.program.programId,
       )
       const createMaxVoterWeightRecordix = await nftClient!.program.methods
         .createMaxVoterWeightRecord()
@@ -66,7 +66,7 @@ const CreateNftPluginMaxVoterWeightRecord = ({
         })
         .instruction()
       serializedInstruction = serializeInstructionToBase64(
-        createMaxVoterWeightRecordix
+        createMaxVoterWeightRecordix,
       )
     }
     const obj: UiInstruction = {
@@ -79,7 +79,7 @@ const CreateNftPluginMaxVoterWeightRecord = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -100,7 +100,7 @@ const CreateNftPluginMaxVoterWeightRecord = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
     },
   ]

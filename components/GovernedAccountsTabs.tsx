@@ -20,7 +20,7 @@ const GovernedAccountsTabs: FunctionComponent<GovernedAccountsTabsProps> = ({
         style={{
           transform: `translateY(${
             tabs.findIndex(
-              (t) => t.pubkey.toBase58() === activeTab?.pubkey.toBase58()
+              (t) => t.pubkey.toBase58() === activeTab?.pubkey.toBase58(),
             ) * 100
           }%)`,
           height: `${100 / tabs.length}%`,

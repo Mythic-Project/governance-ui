@@ -55,7 +55,7 @@ export default function ProposalVoteResult(props: Props) {
               'absolute',
               'bg-neutral-400',
               'left-1/2',
-              'w-[3px]'
+              'w-[3px]',
             )}
           />
           <div
@@ -81,7 +81,7 @@ export default function ProposalVoteResult(props: Props) {
               'after:rotate-45',
               'after:w-[8px]',
               'after:z-20',
-              "after:content-[' ']"
+              "after:content-[' ']",
             )}
             style={{ left: `${yesPercent}%` }}
           >
@@ -113,7 +113,7 @@ export default function ProposalVoteResult(props: Props) {
               'after:rotate-45',
               'after:w-[8px]',
               'after:z-20',
-              "after:content-[' ']"
+              "after:content-[' ']",
             )}
             style={{ right: `${noPercent}%` }}
           >
@@ -152,7 +152,7 @@ export default function ProposalVoteResult(props: Props) {
                   'after:top-full',
                   'after:w-[8px]',
                   'after:z-20',
-                  "after:content-[' ']"
+                  "after:content-[' ']",
                 )}
                 style={{ left: `${threshold}%` }}
               >

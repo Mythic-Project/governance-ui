@@ -16,7 +16,7 @@ const BaseAccountHeader: React.FC<{
   const [symbol, setSymbol] = useState<undefined | string>(tokenInfo?.symbol)
   const { data } = useTokenMetadata(
     new PublicKey(mintAddress),
-    !tokenInfo?.symbol
+    !tokenInfo?.symbol,
   )
 
   useEffect(() => {

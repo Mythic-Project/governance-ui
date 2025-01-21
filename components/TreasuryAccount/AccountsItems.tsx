@@ -6,10 +6,8 @@ import { AssetAccount } from '@utils/uiTypes/assets'
 import Loading from '@components/Loading'
 
 const AccountsItems = () => {
-  const {
-    governedTokenAccountsWithoutNfts,
-    auxiliaryTokenAccounts,
-  } = useGovernanceAssets()
+  const { governedTokenAccountsWithoutNfts, auxiliaryTokenAccounts } =
+    useGovernanceAssets()
 
   const [sortedAccounts, setSortedAccounts] = useState<AssetAccount[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -28,7 +26,7 @@ const AccountsItems = () => {
           accounts.map(async (account) => ({
             account,
             info: await getTreasuryAccountItemInfoV2Async(account),
-          }))
+          })),
         )
 
         // Sort based on the fetched info
@@ -38,8 +36,9 @@ const AccountsItems = () => {
           .splice(
             0,
             Number(
-              process?.env?.MAIN_VIEW_SHOW_MAX_TOP_TOKENS_NUM || accounts.length
-            )
+              process?.env?.MAIN_VIEW_SHOW_MAX_TOP_TOKENS_NUM ||
+                accounts.length,
+            ),
           )
 
         setSortedAccounts(sorted)
