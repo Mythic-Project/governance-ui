@@ -20,6 +20,7 @@ import VanillaVotingPower from '@components/GovernancePower/Power/Vanilla/Vanill
 import React from 'react'
 import ParclAccountDetails from 'ParclVotePlugin/components/ParclAccountDetails'
 import BonkBalanceCard from 'BonkVotePlugin/components/BalanceCard'
+import TokenVoterBalanceCard from 'TokenVoterPlugin/components/BalanceCard'
 
 const LockPluginTokenBalanceCard = dynamic(
   () =>
@@ -82,6 +83,7 @@ const TokenBalanceCardInner = ({
   const showQvCard = requiredCards?.includes('QV')
   const showParclCard = requiredCards?.includes('parcl');
   const showBonkCard = requiredCards?.includes('bonk');
+  const showTokenVoterCard = requiredCards?.includes('token_voter');
 
   if (showDefaultVSRCard && inAccountDetails) {
     return <LockPluginTokenBalanceCard inAccountDetails={inAccountDetails} /> // does this ever actually occur in the component hierarchy?
@@ -119,6 +121,14 @@ const TokenBalanceCardInner = ({
     cards.push(
       <React.Fragment key="bonk">
         {<BonkBalanceCard />}
+      </React.Fragment>
+    )
+  }
+
+  if (showTokenVoterCard) {
+    cards.push(
+      <React.Fragment key="token_voter">
+        {<TokenVoterBalanceCard />}
       </React.Fragment>
     )
   }

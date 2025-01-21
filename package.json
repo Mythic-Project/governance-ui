@@ -143,6 +143,7 @@
     "figlet": "1.5.2",
     "file-saver": "2.0.5",
     "fp-ts": "2.12.2",
+    "governance-idl-sdk": "0.0.4",
     "graphql": "16.5.0",
     "immer": "9.0.15",
     "io-ts": "2.2.18",
@@ -291,5 +292,6 @@
   "volta": {
     "node": "18.19.0",
     "yarn": "1.22.19"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

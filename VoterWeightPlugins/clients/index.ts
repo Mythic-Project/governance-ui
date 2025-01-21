@@ -16,7 +16,7 @@ import { UnrecognisedVoterWeightPluginClient } from './UnrecognisedVoterWeightPl
 import { DriftVoterClient } from 'DriftStakeVoterPlugin/DriftVoterClient'
 import { TokenHaverClient } from 'TokenHaverPlugin/TokenHaverClient'
 import { BonkClient } from 'BonkVotePlugin/client'
-import { TokenVoterClient } from 'BonkVotePlugin/token-client'
+import { TokenVoterClient } from 'TokenVoterPlugin/client'
 
 /**
  * Given a plugin name and program ID, load the appropriate client
@@ -54,7 +54,7 @@ export const loadClient = (
     case 'bonk':
       return BonkClient.connect(provider, programId)
     case 'token_voter' :
-      return TokenVoterClient.connect(provider, programId)
+      return TokenVoterClient.connect(provider)
     default:
       return UnrecognisedVoterWeightPluginClient.connect(provider, programId)
   }
