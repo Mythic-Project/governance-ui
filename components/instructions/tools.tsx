@@ -356,6 +356,16 @@ export const ACCOUNT_NAMES = {
 
   // Parcl
   '9Waj7NNTzEhyHf1j1F36xgtnXaLoAxVBFhf6VxE9fgaf': 'Parcl DAO',
+
+
+  // Xandeum DAO
+  'CaGfz4CkN4otKGsC38r3GfxXAJKmkUSJaJSx6Bfh5Fnt': 'Xandeum DAO Community Building',
+  'FUBGqvghKNgKcSddaxyhrpcbjcxGJtJAfRoBjkyj1DeV': 'Xandeum DAO Ecosystem Development',
+  'DX91TwVuqpradg3swfxSQY5ghGN5x8mf593SDLyeX3xH': 'Xandeum DAO Staking Rewards',
+  '9HE6X3FmBqUYba2S9wqbQNASABHZBVigWSij1bgWL9KL': 'Xandeum DAO Community Building',
+  '2HgKBjfnALwMpChY8ZXR8YePWVejwxq9MWXmXCmvSPMU': 'Xandeum DAO Community Building',
+
+
 }
 
 // TODO: Add this to on-chain metadata to Governance account
