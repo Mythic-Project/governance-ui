@@ -358,11 +358,12 @@ export const ACCOUNT_NAMES = {
   '9Waj7NNTzEhyHf1j1F36xgtnXaLoAxVBFhf6VxE9fgaf': 'Parcl DAO',
 
   // Xandeum DAO
-  '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Community Building',
+  '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Earnings',
   '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development',
   'DdphfkqpTJiHRQP6c7qVjtjG8aMQMPhEHpYjrRDSGpsC': 'Xandeum DAO Staking Rewards',
   'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Liquidity Providers',
   '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Grants',
+  'GSRBeDfdg4qy5boj1D5DQ1u1YqwDtCfNJFkpDrf2cj1R': 'Xandeum DAO Community Building',
   
 }
 
