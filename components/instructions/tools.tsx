@@ -361,8 +361,8 @@ export const ACCOUNT_NAMES = {
   '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Community Building',
   '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development',
   'DdphfkqpTJiHRQP6c7qVjtjG8aMQMPhEHpYjrRDSGpsC': 'Xandeum DAO Staking Rewards',
-  'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Community Building',
-  '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Building',
+  'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Liquidity Providers',
+  '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Grants',
   
 }
 
