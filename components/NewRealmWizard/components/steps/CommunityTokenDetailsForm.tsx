@@ -376,7 +376,7 @@ export default function CommunityTokenForm({
           />
         )}
 
-        <Controller
+        {/* <Controller
           name="isQuadratic"
           control={control}
           defaultValue={true}
@@ -397,7 +397,7 @@ export default function CommunityTokenForm({
               </FormField>
             </div>
           )}
-        />
+        /> */}
 
         {isQuadratic && (
           <AdvancedOptionsDropdown

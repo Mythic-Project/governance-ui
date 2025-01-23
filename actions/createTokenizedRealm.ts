@@ -22,6 +22,7 @@ import { addQVPlugin } from './addPlugins/addQVPlugin'
 import { defaultSybilResistancePass } from '../GatewayPlugin/config'
 import { addGatewayPlugin } from './addPlugins/addGatewayPlugin'
 import { Coefficients } from '@solana/governance-program-library'
+import { addTokenVoterPlugin } from './addPlugins/addTokenVoterPlugin'
 
 type CreateWithPlugin = {
   pluginList: PluginName[]
@@ -54,6 +55,10 @@ export default async function createTokenizedRealm({
     voterWeightAddin,
   }
 
+  if (pluginList.includes('token_voter') && !params.existingCommunityMintPk) {
+    throw new Error("It is mandatory to provide community mint public key.")
+  }
+
   const {
     communityMintPk,
     councilMintPk,
@@ -72,6 +77,7 @@ export default async function createTokenizedRealm({
     wallet,
     ...params,
     communityTokenConfig,
+    pluginList
   })
 
   try {
@@ -125,6 +131,19 @@ export default async function createTokenizedRealm({
 
       pluginIxes.push(...instructions)
       predecessorProgramId = pluginProgramId
+    }
+
+    if (pluginList.includes('token_voter')) {
+      const {instructions} = await addTokenVoterPlugin(
+        connection,
+        wallet as Wallet,
+        realmPk,
+        communityMintPk,
+        programIdPk,
+        params.existingCommunityMintPk!
+      )
+
+      pluginIxes.push(...instructions)
     }
 
     if (pluginIxes.length > 0) {
