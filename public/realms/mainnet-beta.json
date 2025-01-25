@@ -3896,5 +3896,14 @@
   "website": "https://www.fungi.ag/",
   "twitter": "@FungiProject",
   "telegram": "https://t.me/fungiagents"
+  },
+  {
+  "symbol": "FOGMOE",
+  "displayName": "FOGMOE",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "FHWSpkxJPFX3m3jtqKjrHDeSymLZcQiSxn2JaHVVzdt9",
+  "ogImage": "/realms/FOGMOE/img/FM.jpg",
+  "website": "https://token.fog.moe/",
+  "twitter": "@FOG_MOE" 
   }
 ]
