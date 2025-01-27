@@ -3896,5 +3896,17 @@
   "website": "https://www.fungi.ag/",
   "twitter": "@FungiProject",
   "telegram": "https://t.me/fungiagents"
+  },
+  { 
+  "symbol": "BEASTAI",
+  "displayName": "BlockBeast AI Dao",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "Efc5hj7r1m7KDvYfSPwZrgLhttnNe6oJKbnTKfoiqhDR",
+  "ogImage": "/realms/BeastAI/beastlogo.png",
+  "bannerImage": "/realms/BeastAI/beast-banner.png",
+  "shortDescription": "Blockbeast is a pioneering platform on the Solana blockchain that empowers users to create, train, and monetize AI agents. Creators of @AiBlockbeast",
+  "website": "https://blockbeast.ai/",
+  "twitter": "@AiBlockbeast",
+  "telegram": "https://t.me/blockbeastai"
   }
 ]
