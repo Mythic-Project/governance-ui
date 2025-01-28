@@ -15,6 +15,7 @@ import tokenPriceService from '@utils/services/tokenPrice'
 import TransactionLoader from '@components/TransactionLoader'
 import useDepositStore from 'VoteStakeRegistry/stores/useDepositStore'
 import useRealm from '@hooks/useRealm'
+import { DefiProvider } from '@hub/providers/Defi'
 import NftVotingCountingModal from '@components/NftVotingCountingModal'
 import { getResourcePathPart } from '@tools/core/resources'
 import useSerumGovStore from 'stores/useSerumGovStore'
@@ -327,7 +328,9 @@ export function AppContents(props: Props) {
             <Notifications />
             <TransactionLoader></TransactionLoader>
             <NftVotingCountingModal />
-            <PageBodyContainer>{props.children}</PageBodyContainer>
+            <PageBodyContainer>
+              <DefiProvider>{props.children}</DefiProvider>
+            </PageBodyContainer>
             <TermsPopupModal />
           </GatewayProvider>
         </ThemeProvider>

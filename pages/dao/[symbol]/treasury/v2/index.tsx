@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { pipe } from 'fp-ts/function'
-
 import PreviousRouteBtn from '@components/PreviousRouteBtn'
 import TotalValueTitle from '@components/treasuryV2/TotalValueTitle'
 import WalletList from '@components/treasuryV2/WalletList'
@@ -10,7 +9,6 @@ import useTreasuryInfo from '@hooks/useTreasuryInfo'
 import { AuxiliaryWallet, Wallet } from '@models/treasury/Wallet'
 import { Asset } from '@models/treasury/Asset'
 import { useTreasurySelectState } from '@components/treasuryV2/Details/treasurySelectStore'
-import { DefiProvider } from '@hub/providers/Defi'
 
 export default function Treasury() {
   const data = useTreasuryInfo()
@@ -78,7 +76,6 @@ export default function Treasury() {
         />
       </header>
       <article className="grid grid-cols-[458px_1fr] flex-grow gap-x-4">
-        <DefiProvider>
         <WalletList
           className="w-full pt-9"
           data={pipe(
@@ -118,7 +115,6 @@ export default function Treasury() {
             />
           </div>
         </div>
-        </DefiProvider>
       </article>
     </div>
   )

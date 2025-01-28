@@ -76,7 +76,7 @@ const Details = forwardRef<HTMLDivElement, Props>((props, ref) => {
             ) : treasurySelect?._kind === 'Defi' ? (
               <DefiDetails
                 isStickied={props.isStickied}
-                walletAddress={treasurySelect.selectedWalletAddress}
+                wallet={treasurySelect.selectedWallet}
               />
             ) : (
               (null as never)

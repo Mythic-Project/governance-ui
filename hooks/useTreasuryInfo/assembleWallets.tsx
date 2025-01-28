@@ -42,6 +42,7 @@ import {
 } from '@blockworks-foundation/mango-v4'
 import { BN } from '@coral-xyz/anchor'
 import { getFavoriteDomain } from '@bonfida/spl-name-service'
+import { Position } from '@hub/providers/Defi'
 
 function isNotNull<T>(x: T | null): x is T {
   return x !== null
@@ -117,6 +118,7 @@ export const assembleWallets = async (
   realm?: ProgramAccount<Realm>,
   realmConfig?: ProgramAccount<RealmConfigAccount>,
   realmInfo?: RealmInfo,
+  positions?: Position[],
 ) => {
   const walletMap: { [address: string]: Wallet } = {}
   const programs = accounts.filter(
@@ -303,9 +305,9 @@ export const assembleWallets = async (
         : getAccountName(wallet.address),
       totalValue: calculateTotalValue(
         wallet.assets.map((asset) =>
-          'value' in asset ? asset.value : new BigNumber(0),
-        ),
-      ),
+          'value' in asset ? asset.value : new BigNumber(0)
+        )
+      ).plus(positions?.reduce((acc, position) => position.walletAddress === wallet.address ? acc.plus(position.value) : acc, new BigNumber(0)) ?? new BigNumber(0)),
     })
   }
 

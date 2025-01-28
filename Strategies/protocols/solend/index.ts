@@ -533,11 +533,20 @@ export async function handleSolendActionV2(
     ? matchedTreasury!.pubkey
     : matchedTreasury!.extensions!.token!.account.owner
 
-    console.log(
+    const solendAction = form.action === 'Deposit' ? await SolendActionCore.buildDepositReserveLiquidityTxns(
       MAIN_POOL_CONFIGS,
-      RESERVE_CONFIG[form.reserveAddress]
-    );
-    const solendAction = await SolendActionCore.buildRedeemReserveCollateralTxns(
+      RESERVE_CONFIG[form.reserveAddress],
+      connection.current,
+      form.bnAmount.toString(),
+      {
+        publicKey: owner,
+      },
+      {
+        lookupTableAddress: MAIN_POOL_CONFIGS.lookupTableAddress
+          ? new PublicKey(MAIN_POOL_CONFIGS.lookupTableAddress)
+          : undefined,
+      },
+    ) : await SolendActionCore.buildRedeemReserveCollateralTxns(
       MAIN_POOL_CONFIGS,
       RESERVE_CONFIG[form.reserveAddress],
       connection.current,
@@ -580,7 +589,7 @@ export async function handleSolendActionV2(
         tokenPriceService.getTokenInfo(
           matchedTreasury.extensions.mint!.publicKey.toBase58()
         )?.symbol || 'tokens'
-      } from Save`,
+      } ${form.action === 'Deposit' ? 'into' : 'from'} Save`,
     form.description,
     governingTokenMint,
     proposalIndex,

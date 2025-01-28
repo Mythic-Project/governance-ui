@@ -15,6 +15,8 @@ const AdditionalProposalOptions: React.FC<{
   defaultDescription?: string
   voteByCouncil: boolean
   setVoteByCouncil: (val) => void
+  allowWalletDeposit?: boolean
+  setAllowWalletDeposit?: (val) => void
 }> = ({
   title,
   description,
@@ -24,22 +26,55 @@ const AdditionalProposalOptions: React.FC<{
   defaultDescription,
   voteByCouncil,
   setVoteByCouncil,
+  allowWalletDeposit,
+  setAllowWalletDeposit,
 }) => {
   const [showOptions, setShowOptions] = useState(false)
   const { shouldShowVoteByCouncilToggle } = useVoteByCouncilToggle()
   return (
     <>
-      <LinkButton
-        className="flex items-center text-primary-light my-5"
-        onClick={() => setShowOptions(!showOptions)}
-      >
-        {showOptions ? 'Less Proposal Options' : 'More Proposal Options'}
-        <ChevronDownIcon
-          className={`default-transition h-5 w-5 ml-1 ${
-            showOptions ? 'transform rotate-180' : 'transform rotate-360'
-          }`}
-        />
-      </LinkButton>
+      <div className="flex justify-between">
+        {setAllowWalletDeposit && (
+          <div className="flex items-center space-x-1 mt-2">
+            <span className="text-fgd-3 mr-1 text-xs">Deposit from</span>
+            <div className="flex items-center">
+              <LinkButton
+                className={`px-2 border rounded ${
+                  allowWalletDeposit
+                    ? 'text-primary-light border-primary-light'
+                    : 'text-gray-500 border-gray-500'
+                }`}
+                onClick={() => setAllowWalletDeposit?.(true)}
+              >
+                Wallet
+              </LinkButton>
+              <LinkButton
+                className={`px-2 border rounded ${
+                  !allowWalletDeposit
+                    ? 'text-primary-light border-primary-light'
+                    : 'text-gray-500 border-gray-500'
+                }`}
+                onClick={() => setAllowWalletDeposit?.(false)}
+              >
+                DAO
+              </LinkButton>
+            </div>
+          </div>
+        )}
+        {!allowWalletDeposit && (
+          <LinkButton
+            className="flex items-center text-primary-light mt-2"
+            onClick={() => setShowOptions(!showOptions)}
+          >
+            {showOptions ? 'Less Proposal Options' : 'More Proposal Options'}
+            <ChevronDownIcon
+              className={`default-transition h-5 w-5 ml-1 ${
+                showOptions ? 'transform rotate-180' : 'transform rotate-360'
+              }`}
+            />
+          </LinkButton>
+        )}
+      </div>
       {showOptions && (
         <div className="space-y-4">
           <Input

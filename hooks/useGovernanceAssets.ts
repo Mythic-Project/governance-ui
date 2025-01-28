@@ -8,6 +8,8 @@ import { useRealmGovernancesQuery } from './queries/governance'
 import { useMemo } from 'react'
 import { useRealmVoterWeights } from '@hooks/useRealmVoterWeightPlugins'
 import { GovernanceConfig } from '@solana/spl-governance'
+import { AssetType } from '@models/treasury/Asset'
+import { INDICATOR_TOKENS } from '@hub/providers/Defi'
 
 type Package = {
   name: string

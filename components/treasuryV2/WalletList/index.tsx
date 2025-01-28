@@ -86,8 +86,9 @@ export default function WalletList(props: Props) {
                   There are no wallets in this treasury
                 </div>
               )}
-            {props.data.data.wallets.map((wallet) => (
+            {props.data.data.wallets.map((wallet, index) => (
               <WalletListItem
+                firstWallet={index === 0}
                 key={wallet.address}
                 expanded={expanded.includes(wallet.address)}
                 selected={

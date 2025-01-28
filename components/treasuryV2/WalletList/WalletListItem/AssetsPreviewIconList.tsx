@@ -21,6 +21,7 @@ import useGovernanceNfts from './AssetList/useGovernanceNfts'
 import { PublicKey } from '@solana/web3.js'
 import NFTCollectionPreviewIcon from '@components/treasuryV2/icons/NFTCollectionPreviewIcon'
 import { useDigitalAssetById } from '@hooks/queries/digitalAssets'
+import { INDICATOR_TOKENS } from '@hub/providers/Defi'
 
 function isDomains(asset: Asset): asset is Domains {
   return asset.type === AssetType.Domain
@@ -93,9 +94,9 @@ interface Props {
  */
 export default function AssetsPreviewIconList(props: Props) {
   const nfts = useGovernanceNfts(props.governance) ?? []
-  const tokens = props.assets
-    .filter(isToken)
-    .sort((a, b) => b.value.comparedTo(a.value))
+  const tokens = (props.assets.filter(
+    (t) => isToken(t) && !INDICATOR_TOKENS.includes(t.mintAddress ?? '')
+  ) as Token[]).sort((a, b) => b.value.comparedTo(a.value))
   const sol = props.assets.filter(isSol)
   const councilMint: Mint | undefined = props.assets.filter(isCouncilMint)[0]
   const communityMint: Mint | undefined =
@@ -166,6 +167,7 @@ export default function AssetsPreviewIconList(props: Props) {
       return bTotal.comparedTo(aTotal)
     })
     // Show atleast one token
+
     previewList.push(list[0].icon)
     remainingCount--
     summary.push(list[0].symbol)

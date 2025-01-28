@@ -3,17 +3,42 @@ import { Wallet } from '@models/treasury/Wallet'
 import { AssetType, Token } from "@models/treasury/Asset"
 import queryClient from "@hooks/queries/queryClient"
 import { useQuery } from "@tanstack/react-query";
+import { createAssociatedTokenAccountIdempotentInstruction, getAssociatedTokenAddressSync } from '@solana/spl-token-new'
 import { Plan, Position } from "..";
 import tokenPriceService from "@utils/services/tokenPrice";
 import { useJupiterPricesByMintsQuery } from "@hooks/queries/jupiterPrice";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { InstructionWithSigners, SaveWallet } from "@solendprotocol/solend-sdk";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import { InstructionWithSigners, LendingInstruction, SaveWallet } from "@solendprotocol/solend-sdk";
 import { SolendActionCore } from "@solendprotocol/solend-sdk";
 import { useConnection } from "@solana/wallet-adapter-react";
 import BigNumber from "bignumber.js";
 import useWalletOnePointOh from "@hooks/useWalletOnePointOh";
 import { Token as SplToken } from '@solana/spl-token'
 import { sendTransactionsV3, SequenceType } from "@utils/sendTransactions";
+import { useRealmQuery } from "@hooks/queries/realm";
+import useGovernanceAssetsStore from "stores/useGovernanceAssetsStore";
+import useLegacyConnectionContext from "@hooks/useLegacyConnectionContext";
+
+export const PROTOCOL_SLUG = 'Save';
+
+const SAVE_TRANSACTIONS_ENDPOINT = 'https://api.save.finance/transactions';
+
+type TransactionHistory = {
+  instruction: LendingInstruction;
+  instructionIndex: number;
+  market: string;
+  signature: string;
+  slot: number;
+  timestamp: number;
+  liquidityMint: string;
+  liquidityQuantity: string;
+  liquiditySymbol: string;
+  ctokenMint: string;
+  ctokenQuantity: string;
+  ctokenDestinationAccount: string;
+  userTransferAuthority: string;
+  dumpy: boolean;
+};
 
 export const MAIN_POOL_CONFIGS = {
 name: "main",
@@ -117,6 +142,10 @@ export const RESERVE_CONFIG: {
   },
 }
 
+export const INDICATOR_TOKENS = [
+  ...ELIGIBLE_RESERVES.map((reserve) => RESERVE_CONFIG[reserve].cTokenMint),
+]
+
 export function useFetchReserveInfo(reserveAddresses: string[]) {
   const queryFunction = queryClient.fetchQuery<{
     address: string;
@@ -171,13 +200,75 @@ export function useFetchReserveInfo(reserveAddresses: string[]) {
   })
 }
 
+export function useFetchEarnings(reserveAddresses: string[], wallets: Wallet[] | undefined, connection: Connection) {
+  const atas = wallets?.flatMap((wallet) => {
+    return reserveAddresses.map((reserve) => {
+      return getAssociatedTokenAddressSync(new PublicKey(RESERVE_CONFIG[reserve].cTokenMint), new PublicKey(wallet.address), true);
+    })
+  }) ?? [];
+
+  const queryFunction = queryClient.fetchQuery<{
+    [ataAddress: string]: {
+      netAmount: BigNumber;
+      netCAmount: BigNumber;
+    };
+  }>({
+    queryKey: atas.map((ata) => ata.toBase58()),
+    queryFn: async () => {
+      if (!atas.length) return {};
+      const earnings: {
+        [ataAddress: string]: {
+          netAmount: BigNumber;
+          netCAmount: BigNumber;
+        };
+      } = {};
+
+      await Promise.all(atas.map(async (ata) => {
+        const signatures = await connection.getSignaturesForAddress(ata, undefined, 'confirmed');
+        if (!signatures.length) return;
+        const txns: TransactionHistory[] = await (await fetch(`${SAVE_TRANSACTIONS_ENDPOINT}?signatures=${signatures.filter((s) => !s.err).map((s) => s.signature).join(',')}`)).json().catch(() => []);
+        let netAmount = new BigNumber(0);
+        let netCAmount = new BigNumber(0);
+
+        txns.forEach((txn) => {
+          if (txn.instruction === LendingInstruction.DepositReserveLiquidity) {
+            netAmount = netAmount.plus(txn.liquidityQuantity);
+            netCAmount = netCAmount.plus(txn.ctokenQuantity);
+          } else if (txn.instruction === LendingInstruction.RedeemReserveCollateral) {
+            netAmount = netAmount.minus(txn.liquidityQuantity);
+            netCAmount = netCAmount.minus(txn.ctokenQuantity);
+          }
+        });
+
+        earnings[ata.toBase58()] = {
+          netAmount,
+          netCAmount,
+        };
+      }));
+
+      return earnings;
+    },
+  })
+
+  return useQuery({
+    queryKey: atas.map((ata) => ata.toBase58()),
+    queryFn: async () => {
+      return queryFunction;
+    },
+  })
+}
+
 export const useSavePlans = (wallets?: Wallet[]): {
   plans: Plan[];
+  positions: Position[];
 } => {
+  const realm = useRealmQuery().data?.result
+  const { getGovernedAccounts } = useGovernanceAssetsStore()
   const wallet = useWalletOnePointOh();
   const reservesInfo = useFetchReserveInfo(ELIGIBLE_RESERVES);
   const { data: tokenPrices } = useJupiterPricesByMintsQuery(reservesInfo.data?.map((r) => new PublicKey(r.mintAddress)) ?? []);  
-  const { connection } = useConnection();
+  const connection = useLegacyConnectionContext();
+  const {data: earningsData} = useFetchEarnings(ELIGIBLE_RESERVES, wallets, connection.current);
 
   async function deposit(reserveAddress: string, amount: number, realmsWalletAddress: string) {
     const reserve = reservesInfo.data?.find((r) => r.address === reserveAddress);
@@ -188,7 +279,7 @@ export const useSavePlans = (wallets?: Wallet[]): {
     const solendAction = await SolendActionCore.buildDepositReserveLiquidityTxns(
       MAIN_POOL_CONFIGS,
       RESERVE_CONFIG[reserveAddress],
-      connection,
+      connection.current,
       amountBase,
       wallet as SaveWallet,
       {
@@ -224,6 +315,13 @@ export const useSavePlans = (wallets?: Wallet[]): {
 
     const transferAmountBase = new BigNumber(amount).shiftedBy(reserve?.mintDecimals ?? 0).div(reserve.cTokenExchangeRate).dp(0, BigNumber.ROUND_DOWN).toNumber();
 
+    const createAtaIx = await createAssociatedTokenAccountIdempotentInstruction(
+      wallet.publicKey,
+      walletAta,
+      new PublicKey(realmsWalletAddress),
+      new PublicKey(reserve.cTokenMint),
+    );
+
     const transferIx = SplToken.createTransferInstruction(
       TOKEN_PROGRAM_ID,
       userAta,
@@ -233,8 +331,8 @@ export const useSavePlans = (wallets?: Wallet[]): {
       transferAmountBase,
     );
 
-    sendTransactionsV3({
-      connection,
+    await sendTransactionsV3({
+      connection: connection.current,
       wallet,
       transactionInstructions: [
         {
@@ -243,6 +341,10 @@ export const useSavePlans = (wallets?: Wallet[]): {
             signers: ix.signers?.map((s) => Keypair.fromSecretKey(s.secretKey)),
             alts: ix.lookupTableAccounts,
           })).concat({
+            transactionInstruction: createAtaIx,
+            signers: [],
+            alts: [],
+          }).concat({
             transactionInstruction: transferIx,
             signers: [],
             alts: [],
@@ -251,26 +353,36 @@ export const useSavePlans = (wallets?: Wallet[]): {
         }
       ],
     });
+    console.log(walletAta.toBase58());
+    getGovernedAccounts(connection, realm!)
   }
+
+  const positions = reservesInfo.data?.flatMap((reserve) => {
+    return wallets?.flatMap((wallet) => {
+      const account = wallet.assets.find((a) => a.type === AssetType.Token && a.mintAddress === reserve.cTokenMint) as Token;
+      const liquidityAmount = account?.count?.times(reserve.cTokenExchangeRate);
+      const price = tokenPrices?.[reserve.mintAddress]?.price;
+
+      return account ? {
+        planId: reserve.address,
+        accountAddress: account?.address,
+        walletAddress: wallet.address,
+        amount: liquidityAmount,
+        value: liquidityAmount.times(reserve.cTokenExchangeRate).times(price ?? 0),
+        account,
+        earnings: (account.address && earningsData?.[account.address]) ? earningsData[account.address].netCAmount.times(reserve.cTokenExchangeRate).minus(earningsData[account.address].netAmount).dividedBy(10 ** reserve.mintDecimals) : undefined,
+      } : undefined;
+    }).filter((p) => p !== undefined) ?? [];
+  }) ?? [];
 
   return {
       plans: reservesInfo.data?.map((reserve) => {
         const info = tokenPriceService.getTokenInfo(reserve.mintAddress);
         const price = tokenPrices?.[reserve.mintAddress]?.price;
-        const positions = wallets?.flatMap((wallet) => {
-          const account = wallet.assets.find((a) => a.type === AssetType.Token && a.mintAddress === reserve.cTokenMint) as Token;
-          return account ? {
-            planId: reserve.address,
-            accountAddress: account?.address,
-            walletAddress: wallet.address,
-            amount: account?.count?.times(reserve.cTokenExchangeRate),
-            account,
-            earnings: new BigNumber(0),
-          } : undefined;
-        }).filter((p) => p !== undefined) ?? [];
+
         return ({ 
         id: reserve.address,
-        protocol: 'Save',
+        protocol: PROTOCOL_SLUG,
         type: 'Lending',
         name: info?.symbol ?? '',
         assets: [{
@@ -281,8 +393,8 @@ export const useSavePlans = (wallets?: Wallet[]): {
         }],
         apr: reserve.supplyInterest,
         price: price ? Number(price) : undefined,
-        positions: positions as Position[],
         deposit: (amount: number, realmsWalletAddress: string) => deposit(reserve.address, amount, realmsWalletAddress),
       })}) ?? [],
+      positions,
   }
 }

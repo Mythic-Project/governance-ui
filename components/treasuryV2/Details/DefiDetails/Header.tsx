@@ -4,7 +4,6 @@ import { CashIcon } from '@heroicons/react/solid'
 import { formatNumber } from '@utils/formatNumber'
 import { BigNumber } from 'bignumber.js'
 import Address from '@components/Address'
-import { Wallet } from '@models/treasury/Wallet'
 
 interface Props {
   className?: string

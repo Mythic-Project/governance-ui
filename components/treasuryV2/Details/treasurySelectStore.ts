@@ -1,3 +1,4 @@
+import { Wallet } from '@models/treasury/Wallet'
 import create from 'zustand'
 
 type PubkeyAsString = string
@@ -14,8 +15,8 @@ type TokenOwnerRecordView = {
 }
 
 type DefiView = {
-  _kind: 'Defi',
-  selectedWalletAddress: string,
+  _kind: 'Defi'
+  selectedWallet: Wallet
 }
 
 /** Used whenever the view state should use the legacy, non-zustand props */

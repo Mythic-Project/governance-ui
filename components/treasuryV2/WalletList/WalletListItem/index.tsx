@@ -13,13 +13,14 @@ interface Props {
   selected?: boolean
   selectedAsset?: Asset | null
   wallet: Wallet
+  firstWallet: boolean
   onExpand?(): void
   onSelectAsset?(asset: Asset): void
   onSelectWallet?(): void
 }
 
 export default function WalletListItem(props: Props) {
-  const [expandedSections, setExpandedSections] = useState<Section[]>([]);
+  const [expandedSections, setExpandedSections] = useState<Section[]>([])
   const isOpen = props.expanded
 
   const governance = useMemo(
@@ -74,9 +75,7 @@ export default function WalletListItem(props: Props) {
       </div>
       {isOpen && (
         <div className="p-2">
-          <DefiSummary
-            wallet={props.wallet}
-          />
+          <DefiSummary wallet={props.wallet} firstWallet={props.firstWallet} />
           <AssetList
             governance={governance}
             assets={props.wallet.assets}

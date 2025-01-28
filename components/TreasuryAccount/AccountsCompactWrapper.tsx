@@ -8,8 +8,8 @@ import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import Link from 'next/link'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
 import Loading from '@components/Loading'
+import Divider from '@components/Divider'
 import DefiSummary from './DefiSummary'
-import { DefiProvider } from '@hub/providers/Defi'
 
 const AccountsCompactWrapper = () => {
   const { governedTokenAccountsWithoutNfts, auxiliaryTokenAccounts } =
@@ -43,11 +43,10 @@ const AccountsCompactWrapper = () => {
       ) : !isLoadingAccounts ? null : (
         <Loading></Loading>
       )}
-      <DefiProvider>
-        <div className="mt-4">
+      <Divider />
+      <div className="mt-4">
         <DefiSummary />
-        </div>
-      </DefiProvider>
+      </div>
     </div>
   )
 }
