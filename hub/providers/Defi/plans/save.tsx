@@ -353,7 +353,7 @@ export const useSavePlans = (wallets?: Wallet[]): {
         }
       ],
     });
-    console.log(walletAta.toBase58());
+
     getGovernedAccounts(connection, realm!)
   }
 
