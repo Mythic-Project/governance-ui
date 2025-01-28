@@ -485,7 +485,7 @@ const SaveDepositModal = ({
               : ''
           }
         >
-          {!isDepositing ? 'Propose deposit' : <Loading></Loading>}
+          {!isDepositing ? (depositFromWallet ? 'Deposit' : 'Propose deposit') : <Loading></Loading>}
         </Tooltip>
       </Button>
     </Modal>
