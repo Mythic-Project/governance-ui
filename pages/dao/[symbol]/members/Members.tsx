@@ -43,13 +43,7 @@ const Members = () => {
 
   const { connection } = useConnection()
   const realmPk = useSelectedRealmPubkey()
-  const [isClient, setIsClient] = useState(false);
-  const { data: activeMembers } = useMembersQuery({
-    isClient, // Prevent fetching during build
-  })
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const { data: activeMembers } = useMembersQuery();
 
   const { result: kind } = useAsync(async () => {
     if (realmPk === undefined) return undefined
@@ -218,7 +212,7 @@ const Members = () => {
                 placeholder="Please select..."
                 value={activeMember?.walletAddress}
               >
-                {activeMembers?.map((x) => {
+                {Array.isArray(activeMembers) && activeMembers?.map((x) => {
                   return (
                     <Select.Option
                       key={x?.walletAddress}

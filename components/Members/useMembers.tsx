@@ -29,7 +29,7 @@ import { BN } from '@coral-xyz/anchor'
  * @deprecated
  * legacy structure for fetching data, you should probably not be using it.
  */
-export const useMembersQuery = ({isClient}: {isClient: boolean}) => {
+export const useMembersQuery = () => {
   const realm = useRealmQuery().data?.result
   const { data: tors } = useCouncilTokenOwnerRecordsForRealmQuery()
 
@@ -45,7 +45,7 @@ export const useMembersQuery = ({isClient}: {isClient: boolean}) => {
   const enabled =
     tors !== undefined &&
     realm !== undefined &&
-    (!isNftMode || usedCollectionsPks !== undefined) && !isClient
+    (!isNftMode || usedCollectionsPks !== undefined)
 
   const query = useQuery({
     enabled,
