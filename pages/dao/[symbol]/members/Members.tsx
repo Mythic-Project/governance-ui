@@ -44,9 +44,9 @@ const Members = () => {
 
   const { connection } = useConnection()
   const realmPk = useSelectedRealmPubkey()
-  const { data: activeMembers, error } = useMembersQuery()
+  const { data: activeMembers, isError, isLoading, isLoadingError } = useMembersQuery()
 
-  if (error) return null;
+  if (isError || isLoading || isLoadingError) return null;
 
   const { result: kind } = useAsync(async () => {
     if (realmPk === undefined) return undefined
