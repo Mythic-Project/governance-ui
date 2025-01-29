@@ -45,8 +45,14 @@ const Members = () => {
   const { connection } = useConnection()
   const realmPk = useSelectedRealmPubkey()
   const { data: activeMembers, isError, isLoading, isLoadingError } = useMembersQuery()
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-  if (isError || isLoading || isLoadingError) return null;
+  const { data, isLoading } = useQuery(["myData"], fetchData, {
+    enabled: isClient, // Prevent fetching during build
+  });
 
   const { result: kind } = useAsync(async () => {
     if (realmPk === undefined) return undefined
