@@ -213,7 +213,6 @@ const Members = () => {
                 placeholder="Please select..."
                 value={activeMember?.walletAddress}
               >
-                {/* @ts-ignore */}
                 {activeMembers?.map((x) => {
                   return (
                     <Select.Option
