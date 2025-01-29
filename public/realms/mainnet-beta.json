@@ -3923,4 +3923,17 @@
   "twitter": "@rallyguardco",
   "telegram": "https://t.me/rallyguard_portal"
   }
+      {
+  "symbol": "BluC",
+  "bannerImage": "/realms/BluChain/background.png",
+  "displayName": "BluChain",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "J7SZKuDwoEJ28DKRU4q7Lp4VvgUhvqETCRWxBskTnmGG",
+  "communityMint": "J2NcpREwgbJQqHHwwChtm2oG6nVRyDkwbEMo7EQcgJjE",
+  "ogImage": "/realms/BluChain/BluChip-coin.png",
+  "shortDescription": "BluChain DAO is the decentralized governance hub for the BluChip ecosystem. It empowers BluChip token holders to actively participate in decision-making, manage proposals, and shape the future of BluChain's blockchain and DeFi initiatives. Designed to support blue-collar communities, BluChain DAO fosters financial inclusion through transparent and collaborative governance.",
+  "website": "https://bluchain.xyz",
+  "twitter": "@isolexIO",
+  "telegram": "https://t.me/isolexIO"
+  }
 ]
