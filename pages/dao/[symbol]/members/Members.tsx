@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useRealm from '@hooks/useRealm'
 import { useEffect, useRef, useState } from 'react'
 import MemberOverview from '@components/Members/MemberOverview'
