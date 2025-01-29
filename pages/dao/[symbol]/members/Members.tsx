@@ -1,4 +1,3 @@
-// @ts-nocheck
 import useRealm from '@hooks/useRealm'
 import { useEffect, useRef, useState } from 'react'
 import MemberOverview from '@components/Members/MemberOverview'
@@ -44,15 +43,13 @@ const Members = () => {
 
   const { connection } = useConnection()
   const realmPk = useSelectedRealmPubkey()
-  const { data: activeMembers, isError, isLoading, isLoadingError } = useMembersQuery()
   const [isClient, setIsClient] = useState(false);
+  const { data: activeMembers } = useMembersQuery({
+    isClient, // Prevent fetching during build
+  })
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const { data, isLoading } = useQuery(["myData"], fetchData, {
-    enabled: isClient, // Prevent fetching during build
-  });
 
   const { result: kind } = useAsync(async () => {
     if (realmPk === undefined) return undefined
