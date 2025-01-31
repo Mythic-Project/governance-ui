@@ -359,11 +359,13 @@ export const ACCOUNT_NAMES = {
 
   // Xandeum DAO
   '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Earnings',
-  '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development',
+  '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development 1',
+  'A5JXGKq8gJXb4K7hDBRQh7zToDPpjF5RuWHJ1TUnAx6f': 'Xandeum DAO Ecosystem Development 2',
   'DdphfkqpTJiHRQP6c7qVjtjG8aMQMPhEHpYjrRDSGpsC': 'Xandeum DAO Staking Rewards',
   'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Liquidity Providers',
   '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Grants',
-  'GSRBeDfdg4qy5boj1D5DQ1u1YqwDtCfNJFkpDrf2cj1R': 'Xandeum DAO Community Building',
+  'GSRBeDfdg4qy5boj1D5DQ1u1YqwDtCfNJFkpDrf2cj1R': 'Xandeum DAO Community Building 1',
+  '9PhjJ2sSnb1iAVmeJdn2ASq4sSXf65rMJ8SpZsfynHnF': 'Xandeum DAO Community Building 2',
   
 }
 
