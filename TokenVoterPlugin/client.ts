@@ -7,7 +7,7 @@ import { TokenVoter } from "../BonkVotePlugin/token-type";
 import { tokenVoterKey } from "../BonkVotePlugin/utils";
 import { VoterWeightAction } from "@solana/spl-governance";
 
-const DEFAULT_TOKEN_VOTER_PROGRAMID = new PublicKey("HA99cuBQCCzZu1zuHN2qBxo2FBo1cxNLwKkdt6Prhy8v")
+export const DEFAULT_TOKEN_VOTER_PROGRAMID = new PublicKey("HA99cuBQCCzZu1zuHN2qBxo2FBo1cxNLwKkdt6Prhy8v")
 
 export class TokenVoterClient extends Client<TokenVoter> {
   readonly requiresInputVoterWeight = false
@@ -54,6 +54,22 @@ export class TokenVoterClient extends Client<TokenVoter> {
     return {
       voterWeightPk,
       voterWeightRecordBump,
+    }
+  }
+
+  async getMaxVoterWeightRecordPDA(realm: PublicKey, mint: PublicKey) {    
+    const [maxVoterWeightPk, maxVoterWeightRecordBump] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('max-voter-weight-record'),
+        realm.toBuffer(),
+        mint.toBuffer(),
+      ],
+      this.program.programId
+    )
+
+    return {
+      maxVoterWeightPk,
+      maxVoterWeightRecordBump,
     }
   }
 

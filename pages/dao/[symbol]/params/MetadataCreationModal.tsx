@@ -24,7 +24,8 @@ import GovernedAccountSelect from '@components/inputs/GovernedAccountSelect'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import { AccountType } from '@utils/uiTypes/assets'
 import { WebBundlr } from '@bundlr-network/client'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { WebSolana } from "@irys/web-upload-solana"
+import { WebUploader } from "@irys/web-upload";
 import { PublicKey } from '@solana/web3.js'
 import { Metaplex } from '@metaplex-foundation/js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
@@ -204,28 +205,24 @@ const MetadataCreationModal = ({
   }
 
   const uploadImage = async () => {
-    const bundlr = await initBundlr()
-    if (!bundlr) return
+    const irysUploader = await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.endpoint);
     if (imageFile == null) return
 
-    const loadedBalance = await bundlr.getLoadedBalance()
-    const balance = bundlr.utils.unitConverter(loadedBalance.toNumber())
+    const loadedBalance = await irysUploader.getBalance()
+    const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await bundlr.utils.getPrice('solana', imageFile.length)
-    const amount = bundlr.utils.unitConverter(price)
+    const price = await irysUploader.utils.getPrice('solana', imageFile.length)
+    const amount = irysUploader.utils.fromAtomic(price)
     const amountNum = amount.toNumber()
 
     if (balanceNum < amountNum) {
-      await bundlr.fund(Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL))
+      await irysUploader.fund(Math.ceil((amountNum - balanceNum)))
     }
 
-    const imageResult = await bundlr.uploader.upload(imageFile, [
-      { name: 'Content-Type', value: 'image/png' },
-    ])
+    const imageResult = await irysUploader.uploader.uploadData(imageFile)
 
-    const arweaveImageUrl = `https://arweave.net/${imageResult.data.id}?ext=png`
-
+    const arweaveImageUrl = `https://gateway.irys.xyz/${imageResult.id}`
     return arweaveImageUrl
   }
 
@@ -237,31 +234,28 @@ const MetadataCreationModal = ({
       image: arweaveImageUrl,
     }
     const tokenMetadataJsonString = JSON.stringify(tokenMetadata)
-    const bundlr = await initBundlr()
-    if (!bundlr) return
+    const irysUploader = await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.endpoint);
     if (tokenMetadataJsonString == null) return
 
     const tokenMetadataJson = Buffer.from(tokenMetadataJsonString)
-    const loadedBalance = await bundlr.getLoadedBalance()
-    const balance = bundlr.utils.unitConverter(loadedBalance.toNumber())
+    const loadedBalance = await irysUploader.getBalance()
+    const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await bundlr.utils.getPrice(
+    const price = await irysUploader.utils.getPrice(
       'solana',
       tokenMetadataJson.length,
     )
-    const amount = bundlr.utils.unitConverter(price)
+    const amount = irysUploader.utils.fromAtomic(price)
     const amountNum = amount.toNumber()
-
+    
     if (balanceNum < amountNum) {
-      await bundlr.fund(Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL))
+      await irysUploader.fund(Math.ceil((amountNum - balanceNum)))
     }
 
-    const metadataResult = await bundlr.uploader.upload(tokenMetadataJson, [
-      { name: 'Content-Type', value: 'application/json' },
-    ])
+    const metadataResult = await irysUploader.uploader.uploadData(tokenMetadataJson)
 
-    const arweaveMetadataUrl = `https://arweave.net/${metadataResult.data.id}`
+    const arweaveMetadataUrl = `https://gateway.irys.xyz/${metadataResult.id}`
     return arweaveMetadataUrl
   }
 

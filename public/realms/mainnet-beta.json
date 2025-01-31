@@ -3896,5 +3896,44 @@
   "website": "https://www.fungi.ag/",
   "twitter": "@FungiProject",
   "telegram": "https://t.me/fungiagents"
+  },
+  { 
+  "symbol": "BEASTAI",
+  "displayName": "BlockBeast AI DAO",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "Efc5hj7r1m7KDvYfSPwZrgLhttnNe6oJKbnTKfoiqhDR",
+  "ogImage": "/realms/BeastAI/beastlogo.png",
+  "bannerImage": "/realms/BeastAI/beast-banner.png",
+  "shortDescription": "Blockbeast is a pioneering platform on the Solana blockchain that enables users to create, train, and monetize AI agents. Creators of @AiBlockbeast.",
+  "website": "https://blockbeast.ai/",
+  "twitter": "@AiBlockbeast",
+  "telegram": "https://t.me/blockbeastai"
+  },
+  {
+  "symbol": "RALLY",
+  "bannerImage": "/realms/RallyDAO/RallyBanner.png",
+  "displayName": "Rally DAO",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "CrQNnuuVKuhZJ3sNo3iwdoVXyT5NWhPE1utcWvFSZWeN",
+  "communityMint": "w3GcsSGh5YwsENsogENUWZERpjKj36nAEH8Tztipump",
+  "ogImage": "/realms/RallyDAO/RallyLogo.png",
+  "shortDescription": "A powerful engagement tool for crypto groups! Admins can direct members to raid links on PumpFun, Twitter, Reddit, or DEX Screener, boosting likes, views, upvotes, and comments.",
+  "website": "https://rallyguard.xyz",
+  "keywords" : "crypto, engagement, boosting, social, marketing, PumpFun, Twitter, Reddit, raids, raiding, raid, metrics, upvotes, likes, comments, views, growth, community, tool, admin, DEX",
+  "twitter": "@rallyguardco",
+  "telegram": "https://t.me/rallyguard_portal"
+  },
+      {
+  "symbol": "BluC",
+  "bannerImage": "/realms/BluChain/background.png",
+  "displayName": "BluChain",
+  "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+  "realmId": "J7SZKuDwoEJ28DKRU4q7Lp4VvgUhvqETCRWxBskTnmGG",
+  "communityMint": "J2NcpREwgbJQqHHwwChtm2oG6nVRyDkwbEMo7EQcgJjE",
+  "ogImage": "/realms/BluChain/BluChip-coin.png",
+  "shortDescription": "BluChain DAO is the decentralized governance hub for the BluChip ecosystem. It empowers BluChip token holders to actively participate in decision-making, manage proposals, and shape the future of BluChain's blockchain and DeFi initiatives. Designed to support blue-collar communities, BluChain DAO fosters financial inclusion through transparent and collaborative governance.",
+  "website": "https://bluchain.xyz",
+  "twitter": "@isolexIO",
+  "telegram": "https://t.me/isolexIO"
   }
 ]

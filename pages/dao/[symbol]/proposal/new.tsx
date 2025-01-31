@@ -146,6 +146,7 @@ import SymmetryEditBasket from './components/instructions/Symmetry/SymmetryEditB
 import SymmetryDeposit from './components/instructions/Symmetry/SymmetryDeposit'
 import SymmetryWithdraw from './components/instructions/Symmetry/SymmetryWithdraw'
 import PythUpdatePoolAuthority from './components/instructions/Pyth/PythUpdatePoolAuthority'
+import WithdrawFees from './components/instructions/Token2022/WithdrawFees'
 
 const TITLE_LENGTH_LIMIT = 130
 // the true length limit is either at the tx size level, and maybe also the total account size level (I can't remember)
@@ -556,6 +557,7 @@ const New = () => {
       [Instructions.DifferValidatorStake]: null,
       [Instructions.TransferDomainName]: TransferDomainName,
       [Instructions.SerumInitUser]: InitUser,
+      [Instructions.TokenWithdrawFees]: WithdrawFees,
       [Instructions.SerumGrantLockedSRM]: {
         componentBuilderFunction: ({ index, governance }) => (
           <GrantForm

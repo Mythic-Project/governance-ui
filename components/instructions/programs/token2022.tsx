@@ -10,10 +10,16 @@ import { struct, u8 } from 'buffer-layout'
 import { publicKey } from '@coral-xyz/borsh'
 import {
   decodeTransferCheckedInstruction,
+  decodeWithdrawWithheldTokensFromMintInstruction,
+  getTransferFeeAmount,
   TOKEN_2022_PROGRAM_ID,
+  unpackAccount,
 } from '@solana/spl-token-new'
 import { Transaction } from '@sentry/nextjs'
 import { toUiDecimals } from '@blockworks-foundation/mango-v4'
+import { useState } from 'react'
+import Button from '@components/Button'
+import HarvestTokenPanel from '@components/Token2022/HarvestTokensPanel'
 
 interface TokenMintMetadata {
   name: string
@@ -92,6 +98,21 @@ export const TOKEN_2022_INST = {
             )}
           </>
         )
+      },
+    },
+    26: {
+      name: 'Token: Withdraw Fees From Mint',
+      accounts: [
+        { name: 'Mint' },
+        { name: 'Destination' },
+        { name: 'Authority' },
+      ],
+      getDataUI: async (
+        connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[],
+      ) => {
+        return <HarvestTokenPanel mint={accounts[0].pubkey}></HarvestTokenPanel>
       },
     },
   },

@@ -106,6 +106,8 @@ export const pluginNameToCanonicalProgramId = (
       return lastPk(QV_PLUGINS_PKS)
     case 'pyth':
       return lastPk(PYTH_PLUGIN_PK)
+    case 'token_voter':
+      return lastPk(TOKEN_VOTER_PK)
     default:
       return undefined
   }

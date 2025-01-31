@@ -374,6 +374,11 @@ export default function useGovernanceAssets() {
       isVisible: canUseTransferInstruction,
       packageId: PackageEnum.Common,
     },
+    [Instructions.TokenWithdrawFees]: {
+      name: 'Token 2022 withdraw fees',
+      packageId: PackageEnum.Common,
+      isVisible: canUseTransferInstruction,
+    },
     /*
       ██████  ██    ██  █████  ██          ███████ ██ ███    ██  █████  ███    ██  ██████ ███████
       ██   ██ ██    ██ ██   ██ ██          ██      ██ ████   ██ ██   ██ ████   ██ ██      ██

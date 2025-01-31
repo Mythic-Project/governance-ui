@@ -22,7 +22,6 @@ import {
   getVoterPDA,
   getVoterWeightPDA,
 } from 'VoteStakeRegistry/sdk/accounts'
-import { chargeFee, PROPOSAL_FEE } from 'actions/createChargeFee'
 
 export const createBase64Proposal = async (
   connection: Connection,
@@ -158,15 +157,6 @@ export const createBase64Proposal = async (
         })),
         sequenceType: SequenceType.Sequential,
       })),
-      {
-        instructionsSet: [
-          ...chargeFee(wallet.publicKey!, PROPOSAL_FEE).map((x) => ({
-            transactionInstruction: x,
-            signers: [],
-          })),
-        ],
-        sequenceType: SequenceType.Sequential,
-      },
     ],
   })
   return proposalAddress
