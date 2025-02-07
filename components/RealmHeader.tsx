@@ -81,11 +81,11 @@ const RealmHeader = () => {
               </a>
             </Link>
           )}
-          {realmData === null && realm && vsrMode !== "default" ?
+          {realmData !== undefined && realm && vsrMode !== "default" ?
             <Link href={`https://mythic.today?realm=${realm.pubkey.toBase58()}`}>
               <a className="flex items-center text-sm cursor-pointer default-transition text-fgd-2 hover:text-fgd-3">
                 <IdentificationIcon className="flex-shrink-0 w-5 h-5 mr-1" />
-                Add Metadata
+                {realmData ? "Update" : "Add" } Metadata
               </a>
             </Link> 
           : null}
@@ -111,12 +111,12 @@ const RealmHeader = () => {
           </a>
         </div>
       </div>
-      {vsrMode === 'default' && realm && realmData === null ?
+      {vsrMode === 'default' && realm && realmData !== undefined ?
         <div className="w-full flex justify-end mt-4">
           <Link href={`https://mythic.today?realm=${realm.pubkey.toBase58()}`}>
             <a className="flex items-center text-sm cursor-pointer default-transition text-fgd-2 hover:text-fgd-3">
               <IdentificationIcon className="flex-shrink-0 w-5 h-5 mr-1" />
-              Add Onchain Metadata
+              {realmData ? "Update" : "Add" } Onchain Metadata
             </a>
           </Link> 
         </div>
