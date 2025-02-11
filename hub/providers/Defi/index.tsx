@@ -40,7 +40,7 @@ export function aggregateStats(plans: Plan[], positions: Position[]) {
   const totalDepositedUsd = positions.reduce((acc, position) => acc.plus(position.amount.times(plansMap.get(position.planId)?.price ?? 0)), new BigNumber(0));
   const averageApr = totalDepositedUsd.isZero() ? new BigNumber(0) : plans.reduce(
     (acc, plan) => {
-      const totalDepositedUsdInPlan = positions.reduce((acc, position) => acc.plus(position.amount.times(plansMap.get(position.planId)?.price ?? 0)), new BigNumber(0));
+      const totalDepositedUsdInPlan = positions.filter(p => p.planId === plan.id).reduce((acc, position) => acc.plus(position.amount.times(plansMap.get(position.planId)?.price ?? 0)), new BigNumber(0));
       return acc.plus(
       totalDepositedUsdInPlan.times(plan.apr)
     )}, new BigNumber(0)).dividedBy(totalDepositedUsd);

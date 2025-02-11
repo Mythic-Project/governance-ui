@@ -8,7 +8,7 @@ import { nu64, struct, u8 } from 'buffer-layout'
 export const SOLEND_PROGRAM_INSTRUCTIONS = {
   [SolendConfiguration.programID.toBase58()]: {
     [LendingInstruction.InitObligation]: {
-      name: 'Solend - Init Obligation',
+      name: 'Save - Init Obligation',
       accounts: [
         'Obligation',
         'Lending Market Account',
@@ -36,7 +36,7 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
     },
 
     [LendingInstruction.RefreshObligation]: {
-      name: 'Solend - Refresh Obligation',
+      name: 'Save - Refresh Obligation',
       accounts: [
         'Obligation',
         'Sysvar: Clock',
@@ -72,7 +72,7 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
     },
 
     [LendingInstruction.RefreshReserve]: {
-      name: 'Solend - Refresh Reserve',
+      name: 'Save - Refresh Reserve',
       accounts: ['Reserve'],
       getDataUI: (
         _connection: Connection,
@@ -95,7 +95,7 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
     },
 
     [LendingInstruction.DepositReserveLiquidityAndObligationCollateral]: {
-      name: 'Solend - Deposit Reserve Liquidity And Obligation Collateral',
+      name: 'Save - Deposit Reserve Liquidity And Obligation Collateral',
       accounts: [
         'Source Liquidity',
         'Source Collateral',
@@ -142,33 +142,33 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
       },
     },
 
-    [LendingInstruction.WithdrawObligationCollateralAndRedeemReserveLiquidity]:
-      {
-        name: 'Solend - Withdraw Obligation Collateral And Redeem Reserve Liquidity',
-        accounts: [
-          'Source Collateral',
-          'Destination Collateral',
-          'Withdraw Reserve',
-          'Obligation',
-          'Lending Market',
-          'Lending Market Authority',
-          'Destination Liquidity',
-          'Reserve Collateral Mint',
-          'Reserve Liquidity Supply',
-          'Obligation Owner',
-          'Transfer Authority',
-          'Sysvar: Clock',
-          'Token Program',
-        ],
-        getDataUI: (
-          _connection: Connection,
-          data: Uint8Array,
-          accounts: AccountMetaData[],
-        ) => {
-          const dataLayout = struct([
-            u8('instruction'),
-            nu64('collateralAmount'),
-          ])
+    [LendingInstruction.WithdrawObligationCollateralAndRedeemReserveLiquidity]: {
+      name:
+        'Save - Withdraw Obligation Collateral And Redeem Reserve Liquidity',
+      accounts: [
+        'Source Collateral',
+        'Destination Collateral',
+        'Withdraw Reserve',
+        'Obligation',
+        'Lending Market',
+        'Lending Market Authority',
+        'Destination Liquidity',
+        'Reserve Collateral Mint',
+        'Reserve Liquidity Supply',
+        'Obligation Owner',
+        'Transfer Authority',
+        'Sysvar: Clock',
+        'Token Program',
+      ],
+      getDataUI: (
+        _connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[]
+      ) => {
+        const dataLayout = struct([
+          u8('instruction'),
+          nu64('collateralAmount')]
+        )
 
           const { collateralAmount } = dataLayout.decode(
             Buffer.from(data),
@@ -195,5 +195,93 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
           )
         },
       },
-  },
+    },
+    [LendingInstruction.DepositReserveLiquidity]: {
+      name: 'Save - Deposit Reserve Liquidity',
+      accounts: [
+        {name: 'Source Liquidity'},
+        {name: 'Destination Collateral'},
+        {name: 'Reserve'},
+        {name: 'Reserve Liquidity Supply'},
+        {name: 'Reserve Collateral Mint'},
+        {name: 'Lending Market'},
+        {name: 'Lending Market Authority'},
+        {name: 'Transfer Authority'},
+        {name: 'Token Program'}
+      ],
+      getDataUI: (
+        _connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[]
+      ) => {
+        const dataLayout = struct([u8('instruction'), nu64('liquidityAmount')])
+  
+        const { liquidityAmount } = dataLayout.decode(Buffer.from(data)) as any
+  
+        const reserve = accounts[2]
+  
+        const tokenName =
+          SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
+          'unknown'
+
+        const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
+  
+        return (
+          <div className="flex flex-col">
+            <div className="flex justify-between">
+              <span>Token</span>
+              <span>{tokenName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Amount</span>
+              <span>{liquidityAmount / 10 ** decimals}</span>
+            </div>
+          </div>
+        )
+      },
+    },
+    
+    [LendingInstruction.RedeemReserveCollateral]: {
+      name: 'Save - Withdraw Reserve Liquidity',
+      accounts: [
+        {name: 'Source Collateral'},
+        {name: 'Destination Liquidity'},
+        {name: 'Reserve'},
+        {name: 'Reserve Collateral Mint'},
+        {name: 'Reserve Liquidity Supply'},
+        {name: 'Lending Market'},
+        {name: 'Lending Market Authority'},
+        {name: 'Transfer Authority'},
+        {name: 'Token Program'}
+      ],
+      getDataUI: async (
+        _connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[]
+      ) => {
+        const dataLayout = struct([u8('instruction'), nu64('collateralAmount')])
+
+        const { collateralAmount } = dataLayout.decode(Buffer.from(data)) as any
+
+        const reserve = accounts[2]
+
+        const tokenName =
+          SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
+          'unknown'
+
+        const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
+        return (
+          <div className="flex flex-col">
+            <div className="flex justify-between">
+              <span>Token</span>
+              <span>{tokenName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Collateral Token Amount Redeemed</span>
+              <span>{collateralAmount / 10 ** decimals}</span>
+            </div>
+          </div>
+        )
+      },
+    }
 }

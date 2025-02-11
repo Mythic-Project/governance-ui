@@ -23,8 +23,8 @@ abstract class ASolendConfiguration {
 }
 
 // Add here new token to support ...
-export type SupportedMintName = 'USDC'
-export type SupportedCollateralMintNames = 'cUSDC'
+export type SupportedMintName = 'USDC' | 'USDT' | 'SOL'
+export type SupportedCollateralMintNames = 'cUSDC' | 'cUSDT' | 'cSOL'
 
 type SupportedCollateralMintInformation = {
   name: string
@@ -52,14 +52,24 @@ type SupportedMintsInformation = {
 }
 
 class SolendConfiguration implements ASolendConfiguration {
-  protected supportedCollateralMintsInformation: SupportedCollateralMintsInformation =
-    {
-      cUSDC: {
-        name: 'Solend Protocol: cUSDC',
-        mint: new PublicKey('993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk'),
-        decimals: 6,
-      },
+  protected supportedCollateralMintsInformation: SupportedCollateralMintsInformation = 
+  {
+    cUSDC: {
+      name: 'Save Protocol: cUSDC',
+      mint: new PublicKey('993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk'),
+      decimals: 6,
+    },
+    cUSDT: {
+      name: 'Save Protocol: cUSDT',
+      mint: new PublicKey('BTsbZDV7aCMRJ3VNy9ygV4Q2UeEo9GpR8D6VvmMZzNr8'),
+      decimals: 6,
+    },
+    cSOL: {
+      name: 'Save Protocol: cSOL',
+      mint: new PublicKey('5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV'),
+      decimals: 9,
     }
+  }
 
   protected supportedMintsInformation: SupportedMintsInformation = {
     USDC: {
@@ -78,6 +88,38 @@ class SolendConfiguration implements ASolendConfiguration {
         'UtRy8gcEu9fCkDuUrU8EmC7Uc6FZy5NCwttzG7i6nkw',
       ),
     },
+    USDT: {
+      relatedCollateralMint: this.supportedCollateralMintsInformation.cUSDT,
+      mint: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+      decimals: 6,
+      reserve: new PublicKey('8K9WC8xoh2rtQNY7iEGXtPvfbDCi563SdWhCAhuMP2xE'),
+      reserveLiquiditySupply: new PublicKey(
+        '3CdpSW5dxM7RTxBgxeyt8nnnjqoDbZe48tsBs9QUrmuN'
+      ),
+      pythOracle: new PublicKey('HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM'),
+      switchboardFeedAddress: new PublicKey(
+        'ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9'
+      ),
+      reserveCollateralSupplySplTokenAccount: new PublicKey(
+        'CXDxj6cepVv9nWh4QYqWS2MpeoVKBLKJkMfo3c6Y1Lud'
+      ),
+    },
+    SOL: {
+      relatedCollateralMint: this.supportedCollateralMintsInformation.cSOL,
+      mint: new PublicKey('So11111111111111111111111111111111111111112'),
+      decimals: 9,
+      reserve: new PublicKey('8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36'),
+      reserveLiquiditySupply: new PublicKey(
+        '8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv'
+      ),
+      pythOracle: new PublicKey('7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE'),
+      switchboardFeedAddress: new PublicKey(
+        'GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR'
+      ),
+      reserveCollateralSupplySplTokenAccount: new PublicKey(
+        'B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g'
+      ),
+    }
   }
 
   public readonly programID = new PublicKey(
@@ -131,6 +173,21 @@ class SolendConfiguration implements ASolendConfiguration {
         return tmp
       },
       undefined,
+    )
+  }
+  public getTokenDecimalsByReservePublicKey(
+    reserveToFind: PublicKey
+  ): number | undefined {
+    
+    return Object.entries(this.supportedMintsInformation).reduce(
+      (tmp, [_mintName, { reserve, decimals }]) => {
+        if (reserveToFind.toString() === reserve.toString()) {
+          return decimals
+        }
+
+        return tmp
+      },
+      undefined
     )
   }
 }

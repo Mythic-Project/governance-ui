@@ -1,128 +1,3 @@
-/*
-import Button, { LinkButton } from "@components/Button"
-import Input from "@components/inputs/Input"
-import Loading from "@components/Loading"
-import Modal from "@components/Modal"
-import Tooltip from "@components/Tooltip"
-import BigNumber from "bignumber.js"
-import { useState } from "react"
-import { Plan, Position } from "@hub/providers/Defi"
-import useWalletOnePointOh from "@hooks/useWalletOnePointOh"
-import { useTokenAccountsByOwnerQuery } from "@hooks/queries/tokenAccount"
-import { Wallet } from "@models/treasury/Wallet"
-import { Token, AssetType } from "@models/treasury/Asset"
-
-
-const SaveDepositModal = ({ isOpen, onClose, plan, positions, wallet }: { isOpen: boolean, onClose: () => void, plan: Plan, positions: Position[], wallet: Wallet }) => {
-  // Save assumes one position per wallet
-  const [depositFromWallet, setDepositFromWallet] = useState(false);
-  const position = positions[0];
-  const [formErrors, setFormErrors] = useState({});
-  const [isDepositing, setIsDepositing] = useState(false)
-  const [form, setForm] = useState<{
-    title: string
-    description: string
-    amount?: number
-    max: boolean
-  }>({
-    title: '',
-    description: '',
-    amount: undefined,
-    max: false,
-  });
-  const mintMinAmount = new BigNumber(1).shiftedBy(plan.assets[0].decimals).toNumber()
-
-  const tokenAccount = tokenAccounts?.find(t => t.account.mint.toBase58() === plan.assets[0].mintAddress);
-  const tokenAccountFromDao = wallet.assets?.find(t => t.type === AssetType.Token && t.mintAddress === plan.assets[0].mintAddress) as Token;
-  const maxAmount = new BigNumber(
-    (depositFromWallet ? tokenAccount?.account.amount.toString() : tokenAccountFromDao.count.toString()) ?? 0
-  );
-  const maxAmountFtm = maxAmount.toFixed(4);
-
-  const handleSetForm = ({ propertyName, value }) => {
-    setFormErrors({})
-    setForm({
-      ...form,
-      max: propertyName === 'amount' ? false : form.max,
-      [propertyName]: value,
-    })
-  }
-
-  async function handleDeposit() {
-    if(!position.walletAddress) return;
-    setIsDepositing(true)
-    await plan.deposit(Number(amount), position.walletAddress)
-    setIsDepositing(false)
-  }
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-    <div className="flex mb-1.5 text-sm">
-      Amount
-      <div className="ml-auto flex items-center text-xs">
-        <span className="text-fgd-3 mr-1">Bal:</span> {maxAmountFtm}
-        <LinkButton
-          onClick={() => {
-            setFormErrors({})
-            setForm({
-              ...form,
-              amount: maxAmount.toNumber(),
-              max: true,
-            })
-          }}
-          className="font-bold ml-2 text-primary-light"
-        >
-          Max
-        </LinkButton>
-      </div>
-    </div>
-      <div className="flex flex-col gap-2">
-      <Input
-        error={formErrors['amount']}
-        min={mintMinAmount}
-        value={amount}
-        type="number"
-        onChange={(e) =>
-          handleSetForm({ propertyName: 'amount', value: e.target.value })
-        }
-        step={mintMinAmount}
-      />
-      <div className="flex justify-between">
-        <span className="text-fgd-3">Current Deposits</span>
-        <span className="font-bold text-fgd-1">
-          {position.amount?.toFixed(4) || 0}{' '}
-          <span className="font-normal text-fgd-3">{plan.assets[0].symbol}</span>
-        </span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-fgd-3">APR</span>
-        <span className="font-bold text-fgd-1">
-          {plan.apr}{' '}
-          <span className="font-normal text-fgd-3">%</span>
-        </span>
-      </div>
-      <Button
-        className="w-full"
-        onClick={handleDeposit}
-        disabled={!amount ||  isDepositing}
-      >
-        <Tooltip
-          content={
-            !amount
-              ? 'Please input the amount'
-              : ''
-          }
-        >
-          {!isDepositing ? 'Deposit' : <Loading/>}
-        </Tooltip>
-      </Button>
-      </div>
-    </Modal>
-  )
-}
-
-*/
-
 import Button, { LinkButton } from '@components/Button'
 import Input from '@components/inputs/Input'
 import Loading from '@components/Loading'
@@ -187,7 +62,7 @@ const SaveDepositModal = ({
   const isSol =
     plan.assets[0].mintAddress === 'So11111111111111111111111111111111111111112'
   const [depositFromWallet, setDepositFromWallet] = useState(true)
-  const position = positions[0] as Position | undefined
+  const position = positions.find(p => p.planId === plan.id && p.walletAddress === wallet.address) as Position | undefined
   const {
     governedTokenAccountsWithoutNfts,
     auxiliaryTokenAccounts,
@@ -303,7 +178,7 @@ const SaveDepositModal = ({
       : new BigNumber(0)) ?? new BigNumber(0)
 
   if (governedTokenAccount?.isSol) {
-    maxAmount = BigNumber.max(0, maxAmount.minus(SOL_BUFFER))
+    maxAmount = BigNumber.max(0, maxAmount.minus(0))
   }
   const maxAmountFtm = maxAmount.toNumber().toFixed(4)
   const currentPrecision = precision(mintMinAmount)
@@ -324,8 +199,11 @@ const SaveDepositModal = ({
     if (depositFromWallet) {
       if (!wallet?.address) return
       setIsDepositing(true)
-      await plan.deposit(Number(form.amount), wallet.address)
-      setIsDepositing(false)
+      try {
+        await plan.deposit(Number(form.amount), wallet.address)
+      } finally {
+        setIsDepositing(false)
+      }
       return
     }
 
@@ -385,8 +263,9 @@ const SaveDepositModal = ({
     } catch (e) {
       console.log(e)
       throw e
+    } finally {
+      setIsDepositing(false)
     }
-    setIsDepositing(false)
   }
   const schema = yup.object().shape({
     amount: yup

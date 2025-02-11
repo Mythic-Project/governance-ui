@@ -44,7 +44,7 @@ const WithdrawModal = ({
   positions,
   onClose,
   isOpen,
-  wallet: _wallet,
+  wallet: governanceWallet,
 }: {
   plan: Plan
   positions: Position[]
@@ -52,7 +52,7 @@ const WithdrawModal = ({
   isOpen: boolean
   wallet: Wallet
 }) => {
-  const position = positions[0]
+  const position = positions.find(p => p.planId === plan.id && p.walletAddress === governanceWallet.address) as Position | undefined
   const {
     governedTokenAccountsWithoutNfts,
     auxiliaryTokenAccounts,
@@ -62,7 +62,7 @@ const WithdrawModal = ({
     ...auxiliaryTokenAccounts,
   ]
   const governedTokenAccount = accounts.find(
-    (account) => account.pubkey.toBase58() === position.accountAddress
+    (account) => account.pubkey.toBase58() === position?.accountAddress
   )!
   const { canUseTransferInstruction } = useGovernanceAssets()
   const cTokenBalance =
@@ -110,7 +110,7 @@ const WithdrawModal = ({
     })
   }
   const mintMinAmount = mintInfo ? getMintMinAmountAsDecimal(mintInfo) : 1
-  const maxAmount = new BigNumber(position.amount ?? 0)
+  const maxAmount = new BigNumber(position?.amount ?? 0)
   const maxAmountFtm = maxAmount.toFixed(4)
   const currentPrecision = precision(mintMinAmount)
 
@@ -191,14 +191,15 @@ const WithdrawModal = ({
     } catch (e) {
       console.log(e)
       throw e
+    } finally {
+      setIsWithdrawing(false)
     }
-    setIsWithdrawing(false)
   }
   const schema = yup.object().shape({
     amount: yup
       .number()
       .required('Amount is required')
-      .max(new BigNumber(position.amount ?? 0).toNumber()),
+      .max(new BigNumber(position?.amount ?? 0).toNumber()),
   })
 
   return (
@@ -212,7 +213,7 @@ const WithdrawModal = ({
               setFormErrors({})
               setForm({
                 ...form,
-                amount: maxAmount.toNumber(),
+                amount: Number(maxAmount.toFixed(mintInfo?.decimals ?? 0, BigNumber.ROUND_HALF_EVEN)),
                 max: true,
               })
             }}
@@ -257,7 +258,7 @@ const WithdrawModal = ({
         <div className="flex justify-between">
           <span className="text-fgd-3">Current Deposits</span>
           <span className="font-bold text-fgd-1">
-            {position.amount?.toFixed(4) || 0}{' '}
+            {position?.amount?.toFixed(4) || 0}{' '}
             <span className="font-normal text-fgd-3">{tokenInfo?.symbol}</span>
           </span>
         </div>
