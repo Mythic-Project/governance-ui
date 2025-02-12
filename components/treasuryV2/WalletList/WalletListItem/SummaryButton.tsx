@@ -110,7 +110,10 @@ export default function SummaryButton(props: Props) {
             />
           </div>
           <div className="font-bold text-left whitespace-nowrap text-ellipsis overflow-hidden">
-            {props.wallet.name || abbreviateAddress(props.wallet.address)}
+            {props.wallet.name ||
+              (props.wallet.favoriteDomain?.name
+                ? `${props.wallet.favoriteDomain?.name}.sol`
+                : abbreviateAddress(props.wallet.address))}
           </div>
         </div>
       </div>
