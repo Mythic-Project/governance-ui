@@ -26,7 +26,7 @@ import { AccountType } from '@utils/uiTypes/assets'
 import { WebBundlr } from '@bundlr-network/client'
 import { WebSolana } from "@irys/web-upload-solana"
 import { WebUploader } from "@irys/web-upload";
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { Metaplex } from '@metaplex-foundation/js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
@@ -212,12 +212,13 @@ const MetadataCreationModal = ({
     const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await irysUploader.utils.getPrice('solana', imageFile.length)
+    const price = await irysUploader.getPrice(imageFile.length)
     const amount = irysUploader.utils.fromAtomic(price)
-    const amountNum = amount.toNumber()
+    const amountNum = amount.toNumber() * 1.2
 
     if (balanceNum < amountNum) {
-      await irysUploader.fund(Math.ceil((amountNum - balanceNum)))
+      const fundAmount = Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL)
+      await irysUploader.fund(fundAmount)
     }
 
     const imageResult = await irysUploader.uploader.uploadData(imageFile)
@@ -242,15 +243,16 @@ const MetadataCreationModal = ({
     const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await irysUploader.utils.getPrice(
-      'solana',
+    const price = await irysUploader.getPrice(
       tokenMetadataJson.length,
     )
+
     const amount = irysUploader.utils.fromAtomic(price)
     const amountNum = amount.toNumber()
     
     if (balanceNum < amountNum) {
-      await irysUploader.fund(Math.ceil((amountNum - balanceNum)))
+      const fundAmount = Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL)
+      await irysUploader.fund(fundAmount)
     }
 
     const metadataResult = await irysUploader.uploader.uploadData(tokenMetadataJson)
