@@ -20,9 +20,7 @@ import { secondsToHours } from 'date-fns'
 import WarningFilledIcon from '@carbon/icons-react/lib/WarningFilled'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Market } from '@project-serum/serum'
-import tokenPriceService, {
-  TokenInfoWithoutDecimals,
-} from '@utils/services/tokenPrice'
+import tokenPriceService, { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import {
   LISTING_PRESETS_KEY,
   MidPriceImpact,
@@ -829,7 +827,7 @@ const instructions = () => ({
       accounts: AccountMetaData[],
     ) => {
       try {
-        let mintData: null | TokenInfoWithoutDecimals | undefined = null
+        let mintData: null | TokenInfoJupiter | undefined = null
 
         const mintInfo = accounts[2].pubkey
         const group = accounts[0].pubkey

@@ -15,14 +15,14 @@ const CACHE_TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
 const PRICE_STORAGE_KEY = 'tokenPrices'
 const PRICE_CACHE_TTL_MS = 1000 * 60 * 5 // 5 minutes TTL
 
-export type TokenInfoWithoutDecimals = Omit<TokenInfo, 'decimals'>
+export type TokenInfoJupiter = TokenInfo
 
 class TokenPriceService {
   _tokenList: TokenInfo[]
   _tokenPriceToUSDlist: {
     [mintAddress: string]: Price
   }
-  _unverifiedTokenCache: { [mintAddress: string]: TokenInfoWithoutDecimals }
+  _unverifiedTokenCache: { [mintAddress: string]: TokenInfoJupiter }
 
   constructor() {
     this._tokenList = []
@@ -295,7 +295,7 @@ class TokenPriceService {
   /**
    * For decimals use on chain tryGetMint
    */
-  getTokenInfo(mintAddress: string): TokenInfoWithoutDecimals | undefined {
+  getTokenInfo(mintAddress: string): TokenInfoJupiter | undefined {
     const tokenListRecord = this._tokenList?.find(
       (x) => x.address === mintAddress,
     )
@@ -305,8 +305,8 @@ class TokenPriceService {
   // This async method is used to lookup additional tokens not on JUP's strict list
   async getTokenInfoAsync(
     mintAddress: string,
-  ): Promise<TokenInfoWithoutDecimals | undefined> {
-    const tokenInfo: TokenInfoWithoutDecimals | undefined =
+  ): Promise<TokenInfoJupiter | undefined> {
+    const tokenInfo: TokenInfoJupiter | undefined =
       this._unverifiedTokenCache[mintAddress] || undefined
 
     if (tokenInfo) {
@@ -366,7 +366,7 @@ class TokenPriceService {
    */
   getTokenInfoFromCoingeckoId(
     coingeckoId: string,
-  ): TokenInfoWithoutDecimals | undefined {
+  ): TokenInfoJupiter | undefined {
     const tokenListRecord = this._tokenList?.find(
       (x) => x.extensions?.coingeckoId === coingeckoId,
     )

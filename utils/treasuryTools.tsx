@@ -4,9 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 import { getMintDecimalAmountFromNatural } from '@tools/sdk/units'
 import BigNumber from 'bignumber.js'
 import { abbreviateAddress } from './formatting'
-import tokenPriceService, {
-  TokenInfoWithoutDecimals,
-} from './services/tokenPrice'
+import tokenPriceService, { TokenInfoJupiter } from './services/tokenPrice'
 import { AccountType, AssetAccount } from './uiTypes/assets'
 
 interface TreasuryAccountInfo {
@@ -15,7 +13,7 @@ interface TreasuryAccountInfo {
   logo: string
   name: string
   displayPrice: string
-  info: TokenInfoWithoutDecimals | undefined
+  info: TokenInfoJupiter | undefined
   symbol: string
   totalPrice: number
 }

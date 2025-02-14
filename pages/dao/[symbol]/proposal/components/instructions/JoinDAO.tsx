@@ -2,7 +2,6 @@ import Input from '@components/inputs/Input'
 import Select from '@components/inputs/Select'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import useRealmAccount from '@hooks/useRealmAccount'
-import { getCertifiedRealmInfos, RealmInfo } from '@models/registry/api'
 import {
   Governance,
   ProgramAccount,
@@ -24,6 +23,11 @@ import { NewProposalContext } from '../../new'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { fetchProgramVersion } from '@hooks/queries/useProgramVersionQuery'
+import { useRealmsByProgramQuery } from '@hooks/queries/realm'
+import { DEFAULT_GOVERNANCE_PROGRAM_ID } from '@solana/governance-program-library'
+import { BN } from 'bn.js'
+import { shortenAddress } from '@utils/address'
+import { createUnchartedRealmInfo, RealmInfo } from '@models/registry/api'
 
 /** This is an instruction component to deposit tokens in another DAO */
 const JoinDAO = ({
@@ -67,6 +71,7 @@ const JoinDAO = ({
   >([])
 
   const { realmAccount: selectedRealm } = useRealmAccount(form.realm?.realmId)
+  const { data: queryRealms } = useRealmsByProgramQuery(DEFAULT_GOVERNANCE_PROGRAM_ID)
 
   const validTokenAccounts = useMemo(() => {
     if (selectedRealm) {
@@ -157,15 +162,27 @@ const JoinDAO = ({
 
   // Fetch realms to join
   useEffect(() => {
-    if (
-      connection &&
-      ((routeHasClusterInPath && cluster) || !routeHasClusterInPath)
-    ) {
-      const realms = getCertifiedRealmInfos(connection)
+    if (queryRealms) {
+      const mintsWithBalance = governedSPLTokenAccounts.filter(x => x.extensions.amount?.gt(new BN(0)))
+
+      const uniqueMints = [...new Set(mintsWithBalance
+        .map(t => t.extensions.mint?.publicKey.toBase58())
+        .filter(t => t !== undefined))]
+
+      const realms: RealmInfo[] = queryRealms
+        .filter(realm => uniqueMints.includes(realm.account.communityMint.toBase58()))
+        .map((x) => (
+          createUnchartedRealmInfo({
+            name: x.account.name,
+            programId: x.owner.toBase58(),
+            address: x.pubkey.toBase58(),
+          })
+        ))
+  
       setCertifiedRealms(realms)
     } else setCertifiedRealms([])
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  }, [connection.current.rpcEndpoint])
+  }, [queryRealms])
 
   // Update mint info when selected token account changes.
   useEffect(() => {
@@ -186,7 +203,7 @@ const JoinDAO = ({
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
-
+  
   return (
     <>
       <Select
@@ -206,7 +223,10 @@ const JoinDAO = ({
             key={r.realmId.toString()}
             value={r}
           >
-            {r.displayName}
+            {r.displayName} 
+            <span className="text-xs ml-2">
+              ({shortenAddress(r.realmId.toBase58(), 8)})
+            </span>
           </Select.Option>
         ))}
       </Select>

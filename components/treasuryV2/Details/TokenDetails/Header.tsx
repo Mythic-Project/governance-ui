@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { PlusCircleIcon, ReplyIcon } from '@heroicons/react/outline'
+import { DocumentDuplicateIcon, PlusCircleIcon, ReplyIcon } from '@heroicons/react/outline'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token as SplToken,
@@ -20,6 +20,8 @@ import Address from '@components/Address'
 
 import AddAssetModal from '../WalletDetails/AddAssetModal'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import Tooltip from '@components/Tooltip'
+import { notify } from '@utils/notifications'
 
 interface Props {
   className?: string
@@ -54,6 +56,20 @@ export default function Header(props: Props) {
       }
     }
   }, [props.asset, props.wallet])
+
+  async function copyMintAddress() {
+    const mint = props.asset.raw.extensions.mint?.publicKey
+    const base58 = mint?.toBase58() || ''
+
+    try {
+      await navigator?.clipboard?.writeText(base58)
+    } catch {
+      notify({
+        type: 'error',
+        message: 'Could not copy address to clipboard',
+      })
+    }
+  }
 
   return (
     <div
@@ -121,6 +137,11 @@ export default function Header(props: Props) {
                 {props.asset.type === AssetType.Sol
                   ? 'SOL'
                   : props.asset.symbol}
+              </span>
+              <span className="text-sm ml-2 inline-block relative top-1" onClick={copyMintAddress}>
+                <Tooltip content="Copy Mint Address">
+                  <DocumentDuplicateIcon className="cursor-pointer h-[1.25em] w-[1.25em]" />
+                </Tooltip>
               </span>
             </div>
           </div>

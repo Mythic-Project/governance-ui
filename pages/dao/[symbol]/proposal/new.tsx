@@ -26,7 +26,7 @@ import useGovernanceAssets, {
 } from '@hooks/useGovernanceAssets'
 import useQueryContext from '@hooks/useQueryContext'
 import useRealm from '@hooks/useRealm'
-import { getTimestampFromDays } from '@tools/sdk/units'
+import { getTimestampFromDays, getTimestampFromMinutes } from '@tools/sdk/units'
 import { formValidation, isFormValid } from '@utils/formValidation'
 import {
   ComponentInstructionData,
@@ -146,6 +146,9 @@ import SymmetryEditBasket from './components/instructions/Symmetry/SymmetryEditB
 import SymmetryDeposit from './components/instructions/Symmetry/SymmetryDeposit'
 import SymmetryWithdraw from './components/instructions/Symmetry/SymmetryWithdraw'
 import PythUpdatePoolAuthority from './components/instructions/Pyth/PythUpdatePoolAuthority'
+import PlaceLimitOrder from './components/instructions/Manifest/PlaceLimitOrder'
+import SettleToken from './components/instructions/Manifest/SettleToken'
+import CancelLimitOrder from './components/instructions/Manifest/CancelLimitOrder'
 import WithdrawFees from './components/instructions/Token2022/WithdrawFees'
 
 const TITLE_LENGTH_LIMIT = 130
@@ -351,20 +354,26 @@ const New = () => {
           handleTurnOffLoaders()
           throw Error('No governance selected')
         }
-
+        console.log(instructions)
         const additionalInstructions = instructions
-          .flatMap(
-            (instruction) =>
-              instruction.additionalSerializedInstructions
-                ?.filter(
-                  (value, index, self) =>
-                    index === self.findIndex((t) => t === value),
-                )
-                .map((x) => ({
-                  data: x ? getInstructionDataFromBase64(x) : null,
-                  ...getDefaultInstructionProps(instruction, governance),
-                })),
-          )
+          .flatMap((instruction) => {
+            return instruction.additionalSerializedInstructions
+              ?.filter((x) => x)
+              .map((x) => ({
+                data: x
+                  ? getInstructionDataFromBase64(
+                      typeof x === 'string' ? x : x.serializedInstruction,
+                    )
+                  : null,
+                ...getDefaultInstructionProps(instruction, governance),
+                holdUpTime:
+                  typeof x === 'string'
+                    ? instruction.customHoldUpTime
+                      ? getTimestampFromDays(instruction.customHoldUpTime)
+                      : governance?.account?.config.minInstructionHoldUpTime
+                    : getTimestampFromMinutes(x.holdUpTime),
+              }))
+          })
           .filter((x) => x) as InstructionDataWithHoldUpTime[]
 
         const instructionsData = [
@@ -553,6 +562,9 @@ const New = () => {
       [Instructions.WithdrawValidatorStake]: WithdrawValidatorStake,
       [Instructions.DelegateStake]: DelegateStake,
       [Instructions.RemoveStakeLock]: RemoveLockup,
+      [Instructions.PlaceLimitOrder]: PlaceLimitOrder,
+      [Instructions.SettleToken]: SettleToken,
+      [Instructions.CancelLimitOrder]: CancelLimitOrder,
       [Instructions.SplitStake]: SplitStake,
       [Instructions.DifferValidatorStake]: null,
       [Instructions.TransferDomainName]: TransferDomainName,

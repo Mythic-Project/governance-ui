@@ -83,10 +83,10 @@ const HarvestTokenPanel = ({ mint }: { mint: PublicKey }) => {
         connection: connection.current,
         wallet: wallet!,
         transactionInstructions: [
-          {
-            instructionsSet: txBatchesToInstructionSetWithSigners(ixes, []),
+          ...ixes.map((x) => ({
+            instructionsSet: txBatchesToInstructionSetWithSigners([x], []),
             sequenceType: SequenceType.Parallel,
-          },
+          })),
         ],
         autoFee: true,
       })
@@ -123,7 +123,7 @@ const HarvestTokenPanel = ({ mint }: { mint: PublicKey }) => {
           <Button
             isLoading={isHarvesting}
             onClick={harvestFees}
-            disabled={accountsToHarvest === null}
+            disabled={accountsToHarvest === null || !wallet?.publicKey}
           >
             Start harvesting
           </Button>

@@ -12,7 +12,7 @@ import { sendTransaction } from '@utils/send'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
 import * as serum from '@project-serum/common'
 import TokenMintInput from '@components/inputs/TokenMintInput'
-import { TokenInfoWithoutDecimals } from '@utils/services/tokenPrice'
+import { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
@@ -37,7 +37,7 @@ const CreateAta = ({
     string | undefined
   >()
   const [foundByNameToken, setFoundByNameToken] = useState<
-    TokenInfoWithoutDecimals | undefined
+    TokenInfoJupiter | undefined
   >()
   const handleCreate = async () => {
     if (!realm) throw new Error()

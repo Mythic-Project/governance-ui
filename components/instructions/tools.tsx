@@ -38,6 +38,7 @@ import { JUPITER_REF } from './programs/jupiterRef'
 import { STAKE_SANCTUM_INSTRUCTIONS } from './programs/stakeSanctum'
 import { SYMMETRY_V2_INSTRUCTIONS } from './programs/symmetryV2'
 import { TOKEN_2022_INST } from './programs/token2022'
+import { MANIFEST_INSTRUCTIONS } from './programs/manifest'
 
 /**
  * Default governance program id instance
@@ -358,11 +359,14 @@ export const ACCOUNT_NAMES = {
   '9Waj7NNTzEhyHf1j1F36xgtnXaLoAxVBFhf6VxE9fgaf': 'Parcl DAO',
 
   // Xandeum DAO
-  '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Community Building',
-  '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development',
+  '3tWGHdmFd5FPqiZbR9r57qLDTnkxLBLAKno71a72ySQk': 'Xandeum DAO Earnings',
+  '4DZTzekhXx9QpG3MLzp25LGsmDRCUqA1BsVU2KuxCYdF': 'Xandeum DAO Ecosystem Development 1',
+  'A5JXGKq8gJXb4K7hDBRQh7zToDPpjF5RuWHJ1TUnAx6f': 'Xandeum DAO Ecosystem Development 2',
   'DdphfkqpTJiHRQP6c7qVjtjG8aMQMPhEHpYjrRDSGpsC': 'Xandeum DAO Staking Rewards',
-  'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Community Building',
-  '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Building',
+  'EYu8Zh4odXLkpquHZMT6fKyX35qa84u5WGxZJ1Wi6BCr': 'Xandeum DAO Liquidity Providers',
+  '2dUeHJ1nbfoEJ3Qm9eDLjTG3cqSiCpJUifhEZi1AaW1R': 'Xandeum DAO Community Grants',
+  'GSRBeDfdg4qy5boj1D5DQ1u1YqwDtCfNJFkpDrf2cj1R': 'Xandeum DAO Community Building 1',
+  '9PhjJ2sSnb1iAVmeJdn2ASq4sSXf65rMJ8SpZsfynHnF': 'Xandeum DAO Community Building 2',
   
 }
 
@@ -402,6 +406,7 @@ export const HIDDEN_PROPOSALS = new Map<string, string>([
   ['8msNFq5VBectsGAv66zYx5QRve1p3m6ZEz49xaWX3tbd', ''],
   ['3jU2YuKXKBw4cWx9taPDfhQZ8RFLmFUx3HLxMrh7w749', ''],
   ['8eiBtZ7ZgAZEK747z1mXKPktQg3gdbgB9ew78t9LXwyL', ''],
+  ['GLdM2J4YkCz3zJ5K9QRsASYBhU3m4X92d2HoUSzgYD9V', ''],
 ])
 
 export const DEFAULT_NATIVE_SOL_MINT =
@@ -553,6 +558,7 @@ export const INSTRUCTION_DESCRIPTORS = {
   ...STAKE_SANCTUM_INSTRUCTIONS,
   ...JUPITER_REF,
   ...SYMMETRY_V2_INSTRUCTIONS,
+  ...MANIFEST_INSTRUCTIONS,
 }
 
 export async function getInstructionDescriptor(

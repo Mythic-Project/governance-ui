@@ -54,7 +54,7 @@ export const executeTransaction = async (
 
   // Create proposal transaction
   const proposalTransaction = new Transaction().add(
-    ComputeBudgetProgram.setComputeUnitLimit({ units: 1000000 }),
+    ComputeBudgetProgram.setComputeUnitLimit({ units: 2000000 }),
     ...instructions,
   )
 

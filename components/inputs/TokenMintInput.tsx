@@ -1,9 +1,7 @@
 import Input from './Input'
 import { inputClasses } from './styles'
 import { useEffect, useState } from 'react'
-import tokenPriceService, {
-  TokenInfoWithoutDecimals,
-} from '@utils/services/tokenPrice'
+import tokenPriceService, { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import { tryParsePublicKey } from '@tools/core/pubkey'
 import { TokenProgramAccount, tryGetMint } from '@utils/tokens'
 import { PublicKey } from '@solana/web3.js'
@@ -25,7 +23,7 @@ const TokenMintInput = ({
   label?: string
   onValidMintChange: (
     mintAddress: string | undefined,
-    foundByNameToken: TokenInfoWithoutDecimals | undefined,
+    foundByNameToken: TokenInfoJupiter | undefined,
   ) => void
 }) => {
   const connection = useLegacyConnectionContext()

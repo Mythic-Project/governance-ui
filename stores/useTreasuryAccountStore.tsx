@@ -1,7 +1,5 @@
 import create, { State } from 'zustand'
-import tokenPriceService, {
-  TokenInfoWithoutDecimals,
-} from '@utils/services/tokenPrice'
+import tokenPriceService, { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import { ConfirmedSignatureInfo } from '@solana/web3.js'
 import { notify } from '@utils/notifications'
 import { WSOL_MINT } from '@components/instructions/tools'
@@ -10,7 +8,7 @@ import { AccountType, AssetAccount } from '@utils/uiTypes/assets'
 interface TreasuryAccountStore extends State {
   currentAccount: AssetAccount | null
   mintAddress: string
-  tokenInfo?: TokenInfoWithoutDecimals
+  tokenInfo?: TokenInfoJupiter
   recentActivity: ConfirmedSignatureInfo[]
 
   isLoadingRecentActivity: boolean

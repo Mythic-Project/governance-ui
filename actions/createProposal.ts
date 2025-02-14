@@ -196,6 +196,7 @@ export const createProposal = async (
           ...instruction.prerequisiteInstructionsSigners,
         )
       }
+
       await withInsertTransaction(
         insertInstructions,
         programId,

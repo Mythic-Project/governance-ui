@@ -139,6 +139,9 @@ const validateDestinationAccAddressWithMint = async (
     if (tokenAccount && mintPubKey) {
       await validateDoseTokenAccountMatchMint(tokenAccount.account, mintPubKey)
     }
+    if (pubKey.equals(mintPubKey)) {
+      throw 'Destination account cannot be the same as the mint account'
+    }
   }
   return true
 }

@@ -20,6 +20,7 @@ import { DEFAULT_GOVERNANCE_PROGRAM_ID } from '@components/instructions/tools'
 import { useRealmsByProgramQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import RealmsDashboard from './components/RealmsDashboard'
+import { useGetAllMetadata } from '@hooks/useOnchainMetadata'
 
 const Realms = () => {
   const [realms, setRealms] = useState<ReadonlyArray<RealmInfo>>([])
@@ -42,7 +43,8 @@ const Realms = () => {
     [],
   )
   const { data: queryRealms } = useRealmsByProgramQuery(programs)
-
+  const metadata = useGetAllMetadata().data
+  
   useMemo(async () => {
     if (
       connection &&
@@ -64,11 +66,29 @@ const Realms = () => {
             }),
           ) ?? []
       const allRealms = [...certifiedRealms, ...unchartedRealms]
-      setRealms(sortDaos(allRealms))
+
+      if (metadata) {
+        const updatedRealms = allRealms.map((realm) => {
+          const metadataAccount = metadata.find(
+            (m) => m.realm.toBase58() === realm.realmId.toBase58()
+          )
+
+          if (metadataAccount) {
+            return {
+              ...realm,
+              displayName: metadataAccount.displayName ?? realm.displayName,
+              ogImage: metadataAccount.daoImage ?? realm.ogImage,
+            }
+          }
+          return realm
+        })
+        setRealms(sortDaos(updatedRealms))
+      }
+      
       setFilteredRealms(sortDaos(allRealms))
       setIsLoadingRealms(false)
     }
-  }, [connection, routeHasClusterInPath, cluster, queryRealms])
+  }, [connection, routeHasClusterInPath, cluster, queryRealms, metadata])
 
   const handleCreateRealmButtonClick = async () => {
     if (!connected) {

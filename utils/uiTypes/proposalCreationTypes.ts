@@ -25,6 +25,7 @@ export enum PackageEnum {
   Serum,
   Solend,
   Symmetry,
+  Manifest,
   Squads,
   Switchboard,
   VsrPlugin,
@@ -32,7 +33,13 @@ export enum PackageEnum {
 
 export interface UiInstruction {
   serializedInstruction: string
-  additionalSerializedInstructions?: string[]
+  additionalSerializedInstructions?: (
+    | string
+    | {
+        serializedInstruction: string
+        holdUpTime: number
+      }
+  )[]
   isValid: boolean
   governance: ProgramAccount<Governance> | undefined
   customHoldUpTime?: number
@@ -330,6 +337,9 @@ export enum Instructions {
   DistributionFillVaults,
   DelegateStake,
   RemoveStakeLock,
+  PlaceLimitOrder,
+  SettleToken,
+  CancelLimitOrder,
   Grant,
   InitSolendObligationAccount,
   JoinDAO,

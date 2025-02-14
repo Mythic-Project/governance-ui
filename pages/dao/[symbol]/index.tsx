@@ -56,6 +56,7 @@ import { createComputeBudgetIx } from '@blockworks-foundation/mango-v4'
 import { useNftClient } from '../../../VoterWeightPlugins/useNftClient'
 import { useVotingClients } from '@hooks/useVotingClients'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
+import { useGetOnchainMetadata } from '@hooks/useOnchainMetadata'
 
 const AccountsCompactWrapper = dynamic(
   () => import('@components/TreasuryAccount/AccountsCompactWrapper'),
@@ -80,6 +81,7 @@ const REALM = () => {
   const mint = useRealmCommunityMintInfoQuery().data?.result
   const councilMint = useRealmCouncilMintInfoQuery().data?.result
   const { realmInfo } = useRealm()
+  const realmData = useGetOnchainMetadata(realmInfo?.realmId).data
   const proposalsPerPage = 20
   const [filters, setFilters] = useState<Filters>(InitialFilters)
   const [sorting, setSorting] = useState<Sorting>(InitialSorting)
@@ -421,11 +423,11 @@ const REALM = () => {
               <RealmHeader />
               <div className="p-4 md:p-6 ">
                 <div>
-                  {realmInfo?.bannerImage ? (
+                  {realmInfo?.bannerImage || realmData?.bannerImage ? (
                     <>
-                      <img className="mb-10" src={realmInfo?.bannerImage}></img>
+                      <img className="mb-10" src={realmData?.bannerImage || realmInfo?.bannerImage}></img>
                       {/* temp. setup for Ukraine.SOL */}
-                      {realmInfo.sharedWalletId && (
+                      {realmInfo?.sharedWalletId && (
                         <div>
                           <div className="mb-10">
                             <DepositLabel
