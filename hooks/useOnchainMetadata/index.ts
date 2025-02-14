@@ -9,6 +9,12 @@ import { useRealmByPubkeyQuery } from "@hooks/queries/realm"
 import { getNativeTreasuryAddress } from "@solana/spl-governance"
 
 export type MetadataKey = IdlAccounts<MythicMetadata>["metadataKey"]
+export type MetadataItemForList = {
+  displayName: string | undefined
+  daoImage: string | undefined
+  realm: PublicKey
+}
+
 const metadataProgramId = new PublicKey("metaThtkusoWYDvHBFXfvc93Z3d8iBeDZ4DVyq8SYVR")
 
 export function useGetOnchainMetadata(realmAddress: PublicKey | undefined) {
@@ -19,7 +25,7 @@ export function useGetOnchainMetadata(realmAddress: PublicKey | undefined) {
 
   return useQuery({
     enabled: realm !== undefined,
-    queryKey: ['get-onchain=metadata', {realmAddress: realmAddress?.toBase58()}],
+    queryKey: ['get-onchain-metadata', {realmAddress: realmAddress?.toBase58()}],
     queryFn: async() => {
       if (!realm || !realm.result) {
         return null
@@ -65,6 +71,41 @@ export function useGetOnchainMetadata(realmAddress: PublicKey | undefined) {
         return null
       }
     },
+    refetchOnWindowFocus: false,
+    staleTime: 3600000, // 1 hour
+    cacheTime: 3600000 * 24 * 10,
+  })
+}
+
+export function useGetAllMetadata() {
+  const { connection } = useConnection()
+  const provider = new AnchorProvider(connection, {} as Wallet, {})
+  const client = new Program(idl as MythicMetadata, metadataProgramId, provider)
+
+  const query = useQuery({
+    queryKey: ['get-onchain-metadata'],
+    queryFn: async () => {
+      const metadatas = await client.account.metadata.all()
+      const displayNameKeyId = metadataKeys[1].id
+      const daoImageKeyId = metadataKeys[2].id
+
+      const metadataItems: MetadataItemForList[] = metadatas.map(metadata => {
+        const displayName = metadata.account.items.find(i => i.metadataKeyId.eq(displayNameKeyId))?.value.toString()
+        const daoImage = metadata.account.items.find(i => i.metadataKeyId.eq(daoImageKeyId))?.value.toString()
+
+        return {
+          displayName,
+          daoImage,
+          realm: metadata.account.subject
+        }
+      })
+
+      return metadataItems
+    },
+    staleTime: 3600000, // 1 hour
+    cacheTime: 3600000 * 24 * 10,
     refetchOnWindowFocus: false
   })
+
+  return query
 }

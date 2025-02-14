@@ -3965,5 +3965,13 @@
     "realmId": "GDaLwof8UxAsQZjBgtiWepyV73rkKpdPVUMFVEAwMw1r",
     "communityMint": "4B5EYJd7MJaVEZUWMhMxUckxtMqSicJpiqM4g6hKm4wz",
     "sortRank": 986
+  },
+  {
+    "symbol": "Realms Consensus HK",
+    "displayName": "Realms Consensus HK",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "E9xXs6YpuMBD3a8jShzMDzsivZiy8YmcD5UzTsmwsUE",
+    "communityMint": "7JLYpUf35CbKsHW6x1zw4RbsNhcmtEfxT352czXi59Cg",
+    "sortRank": 1001
   }
 ]
