@@ -53,7 +53,12 @@ const Realms = () => {
       const [certifiedRealms] = await Promise.all([
         getCertifiedRealmInfos(connection),
       ])
-      const allRealms =
+
+      const certifiedSelfHostedRealms = certifiedRealms.filter(
+        realm => realm.programId.toBase58() !== DEFAULT_GOVERNANCE_PROGRAM_ID
+      )
+
+      const uncharteredRealms =
         queryRealms?.map((x) => {
           const realm = certifiedRealms.find((y) => y.realmId.equals(x.pubkey))
 
@@ -69,6 +74,7 @@ const Realms = () => {
           })
         }) ?? []
 
+      const allRealms = [...certifiedSelfHostedRealms, ...uncharteredRealms]
 
       if (metadata) {
         const updatedRealms = allRealms.map((realm) => {
