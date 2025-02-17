@@ -367,30 +367,7 @@ export const assembleWallets = async (
       ]
     : []
 
-  // Fetch favorite domains for all wallets
-  const walletsWithFavorites = await Promise.all(
-    allWallets.map(async (wallet) => {
-      if (wallet) {
-        try {
-          const favoriteDomainResponse = await getFavoriteDomain(
-            connection.current,
-            wallet.governanceAccount.pubkey,
-          )
-
-          return {
-            ...wallet,
-            favoriteDomain: favoriteDomainResponse?.domain,
-          }
-        } catch {
-          return wallet
-        }
-      }
-      return wallet
-    }),
-  )
-
-  // Replace allWallets with walletsWithFavorites in the rest of the code
-  const walletsToMerge = walletsWithFavorites
+  const walletsToMerge = allWallets
     .filter((wallet) => !!governanceToWallet[wallet.address])
     .reduce(
       (acc, wallet) => {
@@ -400,7 +377,7 @@ export const assembleWallets = async (
       {} as { [walletAddress: string]: Wallet },
     )
 
-  const wallets = walletsWithFavorites
+  const wallets = allWallets
     .filter((wallet) => !walletsToMerge[wallet.address])
     .map((wallet) => {
       const walletToMerge = wallet.governanceAddress
