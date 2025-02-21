@@ -1,5 +1,5 @@
-import { Wallet } from '@models/treasury/Wallet'
 import create from 'zustand'
+import { Wallet } from '@models/treasury/Wallet'
 
 type PubkeyAsString = string
 

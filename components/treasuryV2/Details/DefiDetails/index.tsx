@@ -1,12 +1,12 @@
 import React from 'react'
 import cx from 'classnames'
-import Header from './Header'
-import StickyScrolledContainer from '../StickyScrolledContainer'
 import { useDefi } from '@hooks/useDefi'
 import { Wallet } from '@models/treasury/Wallet'
 import { formatNumber } from '@utils/formatNumber'
 import { aggregateStats, Plan } from '@hub/providers/Defi'
 import PlansList from '@components/TreasuryAccount/PlansList'
+import Header from './Header'
+import StickyScrolledContainer from '../StickyScrolledContainer'
 
 interface Props {
   className?: string

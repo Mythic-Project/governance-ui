@@ -1,10 +1,8 @@
 import { forwardRef } from 'react'
 import cx from 'classnames'
-
 import { Asset, AssetType } from '@models/treasury/Asset'
 import { AuxiliaryWallet, Wallet } from '@models/treasury/Wallet'
 import { Result, Status } from '@utils/uiTypes/Result'
-
 import AuxiliaryWalletDetails from './AuxiliaryWalletDetails'
 import MintDetails from './MintDetails'
 import NFTCollectionDetails from './NFTCollectionDetails'

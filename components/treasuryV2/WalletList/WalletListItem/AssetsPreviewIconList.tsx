@@ -167,7 +167,6 @@ export default function AssetsPreviewIconList(props: Props) {
       return bTotal.comparedTo(aTotal)
     })
     // Show atleast one token
-
     previewList.push(list[0].icon)
     remainingCount--
     summary.push(list[0].symbol)

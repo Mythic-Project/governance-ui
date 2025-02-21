@@ -179,7 +179,6 @@ export default function AssetList(props: Props) {
       newItemsToHide.push(realm.account.config.councilMint.toBase58())
     }
     setItemsToHide(newItemsToHide)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [isCommunityMintDisabled, isCouncilMintDisabled])
 
   useEffect(() => {
@@ -216,6 +215,7 @@ export default function AssetList(props: Props) {
     if (data) {
       getTokenData()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [othersFromProps, data])
 
   const diplayingMultipleAssetTypes =

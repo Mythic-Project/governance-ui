@@ -50,7 +50,6 @@ export const useMembersQuery = () => {
   const query = useQuery({
     enabled,
     queryKey: [],
-    initialData: [],
     queryFn: async () => {
       if (!enabled) throw new Error()
 

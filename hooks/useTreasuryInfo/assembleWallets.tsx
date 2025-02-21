@@ -298,6 +298,8 @@ export const assembleWallets = async (
       })
     }
 
+    const defiPositionsValue = positions?.reduce((acc, position) => position.walletAddress === wallet.address ? acc.plus(position.value) : acc, new BigNumber(0)) ?? new BigNumber(0)
+
     allWallets.push({
       ...wallet,
       name: wallet.governanceAddress
@@ -307,7 +309,7 @@ export const assembleWallets = async (
         wallet.assets.map((asset) =>
           'value' in asset ? asset.value : new BigNumber(0)
         )
-      ).plus(positions?.reduce((acc, position) => position.walletAddress === wallet.address ? acc.plus(position.value) : acc, new BigNumber(0)) ?? new BigNumber(0)),
+      ).plus(defiPositionsValue),
     })
   }
 
