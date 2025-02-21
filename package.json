@@ -272,6 +272,7 @@
   "lavamoat": {
     "allowScripts": {
       "@metaplex-foundation/js>@bundlr-network/client>arbundles>secp256k1": true,
+      "@bundlr-network/client>arbundles>secp256k1": true,
       "@irys/web-upload>@irys/bundles>keccak": true,
       "@irys/web-upload>@irys/bundles>secp256k1": true,
       "$root$": false,
