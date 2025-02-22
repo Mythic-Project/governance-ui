@@ -142,6 +142,8 @@ export const RESERVE_CONFIG: {
   },
 }
 
+// Indicator tokens are collateral tokens or other tokens of this nature that represent a position in Defi. They are excluded from
+// beind displayed in the wallet to avoid confusion and clutter.
 export const INDICATOR_TOKENS = [
   ...ELIGIBLE_RESERVES.map((reserve) => RESERVE_CONFIG[reserve].cTokenMint),
 ]
