@@ -1,4 +1,5 @@
 import create from 'zustand'
+import { Wallet } from '@models/treasury/Wallet'
 
 type PubkeyAsString = string
 
@@ -13,11 +14,16 @@ type TokenOwnerRecordView = {
   pubkey: PubkeyAsString
 }
 
+type DefiView = {
+  _kind: 'Defi'
+  selectedWallet: Wallet
+}
+
 /** Used whenever the view state should use the legacy, non-zustand props */
 type LegacyView = {
   _kind: 'Legacy'
 }
-type View = NftCollectionView | LegacyView | TokenOwnerRecordView
+type View = NftCollectionView | LegacyView | TokenOwnerRecordView | DefiView
 
 type TreasurySelectState =
   | LegacyView

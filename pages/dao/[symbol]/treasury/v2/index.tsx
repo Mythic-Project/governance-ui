@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { pipe } from 'fp-ts/function'
-
 import PreviousRouteBtn from '@components/PreviousRouteBtn'
 import TotalValueTitle from '@components/treasuryV2/TotalValueTitle'
 import WalletList from '@components/treasuryV2/WalletList'

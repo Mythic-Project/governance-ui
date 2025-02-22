@@ -61,7 +61,9 @@ export function fmtTokenInfoWithMint(
 }
 
 // Converts mint amount (natural units) to decimals
-export function getMintDecimalAmount(mint: MintInfo, mintAmount: BN) {
+export function getMintDecimalAmount(mint: {
+  decimals: number
+}, mintAmount: BN) {
   return new BigNumber(mintAmount.toString()).shiftedBy(-mint.decimals)
 }
 function getBigNumberAmount(amount: BN | number) {
@@ -114,7 +116,9 @@ export function getMintNaturalAmountFromDecimalAsBN(
 }
 
 // Calculates mint min amount as decimal
-export function getMintMinAmountAsDecimal(mint: MintInfo) {
+export function getMintMinAmountAsDecimal(mint: {
+  decimals: number
+}) {
   return new BigNumber(1).shiftedBy(-mint.decimals).toNumber()
 }
 
@@ -126,7 +130,9 @@ export function formatMintNaturalAmountAsDecimal(
 }
 
 export function getMintDecimalAmountFromNatural(
-  mint: MintInfo,
+  mint: {
+    decimals: number,
+  },
   naturalAmount: BN,
 ) {
   return new BigNumber(naturalAmount.toString()).shiftedBy(-mint.decimals)

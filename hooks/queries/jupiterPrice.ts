@@ -106,6 +106,7 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
   const enabled = mints.length > 0
   const deduped = new Set(mints)
   const dedupedMints = Array.from(deduped)
+
   return useQuery({
     enabled,
     queryKey: jupiterPriceQueryKeys.byMints(dedupedMints),

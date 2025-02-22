@@ -19,6 +19,8 @@ import {
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import UseMangoV4 from '@hooks/useMangoV4'
 import useProgramSelector from '@components/Mango/useProgramSelector'
+import { useDefi } from '@hooks/useDefi'
+import { aggregateStats } from '@hub/providers/Defi'
 
 interface Data {
   auxiliaryWallets: AuxiliaryWallet[]
@@ -42,6 +44,8 @@ export default function useTreasuryInfo(
   const { realmInfo } = useRealm()
   const connection = useLegacyConnectionContext()
   const accounts = useGovernanceAssetsStore((s) => s.assetAccounts)
+  const { plans, positions } = useDefi();
+  const {totalDepositedUsd} = aggregateStats(plans, positions);
 
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
@@ -91,6 +95,8 @@ export default function useTreasuryInfo(
     accounts.map((account) => account.pubkey.toBase58()).join('-'),
   ])
 
+  const positionsKey = useMemo(() => positions.map((position) => position.value.toString()).join('-'), [positions]);
+
   const walletsAsync = useMemo(() => {
     if (domainsLoading || !realmInfo) {
       return Promise.resolve({ wallets: [] })
@@ -109,6 +115,7 @@ export default function useTreasuryInfo(
         realm,
         config,
         realmInfo,
+        positions,
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
@@ -118,6 +125,7 @@ export default function useTreasuryInfo(
     domainsLoading,
     realmInfo,
     connection.current.rpcEndpoint,
+    positionsKey
   ])
 
   useEffect(() => {

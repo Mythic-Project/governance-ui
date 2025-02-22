@@ -1,6 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { withdrawObligationCollateralAndRedeemReserveLiquidity as originalWithdrawFunction } from '@solendprotocol/solend-sdk'
+import { withdrawObligationCollateralAndRedeemReserveLiquidity as originalWithdrawFunction, SOLEND_PRODUCTION_PROGRAM_ID } from '@solendprotocol/solend-sdk'
 import { findATAAddrSync } from '@utils/ataTools'
 import SolendConfiguration, { SupportedMintName } from './configuration'
 
@@ -55,5 +55,6 @@ export async function withdrawObligationCollateralAndRedeemReserveLiquidity({
     obligationOwner,
     transferAuthority,
     SolendConfiguration.programID,
+    []
   )
 }
