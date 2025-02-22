@@ -38,6 +38,7 @@ import Modal from '@components/Modal'
 import { handleSolendActionV2 } from 'Strategies/protocols/solend'
 import { Plan, Position } from '@hub/providers/Defi'
 import { Wallet } from '@models/treasury/Wallet'
+import { notify } from '@utils/notifications'
 
 const WithdrawModal = ({
   plan,
@@ -63,10 +64,11 @@ const WithdrawModal = ({
   ]
   const governedTokenAccount = accounts.find(
     (account) => account.pubkey.toBase58() === position?.accountAddress
-  )!
+  )
   const { canUseTransferInstruction } = useGovernanceAssets()
   const cTokenBalance =
-    governedTokenAccount.extensions.token?.account.amount ?? 0
+    governedTokenAccount?.extensions.token?.account.amount ?? 0
+
   const router = useRouter()
   const { fmtUrlWithCluster } = useQueryContext()
   const realm = useRealmQuery().data?.result
@@ -84,7 +86,7 @@ const WithdrawModal = ({
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
   const tokenInfo = tokenPriceService.getTokenInfo(plan.assets[0].mintAddress)
-  const mintInfo = governedTokenAccount.extensions?.mint?.account
+  const mintInfo = governedTokenAccount?.extensions?.mint?.account
   const tokenSymbol = plan.assets[0].symbol
   const [form, setForm] = useState<{
     title: string
@@ -169,7 +171,7 @@ const WithdrawModal = ({
                   getMintNaturalAmountFromDecimal(
                     (form.amount as number) /
                       (reservesInfo?.[0].cTokenExchangeRate ?? 1),
-                    governedTokenAccount.extensions.mint!.account.decimals
+                    governedTokenAccount?.extensions.mint!.account.decimals ?? 0
                   )
                 ).toString()
               ),
@@ -189,7 +191,7 @@ const WithdrawModal = ({
       )
       router.push(url)
     } catch (e) {
-      console.log(e)
+      notify({ type: 'error', message: `${e}` })
       throw e
     } finally {
       setIsWithdrawing(false)
@@ -213,7 +215,7 @@ const WithdrawModal = ({
               setFormErrors({})
               setForm({
                 ...form,
-                amount: Number(maxAmount.toFixed(mintInfo?.decimals ?? 0, BigNumber.ROUND_HALF_EVEN)),
+                amount: Number(maxAmount.toFixed(mintInfo?.decimals ?? 0, BigNumber.ROUND_FLOOR)),
                 max: true,
               })
             }}

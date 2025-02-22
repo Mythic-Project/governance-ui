@@ -24,7 +24,7 @@ import tokenPriceService from '@utils/services/tokenPrice'
 import AdditionalProposalOptions from '@components/AdditionalProposalOptions'
 import { validateInstruction } from '@utils/instructionTools'
 import { handleSolendActionV2 } from 'Strategies/protocols/solend'
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
@@ -43,8 +43,9 @@ import { Wallet } from '@models/treasury/Wallet'
 import Modal from '@components/Modal'
 import { AssetType, Token } from '@models/treasury/Asset'
 import queryClient from '@hooks/queries/queryClient'
+import { notify } from '@utils/notifications'
 
-const SOL_BUFFER = 0.02
+const SOL_BUFFER = 0.02 * LAMPORTS_PER_SOL;
 
 const SaveDepositModal = ({
   plan,
@@ -167,7 +168,7 @@ const SaveDepositModal = ({
   }
   const mintMinAmount = mintInfo ? getMintMinAmountAsDecimal(mintInfo) : 1
   const walletBalance = isSol
-    ? new BN(solBalance ?? 0)
+    ? new BN(solBalance ?? 0).sub(new BN(SOL_BUFFER))
     : new BN(tokenAccount?.account.amount.toString() ?? 0)
 
   let maxAmount =
@@ -201,6 +202,8 @@ const SaveDepositModal = ({
       setIsDepositing(true)
       try {
         await plan.deposit(Number(form.amount), wallet.address)
+      } catch (e) {
+        notify({ type: 'error', message: `${e}` })
       } finally {
         setIsDepositing(false)
       }
@@ -261,7 +264,7 @@ const SaveDepositModal = ({
       )
       router.push(url)
     } catch (e) {
-      console.log(e)
+      notify({ type: 'error', message: `${e}` })
       throw e
     } finally {
       setIsDepositing(false)

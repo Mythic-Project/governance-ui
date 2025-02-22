@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useQuery } from '@tanstack/react-query'
 import queryClient from './queryClient'
 
-const URL = 'https://price.jup.ag/v4/price'
+const URL = 'https://api.jup.ag/price/v2'
 
 /* example query
 # Unit price of 1 JUP & 1 SOL based on the Derived Price in USDC

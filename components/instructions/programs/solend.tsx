@@ -195,93 +195,93 @@ export const SOLEND_PROGRAM_INSTRUCTIONS = {
           )
         },
       },
-    },
-    [LendingInstruction.DepositReserveLiquidity]: {
-      name: 'Save - Deposit Reserve Liquidity',
-      accounts: [
-        {name: 'Source Liquidity'},
-        {name: 'Destination Collateral'},
-        {name: 'Reserve'},
-        {name: 'Reserve Liquidity Supply'},
-        {name: 'Reserve Collateral Mint'},
-        {name: 'Lending Market'},
-        {name: 'Lending Market Authority'},
-        {name: 'Transfer Authority'},
-        {name: 'Token Program'}
-      ],
-      getDataUI: (
-        _connection: Connection,
-        data: Uint8Array,
-        accounts: AccountMetaData[]
-      ) => {
-        const dataLayout = struct([u8('instruction'), nu64('liquidityAmount')])
-  
-        const { liquidityAmount } = dataLayout.decode(Buffer.from(data)) as any
-  
-        const reserve = accounts[2]
-  
-        const tokenName =
-          SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
-          'unknown'
-
-        const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
-  
-        return (
-          <div className="flex flex-col">
-            <div className="flex justify-between">
-              <span>Token</span>
-              <span>{tokenName}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Amount</span>
-              <span>{liquidityAmount / 10 ** decimals}</span>
-            </div>
-          </div>
-        )
-      },
-    },
+      [LendingInstruction.DepositReserveLiquidity]: {
+        name: 'Save - Deposit Reserve Liquidity',
+        accounts: [
+          {name: 'Source Liquidity'},
+          {name: 'Destination Collateral'},
+          {name: 'Reserve'},
+          {name: 'Reserve Liquidity Supply'},
+          {name: 'Reserve Collateral Mint'},
+          {name: 'Lending Market'},
+          {name: 'Lending Market Authority'},
+          {name: 'Transfer Authority'},
+          {name: 'Token Program'}
+        ],
+        getDataUI: (
+          _connection: Connection,
+          data: Uint8Array,
+          accounts: AccountMetaData[]
+        ) => {
+          const dataLayout = struct([u8('instruction'), nu64('liquidityAmount')])
     
-    [LendingInstruction.RedeemReserveCollateral]: {
-      name: 'Save - Withdraw Reserve Liquidity',
-      accounts: [
-        {name: 'Source Collateral'},
-        {name: 'Destination Liquidity'},
-        {name: 'Reserve'},
-        {name: 'Reserve Collateral Mint'},
-        {name: 'Reserve Liquidity Supply'},
-        {name: 'Lending Market'},
-        {name: 'Lending Market Authority'},
-        {name: 'Transfer Authority'},
-        {name: 'Token Program'}
-      ],
-      getDataUI: async (
-        _connection: Connection,
-        data: Uint8Array,
-        accounts: AccountMetaData[]
-      ) => {
-        const dataLayout = struct([u8('instruction'), nu64('collateralAmount')])
-
-        const { collateralAmount } = dataLayout.decode(Buffer.from(data)) as any
-
-        const reserve = accounts[2]
-
-        const tokenName =
-          SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
-          'unknown'
-
-        const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
-        return (
-          <div className="flex flex-col">
-            <div className="flex justify-between">
-              <span>Token</span>
-              <span>{tokenName}</span>
+          const { liquidityAmount } = dataLayout.decode(Buffer.from(data)) as any
+    
+          const reserve = accounts[2]
+    
+          const tokenName =
+            SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
+            'unknown'
+  
+          const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
+    
+          return (
+            <div className="flex flex-col">
+              <div className="flex justify-between">
+                <span>Token</span>
+                <span>{tokenName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Amount</span>
+                <span>{liquidityAmount / 10 ** decimals}</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Collateral Token Amount Redeemed</span>
-              <span>{collateralAmount / 10 ** decimals}</span>
-            </div>
-          </div>
-        )
+          )
+        },
       },
-    }
+      
+      [LendingInstruction.RedeemReserveCollateral]: {
+        name: 'Save - Withdraw Reserve Liquidity',
+        accounts: [
+          {name: 'Source Collateral'},
+          {name: 'Destination Liquidity'},
+          {name: 'Reserve'},
+          {name: 'Reserve Collateral Mint'},
+          {name: 'Reserve Liquidity Supply'},
+          {name: 'Lending Market'},
+          {name: 'Lending Market Authority'},
+          {name: 'Transfer Authority'},
+          {name: 'Token Program'}
+        ],
+        getDataUI: async (
+          _connection: Connection,
+          data: Uint8Array,
+          accounts: AccountMetaData[]
+        ) => {
+          const dataLayout = struct([u8('instruction'), nu64('collateralAmount')])
+  
+          const { collateralAmount } = dataLayout.decode(Buffer.from(data)) as any
+  
+          const reserve = accounts[2]
+  
+          const tokenName =
+            SolendConfiguration.getTokenNameByReservePublicKey(reserve.pubkey) ??
+            'unknown'
+  
+          const decimals = SolendConfiguration.getTokenDecimalsByReservePublicKey(reserve.pubkey) ?? 0
+          return (
+            <div className="flex flex-col">
+              <div className="flex justify-between">
+                <span>Token</span>
+                <span>{tokenName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Collateral Token Amount Redeemed</span>
+                <span>{collateralAmount / 10 ** decimals}</span>
+              </div>
+            </div>
+          )
+        },
+      }
+    },
 }

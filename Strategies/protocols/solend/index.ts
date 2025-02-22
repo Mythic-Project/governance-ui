@@ -578,7 +578,6 @@ export async function handleSolendActionV2(
       signers: ix.signers?.map((signer) => Keypair.fromSecretKey(signer.secretKey)),
     }));
 
-
   const proposalAddress = await createProposal(
     rpcContext,
     realm,
@@ -587,7 +586,7 @@ export async function handleSolendActionV2(
     form.title ||
       `${form.action} ${form.amountFmt} ${
         tokenPriceService.getTokenInfo(
-          matchedTreasury.extensions.mint!.publicKey.toBase58()
+          RESERVE_CONFIG[form.reserveAddress].mintAddress
         )?.symbol || 'tokens'
       } ${form.action === 'Deposit' ? 'into' : 'from'} Save`,
     form.description,
