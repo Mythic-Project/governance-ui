@@ -21,6 +21,7 @@ import AddAssetModal from './AddAssetModal'
 import SelectedWalletIcon from '../../icons/SelectedWalletIcon'
 import { AssetAccount, AccountType } from '@utils/uiTypes/assets'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import DomainCopyButton from '@components/DomainCopyButton'
 
 enum ModalType {
   AddAsset,
@@ -69,6 +70,13 @@ export default function Header(props: Props) {
           </div>
         </div>
         <Address address={props.wallet.address} className="ml-14 text-xs" />
+        {props.wallet?.favoriteDomain && (
+          <DomainCopyButton
+            className="ml-14 text-xs"
+            domainName={props.wallet.favoriteDomain.name}
+            domainAddress={props.wallet.favoriteDomain.address}
+          />
+        )}
       </div>
       <div className="flex flex-col space-y-2">
         <SecondaryButton

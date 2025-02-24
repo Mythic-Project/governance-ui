@@ -41,6 +41,7 @@ import {
   toUiDecimals,
 } from '@blockworks-foundation/mango-v4'
 import { BN } from '@coral-xyz/anchor'
+import { getFavoriteDomain } from '@bonfida/spl-name-service'
 
 function isNotNull<T>(x: T | null): x is T {
   return x !== null
@@ -145,6 +146,25 @@ export const assembleWallets = async (
     const governanceAddress = account.governance?.pubkey?.toBase58()
 
     if (!walletMap[walletAddress]) {
+      // Fetch favorite domain when creating a new wallet
+      let favoriteDomain: {
+        name: string
+        address: PublicKey
+      } | null = null
+
+      try {
+        const favoriteDomainResponse = await getFavoriteDomain(
+          connection.current,
+          new PublicKey(walletAddress),
+        )
+        favoriteDomain = {
+          name: favoriteDomainResponse?.reverse,
+          address: new PublicKey(favoriteDomainResponse?.domain),
+        }
+      } catch (error) {
+        console.error('Error fetching favorite domain', error)
+      }
+
       walletMap[walletAddress] = {
         governanceAddress,
         address: walletAddress,
@@ -153,6 +173,7 @@ export const assembleWallets = async (
         rules: {},
         stats: {},
         totalValue: new BigNumber(0),
+        favoriteDomain,
       }
 
       if (governanceAddress) {
@@ -245,11 +266,17 @@ export const assembleWallets = async (
       }
     }
 
+    // Add isFavorite property to each domain using the already fetched favoriteDomain to figure out if the domain is the favorite domain
+    const domainsWithFavorite = domainList.map((domain) => ({
+      ...domain,
+      isFavorite: domain.name === walletMap[walletAddress].favoriteDomain?.name,
+    }))
+
     walletMap[walletAddress].assets.unshift({
       type: AssetType.Domain,
       id: 'domain-list',
       count: new BigNumber(domainList.length),
-      list: domainList,
+      list: domainsWithFavorite,
     })
   }
 

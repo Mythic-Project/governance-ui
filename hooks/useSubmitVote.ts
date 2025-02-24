@@ -33,6 +33,7 @@ import { useVotingClients } from '@hooks/useVotingClients'
 import { useNftClient } from '../VoterWeightPlugins/useNftClient'
 import { useRealmVoterWeightPlugins } from './useRealmVoterWeightPlugins'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
+import { usePlausible } from 'next-plausible'
 
 export const useSubmitVote = () => {
   const wallet = useWalletOnePointOh()
@@ -44,6 +45,7 @@ export const useSubmitVote = () => {
   const { closeNftVotingCountingModal } = useNftProposalStore.getState()
   const votingClients = useVotingClients() // TODO this should be passed the role
   const { nftClient } = useNftClient()
+  const plausible = usePlausible()
 
   const isNftPlugin = !!nftClient
 
@@ -157,6 +159,7 @@ export const useSubmitVote = () => {
           relevantDelegators,
           ownVoterWeight?.value,
         )
+        plausible('VoteCasted')
         queryClient.invalidateQueries({
           queryKey: proposalQueryKeys.all(connection.current.rpcEndpoint),
         })
