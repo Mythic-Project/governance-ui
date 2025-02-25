@@ -20,6 +20,7 @@ import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
 import useCreateProposal from '@hooks/useCreateProposal'
 import { useRouter } from 'next/router'
 import SetPrimaryDomainModal from './SetPrimaryDomainModal'
+import { PublicKey } from '@solana/web3.js'
 
 interface Props {
   domain: DomainModel
@@ -35,7 +36,6 @@ const Domain: React.FC<Props> = (props) => {
   const [setPrimaryDomainModalOpen, setSetPrimaryDomainModalOpen] =
     useState(false)
 
-  const { handleCreateProposal } = useCreateProposal()
   const {
     symbol,
     toManyCommunityOutstandingProposalsForUser,
@@ -75,8 +75,19 @@ const Domain: React.FC<Props> = (props) => {
   // only sns domains can be set as primary
   const isSnsDomain = 'type' in props.domain && props.domain?.type === 'sns'
 
-  const governance = governanceItems?.[0]
-
+  const governance = governanceItems?.find(
+    (g) => {
+      const [nativeTreasuryAddress] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('native-treasury'),
+          g.pubkey.toBuffer()
+        ],
+        g.owner
+      )
+      return nativeTreasuryAddress.toBase58() === props.domain.owner
+    }
+  )
+  
   return (
     <div className="flex justify-between items-center px-2 py-6 border-b-[0.5px] border-white/50">
       {governance && setPrimaryDomainModalOpen && (

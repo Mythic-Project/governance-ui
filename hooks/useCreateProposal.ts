@@ -17,6 +17,7 @@ import { proposalQueryKeys } from './queries/proposal'
 import { createLUTProposal } from 'actions/createLUTproposal'
 import { useLegacyVoterWeight } from './queries/governancePower'
 import { useVotingClients } from '@hooks/useVotingClients'
+import { usePlausible } from 'next-plausible'
 
 export default function useCreateProposal() {
   const connection = useLegacyConnectionContext()
@@ -25,7 +26,7 @@ export default function useCreateProposal() {
   const mint = useRealmCommunityMintInfoQuery().data?.result
   const councilMint = useRealmCouncilMintInfoQuery().data?.result
   const { result: ownVoterWeight } = useLegacyVoterWeight()
-
+  const plausible = usePlausible()
   const { getRpcContext } = useRpcContext()
   const votingClients = useVotingClients()
 
@@ -111,6 +112,12 @@ export default function useCreateProposal() {
       ['Approve'],
       votingClient,
     )
+    plausible('ProposalCreated', {
+      props: {
+        realm: realm.pubkey.toBase58(),
+        title: title,
+      },
+    })
     queryClient.invalidateQueries({
       queryKey: proposalQueryKeys.all(connection.endpoint),
     })
@@ -207,6 +214,12 @@ export default function useCreateProposal() {
       options,
       votingClient,
     )
+    plausible('ProposalCreated', {
+      props: {
+        realm: realm.pubkey.toBase58(),
+        title: title,
+      },
+    })
     queryClient.invalidateQueries({
       queryKey: proposalQueryKeys.all(connection.endpoint),
     })

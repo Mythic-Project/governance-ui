@@ -25,6 +25,7 @@ import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import {
   ConnectionProvider,
+  useWallet,
   WalletProvider,
 } from '@solana/wallet-adapter-react'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
@@ -39,6 +40,7 @@ import { useAsync } from 'react-async-hook'
 import { useVsrClient } from '../VoterWeightPlugins/useVsrClient'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 import TermsPopupModal from './TermsPopup'
+import PlausibleProvider from 'next-plausible'
 
 const Notifications = dynamic(() => import('../components/Notification'), {
   ssr: false,
@@ -324,6 +326,7 @@ export function AppContents(props: Props) {
       <ErrorBoundary>
         <ThemeProvider defaultTheme="Dark">
           <GatewayProvider>
+            <Telemetry></Telemetry>
             <NavBar />
             <Notifications />
             <TransactionLoader></TransactionLoader>
@@ -336,5 +339,42 @@ export function AppContents(props: Props) {
         </ThemeProvider>
       </ErrorBoundary>
     </div>
+  )
+}
+
+const Telemetry = () => {
+  const { wallet } = useWallet()
+
+  const telemetryProps = useMemo(() => {
+    if (typeof document !== 'undefined') {
+      const props = {
+        walletProvider: wallet?.adapter.name ?? 'unknown',
+        walletConnected: (wallet?.adapter.connected ?? 'false').toString(),
+      }
+
+      // Hack to update script tag
+      const el = document.getElementById('plausible')
+      if (el) {
+        Object.entries(props).forEach(([key, value]) => {
+          el.setAttribute(`event-${key}`, value)
+        })
+      }
+
+      return props
+    } else {
+      return {}
+    }
+  }, [wallet?.adapter.name, wallet?.adapter.connected])
+
+  return (
+    <PlausibleProvider
+      domain="realms.today"
+      customDomain="https://pl.tantal.cloud"
+      trackLocalhost={true}
+      selfHosted={true}
+      enabled={true}
+      scriptProps={{ id: 'plausible' }}
+      pageviewProps={telemetryProps}
+    />
   )
 }
