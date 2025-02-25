@@ -1,13 +1,12 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "unused-imports"],
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
-    // Uncomment the following lines to enable eslint-config-prettier
-    // Is not enabled right now to avoid issues with the Next.js repo
+    "next/core-web-vitals",
     "prettier"
   ],
   "env": {
@@ -22,31 +21,36 @@
     }
   },
   "rules": {
+    // ESLint Core Rules
+    "no-console": "warn",
+    "no-unused-vars": "off",
+    "no-debugger": "warn",
+
+    // TypeScript Rules
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": ["arrowFunctions", "functions", "methods"]
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+
+    // React Rules
+    "react/react-in-jsx-scope": "off", // Next.js n'a pas besoin d'importer React.
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+
+    // React Hooks Rules
+    "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": [
       "warn",
       {
         "additionalHooks": "(useAsync|useAsyncCallback|useAsyncAbortable)"
       }
-    ],
-    "react/react-in-jsx-scope": 0,
-    "react/display-name": 0,
-    "react/prop-types": 0,
-    "unused-imports/no-unused-imports": 0,
-    //"@typescript-eslint/no-unnecessary-condition": "error",
-    "@typescript-eslint/explicit-function-return-type": 0,
-    "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/explicit-member-accessibility": 0,
-    "@typescript-eslint/indent": 0,
-    "@typescript-eslint/member-delimiter-style": 0,
-    "@typescript-eslint/ban-ts-comment": 0,
-    "@typescript-eslint/no-non-null-assertion": 0, // days are numbered
-    "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/no-var-requires": 0,
-    "@typescript-eslint/no-use-before-define": 0,
-    "@typescript-eslint/no-unused-vars": 0,
-    "import/order": 0,
-    "@typescript-eslint/ban-types": 0,
-    "react/no-unescaped-entities": 0,
-    "react-hooks/rules-of-hooks": 0
+    ]
   }
 }
