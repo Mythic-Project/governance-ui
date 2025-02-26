@@ -1,0 +1,96 @@
+yarn add v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+success Saved 85 new dependencies.
+info Direct dependencies
+└─ react-native@0.78.0
+info All dependencies
+├─ @babel/plugin-proposal-export-default-from@7.25.9
+├─ @babel/plugin-syntax-bigint@7.8.3
+├─ @babel/plugin-syntax-class-properties@7.12.13
+├─ @babel/plugin-syntax-class-static-block@7.14.5
+├─ @babel/plugin-syntax-dynamic-import@7.8.3
+├─ @babel/plugin-syntax-export-default-from@7.25.9
+├─ @babel/plugin-syntax-import-attributes@7.26.0
+├─ @babel/plugin-syntax-import-meta@7.10.4
+├─ @babel/plugin-syntax-json-strings@7.8.3
+├─ @babel/plugin-syntax-top-level-await@7.14.5
+├─ @babel/plugin-transform-arrow-functions@7.25.9
+├─ @babel/plugin-transform-async-generator-functions@7.26.8
+├─ @babel/plugin-transform-async-to-generator@7.25.9
+├─ @babel/plugin-transform-block-scoping@7.25.9
+├─ @babel/plugin-transform-class-properties@7.25.9
+├─ @babel/plugin-transform-classes@7.25.9
+├─ @babel/plugin-transform-computed-properties@7.25.9
+├─ @babel/plugin-transform-destructuring@7.25.9
+├─ @babel/plugin-transform-for-of@7.26.9
+├─ @babel/plugin-transform-function-name@7.25.9
+├─ @babel/plugin-transform-literals@7.25.9
+├─ @babel/plugin-transform-logical-assignment-operators@7.25.9
+├─ @babel/plugin-transform-modules-commonjs@7.26.3
+├─ @babel/plugin-transform-named-capturing-groups-regex@7.25.9
+├─ @babel/plugin-transform-numeric-separator@7.25.9
+├─ @babel/plugin-transform-object-rest-spread@7.25.9
+├─ @babel/plugin-transform-optional-catch-binding@7.25.9
+├─ @babel/plugin-transform-optional-chaining@7.25.9
+├─ @babel/plugin-transform-parameters@7.25.9
+├─ @babel/plugin-transform-react-display-name@7.25.9
+├─ @babel/plugin-transform-react-jsx-self@7.25.9
+├─ @babel/plugin-transform-react-jsx-source@7.25.9
+├─ @babel/plugin-transform-react-jsx@7.25.9
+├─ @babel/plugin-transform-regenerator@7.25.9
+├─ @babel/plugin-transform-runtime@7.26.9
+├─ @babel/plugin-transform-shorthand-properties@7.25.9
+├─ @babel/plugin-transform-spread@7.25.9
+├─ @babel/plugin-transform-sticky-regex@7.25.9
+├─ @babel/plugin-transform-unicode-regex@7.25.9
+├─ @babel/preset-flow@7.25.9
+├─ @babel/preset-typescript@7.26.0
+├─ @babel/register@7.25.9
+├─ @babel/traverse--for-generate-function-map@7.26.9
+├─ @istanbuljs/load-nyc-config@1.1.0
+├─ @jest/transform@29.7.0
+├─ @react-native/assets-registry@0.78.0
+├─ @react-native/babel-plugin-codegen@0.78.0
+├─ @react-native/babel-preset@0.78.0
+├─ @react-native/community-cli-plugin@0.78.0
+├─ @react-native/debugger-frontend@0.78.0
+├─ @react-native/dev-middleware@0.78.0
+├─ @react-native/gradle-plugin@0.78.0
+├─ @react-native/js-polyfills@0.78.0
+├─ @react-native/metro-babel-transformer@0.78.0
+├─ @react-native/normalize-colors@0.78.0
+├─ @react-native/virtualized-lists@0.78.0
+├─ @types/babel__generator@7.6.8
+├─ @types/babel__template@7.4.4
+├─ @types/babel__traverse@7.20.6
+├─ @types/graceful-fs@4.1.9
+├─ ast-types@0.16.1
+├─ babel-jest@29.7.0
+├─ babel-plugin-jest-hoist@29.6.3
+├─ babel-preset-current-node-syntax@1.1.0
+├─ babel-preset-jest@29.6.3
+├─ chromium-edge-launcher@0.2.0
+├─ get-package-type@0.1.0
+├─ hermes-estree@0.25.1
+├─ istanbul-lib-coverage@3.2.2
+├─ istanbul-lib-instrument@5.2.1
+├─ jest-haste-map@29.7.0
+├─ jscodeshift@17.1.2
+├─ metro-config@0.81.1
+├─ metro-file-map@0.81.1
+├─ metro-minify-terser@0.81.1
+├─ metro-transform-worker@0.81.1
+├─ ob1@0.81.1
+├─ react-devtools-core@6.1.1
+├─ react-native@0.78.0
+├─ recast@0.23.9
+├─ regenerator-transform@0.15.2
+├─ serve-static@1.16.2
+├─ test-exclude@6.0.0
+├─ walker@1.0.8
+└─ write-file-atomic@4.0.2
+Done in 16.89s.

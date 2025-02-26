@@ -1,3 +1,20 @@
+import path from 'path';
+
+const nextConfig = {
+  env: {
+    REALM: process.env.REALM || 'default_value',
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@hooks": path.resolve('.', "hooks"),
+      "@constants": path.resolve('.', "constants"),
+      "@utils": path.resolve('.', "utils"),
+    };
+    return config;
+  },
+};
+export default nextConfig;
 // workaround for ESM module loader errors
 // see https://github.com/vercel/next.js/issues/25454
 const { withSentryConfig } = require('@sentry/nextjs')
@@ -7,6 +24,21 @@ const withTM = require('next-transpile-modules')([
   '@solana/wallet-adapter-phantom',
   '@solana/wallet-adapter-sollet',
 ])
+
+const path = require('path');
+
+module.exports = {
+  // Configuration Webpack nécessaire pour la résolution des alias
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@hooks": path.resolve(__dirname, "hooks/"),
+      "@constants": path.resolve(__dirname, "constants/"),
+      "@utils": path.resolve(__dirname, "utils/")
+    };
+    return config;
+  }
+};
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -35,6 +67,7 @@ config = withTM({
       process.env.MAIN_VIEW_SHOW_MAX_TOP_TOKENS_NUM,
     DISABLE_NFTS: process.env.DISABLE_NFTS,
     REALM: process.env.REALM,
+    process.env.REALM = 'default_value';
     MAINNET_RPC: process.env.MAINNET_RPC,
     DEVNET_RPC: process.env.DEVNET_RPC,
     DEFAULT_GOVERNANCE_PROGRAM_ID: process.env.DEFAULT_GOVERNANCE_PROGRAM_ID,
