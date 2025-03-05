@@ -71,6 +71,7 @@ interface RealmCreationV2 {
   existingCouncilMintPk: PublicKey | undefined
   transferCouncilMintAuthority: boolean
   councilWalletPks: PublicKey[]
+  isMultiSig?: boolean
 
   communityTokenConfig: GoverningTokenConfigAccountArgs
   skipRealmAuthority?: boolean
@@ -111,6 +112,8 @@ export async function prepareRealmCreation({
   communityTokenConfig,
   skipRealmAuthority,
   pluginList,
+
+  isMultiSig,
   ...params
 }: RealmCreation & Web3Context) {
   const realmInstructions: TransactionInstruction[] = []
@@ -378,7 +381,7 @@ export async function prepareRealmCreation({
     baseVotingTime:
       getTimestampFromDays(maxVotingTimeInDays) - VOTING_COOLOFF_TIME_DEFAULT,
     communityVoteTipping: VoteTipping.Disabled,
-    councilVoteTipping: VoteTipping.Strict,
+    councilVoteTipping: isMultiSig ? VoteTipping.Early : VoteTipping.Strict,
     minCouncilTokensToCreateProposal: new BN(initialCouncilTokenAmount),
     councilVoteThreshold: councilVoteThreshold,
     councilVetoVoteThreshold: councilVetoVoteThreshold,

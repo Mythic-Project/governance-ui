@@ -29,6 +29,7 @@ export default async function createMultisigWallet({
   } = await prepareRealmCreation({
     connection,
     wallet,
+    isMultiSig: true,
     ...params,
   })
 
