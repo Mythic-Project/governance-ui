@@ -149,23 +149,17 @@ export const assembleWallets = async (
 
     if (!walletMap[walletAddress]) {
       // Fetch favorite domain when creating a new wallet
-      let favoriteDomain: {
-        name: string
-        address: PublicKey
-      } | null = null
+      const favoriteDomainResponse = await getFavoriteDomain(
+        connection.current,
+        new PublicKey(walletAddress),
+      ).catch(() => null)
 
-      try {
-        const favoriteDomainResponse = await getFavoriteDomain(
-          connection.current,
-          new PublicKey(walletAddress),
-        )
-        favoriteDomain = {
-          name: favoriteDomainResponse?.reverse,
-          address: new PublicKey(favoriteDomainResponse?.domain),
-        }
-      } catch (error) {
-        console.error('Error fetching favorite domain', error)
-      }
+      const favoriteDomain = favoriteDomainResponse
+        ? {
+            name: favoriteDomainResponse?.reverse,
+            address: new PublicKey(favoriteDomainResponse?.domain),
+          }
+        : null
 
       walletMap[walletAddress] = {
         governanceAddress,
@@ -298,7 +292,14 @@ export const assembleWallets = async (
       })
     }
 
-    const defiPositionsValue = positions?.reduce((acc, position) => position.walletAddress === wallet.address ? acc.plus(position.value) : acc, new BigNumber(0)) ?? new BigNumber(0)
+    const defiPositionsValue =
+      positions?.reduce(
+        (acc, position) =>
+          position.walletAddress === wallet.address
+            ? acc.plus(position.value)
+            : acc,
+        new BigNumber(0),
+      ) ?? new BigNumber(0)
 
     allWallets.push({
       ...wallet,
@@ -307,8 +308,8 @@ export const assembleWallets = async (
         : getAccountName(wallet.address),
       totalValue: calculateTotalValue(
         wallet.assets.map((asset) =>
-          'value' in asset ? asset.value : new BigNumber(0)
-        )
+          'value' in asset ? asset.value : new BigNumber(0),
+        ),
       ).plus(defiPositionsValue),
     })
   }
