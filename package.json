@@ -274,6 +274,9 @@
   ],
   "lavamoat": {
     "allowScripts": {
+      "@carbon/icons-react>@carbon/icon-helpers": true,
+      "@civic/solana-gateway-react>@civic/common-gateway-react>iframe-resizer-react>iframe-resizer": true,
+      "@solendprotocol/solend-sdk>@switchboard-xyz/on-demand>protobufjs": true,
       "@metaplex-foundation/js>@bundlr-network/client>arbundles>secp256k1": true,
       "@bundlr-network/client>arbundles>secp256k1": true,
       "@irys/web-upload>@irys/bundles>keccak": true,

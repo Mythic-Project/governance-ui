@@ -148,19 +148,6 @@ export const assembleWallets = async (
     const governanceAddress = account.governance?.pubkey?.toBase58()
 
     if (!walletMap[walletAddress]) {
-      // Fetch favorite domain when creating a new wallet
-      const favoriteDomainResponse = await getFavoriteDomain(
-        connection.current,
-        new PublicKey(walletAddress),
-      ).catch(() => null)
-
-      const favoriteDomain = favoriteDomainResponse
-        ? {
-            name: favoriteDomainResponse?.reverse,
-            address: new PublicKey(favoriteDomainResponse?.domain),
-          }
-        : null
-
       walletMap[walletAddress] = {
         governanceAddress,
         address: walletAddress,
@@ -169,7 +156,6 @@ export const assembleWallets = async (
         rules: {},
         stats: {},
         totalValue: new BigNumber(0),
-        favoriteDomain,
       }
 
       if (governanceAddress) {
@@ -301,8 +287,22 @@ export const assembleWallets = async (
         new BigNumber(0),
       ) ?? new BigNumber(0)
 
+    // Fetch favorite domain when creating a new wallet
+    const favoriteDomainResponse = await getFavoriteDomain(
+      connection.current,
+      new PublicKey(wallet.address),
+    ).catch(() => null)
+    
+    const favoriteDomain = favoriteDomainResponse
+      ? {
+          name: favoriteDomainResponse?.reverse,
+          address: new PublicKey(favoriteDomainResponse?.domain),
+        }
+      : null
+
     allWallets.push({
       ...wallet,
+      favoriteDomain,
       name: wallet.governanceAddress
         ? getAccountName(wallet.governanceAddress)
         : getAccountName(wallet.address),
