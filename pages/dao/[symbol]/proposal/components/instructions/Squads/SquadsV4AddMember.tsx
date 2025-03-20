@@ -78,7 +78,7 @@ const SquadsV4AddMember = ({
       const instruction = multisig.instructions.multisigAddMember({
         multisigPda: new PublicKey(form.vault),
         configAuthority: form.governedAccount.governance.pubkey,
-        rentPayer: form.governedAccount.governance.pubkey,
+        rentPayer: form.governedAccount.governance.nativeTreasuryAddress,
         newMember: {
           key: new PublicKey(form.member),
           permissions: {
