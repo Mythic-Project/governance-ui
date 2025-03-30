@@ -5,6 +5,7 @@ import {
   TOKEN_PROGRAM_ID,
   u64,
 } from '@solana/spl-token'
+import { createMintToInstruction } from '@solana/spl-token-new'
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import {
   Keypair,
@@ -442,13 +443,12 @@ export async function getMintInstruction({
         ),
       )
     }
-    const transferIx = Token.createMintToInstruction(
-      TOKEN_PROGRAM_ID,
+    const transferIx = createMintToInstruction(
       mintPK,
       receiverAddress,
       form.mintAccount.extensions.mint!.account.mintAuthority!,
-      [],
-      mintAmount,
+      BigInt(mintAmount.toString()),
+      undefined, TOKEN_PROGRAM_ID
     )
     serializedInstruction = serializeInstructionToBase64(transferIx)
   }
