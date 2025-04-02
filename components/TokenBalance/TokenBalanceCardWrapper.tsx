@@ -200,7 +200,7 @@ export const GovernanceTokenSwap = () => {
     (x) => x.address === communityMint,
   )
 
-  return communityMint ? (
+  return communityMint && tokenInfo ? (
     <div className="flex items-center justify-end py-2">
       <SecondaryButton
         className="relative -bottom-[18px] -right-[15px] rounded-none border-0"
