@@ -76,7 +76,7 @@ export async function getTransferInstruction({
   currentAccount: AssetAccount | null
   setFormErrors: any
 }): Promise<UiInstruction> {
-  const isValid = await validateInstruction({ schema, form, setFormErrors })
+  let isValid = await validateInstruction({ schema, form, setFormErrors })
   let serializedInstruction = ''
   const prerequisiteInstructions: TransactionInstruction[] = []
   const governedTokenAccount = form.governedTokenAccount as AssetAccount
@@ -99,7 +99,6 @@ export async function getTransferInstruction({
 
     const receiverAccount =
       await connection.current.getAccountInfo(destinationAccount)
-    const isExistingReceiver = receiverAccount && receiverAccount.lamports > 0
     const isSolWallet = receiverAccount?.owner.equals(PublicKey.default)
     const ataAddress = isSolWallet
       ? getAssociatedTokenAddressSync(
@@ -109,15 +108,21 @@ export async function getTransferInstruction({
           isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
         )
       : destinationAccount
-    const ataAccount = await connection.current.getAccountInfo(ataAddress)
-    const isExistingAta =
-      destinationAccount.equals(ataAddress) && isExistingReceiver
-        ? true
-        : ataAccount && ataAccount.lamports > 0
+    const ataAccountData = await connection.current.getAccountInfo(ataAddress)
+    const isAtaExist = ataAccountData?.owner.equals(TOKEN_PROGRAM_ID) 
+      || ataAccountData?.owner.equals(TOKEN_2022_PROGRAM_ID)  
 
+    if (!receiverAccount) {
+      setFormErrors({
+        amount: '',
+        destinationAccount: 'The provided destination account is a new account. Kindly fund this account.'
+      })
+      isValid = false
+    }
+      
     //we push this createATA instruction to transactions to create right before creating proposal
     //we don't want to create ata only when instruction is serialized
-    if (!isExistingAta) {
+    if (!isAtaExist) {
       prerequisiteInstructions.push(
         Token.createAssociatedTokenAccountInstruction(
           ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
@@ -181,7 +186,7 @@ export async function getBatchTransferInstruction({
   currentAccount: AssetAccount | null
   setFormErrors: any
 }): Promise<UiInstruction[]> {
-  const isValid = await validateBatchInstruction({
+  let isValid = await validateBatchInstruction({
     schema,
     form,
     setFormErrors,
@@ -214,8 +219,7 @@ export async function getBatchTransferInstruction({
       )
 
       const receiverAccount =
-        await connection.current.getAccountInfo(destinationAccount)
-      const isExistingReceiver = receiverAccount && receiverAccount.lamports > 0
+      await connection.current.getAccountInfo(destinationAccount)
       const isSolWallet = receiverAccount?.owner.equals(PublicKey.default)
       const ataAddress = isSolWallet
         ? getAssociatedTokenAddressSync(
@@ -225,15 +229,23 @@ export async function getBatchTransferInstruction({
             isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
           )
         : destinationAccount
-      const ataAccount = await connection.current.getAccountInfo(ataAddress)
-      const isExistingAta =
-        destinationAccount.equals(ataAddress) && isExistingReceiver
-          ? true
-          : ataAccount && ataAccount.lamports > 0
+      const ataAccountData = await connection.current.getAccountInfo(ataAddress)
+      const isAtaExist = ataAccountData?.owner.equals(TOKEN_PROGRAM_ID) 
+        || ataAccountData?.owner.equals(TOKEN_2022_PROGRAM_ID)  
+
+      if (!receiverAccount) {
+        const errors = {
+          amount: form.destinationAccount.map(_ => ''),
+          destinationAccount: form.destinationAccount.map(_ => '')
+        }
+        errors.destinationAccount[i] = 'The provided destination account is a new account. Kindly fund this account.'
+        setFormErrors(errors)
+        isValid = false
+      }
 
       //we push this createATA instruction to transactions to create right before creating proposal
       //we don't want to create ata only when instruction is serialized
-      if (!isExistingAta) {
+      if (!isAtaExist) {
         prerequisiteInstructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
