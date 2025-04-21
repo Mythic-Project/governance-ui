@@ -138,11 +138,12 @@ export const ACCOUNT_NAMES = {
   FAFDfoUkaxoMqiNur9F1iigdBNrXFf4uNmS5XrhMewvf:
     'Friends and Family Community Mint',
 
-  // Dean's List DAO
-  '6Vjsy1KabnHtSuHZcXuuCQFWoBML9JscSy3L4NGjqmhM': 'Deans List DAO Treasury',
-  CLgzSdeNcf9CYHiAdmXaPaCw2vYBeiqEeZcgguqirVM9: 'DAO: (DEAN) Strategic Reserve',
-  bDgqY2Qt4y2jSsRNvD7FETkRJJNiYZT1Q3UnAYYzUCo: 'DAO: (DEAN) Community Reserve',
-  BtJaNZrZZmagHGzCU2VazSJWzBS9KY7tG41enBrT2NtU: 'DAO: (DEAN) Liquidity Reserve',
+  // Island DAO
+  '6Vjsy1KabnHtSuHZcXuuCQFWoBML9JscSy3L4NGjqmhM': 'Island DAO Main Treasury',
+  CLgzSdeNcf9CYHiAdmXaPaCw2vYBeiqEeZcgguqirVM9: 'DAO: (ISLAND) Strategic Reserve',
+  bDgqY2Qt4y2jSsRNvD7FETkRJJNiYZT1Q3UnAYYzUCo: 'DAO: (ISLAND) Community Reserve',
+  BtJaNZrZZmagHGzCU2VazSJWzBS9KY7tG41enBrT2NtU: 'DAO: (ISLAND) Liquidity Reserve',
+  HRLdZUitTR6ekSWqR8VqmYnEDVnDy8jhkJPB24t9hoB7: 'DAO: (ISLAND) Operations Vault'
 
   // EpicentralDAO
   LABSh5DTebUcUbEoLzXKCiXFJLecDFiDWiBGUU1GpxR: 'LABS Token Mint',
