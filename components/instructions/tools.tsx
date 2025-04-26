@@ -451,6 +451,7 @@ const HIDDEN_MNGO_TREASURES = [
 //badly created realms
 export const HIDDEN_REALMS = [
   'BWnVbUDohApiiaWBNNGcLH2KXRKEoTBJ7schsKQWYAtj',
+  '4jBriJXRvPBDzZtLNaXNjEgGcGfXrCtgs1EmZ2n7VZYY',
   'FsoDEiZ9BoGTAaCLzXkyQWEqNKa5PW2iokzmuD7YsRdL',
   '9nUyxzVL2FUMuWUiVZG66gwK15CJiM3PoLkfrnGfkvt6', // old Drift dao
   '7mjEBafqqKA2K6SHezMrDV1zBoyNw6SKFcTsBbH2Kxgb', // openBook v2 council wrong config
