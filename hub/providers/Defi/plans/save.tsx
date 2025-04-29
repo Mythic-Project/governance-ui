@@ -10,7 +10,14 @@ import {
   createAssociatedTokenAccountIdempotentInstruction,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token-new';
-import { Connection, Keypair, PublicKey, AccountInfo, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  AccountInfo,
+  TransactionMessage,
+  VersionedTransaction,
+} from '@solana/web3.js';
 import { parseReserve, SolendActionCore } from '@solendprotocol/solend-sdk';
 import {
   InstructionWithSigners,
@@ -42,7 +49,6 @@ function simulatedToAccountInfo(simulatedAccount: any): AccountInfo<Buffer> {
     rentEpoch: simulatedAccount.rentEpoch,
   };
 }
-
 
 export const PROTOCOL_SLUG = 'Save';
 
@@ -370,8 +376,7 @@ export const useSavePlans = (
         },
       );
 
-      const solendIxs = await solendAction.getInstructions();
-
+    const solendIxs = await solendAction.getInstructions();
 
     const ixs = [
       ...solendIxs.oracleIxs,
@@ -380,53 +385,54 @@ export const useSavePlans = (
       ...solendIxs.postLendingIxs,
     ] as InstructionWithSigners[];
 
-    // Get Transaction Message 
+    // Get Transaction Message
     const message = new TransactionMessage({
       payerKey: wallet.publicKey,
-      recentBlockhash: (await connection.current.getLatestBlockhash()).blockhash,
+      recentBlockhash: (await connection.current.getLatestBlockhash())
+        .blockhash,
       instructions: ixs.map((ix) => ix.instruction),
     }).compileToV0Message();
-    
+
     // Get Versioned Transaction
     const vtx = new VersionedTransaction(message);
 
-    const res = await connection.current.simulateTransaction(
-      vtx,
-      {
-        commitment: 'processed',
-        sigVerify: false,
-        accounts: {
-          encoding: 'base64',
-          addresses: [reserveAddress],
-        }
-      }
-    );
+    const res = await connection.current.simulateTransaction(vtx, {
+      commitment: 'processed',
+      sigVerify: false,
+      accounts: {
+        encoding: 'base64',
+        addresses: [reserveAddress],
+      },
+    });
 
     const accountInfo = res?.value.accounts?.map(simulatedToAccountInfo);
     let cTokenExchangeRate = new BigNumber(reserve.cTokenExchangeRate);
     let buffer = 0.02;
     if (accountInfo?.[0]) {
-      const simulatedReserve = parseReserve(new PublicKey(reserveAddress), accountInfo?.[0], 'base64');
+      const simulatedReserve = parseReserve(
+        new PublicKey(reserveAddress),
+        accountInfo?.[0],
+        'base64',
+      );
 
-
-    const decimals = simulatedReserve.info.liquidity.mintDecimals;
-    const availableAmount = new BigNumber(
-      simulatedReserve.info.liquidity.availableAmount.toString()
-    ).shiftedBy(-decimals);
-    const totalBorrow = new BigNumber(
-      simulatedReserve.info.liquidity.borrowedAmountWads.toString()
-    ).shiftedBy(-18 - decimals);
-    const accumulatedProtocolFees = new BigNumber(
-      simulatedReserve.info.liquidity.accumulatedProtocolFeesWads.toString()
-    ).shiftedBy(-18 - decimals);
-    const totalSupply = totalBorrow
-      .plus(availableAmount)
-      .minus(accumulatedProtocolFees);
+      const decimals = simulatedReserve.info.liquidity.mintDecimals;
+      const availableAmount = new BigNumber(
+        simulatedReserve.info.liquidity.availableAmount.toString(),
+      ).shiftedBy(-decimals);
+      const totalBorrow = new BigNumber(
+        simulatedReserve.info.liquidity.borrowedAmountWads.toString(),
+      ).shiftedBy(-18 - decimals);
+      const accumulatedProtocolFees = new BigNumber(
+        simulatedReserve.info.liquidity.accumulatedProtocolFeesWads.toString(),
+      ).shiftedBy(-18 - decimals);
+      const totalSupply = totalBorrow
+        .plus(availableAmount)
+        .minus(accumulatedProtocolFees);
 
       cTokenExchangeRate = new BigNumber(totalSupply).dividedBy(
-        new BigNumber(simulatedReserve.info.collateral.mintTotalSupply.toString()).shiftedBy(
-          -decimals
-        )
+        new BigNumber(
+          simulatedReserve.info.collateral.mintTotalSupply.toString(),
+        ).shiftedBy(-decimals),
       );
       buffer = 0;
     }
@@ -448,7 +454,7 @@ export const useSavePlans = (
 
     const transferAmountBase = new BigNumber(amount)
       .shiftedBy(reserve.mintDecimals)
-      .times(1-buffer)
+      .times(1 - buffer)
       .div(cTokenExchangeRate)
       .dp(0, BigNumber.ROUND_DOWN)
       .toNumber();
