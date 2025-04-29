@@ -136,7 +136,7 @@ const CollectPoolFees = ({
         additionalSerializedInstructions,
         isValid: true,
         governance: governedAccount,
-        chunkBy: 2,
+        chunkBy: 1,
       }
     } else {
       return {
