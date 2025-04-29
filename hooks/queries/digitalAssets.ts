@@ -6,6 +6,8 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import { getNativeTreasuryAddress } from '@solana/spl-governance'
 import queryClient from './queryClient'
 import { getNetworkFromEndpoint } from '@utils/connection'
+import axios from 'axios'
+import { BN } from '@coral-xyz/anchor'
 
 type Network = 'devnet' | 'mainnet'
 const getHeliusEndpoint = (network: Network) => {
@@ -34,6 +36,11 @@ export const digitalAssetsQueryKeys = {
   byOwner: (network: Network, owner: PublicKey) => [
     ...digitalAssetsQueryKeys.all(network),
     'by Owner',
+    owner.toString(),
+  ],
+  byOwnerWithMeta: (network: Network, owner: PublicKey) => [
+    ...digitalAssetsQueryKeys.all(network),
+    'by Owner with Meta',
     owner.toString(),
   ],
   byRealm: (network: Network, realm: PublicKey) => [
@@ -264,6 +271,77 @@ export const useDigitalAssetsByOwner = (owner: undefined | PublicKey) => {
     queryFn: async () => {
       if (!enabled) throw new Error()
       return dasByOwnerQueryFn(network, owner)
+    },
+  })
+}
+
+export const useRaydiumAssetsByOwner = (owner: undefined | PublicKey) => {
+  const { connection } = useConnection()
+  const network = getNetworkFromEndpoint(connection.rpcEndpoint) as Network
+  const enabled = owner !== undefined
+  const raydiumCreator = new PublicKey("3f7GcQFG397GAaEnv51zR6tsTVihYRydnydDD1cXekxH")
+
+  return useQuery({
+    enabled,
+    queryKey: owner && digitalAssetsQueryKeys.byOwnerWithMeta(network, owner),
+    queryFn: async () => {
+      if (!enabled) throw new Error()
+      const nfts = await dasByOwnerQueryFn(network, owner)
+      const raydiumAssets = nfts.filter(
+        nft => 
+          nft.creators.length && 
+          nft.creators[0].address === raydiumCreator.toBase58() &&
+          nft.creators[0].verified
+      )
+
+      return Promise.all(
+        raydiumAssets.map(async(x) => {
+          try {
+            const uriData = await axios.get(x.content.json_uri)
+            const mintA = uriData.data.poolInfo?.mintA?.symbol
+            const mintB = uriData.data.poolInfo?.mintB?.symbol
+            const poolId = uriData.data.poolInfo?.id
+            const decimals = uriData.data.poolInfo?.lpMint?.decimals
+            const lp = uriData.data.positionInfo?.unclaimedFee?.lp
+            const mintARewardAmount = uriData.data.positionInfo?.unclaimedFee?.amountA
+            const mintBRewardAmount = uriData.data.positionInfo?.unclaimedFee?.amountB
+
+            const lpAmount = decimals && lp ?
+              new BN(
+                uriData.data.positionInfo?.unclaimedFee?.lp *
+                Math.pow(10, decimals)
+              ) :
+              new BN(0)
+
+            const id = x.id
+            const name = mintA && mintB && id ?
+              `${mintB}-${mintA} (${id})` :
+              undefined
+
+            return {
+              name,
+              poolId,
+              lpAmount,
+              mintARewardAmount,
+              mintBRewardAmount,
+              mintA,
+              mintB,
+              ...x
+            }
+          } catch {
+            return {
+              name: undefined,
+              poolId: undefined,
+              lpAmount: new BN(0),
+              mintARewardAmount: undefined,
+              mintBRewardAmount: undefined,
+              mintA: undefined,
+              mintB: undefined,
+              ...x
+            }
+          }
+        }
+      ))
     },
   })
 }

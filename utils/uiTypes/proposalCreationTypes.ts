@@ -9,6 +9,7 @@ import { LockupKind } from 'VoteStakeRegistry/tools/types'
 import { AssetAccount, StakeAccount } from '@utils/uiTypes/assets'
 import { RealmInfo } from '@models/registry/api'
 import * as PaymentStreaming from '@mean-dao/payment-streaming'
+import { DasNftObject } from '@hooks/queries/digitalAssets'
 
 // Alphabetical order
 export enum PackageEnum {
@@ -29,6 +30,7 @@ export enum PackageEnum {
   Squads,
   Switchboard,
   VsrPlugin,
+  Raydium
 }
 
 export interface UiInstruction {
@@ -421,6 +423,7 @@ export enum Instructions {
   SymmetryDeposit,
   SymmetryWithdraw,
   TokenWithdrawFees,
+  CollectPoolFees
 }
 
 export interface ComponentInstructionData {
