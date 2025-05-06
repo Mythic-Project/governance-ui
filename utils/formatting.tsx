@@ -82,3 +82,18 @@ export const fmtTimeToString = ({
 }
 
 export { abbreviateAddress }
+
+export const fmtDecimalToBN = (
+  num: number,
+  decimals: number,
+) => {
+  const value = num.toString()
+  const decimalIndex = value.indexOf('.')
+  const decimalPlaces = decimalIndex !== -1 ? value.length - decimalIndex - 1 : 0
+  let wholeNumber = value.replace('.', '')
+  wholeNumber = decimals > decimalPlaces 
+    ? wholeNumber + '0'.repeat(decimals - decimalPlaces) 
+    : wholeNumber.slice(0, decimalIndex) + wholeNumber.slice(decimalIndex + 1, decimals + decimalIndex + 1)
+  
+  return new BN(wholeNumber)
+}

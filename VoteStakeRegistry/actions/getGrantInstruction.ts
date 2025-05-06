@@ -13,6 +13,7 @@ import {
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
+import { fmtDecimalToBN } from '@utils/formatting'
 
 export const getGrantInstruction = async ({
   fromPk,
@@ -21,6 +22,7 @@ export const getGrantInstruction = async ({
   grantMintPk,
   communityMintPk,
   amount,
+  decimals,
   lockupPeriod,
   startTime,
   lockupKind,
@@ -36,6 +38,7 @@ export const getGrantInstruction = async ({
   realmPk: PublicKey
   tokenAuthority: PublicKey
   amount: number
+  decimals: number
   //days or months in case of monthly vesting lockup type
   lockupPeriod: number
   lockupKind: LockupType
@@ -73,7 +76,7 @@ export const getGrantInstruction = async ({
       new BN(startTime),
       lockupPeriod,
       allowClawback,
-      new BN(amount),
+      fmtDecimalToBN(amount, decimals)
     )
     .accounts({
       registrar,

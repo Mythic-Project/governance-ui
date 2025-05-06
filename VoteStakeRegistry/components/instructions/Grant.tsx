@@ -4,7 +4,6 @@ import Input from '@components/inputs/Input'
 import useRealm from '@hooks/useRealm'
 import {
   getMintMinAmountAsDecimal,
-  parseMintNaturalAmountFromDecimal,
 } from '@tools/sdk/units'
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { precision } from '@utils/formatting'
@@ -151,10 +150,6 @@ const Grant = ({
       const sourceAccount =
         form.governedTokenAccount.extensions.token?.account.address
       const destinationAccount = new PublicKey(form.destinationAccount)
-      const mintAmount = parseMintNaturalAmountFromDecimal(
-        form.amount!,
-        form.governedTokenAccount.extensions.mint.account.decimals,
-      )
 
       const destinationTokenOwnerRecordPk = await getTokenOwnerRecordAddress(
         realm.owner,
@@ -194,7 +189,8 @@ const Grant = ({
         tokenAuthority:
           form.governedTokenAccount.extensions.token.account.owner,
         grantMintPk: form.governedTokenAccount.extensions.mint.publicKey,
-        amount: mintAmount,
+        amount: form.amount!,
+        decimals: form.governedTokenAccount.extensions.mint.account.decimals,
         lockupPeriod: form.periods,
         startTime: form.startDateUnixSeconds,
         lockupKind: form.lockupKind.value,
