@@ -11,11 +11,13 @@ import { ProgramAccount } from '@solana/spl-governance'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { DasNftObject, useRaydiumAssetsByOwner } from '@hooks/queries/digitalAssets'
-import GovernanceAccountSelect from '../../GovernanceAccountSelect'
 import { SplGovernance } from 'governance-idl-sdk'
 import Select from '@components/inputs/Select'
 import {Raydium} from '@raydium-io/raydium-sdk-v2'
 import { BN } from '@coral-xyz/anchor'
+import GovernedAccountSelect from '../../GovernedAccountSelect'
+import { AssetAccount } from '@utils/uiTypes/assets'
+import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
 
 interface RaydiumDasNftObject extends DasNftObject {
   name: string
@@ -36,32 +38,31 @@ const CollectPoolFees = ({
 }) => {
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
-  const { governancesArray } = useGovernanceAssets()
+  const { assetAccounts } = useGovernanceAssets()
   const [selectedNft, setSelectedNft] = useState<RaydiumDasNftObject | null>(null)
 
   const [governedAccount, setGovernedAccount] = useState<
-    ProgramAccount<Governance> | undefined
+    AssetAccount | undefined
   >(undefined)
 
+  const shouldBeGoverned = !!(index !== 0 && governance)
   const splGovernance = new SplGovernance(connection.current)
-  const nativeAddress = governedAccount?.pubkey ?
-    splGovernance.pda.nativeTreasuryAccount({governanceAccount: governedAccount.pubkey}).publicKey :
-    undefined
 
-  const {data: assets} = useRaydiumAssetsByOwner(nativeAddress)
+  const { result: ownVoterWeight } = useLegacyVoterWeight()
+  const {data: assets} = useRaydiumAssetsByOwner(governedAccount?.pubkey)
   const raydiumNfts = assets?.filter((asset) => asset.name !== undefined)
  
   const { handleSetInstructions } = useContext(NewProposalContext)
 
   async function getInstruction(): Promise<UiInstruction> {
     if (
-      governedAccount?.account &&
+      governedAccount &&
       wallet?.publicKey &&
       selectedNft
     ) {
       const raydium = await Raydium.load({
         connection: connection.current,
-        owner: nativeAddress,
+        owner: governedAccount.pubkey,
       })
     
       if (selectedNft.lpAmount.isZero()) {
@@ -135,14 +136,14 @@ const CollectPoolFees = ({
         serializedInstruction : '',
         additionalSerializedInstructions,
         isValid: true,
-        governance: governedAccount,
+        governance: governedAccount.governance,
         chunkBy: 1,
       }
     } else {
       return {
         serializedInstruction: '',
         isValid: false,
-        governance: governedAccount,
+        governance: governedAccount?.governance,
         chunkBy: 1,
       }
     }
@@ -158,13 +159,15 @@ const CollectPoolFees = ({
 
   return (
     <>
-      <GovernanceAccountSelect
-        label="Governance"
-        governanceAccounts={governancesArray}
-        onChange={(value) => {
-          setGovernedAccount(value)
-        }}
+       <GovernedAccountSelect
+        label="Wallet"
+        governedAccounts={assetAccounts.filter(
+          (x) => ownVoterWeight?.canCreateProposal(x.governance.account.config),
+        )}
+        onChange={(value: AssetAccount) => setGovernedAccount(value)}
         value={governedAccount}
+        shouldBeGoverned={shouldBeGoverned}
+        governance={governance}
       />
 
       <Select

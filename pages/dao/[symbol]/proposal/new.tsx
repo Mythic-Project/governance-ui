@@ -155,6 +155,7 @@ import CancelLimitOrder from './components/instructions/Manifest/CancelLimitOrde
 import WithdrawFees from './components/instructions/Token2022/WithdrawFees'
 import SquadsV4RemoveMember from './components/instructions/Squads/SquadsV4RemoveMember'
 import CollectPoolFees from './components/instructions/Raydium/CollectPoolFees'
+import CollectVestedTokens from './components/instructions/Raydium/CollectVestedTokens'
 
 const TITLE_LENGTH_LIMIT = 130
 // the true length limit is either at the tx size level, and maybe also the total account size level (I can't remember)
@@ -633,7 +634,8 @@ const New = () => {
       [Instructions.SymmetryEditBasket]: SymmetryEditBasket,
       [Instructions.SymmetryDeposit]: SymmetryDeposit,
       [Instructions.SymmetryWithdraw]: SymmetryWithdraw,
-      [Instructions.CollectPoolFees]: CollectPoolFees 
+      [Instructions.CollectPoolFees]: CollectPoolFees ,
+      [Instructions.CollectVestedTokens]: CollectVestedTokens
     }),
     [governance?.pubkey?.toBase58()],
   )

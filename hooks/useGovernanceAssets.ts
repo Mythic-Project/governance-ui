@@ -836,6 +836,10 @@ export default function useGovernanceAssets() {
       name: 'Collect Pool Fees (CPMM)',
       packageId: PackageEnum.Raydium,
     },
+    [Instructions.CollectVestedTokens]: {
+      name: 'Collect Vested Tokens',
+      packageId: PackageEnum.Raydium,
+    },
     /*
       ██    ██ ███████ ██████      ██████  ██      ██    ██  ██████  ██ ███    ██
       ██    ██ ██      ██   ██     ██   ██ ██      ██    ██ ██       ██ ████   ██
