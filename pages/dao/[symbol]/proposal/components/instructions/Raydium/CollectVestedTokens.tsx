@@ -61,7 +61,6 @@ const CollectVestedTokens = ({
         WSOL_MINT_PK.toBuffer(),
       ], LAUNCHPAD_PROGRAM_ID)
 
-
       const vestingAccount = PublicKey.findProgramAddressSync([
         Buffer.from("pool_vesting"),
         poolId.toBuffer(),
@@ -83,6 +82,10 @@ const CollectVestedTokens = ({
       }
       
       const poolInfo = await raydium.launchpad.getRpcPoolInfo({poolId})
+
+      if (!poolInfo.creator.equals(governedAccount.pubkey)) {
+        throw new Error('The DAO does not own the vesting tokens.')
+      }
       const baseVault = poolInfo.vaultA
       const walletAta = associatedAddress({mint: mintA,owner: governedAccount.pubkey})
 
@@ -127,7 +130,7 @@ const CollectVestedTokens = ({
   
   useEffect(() => {
     handleSetInstructions(
-      { governedAccount: governedAccount, getInstruction },
+      { governedAccount: governedAccount?.governance, getInstruction },
       index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
