@@ -16,6 +16,7 @@ import { AccountMetaData } from '@solana/spl-governance'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { abbreviateAddress } from '@utils/formatting'
 import tokenPriceService from '@utils/services/tokenPrice'
+import { tryGetTokenMint } from '@utils/tokens'
 import { UiOpenOrder } from '@utils/uiTypes/manifest'
 
 export type CancelOrderInstructionArgs = {
@@ -102,12 +103,36 @@ export const MANIFEST_INSTRUCTIONS = {
         const amount = params.baseAtoms
 
         const side = params.isBid ? 'Buy' : 'Sell'
-        const quoteTokenInfo = tokenPriceService.getTokenInfo(
+        let quoteTokenInfo = tokenPriceService.getTokenInfo(
           accounts[15].pubkey.toBase58(),
         )
-        const baseTokenInfo = tokenPriceService.getTokenInfo(
+        let baseTokenInfo = tokenPriceService.getTokenInfo(
           accounts[10].pubkey.toBase58(),
         )
+        console.log(
+          accounts[15].pubkey.toBase58(),
+          accounts[10].pubkey.toBase58(),
+        )
+        if (!baseTokenInfo) {
+          const resp = await connection.getParsedAccountInfo(
+            accounts[10].pubkey,
+          )
+          baseTokenInfo = {
+            //@ts-ignore
+            decimals: resp.value?.data.parsed.info.decimals,
+            symbol: accounts[10].pubkey.toBase58(),
+          } as any
+        }
+        if (!quoteTokenInfo) {
+          const resp = await connection.getParsedAccountInfo(
+            accounts[15].pubkey,
+          )
+          quoteTokenInfo = {
+            //@ts-ignore
+            decimals: resp.value?.data.parsed.info.decimals,
+            symbol: accounts[15].pubkey.toBase58(),
+          } as any
+        }
 
         const market = accounts[3].pubkey
 

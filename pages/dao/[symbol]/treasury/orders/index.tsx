@@ -1167,7 +1167,16 @@ export default function Orders() {
                       </div>
                       <div
                         onClick={() => {
-                          setSellAmount(uiAmount.toString())
+                          setSellAmount(
+                            toUiDecimals(
+                              toNative(
+                                uiAmount,
+                                sellToken?.extensions.mint?.account.decimals ||
+                                  6,
+                              ).toNumber() - 1,
+                              sellToken?.extensions.mint?.account.decimals || 6,
+                            ).toString(),
+                          )
                         }}
                         className="text-xs cursor-pointer hover:text-primary-light"
                       >
