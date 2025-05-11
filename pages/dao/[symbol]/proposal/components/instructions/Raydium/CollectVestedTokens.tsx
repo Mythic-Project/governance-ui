@@ -94,7 +94,7 @@ const CollectVestedTokens = ({
         { pubkey: launchpadAuthority, isSigner: false, isWritable: false },
         { pubkey: poolId, isSigner: false, isWritable: true },
         { pubkey: vestingAccount, isSigner: false, isWritable: true },
-        { pubkey: baseVault, isSigner: true, isWritable: true },
+        { pubkey: baseVault, isSigner: false, isWritable: true },
         { pubkey: walletAta, isSigner: false, isWritable: true },
         { pubkey: mintA, isSigner: false, isWritable: false },
         { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
