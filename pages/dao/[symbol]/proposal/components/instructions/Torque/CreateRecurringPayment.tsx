@@ -177,13 +177,6 @@ function CreateRecurringPayment({
       })
     }
 
-    // If it's a Monthly stream we need to make sure the payment frequency is greater than 1
-    // if(form.streamType.value === 'FIRST_OF_EVERY_MONTH' && (!form.paymentFrequency || form.paymentFrequency <= 1)) {
-    //   return setFormErrors({
-    //     paymentFrequency: 'Payment frequency must be greater than 1',
-    //   })
-    // }
-
     const interval =
       form.streamType.value === 'FIXED_INTERVAL'
         ? convertToSeconds(
@@ -198,7 +191,6 @@ function CreateRecurringPayment({
 
     const offer = await createStreamOffer(form, project.id)
 
-    console.log('offer', offer)
     const { serializedIx } = await createStreamDistributor({
       offerId: offer.id,
       totalAmount: totalAmount,

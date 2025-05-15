@@ -8,22 +8,6 @@ import { TorqueCreateRecurringPaymentForm, TorqueStreamType } from '@utils/uiTyp
 import { useRef } from 'react'
 import { StreamedRewardCadenceType } from '@torque-labs/sdk'
 
-// Helper function to convert time units to seconds
-const convertToSeconds = (value: number, unit: string): number => {
-  switch (unit) {
-    case 'days':
-      return value * 86400
-    case 'weeks':
-      return value * 604800
-    case 'months':
-      return value * 2592000 // Approximate
-    case 'years':
-      return value * 31536000 // Approximate
-    default:
-      return 0
-  }
-}
-
 interface CreateStreamDistributorArgs {
     offerId: string,
     totalAmount: number,
@@ -55,8 +39,9 @@ export function useTorque() {
       }
 
       sdkRef.current = new TorqueSDK({
-        apiUrl: 'https://server-devnet.torque.so',
+        apiUrl: process.env.NEXT_PUBLIC_TORQUE_API_URL || 'https://server.torque.so',
         rpcUrl,
+        daoWallet: realmsInfo?.realmId?.toBase58()
       })
       await sdkRef.current.authenticate(wallet)
     }
@@ -74,7 +59,7 @@ export function useTorque() {
       }
       project = existingProjects[0]?.id ? existingProjects[0] : null
     } catch (error) {
-      console.log("error", error)
+
       const projectInput: ProjectInput = {
         name: `Realms DAO - ${daoWallet}`,
         description: `Project to handle all Torque related activities for ${daoWallet}`,
@@ -89,8 +74,7 @@ export function useTorque() {
   async function createStreamOffer(form: TorqueCreateRecurringPaymentForm, projectId: string) {
     const torqueSdk = await getSdk()
 
-    const startDate = form.streamType.value === 'FIRST_OF_EVERY_MONTH' ? new Date() : new Date(form.startDate)
-    const endDate = form.streamType.value === 'FIRST_OF_EVERY_MONTH' ? new Date(startDate.setMonth(new Date().getMonth() + form.paymentDuration)) : new Date(startDate.setDate(new Date().getSeconds() + form.paymentDuration))
+    const endDate = form.streamType.value === 'FIRST_OF_EVERY_MONTH' ? new Date(new Date().setMonth(new Date().getMonth() + form.paymentDuration)) : new Date(new Date().setDate(new Date().getSeconds() + form.paymentDuration))
 
     const requirements: OfferInput['requirements'] = [
         {
@@ -121,7 +105,7 @@ export function useTorque() {
         requirements: requirements,
         metadata: metadata,
         audience: audience,
-        startTime: new Date(form.startDate),
+        startTime: new Date(),
         endTime: endDate,
       }
   
@@ -143,7 +127,7 @@ export function useTorque() {
         maxStreams: args.numberOfPayments,
         requireClaim: true,
         cadence: {
-            seconds: convertToSeconds(args.paymentInterval || 0, 'days'),
+            seconds: args.paymentInterval ?? 3600,
             startDate: new Date(args.startDate)
         }
     } : {
@@ -177,13 +161,9 @@ export function useTorque() {
         },
         closeAuthority: args.payer
       };
-
-      console.log("distributionInput", distributionInput)
   
       const distributor = await torqueSdk.offers.addDistributor(args.offerId, distributionInput)
       const {instruction: distributorIx} = await torqueSdk.offers.distributorInstructions(args.offerId, distributor.id, args.payer, true )
-
-      console.log("distributorIx", distributorIx)
 
       const serializedIx = serializeInstructionToBase64(distributorIx as TransactionInstruction)
 

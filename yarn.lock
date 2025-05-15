@@ -7385,10 +7385,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@torque-labs/sdk@0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@torque-labs/sdk/-/sdk-0.0.12.tgz#1e5bfc455c4174de523c908675c0fc241dfc03cb"
-  integrity sha512-umDm7mVRjXeZp6gU8BIrDClzbpPVFupFTUbQfwPNyYRci+s5vtTDbeH/15Bxk6FJrMW3CLWXadzt+11i+XM7rw==
+"@torque-labs/sdk@0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@torque-labs/sdk/-/sdk-0.0.13.tgz#aa084558c7285ac5964b4a7c671f49a2f072dd5f"
+  integrity sha512-GLtJbc7RnKX60a0vFT+Ge6erWFglKC5DT1SVaRB11GgJvQAElXwGRG5BWLaRBqZ/8wPMbtaqKKFWSSY4HoD5OQ==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.23"
     "@solana/wallet-standard-features" "^1.2.0"
