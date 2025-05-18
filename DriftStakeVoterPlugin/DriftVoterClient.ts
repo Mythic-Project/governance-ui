@@ -79,6 +79,7 @@ export class DriftVoterClient extends Client<DriftStakeVoter> {
     const insuranceFundStake = await queryClient.fetchQuery({
       queryKey: ['Insurance Fund Stake', insuranceFundStakePk.toString()],
       queryFn: async () =>
+        // @ts-ignore
         drift.account.insuranceFundStake.fetchNullable(insuranceFundStakePk),
     })
 
