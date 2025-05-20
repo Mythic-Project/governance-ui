@@ -67,4 +67,4 @@ if (process.env.SENTRY_AUTH_TOKEN) {
   })
 }
 
-module.exports = config
+module.exports = {...config, swcMinify: true}
