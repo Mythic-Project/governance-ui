@@ -314,9 +314,13 @@ export const useRaydiumAssetsByOwner = (owner: undefined | PublicKey) => {
               new BN(0)
 
             const id = x.id
-            const name = mintA && mintB && id ?
-              `${mintB}-${mintA} (${id})` :
-              undefined
+            
+            const name = 
+              typeof mintA === 'string' && 
+              typeof mintB === 'string' && 
+              typeof id === 'string' ?
+                `${mintB}-${mintA} (${id})` :
+                undefined
 
             return {
               name,
