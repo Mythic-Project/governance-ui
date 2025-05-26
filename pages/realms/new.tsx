@@ -54,7 +54,7 @@ const New: React.FC = () => {
         </div>
         <div className="flex items-center justify-center px-4 mt-10 space-x-8">
           <a
-            href="https://governance-docs.vercel.app/"
+            href="https://docs.realms.today"
             target="_blank"
             rel="noopener noreferrer"
           >
