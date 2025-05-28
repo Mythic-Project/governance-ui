@@ -6,6 +6,7 @@ const withTM = require('next-transpile-modules')([
   '@solana/wallet-adapter-base',
   '@solana/wallet-adapter-phantom',
   '@solana/wallet-adapter-sollet',
+  '@pythnetwork/staking-sdk',
 ])
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({

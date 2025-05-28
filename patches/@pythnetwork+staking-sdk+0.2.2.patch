@@ -1,0 +1,30 @@
+diff --git a/node_modules/@pythnetwork/staking-sdk/dist/pyth-staking-client.js b/node_modules/@pythnetwork/staking-sdk/dist/pyth-staking-client.js
+index a460a21..35fb7b1 100644
+--- a/node_modules/@pythnetwork/staking-sdk/dist/pyth-staking-client.js
++++ b/node_modules/@pythnetwork/staking-sdk/dist/pyth-staking-client.js
+@@ -6,9 +6,9 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
+ import { JSONParser } from "@streamparser/json";
+ import { z } from "zod";
+ import { GOVERNANCE_ADDRESS, MAX_VOTER_WEIGHT, FRACTION_PRECISION_N, ONE_YEAR_IN_SECONDS, POSITIONS_ACCOUNT_SIZE, } from "./constants.js";
+-import IntegrityPoolIdl from "./idl/integrity-pool.json" with { type: "json" };
+-import PublisherCapsIdl from "./idl/publisher-caps.json" with { type: "json" };
+-import StakingIdl from "./idl/staking.json" with { type: "json" };
++import IntegrityPoolIdl from "./idl/integrity-pool.json";
++import PublisherCapsIdl from "./idl/publisher-caps.json";
++import StakingIdl from "./idl/staking.json";
+ import { getConfigAddress, getDelegationRecordAddress, getPoolConfigAddress, getStakeAccountCustodyAddress, getStakeAccountMetadataAddress, getTargetAccountAddress, } from "./pdas.js";
+ import { PositionState } from "./types.js";
+ import { bigintMax, bigintMin } from "./utils/bigint.js";
+diff --git a/node_modules/@pythnetwork/staking-sdk/dist/pythnet-client.js b/node_modules/@pythnetwork/staking-sdk/dist/pythnet-client.js
+index b94ca88..281a82d 100644
+--- a/node_modules/@pythnetwork/staking-sdk/dist/pythnet-client.js
++++ b/node_modules/@pythnetwork/staking-sdk/dist/pythnet-client.js
+@@ -1,7 +1,7 @@
+ import { AnchorProvider, Program } from "@coral-xyz/anchor";
+ import { AccountType, getPythProgramKeyForCluster, parseBaseData, parsePriceData, } from "@pythnetwork/client";
+ import { Connection } from "@solana/web3.js";
+-import StakeCapsParametersIdl from "./idl/stake-caps-parameters.json" with { type: "json" };
++import StakeCapsParametersIdl from "./idl/stake-caps-parameters.json";
+ import { getStakeCapsParametersAddress } from "./pdas.js";
+ import { convertBNToBigInt } from "./utils/bn.js";
+ import { DummyWallet } from "./utils/wallet.js";
