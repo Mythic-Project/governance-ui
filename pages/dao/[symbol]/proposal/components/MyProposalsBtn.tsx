@@ -2,6 +2,7 @@ import useRealm from '@hooks/useRealm'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   getProposalDepositsByDepositPayer,
+  getTokenOwnerRecord,
   getVoteRecord,
   getVoteRecordAddress,
   ProgramAccount,
@@ -13,7 +14,7 @@ import {
   withRefundProposalDeposit,
   withRelinquishVote,
 } from '@solana/spl-governance'
-import { Transaction, TransactionInstruction } from '@solana/web3.js'
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import Modal from '@components/Modal'
 import Button from '@components/Button'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
@@ -247,6 +248,17 @@ const MyProposalsBn = () => {
           : 'council'
       const governanceAuthority = wallet!.publicKey!
       const beneficiary = wallet!.publicKey!
+
+      if (!voterTokenRecord && realm && wallet?.publicKey) {
+        const voterTokenOwnerRecordKey = PublicKey.findProgramAddressSync([
+          Buffer.from('governance'),
+          realm.pubkey.toBuffer(),
+          proposal.account.governingTokenMint.toBuffer(),
+          wallet?.publicKey?.toBuffer()
+        ], realm.owner)[0]
+
+        voterTokenRecord = await getTokenOwnerRecord(connection, voterTokenOwnerRecordKey)
+      }
 
       let voteRecordPk = await getVoteRecordAddress(
         realm!.owner,
