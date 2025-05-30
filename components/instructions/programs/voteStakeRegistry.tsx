@@ -496,4 +496,7 @@ export const VOTE_STAKE_REGISTRY_INSTRUCTIONS = {
   '5sWzuuYkeWLBdAv3ULrBfqA51zF7Y4rnVzereboNDCPn': common_instructions(
     new PublicKey('5sWzuuYkeWLBdAv3ULrBfqA51zF7Y4rnVzereboNDCPn'),
   ),
+  'HBZ5oXbFBFbr8Krt2oMU7ApHFeukdRS8Rye1f3T66vg5': common_instructions(
+    new PublicKey('HBZ5oXbFBFbr8Krt2oMU7ApHFeukdRS8Rye1f3T66vg5'),
+  ),
 }
