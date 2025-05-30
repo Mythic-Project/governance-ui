@@ -141,6 +141,7 @@ import MeshChangeThresholdMember from './components/instructions/Squads/MeshChan
 import SquadsV4AddMember from './components/instructions/Squads/SquadsV4AddMember'
 import SquadsV4ChangeThresholdMember from './components/instructions/Squads/SquadsV4ChangeThresholdMember'
 import PythRecoverAccount from './components/instructions/Pyth/PythRecoverAccount'
+import PythTransferAccount from './components/instructions/Pyth/PythTransferAccount'
 import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 import BurnTokens from './components/instructions/BurnTokens'
 import RemoveLockup from './components/instructions/Validators/removeLockup'
@@ -534,6 +535,7 @@ const New = () => {
         SquadsV4ChangeThresholdMember,
       [Instructions.PythRecoverAccount]: PythRecoverAccount,
       [Instructions.PythUpdatePoolAuthority]: PythUpdatePoolAuthority,
+      [Instructions.PythTransferAccount]: PythTransferAccount,
       [Instructions.CreateSolendObligationAccount]: CreateObligationAccount,
       [Instructions.InitSolendObligationAccount]: InitObligationAccount,
       [Instructions.DepositReserveLiquidityAndObligationCollateral]:

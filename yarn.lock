@@ -4007,6 +4007,15 @@
     "@coral-xyz/borsh" "^0.28.0"
     buffer "^6.0.1"
 
+"@pythnetwork/client@^2.22.0":
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/@pythnetwork/client/-/client-2.22.1.tgz#35ddf0301b59dadefcb7aee492b0ce87758512a9"
+  integrity sha512-/RjUB7BMWl42Hr3qSezmO+tsOPBdtrNNXkjskJgZx0kYi+O1UlAweWuwjWBXTNOqlL9jab24odomx8KCAzFjtg==
+  dependencies:
+    "@coral-xyz/anchor" "^0.29.0"
+    "@coral-xyz/borsh" "^0.28.0"
+    buffer "^6.0.1"
+
 "@pythnetwork/client@~2.21.1":
   version "2.21.1"
   resolved "https://registry.yarnpkg.com/@pythnetwork/client/-/client-2.21.1.tgz#524a278432dcec14fcf8ba67dfd4720df19b5cc3"
@@ -4067,12 +4076,13 @@
     bs58 "^5.0.0"
     jito-ts "^3.0.1"
 
-"@pythnetwork/staking-sdk@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@pythnetwork/staking-sdk/-/staking-sdk-0.0.2.tgz#38dfd6f8356c6544875c6d06aafa55886b7bc1a5"
-  integrity sha512-IfHJIJ5ZwF8x86/10/5Gs9SUAj4fgW013OiWekfzXhogI2MT27TFQqpaCGj8ndJ4XVlzMk3MDGRuOmujtGCVGA==
+"@pythnetwork/staking-sdk@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@pythnetwork/staking-sdk/-/staking-sdk-0.0.4.tgz#c080aa2bf344db8bee54aef0a6bebd46e35aad16"
+  integrity sha512-7M9uMXXdvl5snIg1CUd2yeHc4IvPDY56/pSj2ZggPuVYQ3lQ18xE7IR1FDAxM6ZCkjXhrPnb/mTbevUp+hsEEw==
   dependencies:
     "@coral-xyz/anchor" "^0.30.1"
+    "@pythnetwork/client" "^2.22.0"
     "@pythnetwork/solana-utils" "0.4.2"
     "@solana/spl-governance" "^0.3.28"
     "@solana/spl-token" "^0.3.7"

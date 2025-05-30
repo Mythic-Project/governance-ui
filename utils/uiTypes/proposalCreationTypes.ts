@@ -399,6 +399,7 @@ export enum Instructions {
   SquadsV4RemoveMember,
   PythRecoverAccount,
   PythUpdatePoolAuthority,
+  PythTransferAccount,
   StakeValidator,
   SwitchboardFundOracle,
   WithdrawFromOracle,

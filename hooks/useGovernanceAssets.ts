@@ -683,6 +683,10 @@ export default function useGovernanceAssets() {
       name: 'Update Pool Authority',
       packageId: PackageEnum.Pyth,
     },
+    [Instructions.PythTransferAccount]: {
+      name: 'Transfer Account',
+      packageId: PackageEnum.Pyth,
+    },
     /*
       ███████ ███████ ██████  ██    ██ ███    ███
       ██      ██      ██   ██ ██    ██ ████  ████
