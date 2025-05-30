@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   getProposalDepositsByDepositPayer,
   getTokenOwnerRecord,
+  getTokenOwnerRecordAddress,
   getVoteRecord,
   getVoteRecordAddress,
   ProgramAccount,
@@ -250,12 +251,12 @@ const MyProposalsBn = () => {
       const beneficiary = wallet!.publicKey!
 
       if (!voterTokenRecord && realm && wallet?.publicKey) {
-        const voterTokenOwnerRecordKey = PublicKey.findProgramAddressSync([
-          Buffer.from('governance'),
-          realm.pubkey.toBuffer(),
-          proposal.account.governingTokenMint.toBuffer(),
-          wallet?.publicKey?.toBuffer()
-        ], realm.owner)[0]
+        const voterTokenOwnerRecordKey = await getTokenOwnerRecordAddress(
+          realm.owner,
+          realm.pubkey,
+          proposal.account.governingTokenMint,
+          wallet.publicKey
+        )
 
         voterTokenRecord = await getTokenOwnerRecord(connection, voterTokenOwnerRecordKey)
       }
