@@ -28,6 +28,7 @@ import queryClient from '@hooks/queries/queryClient'
 import asFindable from '@utils/queries/asFindable'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 const WithDrawCommunityTokens = () => {
   const { getOwnedDeposits } = useDepositStore()
@@ -47,9 +48,14 @@ const WithDrawCommunityTokens = () => {
   const { connection } = useConnection()
   const deposits = useDepositStore((s) => s.state.deposits)
   const maxVoterWeight = useMaxVoteRecord()?.pubkey || undefined
+
+  const mint = vsrClient?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] ?
+    deposits[0].mint.publicKey :
+    realm?.account.communityMint
+    
   const depositRecord = deposits.find(
     (x) =>
-      x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
+      x.mint.publicKey.toBase58() === mint?.toBase58() &&
       x.lockup.kind.none,
   )
   const withdrawAllTokens = async function () {
@@ -143,7 +149,7 @@ const WithDrawCommunityTokens = () => {
     await withVoteRegistryWithdraw({
       instructions,
       walletPk: wallet!.publicKey!,
-      mintPk: ownTokenRecord!.account.governingTokenMint,
+      mintPk: mint!,
       realmPk: realm!.pubkey!,
       amount: depositRecord!.amountDepositedNative,
       communityMintPk: realm!.account.communityMint,
@@ -187,6 +193,13 @@ const WithDrawCommunityTokens = () => {
           connection.rpcEndpoint,
           wallet!.publicKey!,
         ),
+      )
+      queryClient.invalidateQueries(
+        ['get-custom-vsr-token-account', {
+          realm: realm?.pubkey.toBase58(), 
+          mint: realm?.account.communityMint.toBase58(), 
+          pubkey: wallet?.publicKey?.toBase58()
+        }]
       )
     } catch (ex) {
       console.error(

@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { HeliumVsrClient } from 'HeliumVotePlugin/sdk/client'
 import { Registrar, Voter } from './accounts'
 import { VsrClient } from './client'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 export const tryGetVoter = async (
   voterPk: PublicKey,
@@ -63,6 +64,11 @@ export const getMintCfgIdx = async (
   client: VsrClient,
 ) => {
   const existingRegistrar = await tryGetRegistrar(registrarPk, client)
+
+  if (client.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK) {
+    return 0
+  }
+  
   const mintCfgIdx = existingRegistrar?.votingMints.findIndex(
     (x) => x.mint.toBase58() === mintPK.toBase58(),
   )

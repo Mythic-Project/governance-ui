@@ -16,6 +16,7 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import queryClient from '@hooks/queries/queryClient'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
   const { getOwnedDeposits } = useDepositStore()
@@ -48,10 +49,15 @@ const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
       endpoint,
     )
     try {
+      const mintPk = vsrClient?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
+        await vsrClient.getRegistrarAccount(realm.pubkey, realm.account.communityMint!)
+          .then(r => r?.votingMints[0].mint!) :
+        realm.account.communityMint!
+
       await voteRegistryDepositWithoutLockup({
         rpcContext,
         fromPk: realmTokenAccount!.publicKey,
-        mintPk: realm.account.communityMint!,
+        mintPk,
         realmPk: realm.pubkey,
         programId: realm.owner,
         programVersion: realmInfo?.programVersion!,
@@ -72,6 +78,14 @@ const DepositCommunityTokensBtn = ({ className = '', inAccountDetails }) => {
           connection.rpcEndpoint,
           wallet!.publicKey!,
         ),
+      )
+
+      queryClient.invalidateQueries(
+        ['get-custom-vsr-token-account', {
+          realm: realm.pubkey.toBase58(), 
+          mint: realm.account.communityMint.toBase58(), 
+          pubkey: wallet?.publicKey?.toBase58()
+        }]
       )
     } catch (e) {
       console.log(e)

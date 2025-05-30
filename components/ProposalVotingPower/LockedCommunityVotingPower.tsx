@@ -16,6 +16,8 @@ import {
   VoterWeightPlugins,
 } from '../../VoterWeightPlugins/lib/types'
 import { BN } from '@coral-xyz/anchor'
+import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 interface Props {
   className?: string
@@ -32,6 +34,8 @@ const isVSRLastVoterWeightPlugin = (plugins: VoterWeightPlugins | undefined) =>
 
 export default function LockedCommunityVotingPower(props: Props) {
   const realm = useRealmQuery().data?.result
+  const realmConfig = useRealmConfigQuery().data?.result
+
   const { data: mintData, isLoading: mintLoading } =
     useRealmCommunityMintInfoQuery()
   const mint = mintData?.result
@@ -62,6 +66,13 @@ export default function LockedCommunityVotingPower(props: Props) {
   // memoize useAsync inputs to prevent constant refetch
   const relevantDelegators = useDelegators('community')
 
+  const updatedRealmTokenAccount = realmTokenAccount as any
+
+  const decimals = 
+    realmConfig?.account.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && updatedRealmTokenAccount ?
+      updatedRealmTokenAccount.decimals as number :
+      mint?.decimals ?? 0
+  
   if (isLoading || !votingPowerReady || mintLoading) {
     return (
       <div
@@ -90,10 +101,10 @@ export default function LockedCommunityVotingPower(props: Props) {
 
       {depositAmount.isGreaterThan(0) && (
         <>
-          <div className="mt-3 text-xs text-white/50">
+          <div className="mt-3 mb-3 text-xs text-white/50">
             You have{' '}
             {mint
-              ? depositAmount.shiftedBy(-mint.decimals).toFormat()
+              ? depositAmount.shiftedBy(-decimals).toFormat()
               : depositAmount.toFormat()}{' '}
             more {tokenName} votes in your wallet. Do you want to deposit them
             to increase your voting power in this Dao?

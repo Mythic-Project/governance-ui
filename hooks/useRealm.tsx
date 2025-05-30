@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
-import { NFT_PLUGINS_PKS } from '../constants/plugins'
+import { CUSTOM_BIO_VSR_PLUGIN_PK, NFT_PLUGINS_PKS } from '../constants/plugins'
 import { useVsrMode } from './useVsrMode'
 import { useRealmQuery } from './queries/realm'
 import {
@@ -9,7 +9,8 @@ import {
 } from './queries/tokenOwnerRecord'
 import { useRealmConfigQuery } from './queries/realmConfig'
 import { useSelectedRealmInfo } from './selectedRealm/useSelectedRealmRegistryEntry'
-import { useUserTokenAccountsQuery } from './queries/tokenAccount'
+import { useTokenAccountForCustomVsrQuery, useUserTokenAccountsQuery } from './queries/tokenAccount'
+import { PublicKey } from '@metaplex-foundation/js'
 
 /**
  * @deprecated This hook has been broken up into many smaller hooks, use those instead, DO NOT use this
@@ -17,10 +18,10 @@ import { useUserTokenAccountsQuery } from './queries/tokenAccount'
 export default function useRealm() {
   const router = useRouter()
   const { symbol } = router.query
-
   const { data: tokenAccounts } = useUserTokenAccountsQuery()
   const realm = useRealmQuery().data?.result
   const realmInfo = useSelectedRealmInfo()
+  const {data: vsrTokenAccount} = useTokenAccountForCustomVsrQuery()
 
   const config = useRealmConfigQuery().data?.result
   const currentPluginPk = config?.account?.communityTokenConfig.voterWeightAddin
@@ -29,12 +30,17 @@ export default function useRealm() {
   const ownCouncilTokenRecord = useUserCouncilTokenOwnerRecord().data?.result
 
   const realmTokenAccount = useMemo(
-    () =>
-      realm &&
-      tokenAccounts?.find((a) =>
-        a.account.mint.equals(realm.account.communityMint),
-      ),
-    [realm, tokenAccounts],
+    () => {
+      if (config?.account.communityTokenConfig.voterWeightAddin?.equals(new PublicKey(CUSTOM_BIO_VSR_PLUGIN_PK))) {
+        return vsrTokenAccount
+      } else {
+        return realm &&
+          tokenAccounts?.find((a) =>
+            a.account.mint.equals(realm.account.communityMint),
+          )
+      }
+    },
+    [realm, tokenAccounts, vsrTokenAccount, config?.account.communityTokenConfig.voterWeightAddin],
   )
 
   const councilTokenAccount = useMemo(

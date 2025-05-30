@@ -47,6 +47,7 @@ import {
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useVsrGovpower } from '@hooks/queries/plugins/vsr'
 import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 interface DepositBox {
   mintPk: PublicKey
@@ -62,7 +63,7 @@ const LockTokensAccount: React.FC<{
 }> = ({ tokenOwnerRecordPk, children }) => {
   const realm = useRealmQuery().data?.result
   const config = useRealmConfigQuery().data?.result
-  const mint = useRealmCommunityMintInfoQuery().data?.result
+  const defaultMint = useRealmCommunityMintInfoQuery().data?.result
   const councilMint = useRealmCouncilMintInfoQuery().data?.result
   const { realmInfo } = useRealm()
   const [isLockModalOpen, setIsLockModalOpen] = useState(false)
@@ -82,6 +83,11 @@ const LockTokensAccount: React.FC<{
   )
   const [isOwnerOfDeposits, setIsOwnerOfDeposits] = useState(true)
 
+  const mint = 
+    config?.account.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] ?
+      deposits[0].mint.account :
+      defaultMint
+  
   const { data: tokenOwnerRecord } =
     useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk)
   const tokenOwnerRecordWalletPk =

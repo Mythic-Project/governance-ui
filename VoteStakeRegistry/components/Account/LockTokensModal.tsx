@@ -56,6 +56,7 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import queryClient from '@hooks/queries/queryClient'
 import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 const YES = 'Yes'
 const NO = 'No'
@@ -71,7 +72,7 @@ const LockTokensModal = ({
 }) => {
   const { getOwnedDeposits } = useDepositStore()
   const realm = useRealmQuery().data?.result
-  const mint = useRealmCommunityMintInfoQuery().data?.result
+  const defaultMint = useRealmCommunityMintInfoQuery().data?.result
   const { realmTokenAccount, realmInfo } = useRealm()
   const { data: tokenOwnerRecordPk } = useAddressQuery_CommunityTokenOwner()
 
@@ -177,9 +178,19 @@ const LockTokensModal = ({
     realm,
   )
 
+  const isCustomBioPlugin = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] !== undefined
+  
+  const depositMint = isCustomBioPlugin ?
+    deposits[0].mint.publicKey
+    : realm?.account.communityMint
+
+  const mint = isCustomBioPlugin ?
+    deposits[0].mint.account
+    : defaultMint
+
   const depositRecord = deposits.find(
     (x) =>
-      x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
+      x.mint.publicKey.toBase58() === depositMint!.toBase58() &&
       x.lockup.kind.none,
   )
   const [lockupPeriodDays, setLockupPeriodDays] = useState<number>(0)
@@ -222,6 +233,7 @@ const LockTokensModal = ({
           )
         : getMintDecimalAmount(mint, depositRecord?.amountDepositedNative)
       : 0
+
   const maxAmount = depositToUnlock ? maxAmountToUnlock : maxAmountToLock
   const maxAmountToLockFmt =
     depositRecord && mint && realmTokenAccount
@@ -303,7 +315,7 @@ const LockTokensModal = ({
     }
     await voteRegistryLockDeposit({
       rpcContext,
-      mintPk: realm!.account.communityMint!,
+      mintPk: depositMint!,
       communityMintPk: realm!.account.communityMint!,
       realmPk: realm!.pubkey!,
       programId: realm!.owner,
@@ -327,6 +339,13 @@ const LockTokensModal = ({
     })
     queryClient.invalidateQueries(
       tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!),
+    )
+    queryClient.invalidateQueries(
+      ['get-custom-vsr-token-account', {
+        realm: realm?.pubkey.toBase58(), 
+        mint: realm?.account.communityMint.toBase58(), 
+        pubkey: wallet?.publicKey?.toBase58()
+      }]
     )
     onClose()
   }

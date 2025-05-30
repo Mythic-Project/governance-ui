@@ -10,9 +10,10 @@ import {
   getVoterPDA,
   getVoterWeightPDA,
 } from 'VoteStakeRegistry/sdk/accounts'
-import { tryGetTokenAccount } from '@utils/tokens'
 import { VsrClient } from './client'
 import { withCreateTokenOwnerRecord } from '@solana/spl-governance'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const withVoteRegistryWithdraw = async ({
   instructions,
@@ -49,6 +50,10 @@ export const withVoteRegistryWithdraw = async ({
   }
   const clientProgramId = client!.program.programId
 
+  const tokenProgram = clientProgramId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
+    TOKEN_2022_PROGRAM_ID :
+    TOKEN_PROGRAM_ID
+
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
@@ -63,7 +68,7 @@ export const withVoteRegistryWithdraw = async ({
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    tokenProgram,
     mintPk,
     voter,
     true,
@@ -71,17 +76,19 @@ export const withVoteRegistryWithdraw = async ({
 
   const ataPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-    TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+    tokenProgram,
     mintPk, // mint
     walletPk, // owner
     true,
   )
-  const isExistingAta = await tryGetTokenAccount(connection, ataPk)
+
+  const isExistingAta = await connection.getAccountInfo(ataPk)
+
   if (!isExistingAta) {
     instructions.push(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+        tokenProgram,
         mintPk, // mint
         ataPk, // ata
         walletPk, // owner of token account
@@ -111,9 +118,17 @@ export const withVoteRegistryWithdraw = async ({
       voterWeightRecord: voterWeightPk,
       vault: voterATAPk,
       destination: ataPk,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram
     })
     .instruction()
+
+    if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+      withdrawInstruction.keys.splice(6, 0, {
+        pubkey: mintPk,
+        isSigner: false,
+        isWritable: false,
+      })
+    }
   instructions.push(withdrawInstruction)
 
   if (closeDepositAfterOperation) {

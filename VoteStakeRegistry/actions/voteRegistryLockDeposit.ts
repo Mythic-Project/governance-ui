@@ -4,7 +4,7 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js'
-import { RpcContext, TOKEN_PROGRAM_ID } from '@solana/spl-governance'
+import { RpcContext } from '@solana/spl-governance'
 import { sendTransaction } from 'utils/send'
 
 import { BN } from '@coral-xyz/anchor'
@@ -12,6 +12,7 @@ import { LockupType } from 'VoteStakeRegistry/sdk/accounts'
 import { withCreateNewDeposit } from '../sdk/withCreateNewDeposit'
 import { getPeriod } from 'VoteStakeRegistry/tools/deposits'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const voteRegistryLockDeposit = async ({
   rpcContext,
@@ -59,7 +60,7 @@ export const voteRegistryLockDeposit = async ({
     amountFromVoteRegistryDeposit,
   )
   const instructions: TransactionInstruction[] = []
-  const { depositIdx, voter, registrar, voterATAPk } =
+  const { depositIdx, voter, registrar, voterATAPk, tokenProgram } =
     await withCreateNewDeposit({
       instructions,
       walletPk: rpcContext.walletPubkey,
@@ -101,9 +102,18 @@ export const voteRegistryLockDeposit = async ({
         vault: voterATAPk,
         depositToken: sourceTokenAccount,
         depositAuthority: wallet!.publicKey!,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram,
       })
       .instruction()
+    
+    if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+      depositInstruction.keys.splice(3, 0, {
+        pubkey: mintPk,
+        isSigner: false,
+        isWritable: false,
+      })
+    }
+    
     instructions.push(depositInstruction)
   }
 

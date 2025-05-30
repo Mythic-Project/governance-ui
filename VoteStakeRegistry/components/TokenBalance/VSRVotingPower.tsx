@@ -13,6 +13,8 @@ import { getMintMetadata } from '@components/instructions/programs/splToken'
 import { useTokenOwnerRecordsDelegatedToUser } from '@hooks/queries/tokenOwnerRecord'
 import { useMemo } from 'react'
 import { useSelectedDelegatorStore } from 'stores/useSelectedDelegatorStore'
+import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 interface Props {
   className?: string
@@ -29,8 +31,19 @@ export default function VSRCommunityVotingPower({
 }: Props) {
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
+  const config = useRealmConfigQuery().data?.result
 
   const deposits = useDepositStore((s) => s.state.deposits)
+
+  const isCustomBioPlugin = config?.account.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0]
+
+  const displayMint = isCustomBioPlugin ?
+    deposits[0].mint.account :
+    mint
+
+  const depositMint = isCustomBioPlugin ?
+    deposits[0].mint.publicKey :
+    realm?.account.communityMint
 
   const votingPowerFromDeposits = useDepositStore(
     (s) => s.state.votingPowerFromDeposits,
@@ -40,35 +53,33 @@ export default function VSRCommunityVotingPower({
   const depositRecord = deposits.find(
     (deposit) =>
       deposit.mint.publicKey.toBase58() ===
-        realm?.account.communityMint.toBase58() && deposit.lockup.kind.none,
+        depositMint?.toBase58() && deposit.lockup.kind.none,
   )
-
-  const depositMint = realm?.account.communityMint
 
   const tokenName =
     getMintMetadata(depositMint)?.name ?? realm?.account.name ?? ''
 
   const tokenAmount =
-    depositRecord && mint
+    depositRecord && displayMint
       ? new BigNumber(
-          getMintDecimalAmount(mint, depositRecord.amountDepositedNative),
+          getMintDecimalAmount(displayMint, depositRecord.amountDepositedNative),
         )
       : new BigNumber('0')
 
-  const lockedTokensAmount = mint
+  const lockedTokensAmount = displayMint
     ? deposits
         .filter(
           (x) =>
             typeof x.lockup.kind['none'] === 'undefined' &&
             x.mint.publicKey.toBase58() ===
-              realm?.account.communityMint.toBase58(),
+              depositMint?.toBase58(),
         )
         .reduce(
           (curr, next) =>
             curr.plus(new BigNumber(next.currentlyLocked.toString())),
           new BigNumber(0),
         )
-        .shiftedBy(-mint.decimals)
+        .shiftedBy(-displayMint.decimals)
     : new BigNumber('0')
 
   const { data: delegatedTors } = useTokenOwnerRecordsDelegatedToUser()
@@ -103,7 +114,7 @@ export default function VSRCommunityVotingPower({
 
   //const totalPower = votingPower.add(totalDelegatorPower ?? new BN(0))
 
-  if (isLoading || mint === undefined || votingPowerLoading) {
+  if (isLoading || mint === undefined || displayMint === undefined || votingPowerLoading) {
     return (
       <div
         className={classNames(
@@ -118,7 +129,7 @@ export default function VSRCommunityVotingPower({
     <div className={className}>
       <VotingPowerBox
         votingPower={votingPower ?? new BN(0)}
-        mint={mint}
+        mint={displayMint}
         votingPowerFromDeposits={votingPowerFromDeposits}
         isLastPlugin={isLastPlugin}
         className="p-3"

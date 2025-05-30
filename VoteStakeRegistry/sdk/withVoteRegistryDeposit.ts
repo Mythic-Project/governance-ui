@@ -1,9 +1,9 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
 import { LockupType } from 'VoteStakeRegistry/sdk/accounts'
 import { withCreateNewDeposit } from './withCreateNewDeposit'
 import { VsrClient } from './client'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const withVoteRegistryDeposit = async ({
   instructions,
@@ -39,7 +39,7 @@ export const withVoteRegistryDeposit = async ({
     throw 'no vote registry plugin'
   }
 
-  const { depositIdx, voter, registrar, voterATAPk } =
+  const { depositIdx, voter, registrar, voterATAPk, tokenProgram } =
     await withCreateNewDeposit({
       instructions,
       walletPk,
@@ -61,8 +61,17 @@ export const withVoteRegistryDeposit = async ({
       vault: voterATAPk,
       depositToken: fromPk,
       depositAuthority: walletPk,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram,
     })
     .instruction()
+
+  if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+    depositInstruction.keys.splice(3, 0, {
+      pubkey: mintPk,
+      isSigner: false,
+      isWritable: false,
+    })
+  }
+
   instructions.push(depositInstruction)
 }

@@ -14,6 +14,8 @@ import {
 } from '@solana/spl-token'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
 import { fmtDecimalToBN } from '@utils/formatting'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const getGrantInstruction = async ({
   fromPk,
@@ -49,6 +51,10 @@ export const getGrantInstruction = async ({
   const systemProgram = SystemProgram.programId
   const clientProgramId = client!.program.programId
 
+  const tokenProgram = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
+    TOKEN_2022_PROGRAM_ID :
+    TOKEN_PROGRAM_ID
+
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
@@ -62,7 +68,7 @@ export const getGrantInstruction = async ({
   )
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    tokenProgram,
     grantMintPk,
     voter,
     true,
@@ -90,7 +96,7 @@ export const getGrantInstruction = async ({
       depositMint: grantMintPk,
       payer: toPk,
       systemProgram: systemProgram,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       rent: SYSVAR_RENT_PUBKEY,
     })

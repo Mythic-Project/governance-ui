@@ -1,7 +1,8 @@
-import { Program, Provider, web3 } from '@coral-xyz/anchor'
+import { AnchorProvider, Program, Provider, Wallet, web3 } from '@coral-xyz/anchor'
 import { IDL, VoterStakeRegistry } from './voter_stake_registry'
 import { Client } from '@solana/governance-program-library'
 import {
+  Connection,
   PublicKey,
   SYSVAR_INSTRUCTIONS_PUBKEY,
   SYSVAR_RENT_PUBKEY,
@@ -11,6 +12,9 @@ import { getVoterPDA } from './accounts'
 import { SYSTEM_PROGRAM_ID } from '@solana/spl-governance'
 import BN from 'bn.js'
 import { fetchVotingPower } from '@hooks/queries/plugins/vsr'
+import { getMint, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
+import { getAssociatedTokenAddressSync } from '@solana/spl-token-new'
+import { MintInfo, u64 } from '@solana/spl-token'
 
 export const DEFAULT_VSR_ID = new web3.PublicKey(
   'vsr2nfGVNHmSY8uxoBGqq8AQbwz3JwaEaHqGbsTPXqQ',
@@ -164,6 +168,36 @@ export class VsrClient extends Client<typeof IDL> {
 
     return votingPower.result ?? new BN(0)
   }
+
+  async getUserTokenAccount(  
+    realm?: PublicKey,
+    mint?: PublicKey,
+    owner?: PublicKey | null
+  ) {
+    if (realm && mint && owner) {
+      const { registrar } = this.getRegistrarPDA(realm, mint)
+      const registrarAccount = await this.program.account.registrar.fetch(registrar)
+
+      if (registrarAccount.votingMints.length) {
+        const depositMint = registrarAccount.votingMints[0].mint
+        const ata = getAssociatedTokenAddressSync(
+          depositMint, owner, true, TOKEN_2022_PROGRAM_ID
+        )
+        
+        const account = await this.program.provider.connection.getAccountInfo(ata)
+        const mintAccount = await getMint(this.program.provider.connection, depositMint, undefined, TOKEN_2022_PROGRAM_ID)
+
+        return {
+          pubkey: ata,
+          data: account?.data,
+          decimals: mintAccount?.decimals
+        }
+      }
+    }
+
+    return null
+  }
+
   constructor(program: Program<VoterStakeRegistry>, devnet: boolean) {
     super(program, devnet)
   }

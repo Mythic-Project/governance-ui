@@ -98,6 +98,13 @@ const DepositCard = ({
     queryClient.invalidateQueries(
       tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!),
     )
+    queryClient.invalidateQueries(
+      ['get-custom-vsr-token-account', {
+        realm: realm?.pubkey.toBase58(), 
+        mint: realm?.account.communityMint.toBase58(), 
+        pubkey: wallet?.publicKey?.toBase58()
+      }]
+    )
     queryClient.invalidateQueries(['VoteRecord'])
   }
   const handleStartUnlock = () => {

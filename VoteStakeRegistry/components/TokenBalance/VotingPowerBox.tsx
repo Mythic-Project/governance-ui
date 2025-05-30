@@ -32,7 +32,7 @@ const VotingPowerBox = ({
       ? getMintDecimalAmount(mint, votingPowerFromDeposits)
       : new BigNumber(0)
 
-  const max: BigNumber = new BigNumber(mint.supply.toString())
+  const max: BigNumber = getMintDecimalAmount(mint, new BN(mint.supply.toString()))
 
   return (
     <>

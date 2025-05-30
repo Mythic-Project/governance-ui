@@ -1,7 +1,7 @@
 import { AccountType, AssetAccount } from '@utils/uiTypes/assets'
 import { Instructions, PackageEnum } from '@utils/uiTypes/proposalCreationTypes'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
-import { HELIUM_VSR_PLUGINS_PKS, VSR_PLUGIN_PKS } from '../constants/plugins'
+import { HELIUM_VSR_PLUGINS_PKS, TOKEN_VOTER_PK, VSR_PLUGIN_PKS } from '../constants/plugins'
 import { useRealmQuery } from './queries/realm'
 import { useRealmConfigQuery } from './queries/realmConfig'
 import { useRealmGovernancesQuery } from './queries/governance'
@@ -212,7 +212,7 @@ export default function useGovernanceAssets() {
       name: 'Vsr Plugin',
       isVisible:
         currentPluginPk &&
-        [...VSR_PLUGIN_PKS, ...HELIUM_VSR_PLUGINS_PKS].includes(
+        [...VSR_PLUGIN_PKS, ...HELIUM_VSR_PLUGINS_PKS, ...TOKEN_VOTER_PK].includes(
           currentPluginPk.toBase58(),
         ),
     },
