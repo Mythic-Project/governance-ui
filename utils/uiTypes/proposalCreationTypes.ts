@@ -10,6 +10,7 @@ import { AssetAccount, StakeAccount } from '@utils/uiTypes/assets'
 import { RealmInfo } from '@models/registry/api'
 import * as PaymentStreaming from '@mean-dao/payment-streaming'
 import { DasNftObject } from '@hooks/queries/digitalAssets'
+import { StreamedRewardCadenceType } from '@torque-labs/sdk'
 
 // Alphabetical order
 export enum PackageEnum {
@@ -30,7 +31,8 @@ export enum PackageEnum {
   Squads,
   Switchboard,
   VsrPlugin,
-  Raydium
+  Raydium,
+  Torque,
 }
 
 export interface UiInstruction {
@@ -311,6 +313,30 @@ export interface WithdrawDAOForm {
   amount?: number
 }
 
+export type TorqueDurationUnit = 'hours' | 'days' | 'weeks' | 'months' | 'years'
+
+export type TorqueFrequencyUnit = {
+  name: string
+  value: TorqueDurationUnit
+}
+
+export type TorqueStreamType =  {
+  name: string
+  value: StreamedRewardCadenceType
+  description: string
+}
+
+export interface TorqueCreateRecurringPaymentForm {
+  governedTokenAccount?: AssetAccount
+  tokenAmount: number
+  streamType: TorqueStreamType
+  paymentDuration : number
+  paymentFrequency?: number
+  paymentFrequencyUnit?: TorqueFrequencyUnit
+  paymentDestination: string
+}
+
+
 export enum Instructions {
   Base64,
   Burn,
@@ -425,7 +451,8 @@ export enum Instructions {
   SymmetryWithdraw,
   TokenWithdrawFees,
   CollectPoolFees,
-  CollectVestedTokens
+  CollectVestedTokens,
+  TorqueCreateRecurringPayment,
 }
 
 export interface ComponentInstructionData {

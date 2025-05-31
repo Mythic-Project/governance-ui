@@ -216,6 +216,10 @@ export default function useGovernanceAssets() {
           currentPluginPk.toBase58(),
         ),
     },
+    [PackageEnum.Torque]: {
+      name: 'Torque',
+      image: '/img/torque.png',
+    },
   }
 
   // Alphabetical order, Packages then instructions
@@ -872,6 +876,19 @@ export default function useGovernanceAssets() {
       name: 'Fill vaults',
       isVisible: canUseAuthorityInstruction,
       packageId: PackageEnum.Distribution,
+    },
+
+    /*
+      ████████  ██████  ██████   ██████  ██    ██ ███████ 
+         ██    ██    ██ ██   ██ ██    ██ ██    ██ ██      
+         ██    ██    ██ ██████  ██    ██ ██    ██ █████   
+         ██    ██    ██ ██   ██ ██ ▄▄ ██ ██    ██ ██      
+         ██     ██████  ██   ██  ██████   ██████  ███████ 
+    */
+
+    [Instructions.TorqueCreateRecurringPayment]: {
+      name: 'Create Recurring Payment',
+      packageId: PackageEnum.Torque,
     },
   }
 
