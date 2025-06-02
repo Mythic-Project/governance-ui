@@ -38,10 +38,11 @@ export const getClawbackInstruction = async ({
   )
   const { voter } = getVoterPDA(registrar, voterWalletAddress, clientProgramId)
 
-  const tokenProgram = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
-    TOKEN_2022_PROGRAM_ID :
-    TOKEN_PROGRAM_ID
-
+  const mintInfo = await client?.program.provider.connection.getAccountInfo(grantMintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID 
+    : TOKEN_PROGRAM_ID
+    
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     tokenProgram,

@@ -51,9 +51,10 @@ export const getGrantInstruction = async ({
   const systemProgram = SystemProgram.programId
   const clientProgramId = client!.program.programId
 
-  const tokenProgram = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
-    TOKEN_2022_PROGRAM_ID :
-    TOKEN_PROGRAM_ID
+  const mintInfo = await client?.program.provider.connection.getAccountInfo(grantMintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID
+    : TOKEN_PROGRAM_ID
 
   const { registrar } = getRegistrarPDA(
     realmPk,

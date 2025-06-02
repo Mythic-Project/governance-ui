@@ -50,9 +50,8 @@ export const withVoteRegistryWithdraw = async ({
   }
   const clientProgramId = client!.program.programId
 
-  const tokenProgram = clientProgramId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK ?
-    TOKEN_2022_PROGRAM_ID :
-    TOKEN_PROGRAM_ID
+  const mintInfo = await client.program.provider.connection.getAccountInfo(mintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID) ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
 
   const { registrar } = getRegistrarPDA(
     realmPk,
@@ -122,7 +121,7 @@ export const withVoteRegistryWithdraw = async ({
     })
     .instruction()
 
-    if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+    if (client.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK) {
       withdrawInstruction.keys.splice(6, 0, {
         pubkey: mintPk,
         isSigner: false,

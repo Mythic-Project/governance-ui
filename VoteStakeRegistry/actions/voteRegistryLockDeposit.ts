@@ -12,7 +12,7 @@ import { LockupType } from 'VoteStakeRegistry/sdk/accounts'
 import { withCreateNewDeposit } from '../sdk/withCreateNewDeposit'
 import { getPeriod } from 'VoteStakeRegistry/tools/deposits'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
-import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 export const voteRegistryLockDeposit = async ({
   rpcContext,
@@ -106,7 +106,7 @@ export const voteRegistryLockDeposit = async ({
       })
       .instruction()
     
-    if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+    if (client.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK) {
       depositInstruction.keys.splice(3, 0, {
         pubkey: mintPk,
         isSigner: false,

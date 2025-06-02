@@ -14,7 +14,7 @@ import BN from 'bn.js'
 import { fetchVotingPower } from '@hooks/queries/plugins/vsr'
 import { getMint, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 import { getAssociatedTokenAddressSync } from '@solana/spl-token-new'
-import { MintInfo, u64 } from '@solana/spl-token'
+import { MintInfo, TOKEN_PROGRAM_ID, u64 } from '@solana/spl-token'
 
 export const DEFAULT_VSR_ID = new web3.PublicKey(
   'vsr2nfGVNHmSY8uxoBGqq8AQbwz3JwaEaHqGbsTPXqQ',
@@ -180,12 +180,17 @@ export class VsrClient extends Client<typeof IDL> {
 
       if (registrarAccount.votingMints.length) {
         const depositMint = registrarAccount.votingMints[0].mint
+        const mintInfo = await this.program.provider.connection.getAccountInfo(depositMint)
+        const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+          ? TOKEN_2022_PROGRAM_ID
+          : TOKEN_PROGRAM_ID
+
         const ata = getAssociatedTokenAddressSync(
-          depositMint, owner, true, TOKEN_2022_PROGRAM_ID
+          depositMint, owner, true, tokenProgram
         )
         
         const account = await this.program.provider.connection.getAccountInfo(ata)
-        const mintAccount = await getMint(this.program.provider.connection, depositMint, undefined, TOKEN_2022_PROGRAM_ID)
+        const mintAccount = await getMint(this.program.provider.connection, depositMint, undefined, tokenProgram)
 
         return {
           pubkey: ata,
