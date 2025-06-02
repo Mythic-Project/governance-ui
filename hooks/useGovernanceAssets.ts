@@ -380,6 +380,11 @@ export default function useGovernanceAssets() {
       isVisible: canUseTransferInstruction,
       packageId: PackageEnum.Common,
     },
+    [Instructions.RelinquishDaoVote]: {
+      name: 'Relinquish Vote from DAO',
+      isVisible: canUseTransferInstruction,
+      packageId: PackageEnum.Common,
+    },
     [Instructions.DualFinanceVoteDeposit]: {
       name: 'Join a VSR DAO',
       isVisible: canUseTransferInstruction,

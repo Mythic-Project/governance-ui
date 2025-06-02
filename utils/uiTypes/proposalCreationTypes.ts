@@ -311,6 +311,13 @@ export interface WithdrawDAOForm {
   amount?: number
 }
 
+export interface RelinquishDaoVoteForm {
+  governedAccount?: AssetAccount
+  mintInfo: MintInfo | undefined
+  realm: string
+  proposal: string
+}
+
 export enum Instructions {
   Base64,
   Burn,
@@ -340,6 +347,7 @@ export enum Instructions {
   DualFinanceStakingOptionWithdraw,
   DualFinanceDelegate,
   DualFinanceDelegateWithdraw,
+  RelinquishDaoVote,
   DualFinanceVoteDeposit,
   DaoVote,
   DistributionCloseVaults,
