@@ -83,7 +83,7 @@ const WithDrawCommunityTokens = () => {
         })
         const proposal = proposalQuery.result
 
-        if (!proposal || !ownTokenRecord || !proposal.account.tokenOwnerRecord.equals(ownTokenRecord.pubkey)) {
+        if (!proposal || !ownTokenRecord || !proposal.account.governingTokenMint.equals(ownTokenRecord.account.governingTokenMint)) {
           continue
         }
 
