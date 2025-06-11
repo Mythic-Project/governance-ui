@@ -83,8 +83,22 @@ const WithDrawCommunityTokens = () => {
         })
         const proposal = proposalQuery.result
 
-        if (!proposal || !ownTokenRecord || !proposal.account.governingTokenMint.equals(ownTokenRecord.account.governingTokenMint)) {
+        if (!proposal || !ownTokenRecord) {
           continue
+        }
+
+        if (voteRecord.account.vote?.veto) {
+          const vetoMint = realm?.account.config.councilMint
+          if (
+            vetoMint &&
+            !proposal.account.governingTokenMint.equals(vetoMint)
+          ) {
+            continue
+          }
+        } else {
+          if (!proposal.account.governingTokenMint.equals(ownTokenRecord.account.governingTokenMint)) {
+            continue
+          }
         }
 
         if (proposal.account.state === ProposalState.Voting) {
