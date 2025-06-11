@@ -3964,5 +3964,11 @@
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "HeAue2MpszB7xc4buyh2pkDej8nL9nN18P1rxmbRGXJW",
     "communityMint": "99NrYSg4p9BXv5PHNXFPZiFLZ3DKDDAzx8HHspKUiTPt"
+  },
+  {
+    "symbol": "stabble",
+    "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
+    "realmId": "7Bb3DwfhmDFenjQhwDz1ZZdnbS475Nk5NdFLJc5Q931J",
+    "communityMint": "veSTB2CqekLUzVevEs9mx5mpdE9odxHhFHmcGtX1D9k"
   }
 ]
