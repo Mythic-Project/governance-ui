@@ -18,6 +18,7 @@ import {
 } from '@solana/spl-governance'
 import { PluginName, pluginNameToCanonicalProgramId } from '@constants/plugins'
 import {
+  ComputeBudgetProgram,
   Keypair,
   PublicKey,
   SystemProgram,
@@ -181,6 +182,9 @@ export default async function createTokenizedRealm({
       realmSigners,
       pluginSigners,
     ]
+
+    const cuLimtIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 800_000})
+    realmInstructions.unshift(cuLimtIx)
 
     const ixes = [
       mintsSetupInstructions,

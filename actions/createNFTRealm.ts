@@ -5,6 +5,7 @@ import {
   withSetRealmAuthority,
 } from '@solana/spl-governance'
 import {
+  ComputeBudgetProgram,
   Keypair,
   PublicKey,
   SystemProgram,
@@ -212,6 +213,10 @@ export default async function createNFTRealm({
       realmSigners,
       nftSigners,
     ]
+
+    const cuLimtIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 800_000})
+    realmInstructions.unshift(cuLimtIx)
+
     const txes = [
       mintsSetupInstructions,
       ...councilMembersChunks,
