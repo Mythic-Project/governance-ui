@@ -196,9 +196,16 @@ export const GovernanceTokenSwap = () => {
   const realm = useRealmQuery().data?.result
   const realmAccount = realm?.account
   const communityMint = realmAccount?.communityMint.toBase58()
-  const tokenInfo = tokenPriceService._tokenList.find(
+  let tokenInfo = tokenPriceService._tokenList.find(
     (x) => x.address === communityMint,
   )
+
+  if (communityMint === 'ELPrcU7qRV3DUz8AP6siTE7GkR3gkkBvGmgBRiLnC19Y') {
+    //@ts-ignore
+    tokenInfo = { symbol: 'SFM' }
+  }
+
+  console.log(communityMint, tokenInfo)
 
   return communityMint && tokenInfo ? (
     <div className="flex items-center justify-end py-2">
