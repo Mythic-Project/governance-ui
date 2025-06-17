@@ -197,9 +197,13 @@ export default function useProposalVotes(proposal?: Proposal) {
 
   const minimumVetoVotes = vetoMaxVoteWeight
     ?.div(new BN(10).pow(new BN(vetoMintInfo.decimals ?? 0)))
-    .muln(vetoThreshold.value / 100)
+    .mul(new BN(vetoThreshold.value))
+    .div(new BN(100))
 
-  const vetoVotesRequired = minimumVetoVotes.subn(vetoVoteCount).toString()
+  const vetoVotesRequired = 
+    new BN(vetoVoteCount).gt(minimumVetoVotes) ? 
+      new BN(0) : 
+      minimumVetoVotes.sub(new BN(vetoVoteCount)).toString()
 
   return {
     _programVersion: programVersion,
