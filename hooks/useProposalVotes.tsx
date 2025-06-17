@@ -202,7 +202,7 @@ export default function useProposalVotes(proposal?: Proposal) {
 
   const vetoVotesRequired = 
     new BN(vetoVoteCount).gt(minimumVetoVotes) ? 
-      new BN(0) : 
+      new BN(0).toString() : 
       minimumVetoVotes.sub(new BN(vetoVoteCount)).toString()
 
   return {
