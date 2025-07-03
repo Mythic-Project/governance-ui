@@ -211,7 +211,7 @@ export const GovernanceTokenSwap = () => {
         className="relative -bottom-[18px] -right-[15px] rounded-none border-0"
         onClick={() => {
           window.open(
-            `https://cabana.exchange/swap/${USDC_MINT.toBase58()}-${communityMint.toString()}?daoRef=realms`,
+            `https://cabana.exchange/swap/${USDC_MINT.toBase58()}-${communityMint.toString()}?partner=realms`,
             '_blank',
           )
         }}
