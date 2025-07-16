@@ -40,8 +40,8 @@ export default async function createMultisigWallet({
     ...params,
   })
   const solBalance = await connection.getBalance(wallet.publicKey!)
-  if (lamportsToSol(new BN(solBalance)) < 0.25) {
-    throw new Error('You need to have at least 0.25 SOL to create a realm')
+  if (lamportsToSol(new BN(solBalance)) < 1.05) {
+    throw new Error('You need to have at least 1.05 SOL to create a realm')
   }
 
   try {
@@ -60,7 +60,7 @@ export default async function createMultisigWallet({
         SystemProgram.transfer({
           fromPubkey: wallet.publicKey!,
           toPubkey: FEE_WALLET,
-          lamports: solToLamports(0.2).toNumber(),
+          lamports: solToLamports(1).toNumber(),
         }),
       ],
     ].map((txBatch) => {
