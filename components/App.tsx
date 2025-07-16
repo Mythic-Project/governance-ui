@@ -326,6 +326,17 @@ export function AppContents(props: Props) {
       <ErrorBoundary>
         <ThemeProvider defaultTheme="Dark">
           <GatewayProvider>
+            <div className="relative color-white z-10 text-center w-full py-2">
+              Faster. Sharper. More. Yours.{' '}
+              <a
+                href="https://v2.realms.today"
+                rel="noreferrer"
+                target="_blank"
+                className="underline"
+              >
+                Try Realms v2
+              </a>
+            </div>
             <Telemetry></Telemetry>
             <NavBar />
             <Notifications />
