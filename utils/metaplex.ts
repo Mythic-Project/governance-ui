@@ -45,3 +45,13 @@ export const createIx_transferNft = async (
   ix.keys[10].pubkey = payer
   return ix
 }
+
+export function getMetadataAddress(pk: PublicKey) {
+  const metadataProgramId = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s")
+
+  return PublicKey.findProgramAddressSync([
+    Buffer.from("metadata"),
+    metadataProgramId.toBuffer(),
+    pk.toBuffer()
+  ], metadataProgramId)[0]
+}
