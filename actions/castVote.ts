@@ -239,7 +239,9 @@ export async function castVote(
   const castVoteIxs: TransactionInstruction[] = []
   const pluginCastVoteIxs: TransactionInstruction[] = []
 
-  if (calculatedVoterWeight !== null && calculatedVoterWeight.gtn(0)) {
+  const isPyth = realm.owner.equals(new PublicKey('pytGY6tWRgGinSCvRLnSv4fHfBTMoiDGiCsesmHWM6U'))
+
+  if (isPyth || (calculatedVoterWeight !== null && calculatedVoterWeight.gtn(0))) {
     //will run only if any plugin is connected with realm
     const plugin = await votingPlugin?.withCastPluginVote(
       pluginCastVoteIxs,
