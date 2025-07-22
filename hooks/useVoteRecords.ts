@@ -46,6 +46,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
 
   const { vsrMode, isNftMode } = useRealm()
 
+  const isPyth = realm?.pubkey.equals(new PublicKey('pytGY6tWRgGinSCvRLnSv4fHfBTMoiDGiCsesmHWM6U'))
   //for vsr
   const [undecidedDepositByVoteRecord, setUndecidedDepositByVoteRecord] =
     useState<{ [walletPk: string]: BN }>({})
@@ -122,7 +123,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
   ///
 
   useEffect(() => {
-    if (context && proposal && realm) {
+    if (context && proposal && realm && !isPyth) {
       // fetch vote records
       pipe(
         () =>
