@@ -70,7 +70,7 @@ export const MAIN_POOL_CONFIGS = {
       cTokenMint: '993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk',
       cTokenLiquidityAddress: 'UtRy8gcEu9fCkDuUrU8EmC7Uc6FZy5NCwttzG7i6nkw',
       pythOracle: 'Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX',
-      switchboardOracle: 'BjUgj6YCnFBZ49wF54ddBVA9qu8TeqkFtkbqmZcee8uW',
+      switchboardOracle: 'nu11111111111111111111111111111111111111111',
       mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
       liquidityFeeReceiverAddress:
         '5Gdxn4yquneifE6uk9tK8X4CqHfWKjW2BvYU25hAykwP',
