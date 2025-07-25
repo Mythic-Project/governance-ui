@@ -145,7 +145,7 @@ const DepositCard = ({
   const isRealmCommunityMint =
     deposit.mint.publicKey.toBase58() ===
     realm?.account.communityMint.toBase58()
-  const isConstant = type === 'constant'
+  const isConstant = type === 'constant' || type === 'cliff'
   const CardLabel = ({ label, value }) => {
     return (
       <div className="flex flex-col w-1/2 py-2">
