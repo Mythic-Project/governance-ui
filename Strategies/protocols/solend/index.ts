@@ -32,7 +32,7 @@ import { SolendStrategy } from 'Strategies/types/types'
 import { VotingClient } from '@utils/uiTypes/VotePlugin'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import { ConnectionContext } from '@utils/connection'
-import { MAIN_POOL_CONFIGS, RESERVE_CONFIG } from '@hub/providers/Defi/plans/save'
+import { Config, ReserveConfig } from '@hub/providers/Defi/plans/save'
 
 const MAINNET_PROGRAM = 'So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo'
 const DEVNET_PROGRAM = 'ALend7Ketfx5bxh6ghsCDXAoDrhvEmsXT3cynB6aPLgx'
@@ -64,38 +64,6 @@ export type CreateSolendStrategyParams = (
   connection: ConnectionContext,
   client?: VotingClient,
 ) => Promise<PublicKey>
-
-type Config = Array<MarketConfig>
-
-type MarketConfig = {
-  name: string
-  isPrimary: boolean
-  description: string
-  creator: string
-  address: string
-  authorityAddress: string
-  reserves: Array<ReserveConfig>
-}
-
-type ReserveConfig = {
-  liquidityToken: {
-    coingeckoID: string
-    decimals: number
-    logo: string
-    mint: string
-    name: string
-    symbol: string
-    volume24h: number
-  }
-  pythOracle: string
-  switchboardOracle: string
-  address: string
-  collateralMintAddress: string
-  collateralSupplyAddress: string
-  liquidityAddress: string
-  liquidityFeeReceiverAddress: string
-  userSupplyCap: number
-}
 
 type ReserveStat = {
   reserve: {
@@ -173,13 +141,13 @@ export function cTokenExchangeRate(reserve: ReserveStat) {
     .toNumber()
 }
 
-export async function getReserve(): Promise<Config> {
+export async function getReserve(): Promise<Config[]> {
   return await (
     await axios.get(`${SOLEND_ENDPOINT}/v1/markets/configs?scope=all`)
   ).data
 }
 
-export async function getReserves(): Promise<Config[0]['reserves']> {
+export async function getReserves(): Promise<ReserveConfig[]> {
   const config = await getReserve()
   const reserves = config.flatMap((market) =>
     market.reserves.map((reserve) => ({
@@ -526,7 +494,9 @@ export async function handleSolendActionV2(
   proposalIndex: number,
   isDraft: boolean,
   connection: ConnectionContext,
-  client?: VotingClient
+  config: Config,
+  reserveConfig: ReserveConfig,
+  client?: VotingClient,
 ) {
   const isSol = matchedTreasury.isSol
   const owner = isSol
@@ -534,29 +504,47 @@ export async function handleSolendActionV2(
     : matchedTreasury!.extensions!.token!.account.owner
 
     const solendAction = form.action === 'Deposit' ? await SolendActionCore.buildDepositReserveLiquidityTxns(
-      MAIN_POOL_CONFIGS,
-      RESERVE_CONFIG[form.reserveAddress],
+      config,
+      {
+        address: reserveConfig.address,
+        liquidityAddress: reserveConfig.liquidityAddress,
+        cTokenMint: reserveConfig.collateralMintAddress,
+        cTokenLiquidityAddress: reserveConfig.liquidityAddress,
+        pythOracle: reserveConfig.pythOracle,
+        switchboardOracle: reserveConfig.switchboardOracle,
+        mintAddress: reserveConfig.liquidityToken.mint,
+        liquidityFeeReceiverAddress: reserveConfig.liquidityFeeReceiverAddress,
+      },
       connection.current,
       form.bnAmount.toString(),
       {
         publicKey: owner,
       },
       {
-        lookupTableAddress: MAIN_POOL_CONFIGS.lookupTableAddress
-          ? new PublicKey(MAIN_POOL_CONFIGS.lookupTableAddress)
+        lookupTableAddress: config?.lookupTableAddress
+          ? new PublicKey(config.lookupTableAddress)
           : undefined,
       },
     ) : await SolendActionCore.buildRedeemReserveCollateralTxns(
-      MAIN_POOL_CONFIGS,
-      RESERVE_CONFIG[form.reserveAddress],
+      config,
+      {
+        address: reserveConfig.address,
+        liquidityAddress: reserveConfig.liquidityAddress,
+        cTokenMint: reserveConfig.collateralMintAddress,
+        cTokenLiquidityAddress: reserveConfig.liquidityAddress,
+        pythOracle: reserveConfig.pythOracle,
+        switchboardOracle: reserveConfig.switchboardOracle,
+        mintAddress: reserveConfig.liquidityToken.mint,
+        liquidityFeeReceiverAddress: reserveConfig.liquidityFeeReceiverAddress,
+      },
       connection.current,
       form.bnAmount.toString(),
       {
         publicKey: owner,
       },
       {
-        lookupTableAddress: MAIN_POOL_CONFIGS.lookupTableAddress
-          ? new PublicKey(MAIN_POOL_CONFIGS.lookupTableAddress)
+        lookupTableAddress: config.lookupTableAddress
+          ? new PublicKey(config.lookupTableAddress)
           : undefined,
       },
     );
@@ -586,7 +574,7 @@ export async function handleSolendActionV2(
     form.title ||
       `${form.action} ${form.amountFmt} ${
         tokenPriceService.getTokenInfo(
-          RESERVE_CONFIG[form.reserveAddress].mintAddress
+          reserveConfig.liquidityToken.mint
         )?.symbol || 'tokens'
       } ${form.action === 'Deposit' ? 'into' : 'from'} Save`,
     form.description,

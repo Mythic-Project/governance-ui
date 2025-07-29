@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import { getTreasuryAccountItemInfoV2Async } from '@utils/treasuryTools'
 import { AccountType } from '@utils/uiTypes/assets'
-import { INDICATOR_TOKENS } from '@hub/providers/Defi'
 import AccountItem from './AccountItem'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import Loading from '@components/Loading'
+import { useDefi } from '@hooks/useDefi'
 
 const AccountsItems = () => {
   const { governedTokenAccountsWithoutNfts, auxiliaryTokenAccounts } =
     useGovernanceAssets()
+  const { indicatorTokens } = useDefi()   
 
   const [sortedAccounts, setSortedAccounts] = useState<AssetAccount[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -24,7 +25,7 @@ const AccountsItems = () => {
         ].filter(
           (t) =>
             t.type !== AccountType.TOKEN ||
-            !INDICATOR_TOKENS.includes(t.extensions.mint?.publicKey?.toBase58() ?? '')
+            !indicatorTokens.includes(t.extensions.mint?.publicKey?.toBase58() ?? '')
         )
 
         // Get all account info in parallel

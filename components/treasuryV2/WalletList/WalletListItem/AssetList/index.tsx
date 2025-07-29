@@ -40,7 +40,7 @@ import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import useTreasuryAddressForGovernance from '@hooks/useTreasuryAddressForGovernance'
 import { useDigitalAssetsByOwner } from '@hooks/queries/digitalAssets'
 import { SUPPORT_CNFTS } from '@constants/flags'
-import { INDICATOR_TOKENS } from '@hub/providers/Defi'
+import { useDefi } from '@hooks/useDefi'
 
 export type Section = 'tokens' | 'nfts' | 'others'
 
@@ -80,10 +80,11 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
+  const { indicatorTokens } = useDefi()
   const assets = props.assets.filter(
     (a) =>
       a.type !== AssetType.Token ||
-      !INDICATOR_TOKENS.includes(a.mintAddress ?? '')
+      !indicatorTokens.includes(a.mintAddress ?? '')
   )
   const tokensFromProps = useMemo(() => {
     return assets
