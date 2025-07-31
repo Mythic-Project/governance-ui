@@ -9,6 +9,7 @@ interface Props
   extends FormProps<{
     depositExemptProposalCount: number;
     minInstructionHoldupDays: number;
+    governanceSeed: string;
   }> {
   className?: string;
   programVersion: number;
@@ -58,6 +59,25 @@ export function AdvancedOptions(props: Props) {
           />
           <div className="absolute top-1/2 right-4 text-neutral-500 -translate-y-1/2">
             Days
+          </div>
+        </div>
+      </ValueBlock>
+
+      <ValueBlock
+        title="Governance Seed"
+        description="A random seed used to force the governance wallet to a specific prefix."
+      >
+        <div className="relative">
+          <Input
+            className="w-full pr-24"
+            placeholder="# of days"
+            value={props.governanceSeed}
+            onChange={(e) => {
+              props.onGovernanceSeedChange?.(e.currentTarget.value);
+            }}
+          />
+          <div className="absolute top-1/2 right-4 text-neutral-500 -translate-y-1/2">
+            Base58
           </div>
         </div>
       </ValueBlock>

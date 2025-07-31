@@ -34,6 +34,7 @@ interface Props {
   depositExemptProposalCount: number;
   baseVoteDays: number;
   minInstructionHoldupDays: number;
+  governanceSeed: string;
 }
 
 export function NewRulesList(props: Props) {
@@ -109,6 +110,15 @@ export function NewRulesList(props: Props) {
               ) : (
                 <div>Disabled</div>
               )}
+            </div>
+          }
+        />
+
+        <SummaryItem
+          label="Governance Seed"
+          value={
+            <div className="flex items-baseline">
+              <div>{props.governanceSeed}</div>
             </div>
           }
         />

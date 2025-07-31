@@ -83,6 +83,7 @@ export const getGovernanceRulesResp = IT.type({
       minInstructionHoldupDays: IT.number,
       version: IT.number,
       walletAddress: PublicKey,
+      governanceSeed: IT.string,
     }),
   }),
 });

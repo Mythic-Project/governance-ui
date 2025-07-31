@@ -78,6 +78,7 @@ const configs2defaults = (configs: GovernanceConfig[]) => {
     maxVoteDays: 3,
     depositExemptProposalCount: 10,
     minInstructionHoldupDays: 0,
+    governanceSeed: "",
     version: 3,
   };
   return x;

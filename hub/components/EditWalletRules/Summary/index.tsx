@@ -30,6 +30,7 @@ interface Props
   minInstructionHoldupDays: number;
   governanceAddress?: PublicKey;
   walletAddress?: PublicKey;
+  governanceSeed: string;
 }
 
 function Summary(
@@ -151,6 +152,7 @@ export const NewWalletSummary = (
           depositExemptProposalCount={props.depositExemptProposalCount}
           baseVoteDays={props.baseVoteDays}
           minInstructionHoldupDays={props.minInstructionHoldupDays}
+          governanceSeed={props.governanceSeed}
         />
       </>
     }

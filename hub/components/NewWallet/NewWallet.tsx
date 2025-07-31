@@ -138,6 +138,7 @@ function NewWalletWithDefaults({
                 maxVoteDays={rules.maxVoteDays}
                 minInstructionHoldupDays={rules.minInstructionHoldupDays}
                 programVersion={programVersion ?? 3}
+                governanceSeed={rules.governanceSeed}
                 onCommunityRulesChange={setRule('communityTokenRules')}
                 onCoolOffHoursChange={setRule('coolOffHours')}
                 onCouncilRulesChange={setRule('councilTokenRules')}
@@ -148,6 +149,9 @@ function NewWalletWithDefaults({
                 onMinInstructionHoldupDaysChange={setRule(
                   'minInstructionHoldupDays',
                 )}
+                onGovernanceSeedChange={
+                  setRule('governanceSeed')
+                }
               />
               <footer className="flex items-center justify-between">
                 <button
@@ -189,6 +193,7 @@ function NewWalletWithDefaults({
                 proposalDescription={proposalDescription}
                 proposalTitle={proposalTitle}
                 proposalVoteType={proposalVoteType}
+                governanceSeed={rules.governanceSeed}
                 onProposalDescriptionChange={setProposalDescription}
                 onProposalTitleChange={setProposalTitle}
                 onProposalVoteTypeChange={setProposalVoteType}

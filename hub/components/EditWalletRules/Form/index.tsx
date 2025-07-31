@@ -19,6 +19,7 @@ interface Props
     depositExemptProposalCount: number;
     maxVoteDays: number;
     minInstructionHoldupDays: number;
+    governanceSeed: string;
   }> {
   className?: string;
   initialCommunityRules: CommunityRules;
@@ -147,6 +148,7 @@ function Form(props: Props & { title: string; description: string }) {
             className="mt-2.5"
             depositExemptProposalCount={props.depositExemptProposalCount}
             minInstructionHoldupDays={props.minInstructionHoldupDays}
+            governanceSeed={props.governanceSeed}
             programVersion={props.programVersion}
             onDepositExemptProposalCountChange={
               props.onDepositExemptProposalCountChange
@@ -154,6 +156,7 @@ function Form(props: Props & { title: string; description: string }) {
             onMinInstructionHoldupDaysChange={
               props.onMinInstructionHoldupDaysChange
             }
+            onGovernanceSeedChange={props.onGovernanceSeedChange}
           />
         )}
       </div>

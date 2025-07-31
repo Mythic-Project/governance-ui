@@ -2,7 +2,7 @@ import {
   withCreateGovernance,
   withCreateNativeTreasury,
 } from '@solana/spl-governance';
-import { TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 
 import { useCallback } from 'react';
 
@@ -70,13 +70,18 @@ const useNewWalletCallback = (
       instructions.push(...preIx);
       createNftTicketsIxs.push(...postIx);
     }
+
+    let governedAccount = undefined;
+    if (rules.governanceSeed) {
+      governedAccount = new PublicKey(rules.governanceSeed);
+    }
     
     const governanceAddress = await withCreateGovernance(
       instructions,
       realm.owner,
       programVersion,
       realm.pubkey,
-      undefined,
+      governedAccount,
       config,
       tokenOwnerRecord.pubkey,
       wallet.publicKey,
