@@ -345,7 +345,7 @@ const New = () => {
             })
 
             const url = fmtUrlWithCluster(
-              `/dao/${symbol}/proposal/${proposalAddress}`,
+              `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}`,
             )
 
             router.push(url)
@@ -406,7 +406,7 @@ const New = () => {
           })
 
           const url = fmtUrlWithCluster(
-            `/dao/${symbol}/proposal/${proposalAddress}`,
+            `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}`,
           )
 
           router.push(url)
