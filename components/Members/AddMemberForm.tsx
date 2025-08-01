@@ -280,7 +280,7 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         })
 
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`,
+          `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}`,
         )
 
         router.push(url)
