@@ -72,7 +72,7 @@ const SetPrimaryDomainModal = ({
         })
 
         const url = fmtUrlWithCluster(
-          `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}`,
+          `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}?share=true`,
         )
 
         router.push(url)
