@@ -102,15 +102,7 @@ const DelegateStake = ({
       ],
     )
 
-    const stakingAccounts = accountsNotYetStaked.concat(
-      accountsStaked.filter((x) => {
-        // filter all accounts which are not yet deactivated
-        const data = x.accountInfo.data.slice(172, 172 + 8)
-        return !data.equals(
-          Buffer.from([255, 255, 255, 255, 255, 255, 255, 255]),
-        )
-      }),
-    )
+    const stakingAccounts = accountsNotYetStaked.concat(accountsStaked)
 
     return stakingAccounts.map((x) => {
       return {

@@ -82,15 +82,7 @@ const StakeValidator = ({
   }
 
   const validateInstruction = async (): Promise<boolean> => {
-    const validatorsStatus = await connection.current.getVoteAccounts()
-    const validators = validatorsStatus.current.map((x) => x.votePubkey)
-    //const validator = validatorsStatus.current.map(x => x.votePubkey);
-
     const schema = yup.object().shape({
-      validatorVoteKey: yup
-        .string()
-        .required('Validator vote address is required')
-        .oneOf(validators),
       amount: yup
         .number()
         .min(0.1, 'Amount must be positive number')
