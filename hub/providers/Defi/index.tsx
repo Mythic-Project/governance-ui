@@ -6,12 +6,9 @@ import { Status } from '@hub/types/Result';
 
 import {
   useSavePlans,
-  INDICATOR_TOKENS as SAVE_INDICATOR_TOKENS,
 } from './plans/save';
 
 export type DefiType = 'Staking' | 'Lending';
-
-export const INDICATOR_TOKENS = [...SAVE_INDICATOR_TOKENS];
 
 export type Position = {
   planId: string;
@@ -83,11 +80,13 @@ export function aggregateStats(plans: Plan[], positions: Position[]) {
 interface Value {
   plans: Plan[];
   positions: Position[];
+  indicatorTokens: string[];
 }
 
 export const DEFAULT: Value = {
   plans: [],
   positions: [],
+  indicatorTokens: [],
 };
 
 export const context = createContext(DEFAULT);
@@ -99,7 +98,7 @@ interface Props {
 export function DefiProvider(props: Props) {
   const data = useTreasuryInfo();
   const loadedData = data._tag === Status.Ok ? data.data : null;
-  const { plans: savePlans, positions: savePositions } = useSavePlans(
+  const { plans: savePlans, positions: savePositions, indicatorTokens } = useSavePlans(
     loadedData?.wallets,
   );
 
@@ -108,6 +107,7 @@ export function DefiProvider(props: Props) {
       value={{
         plans: [...savePlans],
         positions: [...savePositions],
+        indicatorTokens,
       }}
     >
       {props.children}

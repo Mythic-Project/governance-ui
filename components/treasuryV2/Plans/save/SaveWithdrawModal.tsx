@@ -33,7 +33,7 @@ import { useRealmProposalsQuery } from '@hooks/queries/proposal'
 import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
 import { useVotingClients } from '@hooks/useVotingClients'
 import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
-import { useFetchReserveInfo } from '@hub/providers/Defi/plans/save'
+import { useFetchConfig, useFetchReserveInfo } from '@hub/providers/Defi/plans/save'
 import Modal from '@components/Modal'
 import { handleSolendActionV2 } from 'Strategies/protocols/solend'
 import { Plan, Position } from '@hub/providers/Defi'
@@ -68,7 +68,6 @@ const WithdrawModal = ({
   const { canUseTransferInstruction } = useGovernanceAssets()
   const cTokenBalance =
     governedTokenAccount?.extensions.token?.account.amount ?? 0
-
   const router = useRouter()
   const { fmtUrlWithCluster } = useQueryContext()
   const realm = useRealmQuery().data?.result
@@ -80,7 +79,8 @@ const WithdrawModal = ({
   const { realmInfo } = useRealm()
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle()
-  const { data: reservesInfo } = useFetchReserveInfo([plan.id])
+  const mainPoolConfig = useFetchConfig().data?.find((c) => c.isPrimary)
+  const { data: reservesInfo } = useFetchReserveInfo([plan.id], mainPoolConfig)
   const votingClients = useVotingClients()
   const proposals = useRealmProposalsQuery().data
   const connection = useLegacyConnectionContext()
@@ -131,6 +131,9 @@ const WithdrawModal = ({
   const handleWithdraw = async () => {
     if (!reservesInfo?.[0]) throw new Error('Reserve not found')
     if (ownVoterWeight === undefined) throw new Error()
+    if (!mainPoolConfig) throw new Error('Main pool config not found')
+    const reserve = mainPoolConfig.reserves.find((r) => r.address === plan.id)
+    if (!reserve) throw new Error('Reserve not found')
     if (proposals === undefined) throw new Error()
     const isValid = await validateInstruction({ schema, form, setFormErrors })
     if (!isValid) {
@@ -184,6 +187,8 @@ const WithdrawModal = ({
         governedTokenAccount!.governance!.account!.proposalCount,
         false,
         connection,
+        mainPoolConfig,
+        reserve,
         votingClients(voteByCouncil ? 'council' : 'community')
       )
       const url = fmtUrlWithCluster(

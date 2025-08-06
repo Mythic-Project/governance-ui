@@ -44,6 +44,7 @@ import Modal from '@components/Modal'
 import { AssetType, Token } from '@models/treasury/Asset'
 import queryClient from '@hooks/queries/queryClient'
 import { notify } from '@utils/notifications'
+import { useFetchConfig } from '@hub/providers/Defi/plans/save'
 
 const SOL_BUFFER = 0.02 * LAMPORTS_PER_SOL;
 
@@ -64,6 +65,7 @@ const SaveDepositModal = ({
     plan.assets[0].mintAddress === 'So11111111111111111111111111111111111111112'
   const [depositFromWallet, setDepositFromWallet] = useState(true)
   const position = positions.find(p => p.planId === plan.id && p.walletAddress === wallet.address) as Position | undefined
+  const mainPoolConfig = useFetchConfig().data?.find((c) => c.isPrimary)
   const {
     governedTokenAccountsWithoutNfts,
     auxiliaryTokenAccounts,
@@ -197,6 +199,9 @@ const SaveDepositModal = ({
   }
 
   const handleDeposit = async () => {
+    if (!mainPoolConfig) throw new Error('Main pool config not found')
+      const reserve = mainPoolConfig?.reserves.find((r) => r.address === plan.id)
+      if (!reserve) throw new Error('Reserve not found')
     if (depositFromWallet) {
       if (!wallet?.address) return
       setIsDepositing(true)
@@ -257,6 +262,8 @@ const SaveDepositModal = ({
         governedTokenAccount!.governance!.account!.proposalCount,
         false,
         connection,
+        mainPoolConfig,
+        reserve,
         votingClients(voteByCouncil ? 'council' : 'community')
       )
       const url = fmtUrlWithCluster(

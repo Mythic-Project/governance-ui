@@ -18,7 +18,7 @@ import {
   TransactionMessage,
   VersionedTransaction,
 } from '@solana/web3.js';
-import { parseReserve, SolendActionCore } from '@solendprotocol/solend-sdk';
+import { InputReserveType, parseReserve, SolendActionCore } from '@solendprotocol/solend-sdk';
 import {
   InstructionWithSigners,
   LendingInstruction,
@@ -71,57 +71,6 @@ type TransactionHistory = {
   dumpy: boolean;
 };
 
-export const MAIN_POOL_CONFIGS = {
-  name: 'main',
-  isPrimary: true,
-  description: '',
-  creator: '5pHk2TmnqQzRF9L6egy5FfiyBgS7G9cMZ5RFaJAvghzw',
-  address: '4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY',
-  hidden: false,
-  isPermissionless: false,
-  authorityAddress: 'DdZR6zRFiUt4S5mg7AV1uKB2z1f1WzcNYCaTEEWPAuby',
-  owner: '5pHk2TmnqQzRF9L6egy5FfiyBgS7G9cMZ5RFaJAvghzw',
-  reserves: [
-    {
-      address: 'BgxfHJDzm44T7XG68MYKx7YisTjZu73tVovyZSjJMpmw',
-      liquidityAddress: '8SheGtsopRUDzdiD6v6BR9a6bqZ9QwywYQY99Fp5meNf',
-      cTokenMint: '993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk',
-      cTokenLiquidityAddress: 'UtRy8gcEu9fCkDuUrU8EmC7Uc6FZy5NCwttzG7i6nkw',
-      pythOracle: 'Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX',
-      switchboardOracle: 'nu11111111111111111111111111111111111111111',
-      mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      liquidityFeeReceiverAddress:
-        '5Gdxn4yquneifE6uk9tK8X4CqHfWKjW2BvYU25hAykwP',
-      extraOracle: '11111111111111111111111111111111',
-    },
-    {
-      address: '8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36',
-      liquidityAddress: '8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv',
-      cTokenMint: '5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV',
-      cTokenLiquidityAddress: 'B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g',
-      pythOracle: '7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',
-      switchboardOracle: 'GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR',
-      mintAddress: 'So11111111111111111111111111111111111111112',
-      liquidityFeeReceiverAddress:
-        '5wo1tFpi4HaVKnemqaXeQnBEpezrJXcXvuztYaPhvgC7',
-      extraOracle: '11111111111111111111111111111111',
-    },
-    {
-      address: '8K9WC8xoh2rtQNY7iEGXtPvfbDCi563SdWhCAhuMP2xE',
-      liquidityAddress: '3CdpSW5dxM7RTxBgxeyt8nnnjqoDbZe48tsBs9QUrmuN',
-      cTokenMint: 'BTsbZDV7aCMRJ3VNy9ygV4Q2UeEo9GpR8D6VvmMZzNr8',
-      cTokenLiquidityAddress: 'CXDxj6cepVv9nWh4QYqWS2MpeoVKBLKJkMfo3c6Y1Lud',
-      pythOracle: 'HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM',
-      switchboardOracle: 'ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9',
-      mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-      liquidityFeeReceiverAddress:
-        'Cpyk5WRGmdK2yFGTJCrmgyABPiNEF5eCyCMMZLxpdkXu',
-      extraOracle: '11111111111111111111111111111111',
-    },
-  ],
-  lookupTableAddress: '89ig7Cu6Roi9mJMqpY8sBkPYL2cnqzpgP16sJxSUbvct',
-};
-
 const USDC_RESERVE_ADDRESS = 'BgxfHJDzm44T7XG68MYKx7YisTjZu73tVovyZSjJMpmw';
 const SOL_RESERVE_ADDRESS = '8PbodeaosQP19SjYFx855UMqWxH2HynZLdBXmsrbac36';
 const USDT_RESERVE_ADDRESS = '8K9WC8xoh2rtQNY7iEGXtPvfbDCi563SdWhCAhuMP2xE';
@@ -131,61 +80,7 @@ const ELIGIBLE_RESERVES = [
   USDT_RESERVE_ADDRESS,
 ];
 
-export const RESERVE_CONFIG: {
-  [key: string]: {
-    cTokenMint: string;
-    mintDecimals: number;
-    address: string;
-    liquidityAddress: string;
-    cTokenLiquidityAddress: string;
-    pythOracle: string;
-    switchboardOracle: string;
-    mintAddress: string;
-    liquidityFeeReceiverAddress: string;
-  };
-} = {
-  [USDC_RESERVE_ADDRESS]: {
-    mintDecimals: 6,
-    address: USDC_RESERVE_ADDRESS,
-    liquidityAddress: '8SheGtsopRUDzdiD6v6BR9a6bqZ9QwywYQY99Fp5meNf',
-    cTokenMint: '993dVFL2uXWYeoXuEBFXR4BijeXdTv4s6BzsCjJZuwqk',
-    cTokenLiquidityAddress: 'UtRy8gcEu9fCkDuUrU8EmC7Uc6FZy5NCwttzG7i6nkw',
-    pythOracle: 'Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX',
-    switchboardOracle: 'nu11111111111111111111111111111111111111111',
-    mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    liquidityFeeReceiverAddress: '5Gdxn4yquneifE6uk9tK8X4CqHfWKjW2BvYU25hAykwP',
-  },
-  [SOL_RESERVE_ADDRESS]: {
-    mintDecimals: 9,
-    address: SOL_RESERVE_ADDRESS,
-    liquidityAddress: '8UviNr47S8eL6J3WfDxMRa3hvLta1VDJwNWqsDgtN3Cv',
-    cTokenMint: '5h6ssFpeDeRbzsEHDbTQNH7nVGgsKrZydxdSTnLm6QdV',
-    cTokenLiquidityAddress: 'B1ATuYXNkacjjJS78MAmqu8Lu8PvEPt51u4oBasH1m1g',
-    pythOracle: '7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',
-    switchboardOracle: 'GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR',
-    mintAddress: 'So11111111111111111111111111111111111111112',
-    liquidityFeeReceiverAddress: '5wo1tFpi4HaVKnemqaXeQnBEpezrJXcXvuztYaPhvgC7',
-  },
-  [USDT_RESERVE_ADDRESS]: {
-    mintDecimals: 6,
-    address: USDT_RESERVE_ADDRESS,
-    liquidityAddress: '3CdpSW5dxM7RTxBgxeyt8nnnjqoDbZe48tsBs9QUrmuN',
-    cTokenMint: 'BTsbZDV7aCMRJ3VNy9ygV4Q2UeEo9GpR8D6VvmMZzNr8',
-    cTokenLiquidityAddress: 'CXDxj6cepVv9nWh4QYqWS2MpeoVKBLKJkMfo3c6Y1Lud',
-    pythOracle: 'HT2PLQBcG5EiCcNSaMHAjSgd9F98ecpATbk4Sk5oYuM',
-    switchboardOracle: 'ETAaeeuQBwsh9mC2gCov9WdhJENZuffRMXY2HgjCcSL9',
-    mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-    liquidityFeeReceiverAddress: 'Cpyk5WRGmdK2yFGTJCrmgyABPiNEF5eCyCMMZLxpdkXu',
-  },
-};
-
-// Indicator tokens are collateral tokens or other tokens of this nature that represent a position in Defi. They are excluded from
-// beind displayed in the wallet to avoid confusion and clutter.
-export const INDICATOR_TOKENS = [
-  ...ELIGIBLE_RESERVES.map((reserve) => RESERVE_CONFIG[reserve].cTokenMint),
-];
-
-export function useFetchReserveInfo(reserveAddresses: string[]) {
+export function useFetchReserveInfo(reserveAddresses: string[], config?: Config) {
   const queryFunction = queryClient.fetchQuery<
     {
       address: string;
@@ -197,8 +92,9 @@ export function useFetchReserveInfo(reserveAddresses: string[]) {
       borrowInterest: number;
     }[]
   >({
-    queryKey: reserveAddresses,
+    queryKey: [...reserveAddresses, config?.address],
     queryFn: async () => {
+      if (!config) return [];
       const response = await fetch(
         `https://api.save.finance/reserves?ids=${reserveAddresses.join(',')}`,
       );
@@ -219,13 +115,14 @@ export function useFetchReserveInfo(reserveAddresses: string[]) {
       };
 
       return data.results.map((reserve) => {
-        const config = RESERVE_CONFIG[reserve.reserve.address];
+        const reserveConfig = config.reserves.find((r) => r.address === reserve.reserve.address);
+        if (!reserveConfig) throw new Error('Reserve config not found');
         return {
           address: reserve.reserve.address,
           mintAddress: reserve.reserve.liquidity.mintPubkey,
           cTokenExchangeRate: reserve.cTokenExchangeRate,
-          cTokenMint: config.cTokenMint,
-          mintDecimals: config.mintDecimals,
+          cTokenMint: reserveConfig?.collateralMintAddress,
+          mintDecimals: reserveConfig?.liquidityToken.decimals,
           supplyInterest: reserve.rates.supplyInterest,
           borrowInterest: reserve.rates.borrowInterest,
         };
@@ -234,9 +131,66 @@ export function useFetchReserveInfo(reserveAddresses: string[]) {
   });
 
   return useQuery({
-    queryKey: reserveAddresses,
+    queryKey: [...reserveAddresses, config?.address],
     queryFn: async () => {
       return queryFunction;
+    },
+  });
+}
+
+export type ReserveConfig = {
+  liquidityToken: {
+  coingeckoID: string;
+  decimals: number;
+  logo: string;
+  mint: string;
+  name: string;
+  symbol: string;
+  volume24h: string;
+  },
+  pythOracle: string;
+  switchboardOracle: string;
+  extraOracle: string;
+  address: string;
+  collateralMintAddress: string;
+  collateralSupplyAddress: string;
+  liquidityAddress: string;
+  liquidityFeeReceiverAddress: string;
+  mintAddress: string;
+}
+
+export type Config = {
+  name: string;
+  isPrimary: boolean;
+  description: string;
+  creator: string;
+  address: string;
+  hidden: boolean;
+  isPermissionless: boolean;
+  authorityAddress: string;
+  owner: string;
+  reserves: ReserveConfig[];
+  lookupTableAddress: string;
+}
+
+export function useFetchConfig() {
+  return useQuery({
+    queryKey: ['config'],
+    queryFn: async () => {
+      const response = await fetch(
+        `https://api.save.finance/v1/markets/configs?scope=all&deployment=production`,
+      );
+      const data = (await response.json()) as Config[];
+
+      return data.map((config) => {
+        return {
+          ...config,
+          reserves: config.reserves.map((reserve) => ({
+            ...reserve,
+            mintAddress: reserve.liquidityToken.mint,
+          })),
+        };
+      });
     },
   });
 }
@@ -245,12 +199,15 @@ export function useFetchEarnings(
   reserveAddresses: string[],
   wallets: Wallet[] | undefined,
   connection: Connection,
+  config?: Config,
 ) {
   const atas =
     wallets?.flatMap((wallet) => {
+      const reserveConfig = config?.reserves.find((r) => reserveAddresses.includes(r.address));
+      if (!reserveConfig) return [];
       return reserveAddresses.map((reserve) => {
         return getAssociatedTokenAddressSync(
-          new PublicKey(RESERVE_CONFIG[reserve].cTokenMint),
+          new PublicKey(reserveConfig.collateralMintAddress),
           new PublicKey(wallet.address),
           true,
         );
@@ -263,15 +220,16 @@ export function useFetchEarnings(
       netCAmount: BigNumber;
     };
   }>({
-    queryKey: atas.map((ata) => ata.toBase58()),
+    queryKey: [...atas.map((ata) => ata.toBase58()), config?.address],
     queryFn: async () => {
-      if (!atas.length) return {};
       const earnings: {
         [ataAddress: string]: {
           netAmount: BigNumber;
           netCAmount: BigNumber;
         };
       } = {};
+      if (!config) return earnings;
+      if (!atas.length) return earnings;
 
       await Promise.all(
         atas.map(async (ata) => {
@@ -320,7 +278,7 @@ export function useFetchEarnings(
   });
 
   return useQuery({
-    queryKey: atas.map((ata) => ata.toBase58()),
+    queryKey: [...atas.map((ata) => ata.toBase58()), config?.address],
     queryFn: async () => {
       return queryFunction;
     },
@@ -330,13 +288,22 @@ export function useFetchEarnings(
 export const useSavePlans = (
   wallets?: Wallet[],
 ): {
+  indicatorTokens: string[];
   plans: Plan[];
   positions: Position[];
 } => {
   const realm = useRealmQuery().data?.result;
+  const { data: configs } = useFetchConfig();
+  const mainPoolConfig = configs?.find((c) => c.isPrimary);
+  // Indicator tokens are collateral tokens or other tokens of this nature that represent a position in Defi. They are excluded from
+// beind displayed in the wallet to avoid confusion and clutter.
+  const indicatorTokens = [
+    ...mainPoolConfig?.reserves.map((reserve) => reserve.collateralMintAddress) ?? [],
+  ];
   const { getGovernedAccounts } = useGovernanceAssetsStore();
   const wallet = useWalletOnePointOh();
-  const reservesInfo = useFetchReserveInfo(ELIGIBLE_RESERVES);
+
+  const reservesInfo = useFetchReserveInfo(ELIGIBLE_RESERVES, mainPoolConfig);
   const { data: tokenPrices } = useJupiterPricesByMintsQuery(
     reservesInfo.data?.map((r) => new PublicKey(r.mintAddress)) ?? [],
   );
@@ -345,6 +312,7 @@ export const useSavePlans = (
     ELIGIBLE_RESERVES,
     wallets,
     connection.current,
+    mainPoolConfig,
   );
 
   async function deposit(
@@ -352,26 +320,38 @@ export const useSavePlans = (
     amount: number,
     realmsWalletAddress: string,
   ) {
-    const reserve = reservesInfo.data?.find(
-      (r) => r.address === reserveAddress,
-    );
+    if (!mainPoolConfig) throw new Error('Config not found');
+    const reserve = mainPoolConfig.reserves.find((r) => r.address === reserveAddress);
     if (!reserve) throw new Error('Reserve not found');
+    const reserveInfo = reservesInfo.data?.find((r) => r.address === reserveAddress);
+    if (!reserveInfo) throw new Error('Reserve info not found');
     if (!wallet?.publicKey) throw new Error('Wallet not connected');
     const amountBase = new BigNumber(amount)
-      .shiftedBy(reserve?.mintDecimals ?? 0)
+      .shiftedBy(reserve.liquidityToken.decimals)
       .dp(0, BigNumber.ROUND_DOWN)
       .toString();
 
+    const inputReserve: InputReserveType = {
+      address: reserve.address,
+      liquidityAddress: reserve.liquidityAddress,
+      cTokenMint: reserve.collateralMintAddress,
+      cTokenLiquidityAddress: reserve.liquidityAddress,
+      pythOracle: reserve.pythOracle,
+      switchboardOracle: reserve.switchboardOracle,
+      mintAddress: reserve.mintAddress,
+      liquidityFeeReceiverAddress: reserve.liquidityFeeReceiverAddress,
+    };
+
     const solendAction =
       await SolendActionCore.buildDepositReserveLiquidityTxns(
-        MAIN_POOL_CONFIGS,
-        RESERVE_CONFIG[reserveAddress],
+        mainPoolConfig,
+        inputReserve,
         connection.current,
         amountBase,
         wallet as SaveWallet,
         {
-          lookupTableAddress: MAIN_POOL_CONFIGS.lookupTableAddress
-            ? new PublicKey(MAIN_POOL_CONFIGS.lookupTableAddress)
+          lookupTableAddress: mainPoolConfig?.lookupTableAddress
+            ? new PublicKey(mainPoolConfig.lookupTableAddress)
             : undefined,
         },
       );
@@ -406,7 +386,7 @@ export const useSavePlans = (
     });
 
     const accountInfo = res?.value.accounts?.map(simulatedToAccountInfo);
-    let cTokenExchangeRate = new BigNumber(reserve.cTokenExchangeRate);
+    let cTokenExchangeRate = new BigNumber(reserveInfo.cTokenExchangeRate);
     let buffer = 0.02;
     if (accountInfo?.[0]) {
       const simulatedReserve = parseReserve(
@@ -440,20 +420,20 @@ export const useSavePlans = (
     const userAta = await SplToken.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
-      new PublicKey(reserve.cTokenMint),
+      new PublicKey(reserve.collateralMintAddress),
       wallet.publicKey,
     );
 
     const walletAta = await SplToken.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
-      new PublicKey(reserve.cTokenMint),
+      new PublicKey(reserve.collateralMintAddress),
       new PublicKey(realmsWalletAddress),
       true,
     );
 
     const transferAmountBase = new BigNumber(amount)
-      .shiftedBy(reserve.mintDecimals)
+      .shiftedBy(reserve.liquidityToken.decimals)
       .times(1 - buffer)
       .div(cTokenExchangeRate)
       .dp(0, BigNumber.ROUND_DOWN)
@@ -463,7 +443,7 @@ export const useSavePlans = (
       wallet.publicKey,
       walletAta,
       new PublicKey(realmsWalletAddress),
-      new PublicKey(reserve.cTokenMint),
+      new PublicKey(reserve.collateralMintAddress),
     );
 
     const transferIx = SplToken.createTransferInstruction(
@@ -546,6 +526,7 @@ export const useSavePlans = (
     }) ?? [];
 
   return {
+    indicatorTokens,
     plans:
       reservesInfo.data?.map((reserve) => {
         const info = tokenPriceService.getTokenInfo(reserve.mintAddress);
