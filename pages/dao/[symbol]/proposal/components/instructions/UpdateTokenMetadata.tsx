@@ -78,7 +78,7 @@ const UpdateTokenMetadata = ({
   }, [form, governedAccount])
   useEffect(() => {
     setGovernedAccount(form?.mintAccount?.governance)
-    setMintAuthority(form?.mintAccount?.extensions.mint?.account.mintAuthority)
+    setMintAuthority(form?.mintAccount?.governance.nativeTreasuryAddress)
   }, [form.mintAccount])
 
   const schema = getUpdateTokenMetadataSchema()
