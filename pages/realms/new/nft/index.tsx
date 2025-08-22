@@ -49,6 +49,8 @@ export default function NFTWizard() {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
   const { push } = useRouter()
+  const router = useRouter()
+  const { cluster } = router.query
   const { fmtUrlWithCluster } = useQueryContext()
   const [requestPending, setRequestPending] = useState(false)
   const plausible = usePlausible()
@@ -177,11 +179,16 @@ export default function NFTWizard() {
           // eslint-disable-next-line no-empty
         } catch (e) {}
 
-        push(
-          fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`),
-          undefined,
-          { shallow: true },
-        )
+        if (cluster === 'devnet') {
+          push(fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`), undefined, {
+            shallow: true,
+          })
+        } else {
+          push(`https://v2.realms.today/dao/${results.realmPk.toBase58()}`, undefined, {
+            shallow: true,
+          })
+        }
+        
       } else {
         throw new Error('Something bad happened during this request.')
       }
