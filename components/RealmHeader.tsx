@@ -58,11 +58,14 @@ const RealmHeader = () => {
                 ></img>
               ) : (
                 <div className="bg-[rgba(255,255,255,0.1)] h-14 w-14 flex font-bold items-center justify-center rounded-full text-fgd-3">
-                  {realmData?.displayName.charAt(0) || realmInfo?.displayName?.charAt(0)}
+                  {realmData?.displayName.charAt(0) ||
+                    realmInfo?.displayName?.charAt(0)}
                 </div>
               )}
               <div className="flex items-center">
-                <h1 className="ml-3">{realmData?.displayName || realmInfo?.displayName}</h1>
+                <h1 className="ml-3">
+                  {realmData?.displayName || realmInfo?.displayName}
+                </h1>
               </div>
             </div>
           </div>
@@ -81,6 +84,16 @@ const RealmHeader = () => {
               </a>
             </Link>
           )}
+          {realmData !== undefined && realm && vsrMode !== 'default' ? (
+            <Link
+              href={`https://v2.realms.today/dao/${realm.pubkey.toBase58()}/create-proposal`}
+            >
+              <a className="flex items-center text-sm cursor-pointer default-transition text-fgd-2 hover:text-fgd-3">
+                <IdentificationIcon className="flex-shrink-0 w-5 h-5 mr-1" />
+                {realmData ? 'Update' : 'Add'} Metadata
+              </a>
+            </Link>
+          ) : null}
           <Link href={fmtUrlWithCluster(`/dao/${symbol}/members`)}>
             <a className="flex items-center text-sm cursor-pointer default-transition text-fgd-2 hover:text-fgd-3">
               <UsersIcon className="flex-shrink-0 w-5 h-5 mr-1" />
@@ -103,6 +116,18 @@ const RealmHeader = () => {
           </a>
         </div>
       </div>
+      {vsrMode === 'default' && realm && realmData !== undefined ? (
+        <div className="w-full flex justify-end mt-4">
+          <Link
+            href={`https://v2.realms.today/dao/${realm.pubkey.toBase58()}/create-proposal`}
+          >
+            <a className="flex items-center text-sm cursor-pointer default-transition text-fgd-2 hover:text-fgd-3">
+              <IdentificationIcon className="flex-shrink-0 w-5 h-5 mr-1" />
+              {realmData ? 'Update' : 'Add'} Onchain Metadata
+            </a>
+          </Link>
+        </div>
+      ) : null}
     </div>
   )
 }
