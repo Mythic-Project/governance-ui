@@ -81,7 +81,7 @@ export default function YesVotePercentageForm({
     : forCouncil
     ? 'councilYesVotePercentage'
     : 'yesVotePercentage'
-  const percentageValue = !formData.isQuadratic || !forCommunity ? 60 : 5
+  const percentageValue = !formData.isQuadratic || !forCommunity ? 10 : 5
   const yesVotePercentage = watch(fieldName) || percentageValue
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function YesVotePercentageForm({
         {forCommunity ? (
           <Text level="1">
             {!formData.isQuadratic
-              ? 'Typically, newer DAOs start their community approval quorums around 60% of total token supply.'
+              ? 'New DAOs generally start their approval quorum at 10% of total token supply. Determine a percentage that will enable your DAO to reliably achieve quorum.'
               : "Setting a high percentage approval quorum may result in proposals never passing in a quadratic voting DAO, as the voting power is influenced by token distribution. It's recomended to start with a low percentage and adjust as needed."}
           </Text>
         ) : forCouncil && formData?.memberAddresses?.length >= 0 ? (
@@ -163,7 +163,9 @@ export default function YesVotePercentageForm({
           </>
         ) : (
           <Text level="1">
-            Typically, newer DAOs start their approval percentage around 60%.
+            New DAOs generally start their approval quorum at 10% of total token
+            supply. Determine a percentage that will enable your DAO to reliably
+            achieve quorum.
           </Text>
         )}
       </AdviceBox>
