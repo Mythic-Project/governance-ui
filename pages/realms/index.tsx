@@ -113,25 +113,26 @@ const Realms = () => {
   }, [connection, routeHasClusterInPath, cluster, queryRealms, metadata])
 
   const handleCreateRealmButtonClick = async () => {
-    if (!connected) {
-      try {
-        if (wallet) {
-          await wallet.connect()
-        } else {
-          throw new Error('You need to connect a wallet to continue')
-        }
-      } catch (error) {
-        const err = error as Error
-        let message = err.message
+    // if (!connected) {
+    //   try {
+    //     if (wallet) {
+    //       await wallet.connect()
+    //     } else {
+    //       throw new Error('You need to connect a wallet to continue')
+    //     }
+    //   } catch (error) {
+    //     const err = error as Error
+    //     let message = err.message
 
-        if (err.name === 'WalletNotReadyError') {
-          message = 'You must connect a wallet to create a DAO'
-        }
+    //     if (err.name === 'WalletNotReadyError') {
+    //       message = 'You must connect a wallet to create a DAO'
+    //     }
 
-        return notify({ message, type: 'error' })
-      }
-    }
-    router.push(fmtUrlWithCluster(`/realms/new`))
+    //     return notify({ message, type: 'error' })
+    //   }
+    // }
+
+    router.push('https://v2.realms.today/create-dao')
   }
   const sortDaos = (realmInfoData: RealmInfo[]) => {
     return realmInfoData.sort((a: RealmInfo, b: RealmInfo) => {
