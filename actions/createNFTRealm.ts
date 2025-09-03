@@ -214,7 +214,9 @@ export default async function createNFTRealm({
       nftSigners,
     ]
 
-    const cuLimtIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 800_000})
+    const cuLimtIx = ComputeBudgetProgram.setComputeUnitLimit({
+      units: 800_000,
+    })
     realmInstructions.unshift(cuLimtIx)
 
     const txes = [
@@ -226,7 +228,7 @@ export default async function createNFTRealm({
         SystemProgram.transfer({
           fromPubkey: wallet.publicKey!,
           toPubkey: FEE_WALLET,
-          lamports: solToLamports(1).toNumber(),
+          lamports: solToLamports(2).toNumber(),
         }),
       ],
     ].map((txBatch, batchIdx) => {

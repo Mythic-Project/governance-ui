@@ -195,7 +195,7 @@ export default async function createTokenizedRealm({
         SystemProgram.transfer({
           fromPubkey: walletPk,
           toPubkey: FEE_WALLET,
-          lamports: solToLamports(1).toNumber(),
+          lamports: solToLamports(2).toNumber(),
         }),
       ],
     ].map((ixBatch, batchIdx) => ({
