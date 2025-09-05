@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 
 /**
@@ -21,3 +21,5 @@ export const DEFAULT_NFT_VOTER_PLUGIN_V2 =
 export const JUPITER_REFERRAL_PK = new PublicKey(
   'EV4qhLE2yPKdUPdQ74EWJUn21xT3eGQxG3DRR1g9NNFc',
 )
+
+export const VOTER_ACCOUNT_FEE = 0.1 * LAMPORTS_PER_SOL

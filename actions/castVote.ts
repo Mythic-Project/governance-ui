@@ -2,6 +2,7 @@ import {
   Connection,
   Keypair,
   PublicKey,
+  SystemProgram,
   TransactionInstruction,
 } from '@solana/web3.js'
 import {
@@ -46,6 +47,8 @@ import { postComment } from './chat/postMessage'
 import { withPostChatMessageEphSigner } from '@utils/ephemeral-signers/postMessageWithEphSigner'
 import { getEphemeralSigners } from '@utils/ephemeral-signers'
 import { Wallet } from '@solana/wallet-adapter-react'
+import { FEE_WALLET } from '@utils/orders'
+import { VOTER_ACCOUNT_FEE } from '@tools/constants'
 
 const getVetoTokenMint = (
   proposal: ProgramAccount<Proposal>,
@@ -156,6 +159,13 @@ const createTokenOwnerRecordIfNeeded = async ({
     governingTokenMint,
     payer,
   )
+  ixs.push(
+    SystemProgram.transfer({
+      fromPubkey: payer!,
+      toPubkey: FEE_WALLET,
+      lamports: VOTER_ACCOUNT_FEE,
+    }),
+  )
   return ixs
 }
 
@@ -239,9 +249,14 @@ export async function castVote(
   const castVoteIxs: TransactionInstruction[] = []
   const pluginCastVoteIxs: TransactionInstruction[] = []
 
-  const isPyth = realm.owner.equals(new PublicKey('pytGY6tWRgGinSCvRLnSv4fHfBTMoiDGiCsesmHWM6U'))
+  const isPyth = realm.owner.equals(
+    new PublicKey('pytGY6tWRgGinSCvRLnSv4fHfBTMoiDGiCsesmHWM6U'),
+  )
 
-  if (isPyth || (calculatedVoterWeight !== null && calculatedVoterWeight.gtn(0))) {
+  if (
+    isPyth ||
+    (calculatedVoterWeight !== null && calculatedVoterWeight.gtn(0))
+  ) {
     //will run only if any plugin is connected with realm
     const plugin = await votingPlugin?.withCastPluginVote(
       pluginCastVoteIxs,
