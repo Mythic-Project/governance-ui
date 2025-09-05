@@ -20,6 +20,8 @@ import { getMintCfgIdx, tryGetVoter } from './api'
 import { getPeriod } from 'VoteStakeRegistry/tools/deposits'
 import { VsrClient } from './client'
 import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
+import { FEE_WALLET } from '@utils/orders'
+import { VOTER_ACCOUNT_FEE } from '@tools/constants'
 
 export const withCreateNewDeposit = async ({
   instructions,
@@ -67,8 +69,11 @@ export const withCreateNewDeposit = async ({
     clientProgramId,
   )
   const existingVoter = await tryGetVoter(voter, client)
-  const mintInfo = await client.program.provider.connection.getAccountInfo(mintPk)
-  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID) ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+  const mintInfo =
+    await client.program.provider.connection.getAccountInfo(mintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID
+    : TOKEN_PROGRAM_ID
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -88,6 +93,13 @@ export const withCreateNewDeposit = async ({
       walletPk,
       communityMintPk,
       walletPk,
+    )
+    instructions.push(
+      SystemProgram.transfer({
+        fromPubkey: walletPk!,
+        toPubkey: FEE_WALLET,
+        lamports: VOTER_ACCOUNT_FEE,
+      }),
     )
   }
 
@@ -159,6 +171,6 @@ export const withCreateNewDeposit = async ({
     voter,
     tokenOwnerRecordPubKey,
     voterWeightPk,
-    tokenProgram
+    tokenProgram,
   }
 }
