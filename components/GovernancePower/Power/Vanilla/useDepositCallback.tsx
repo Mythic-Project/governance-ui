@@ -2,10 +2,13 @@ import { useCallback } from 'react'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { fetchRealmByPubkey } from '@hooks/queries/realm'
 import { useConnection } from '@solana/wallet-adapter-react'
-import { Keypair, TransactionInstruction } from '@solana/web3.js'
+import { Keypair, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { approveTokenTransfer } from '@utils/tokens'
 import useSelectedRealmPubkey from '@hooks/selectedRealm/useSelectedRealmPubkey'
-import { withDepositGoverningTokens } from '@solana/spl-governance'
+import {
+  getTokenOwnerRecordAddress,
+  withDepositGoverningTokens,
+} from '@solana/spl-governance'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
@@ -16,6 +19,8 @@ import { fetchProgramVersion } from '@hooks/queries/useProgramVersionQuery'
 import queryClient from '@hooks/queries/queryClient'
 import { useJoinRealm } from '@hooks/useJoinRealm'
 import { SequenceType, sendTransactionsV3 } from '@utils/sendTransactions'
+import { FEE_WALLET } from '@utils/orders'
+import { VOTER_ACCOUNT_FEE } from '@tools/constants'
 
 export const useDepositCallback = (
   role: 'community' | 'council' | 'undefined',
@@ -87,7 +92,23 @@ export const useDepositCallback = (
         walletPk,
         amount,
       )
+      const torKey = await getTokenOwnerRecordAddress(
+        realm!.owner,
+        realm!.pubkey,
+        mint!,
+        walletPk,
+      )
 
+      const doesTorExist = await connection.getAccountInfo(torKey)
+      if (!doesTorExist) {
+        instructions.push(
+          SystemProgram.transfer({
+            fromPubkey: walletPk,
+            toPubkey: FEE_WALLET,
+            lamports: VOTER_ACCOUNT_FEE,
+          }),
+        )
+      }
       // instructions required to create voter weight records for any plugins connected to the realm
       // no need to create the TOR, as it is already created by the deposit.
       const pluginRegisterInstructions = await handleRegister(false)
