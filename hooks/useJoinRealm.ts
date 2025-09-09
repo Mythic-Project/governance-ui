@@ -5,9 +5,7 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import useProgramVersion from '@hooks/useProgramVersion'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 import { useCallback, useEffect, useState } from 'react'
-import { SystemProgram, TransactionInstruction } from '@solana/web3.js'
-import { FEE_WALLET } from '@utils/orders'
-import { VOTER_ACCOUNT_FEE } from '@tools/constants'
+import { TransactionInstruction } from '@solana/web3.js'
 
 type UseJoinRealmReturnType = {
   // use this to decide whether the join button should be displayed
@@ -60,13 +58,6 @@ export const useJoinRealm = (): UseJoinRealmReturnType => {
           wallet.publicKey,
           realm.account.communityMint,
           wallet.publicKey,
-        )
-        onboardUserIxes.push(
-          SystemProgram.transfer({
-            fromPubkey: wallet.publicKey!,
-            toPubkey: FEE_WALLET,
-            lamports: VOTER_ACCOUNT_FEE,
-          }),
         )
       }
 

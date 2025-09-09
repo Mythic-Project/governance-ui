@@ -92,23 +92,7 @@ export const useDepositCallback = (
         walletPk,
         amount,
       )
-      const torKey = await getTokenOwnerRecordAddress(
-        realm!.owner,
-        realm!.pubkey,
-        mint!,
-        walletPk,
-      )
 
-      const doesTorExist = await connection.getAccountInfo(torKey)
-      if (!doesTorExist) {
-        instructions.push(
-          SystemProgram.transfer({
-            fromPubkey: walletPk,
-            toPubkey: FEE_WALLET,
-            lamports: VOTER_ACCOUNT_FEE,
-          }),
-        )
-      }
       // instructions required to create voter weight records for any plugins connected to the realm
       // no need to create the TOR, as it is already created by the deposit.
       const pluginRegisterInstructions = await handleRegister(false)
