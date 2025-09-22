@@ -45,6 +45,14 @@
     "programId": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw",
     "realmId": "FMEWULPSGR1BKVJK4K7xTjhG23NfYxeAn2bamYgNoUck"
   },
+{
+    "symbol": "REALMSSEC",
+    "category": "defi",
+    "displayName": "Realms Security",
+    "programId": "GoVERLMGbGF8kwAwhyNgF1BQ2uyQPawHCWbnFRmLZCf",
+    "realmId": "2r7VSeKzyepHbdGUsZir94fpZgxBRG2xqgaMnbEALL6r",
+    "communityMint": "EtHceUV7nc19WpFvcc7aG7qiqnWwqaB6eAsKzbvV2YpC"
+  },
   {
     "symbol": "Hype-realm",
     "displayName": "Hype-realm",
