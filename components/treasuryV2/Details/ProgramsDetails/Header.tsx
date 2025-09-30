@@ -21,7 +21,7 @@ export default function Header(props: Props) {
         'py-4',
         'flex',
         'items-center',
-        'justify-between'
+        'justify-between',
       )}
     >
       <div>

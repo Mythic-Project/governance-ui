@@ -30,7 +30,7 @@ const InstructionProgram = ({
         const programInfo = (
           await fetchParsedAccountInfoByPubkey(
             connection.current,
-            new PublicKey(programAccount?.data['parsed']?.info?.programData)
+            new PublicKey(programAccount?.data['parsed']?.info?.programData),
           )
         ).result
         const info = programInfo?.data['parsed']?.info

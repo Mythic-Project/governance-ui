@@ -33,7 +33,7 @@ import { BN } from 'bn.js'
 
 const formReducer = (
   state: PsyFinanceClaimUnderlyingPostExpiration,
-  action: Partial<PsyFinanceClaimUnderlyingPostExpiration>
+  action: Partial<PsyFinanceClaimUnderlyingPostExpiration>,
 ) => ({
   ...state,
   ...action,
@@ -66,7 +66,7 @@ const ClaimUnderlyingPostExpiration = ({
     const program = new Program(
       PsyAmericanIdl,
       PSY_AMERICAN_PROGRAM_ID,
-      anchorProvider
+      anchorProvider,
     )
 
     const prerequisiteInstructions: TransactionInstruction[] = []
@@ -74,8 +74,8 @@ const ClaimUnderlyingPostExpiration = ({
     const optionAccount = options?.find((_option) =>
       _option.account.writerTokenMint.equals(
         form.writerTokenAccount?.extensions.token?.account.mint ??
-          PublicKey.default
-      )
+          PublicKey.default,
+      ),
     )
     if (!optionAccount) {
       throw new Error('Invalid option from writer token account')
@@ -87,8 +87,8 @@ const ClaimUnderlyingPostExpiration = ({
     } else {
       const { currentAddress, needToCreateAta } = await getATA({
         connection,
-        receiverAddress: form.writerTokenAccount!.extensions.token!.account
-          .owner,
+        receiverAddress:
+          form.writerTokenAccount!.extensions.token!.account.owner,
         mintPK: optionAccount.account.underlyingAssetMint,
         wallet,
       })
@@ -100,8 +100,8 @@ const ClaimUnderlyingPostExpiration = ({
             optionAccount.account.underlyingAssetMint,
             currentAddress,
             form.writerTokenAccount!.extensions.token!.account.owner,
-            wallet?.publicKey as PublicKey
-          )
+            wallet?.publicKey as PublicKey,
+          ),
         )
       }
       underlyingDestination = currentAddress
@@ -112,8 +112,8 @@ const ClaimUnderlyingPostExpiration = ({
         userAuthority: form.writerTokenAccount.extensions.token!.account.owner,
         optionMarket: optionAccount.publicKey,
         writerTokenMint: optionAccount.account.writerTokenMint,
-        writerTokenSrc: form.writerTokenAccount.extensions.token!.account
-          .address,
+        writerTokenSrc:
+          form.writerTokenAccount.extensions.token!.account.address,
         underlyingAssetPool: optionAccount.account.underlyingAssetPool,
         underlyingAssetDest: underlyingDestination,
         tokenProgram: TOKEN_PROGRAM_ID,
@@ -132,7 +132,7 @@ const ClaimUnderlyingPostExpiration = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.writerTokenAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, handleSetInstructions, index])

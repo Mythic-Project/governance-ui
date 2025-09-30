@@ -34,7 +34,7 @@ export default async function depositTokensVSR({
     getProgramVersionForRealm(realmInfo),
     wallet,
     connection,
-    endpoint
+    endpoint,
   )
 
   await voteRegistryDepositWithoutLockup({

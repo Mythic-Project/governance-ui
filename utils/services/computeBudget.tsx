@@ -37,7 +37,7 @@ export class ComputeBudgetService {
         insufficientFunds = true
       } else if (
         message.includes(
-          'Program log: AnchorError occurred. Error Code: SlippageToleranceExceeded. Error Number: 6001. Error Message: Slippage tolerance exceeded.'
+          'Program log: AnchorError occurred. Error Code: SlippageToleranceExceeded. Error Number: 6001. Error Message: Slippage tolerance exceeded.',
         )
       ) {
         slippageToleranceExceeded = true
@@ -50,7 +50,7 @@ export class ComputeBudgetService {
   async getSimulationUnitsTxn(
     transaction: VersionedTransaction | Transaction,
     signer?: Keypair,
-    computeErrorMargin: number = 500
+    computeErrorMargin = 500,
   ): Promise<{
     units: number | undefined
     insufficientFunds: boolean
@@ -67,7 +67,7 @@ export class ComputeBudgetService {
     } else {
       if (!signer) {
         throw new Error(
-          'Failed to simulate. Either include signer or use VersionedTransaction'
+          'Failed to simulate. Either include signer or use VersionedTransaction',
         )
       }
       simulation = await this.connection.simulateTransaction(transaction, [
@@ -75,8 +75,9 @@ export class ComputeBudgetService {
       ])
     }
 
+    // eslint-disable-next-line prefer-const
     let { insufficientFunds, slippageToleranceExceeded } = this.parseLogs(
-      simulation.value.logs
+      simulation.value.logs,
     )
 
     let units: number | undefined
@@ -88,7 +89,7 @@ export class ComputeBudgetService {
         (
           simulation.value.unitsConsumed *
           (1 + computeErrorMargin / 10_000)
-        ).toString()
+        ).toString(),
       )
     } else {
       units = simulation.value.err ? undefined : 500_000
@@ -105,7 +106,7 @@ export class ComputeBudgetService {
   async getVersionedTransactionAndPriorityFees(
     walletPubkey: PublicKey,
     instructions: TransactionInstruction[],
-    lookupTables?: AddressLookupTableAccount[]
+    lookupTables?: AddressLookupTableAccount[],
   ): Promise<{ transaction: VersionedTransaction; priorityFees: number }> {
     //   const priorityFees = await this.fetchEstimatePriorityFees(
     //     instructions.flatMap((instruction) =>
@@ -128,7 +129,7 @@ export class ComputeBudgetService {
         instructions: instructionsCompiled,
         recentBlockhash: PublicKey.default.toString(),
         payerKey: walletPubkey,
-      }).compileToV0Message(lookupTables)
+      }).compileToV0Message(lookupTables),
     )
 
     return { transaction, priorityFees: 0 }
@@ -137,7 +138,7 @@ export class ComputeBudgetService {
   async getComputeUnitFees(
     instructions: TransactionInstruction[],
     signerKey: PublicKey,
-    lookupTables?: AddressLookupTableAccount[]
+    lookupTables?: AddressLookupTableAccount[],
   ): Promise<{
     microLamportsEstimate: number
     computeUnits: number
@@ -145,14 +146,12 @@ export class ComputeBudgetService {
     slippageToleranceExceeded: boolean
     simulationError: TransactionError | string | null
   }> {
-    const {
-      transaction,
-      priorityFees: microLamportsEstimate,
-    } = await this.getVersionedTransactionAndPriorityFees(
-      signerKey,
-      instructions,
-      lookupTables
-    )
+    const { transaction, priorityFees: microLamportsEstimate } =
+      await this.getVersionedTransactionAndPriorityFees(
+        signerKey,
+        instructions,
+        lookupTables,
+      )
 
     const {
       units: computeUnits,

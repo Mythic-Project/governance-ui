@@ -17,7 +17,10 @@ import {
 import { precision } from '@utils/formatting'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { voteRegistryLockDeposit } from 'VoteStakeRegistry/actions/voteRegistryLockDeposit'
-import { DepositWithMintAccount, Registrar } from 'VoteStakeRegistry/sdk/accounts'
+import {
+  DepositWithMintAccount,
+  Registrar,
+} from 'VoteStakeRegistry/sdk/accounts'
 import {
   yearsToDays,
   daysToMonths,
@@ -52,7 +55,8 @@ import { useRealmCommunityMintInfoQuery } from '@hooks/queries/mintInfo'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import queryClient from '@hooks/queries/queryClient'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 const YES = 'Yes'
 const NO = 'No'
@@ -68,18 +72,19 @@ const LockTokensModal = ({
 }) => {
   const { getOwnedDeposits } = useDepositStore()
   const realm = useRealmQuery().data?.result
-  const mint = useRealmCommunityMintInfoQuery().data?.result
+  const defaultMint = useRealmCommunityMintInfoQuery().data?.result
   const { realmTokenAccount, realmInfo } = useRealm()
   const { data: tokenOwnerRecordPk } = useAddressQuery_CommunityTokenOwner()
 
-  const { vsrClient: client, plugin } = useVsrClient();
-  const voteStakeRegistryRegistrar = plugin?.params as Registrar | undefined;
-  const saturationSecs = realm && voteStakeRegistryRegistrar ? 
-    voteStakeRegistryRegistrar.votingMints.find(x => x.mint.equals(
-      realm.account.communityMint
-    ))?.lockupSaturationSecs :
-    undefined
-  
+  const { vsrClient: client, plugin } = useVsrClient()
+  const voteStakeRegistryRegistrar = plugin?.params as Registrar | undefined
+  const saturationSecs =
+    realm && voteStakeRegistryRegistrar
+      ? voteStakeRegistryRegistrar.votingMints.find((x) =>
+          x.mint.equals(realm.account.communityMint),
+        )?.lockupSaturationSecs
+      : undefined
+
   const { connection } = useConnection()
   const endpoint = connection.rpcEndpoint
   const wallet = useWalletOnePointOh()
@@ -133,8 +138,8 @@ const LockTokensModal = ({
           ? Math.ceil(
               secsToDays(
                 depositToUnlock?.lockup.endTs.toNumber() -
-                  depositToUnlock.lockup.startTs.toNumber()
-              )
+                  depositToUnlock.lockup.startTs.toNumber(),
+              ),
             )
           : 1,
         display: 'Custom',
@@ -144,9 +149,9 @@ const LockTokensModal = ({
         depositToUnlock
           ? getMinDurationInDays(
               depositToUnlock.lockup.startTs,
-              depositToUnlock.lockup.endTs
+              depositToUnlock.lockup.endTs,
             ) <= x.defaultValue || x.display === 'Custom'
-          : true
+          : true,
       )
       .filter((x) => {
         return x.defaultValue <= secsToDays(fiveYearsSecs)
@@ -154,11 +159,13 @@ const LockTokensModal = ({
   }, [depositToUnlock, fiveYearsSecs])
 
   const lockupLen = lockupPeriods.length
-  const fixedlockupPeriods = lockupPeriods.slice(0, lockupLen-1)
+  const fixedlockupPeriods = lockupPeriods.slice(0, lockupLen - 1)
 
-  const withinPeriod = saturationSecs ? 
-    lockupPeriods.findIndex(p => daysToSecs(p.defaultValue) >= saturationSecs.toNumber()) : 
-    5
+  const withinPeriod = saturationSecs
+    ? lockupPeriods.findIndex(
+        (p) => daysToSecs(p.defaultValue) >= saturationSecs.toNumber(),
+      )
+    : 5
 
   const maxNonCustomDaysLockup = lockupPeriods
     .map((x) => x.defaultValue)
@@ -168,22 +175,31 @@ const LockTokensModal = ({
   const maxMultiplier = calcMintMultiplier(
     maxNonCustomDaysLockup * SECS_PER_DAY,
     voteStakeRegistryRegistrar ?? null,
-    realm
+    realm,
   )
+
+  const isCustomBioPlugin = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] !== undefined
+  
+  const depositMint = isCustomBioPlugin ?
+    deposits[0].mint.publicKey
+    : realm?.account.communityMint
+
+  const mint = isCustomBioPlugin ?
+    deposits[0].mint.account
+    : defaultMint
 
   const depositRecord = deposits.find(
     (x) =>
-      x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
-      x.lockup.kind.none
+      x.mint.publicKey.toBase58() === depositMint!.toBase58() &&
+      x.lockup.kind.none,
   )
   const [lockupPeriodDays, setLockupPeriodDays] = useState<number>(0)
 
   const allowClawback = false
   const [lockupPeriod, setLockupPeriod] = useState<Period>(lockupPeriods[0])
   const [amount, setAmount] = useState<number | undefined>()
-  const [lockMoreThenDeposited, setLockMoreThenDeposited] = useState<string>(
-    YES
-  )
+  const [lockMoreThenDeposited, setLockMoreThenDeposited] =
+    useState<string>(YES)
   const [lockupType, setLockupType] = useState<LockupKind>(lockupTypes[0])
   const [
     vestingPeriod,
@@ -202,7 +218,7 @@ const LockTokensModal = ({
   const maxAmountToUnlock = depositToUnlock
     ? getMintDecimalAmount(
         depositToUnlock.mint.account,
-        depositToUnlock?.amountInitiallyLockedNative
+        depositToUnlock?.amountInitiallyLockedNative,
       )
     : 0
 
@@ -212,11 +228,12 @@ const LockTokensModal = ({
         ? getMintDecimalAmount(
             mint,
             depositRecord?.amountDepositedNative.add(
-              new BN(realmTokenAccount.account.amount)
-            )
+              new BN(realmTokenAccount.account.amount),
+            ),
           )
         : getMintDecimalAmount(mint, depositRecord?.amountDepositedNative)
       : 0
+
   const maxAmount = depositToUnlock ? maxAmountToUnlock : maxAmountToLock
   const maxAmountToLockFmt =
     depositRecord && mint && realmTokenAccount
@@ -224,15 +241,15 @@ const LockTokensModal = ({
         ? fmtMintAmount(
             mint,
             depositRecord?.amountDepositedNative.add(
-              new BN(realmTokenAccount.account.amount)
-            )
+              new BN(realmTokenAccount.account.amount),
+            ),
           )
         : fmtMintAmount(mint, depositRecord?.amountDepositedNative)
       : 0
   const maxAmountToUnlockFmt = depositToUnlock
     ? fmtMintAmount(
         depositToUnlock.mint.account,
-        depositToUnlock?.amountInitiallyLockedNative
+        depositToUnlock?.amountInitiallyLockedNative,
       )
     : 0
   const maxAmountFmt = depositToUnlock
@@ -246,7 +263,7 @@ const LockTokensModal = ({
     lockupPeriodDays * SECS_PER_DAY,
     voteStakeRegistryRegistrar ?? null,
     realm,
-    lockupType.value !== 'constant'
+    lockupType.value !== 'constant',
   )
   const currentPercentOfMaxMultiplier =
     (100 * currentMultiplier) / maxMultiplier
@@ -261,8 +278,8 @@ const LockTokensModal = ({
     const val = parseFloat(
       Math.max(
         Number(mintMinAmount),
-        Math.min(Number(maxAmount), Number(amount))
-      ).toFixed(currentPrecision)
+        Math.min(Number(maxAmount), Number(amount)),
+      ).toFixed(currentPrecision),
     )
     setAmount(val)
   }, [amount, currentPrecision, maxAmount, mintMinAmount])
@@ -275,17 +292,16 @@ const LockTokensModal = ({
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection,
-      endpoint
+      endpoint,
     )
     const totalAmountToLock = getMintNaturalAmountFromDecimalAsBN(
       amount!,
-      mint!.decimals
+      mint!.decimals,
     )
     const totalAmountInDeposit =
       depositRecord?.amountDepositedNative || new BN(0)
-    const whatWillBeLeftInsideDeposit = totalAmountInDeposit.sub(
-      totalAmountToLock
-    )
+    const whatWillBeLeftInsideDeposit =
+      totalAmountInDeposit.sub(totalAmountToLock)
     const amountFromDeposit = whatWillBeLeftInsideDeposit.isNeg()
       ? totalAmountInDeposit
       : totalAmountToLock
@@ -299,7 +315,7 @@ const LockTokensModal = ({
     }
     await voteRegistryLockDeposit({
       rpcContext,
-      mintPk: realm!.account.communityMint!,
+      mintPk: depositMint!,
       communityMintPk: realm!.account.communityMint!,
       realmPk: realm!.pubkey!,
       programId: realm!.owner,
@@ -322,7 +338,14 @@ const LockTokensModal = ({
       connection,
     })
     queryClient.invalidateQueries(
-      tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!)
+      tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!),
+    )
+    queryClient.invalidateQueries(
+      ['get-custom-vsr-token-account', {
+        realm: realm?.pubkey.toBase58(), 
+        mint: realm?.account.communityMint.toBase58(), 
+        pubkey: wallet?.publicKey?.toBase58()
+      }]
     )
     onClose()
   }
@@ -338,18 +361,17 @@ const LockTokensModal = ({
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection,
-      endpoint
+      endpoint,
     )
     const totalAmountToUnlock = getMintNaturalAmountFromDecimalAsBN(
       amount!,
-      depositToUnlock!.mint.account.decimals
+      depositToUnlock!.mint.account.decimals,
     )
 
     const totalAmountInDeposit = depositToUnlock.currentlyLocked
 
-    const whatWillBeLeftInsideDeposit = totalAmountInDeposit.sub(
-      totalAmountToUnlock
-    )
+    const whatWillBeLeftInsideDeposit =
+      totalAmountInDeposit.sub(totalAmountToUnlock)
 
     await voteRegistryStartUnlock({
       rpcContext,
@@ -413,7 +435,7 @@ const LockTokensModal = ({
                     onChange={(type) =>
                       setLockupType(
                         //@ts-ignore
-                        lockupTypes.find((t) => t.displayName === type)
+                        lockupTypes.find((t) => t.displayName === type),
                       )
                     }
                     values={lockupTypes.map((type) => type.displayName)}
@@ -462,18 +484,22 @@ const LockTokensModal = ({
                   onChange={(period) =>
                     setLockupPeriod(
                       //@ts-ignore
-                      lockupPeriods.find((p) => p.display === period)
+                      lockupPeriods.find((p) => p.display === period),
                     )
                   }
                   values={
-                    withinPeriod === -1 ?
-                      [...fixedlockupPeriods.filter((_, i) => i%2 === 0), lockupPeriods[lockupLen-1]]
-                      .map((p) => p.display) :
-                      [
-                        ...fixedlockupPeriods.slice(Math.floor(withinPeriod/2), Math.floor(withinPeriod/2)+6), 
-                        lockupPeriods[lockupLen-1]
-                      ]
-                      .map((p) => p.display)
+                    withinPeriod === -1
+                      ? [
+                          ...fixedlockupPeriods.filter((_, i) => i % 2 === 0),
+                          lockupPeriods[lockupLen - 1],
+                        ].map((p) => p.display)
+                      : [
+                          ...fixedlockupPeriods.slice(
+                            Math.floor(withinPeriod / 2),
+                            Math.floor(withinPeriod / 2) + 6,
+                          ),
+                          lockupPeriods[lockupLen - 1],
+                        ].map((p) => p.display)
                   }
                 />
               </div>

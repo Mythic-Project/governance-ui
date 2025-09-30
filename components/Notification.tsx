@@ -9,7 +9,7 @@ import useNotificationStore from '../stores/useNotificationStore'
 
 const NotificationList = () => {
   const { notifications, set: setNotificationStore } = useNotificationStore(
-    (s) => s
+    (s) => s,
   )
 
   useEffect(() => {
@@ -19,11 +19,11 @@ const NotificationList = () => {
           // Remove notifications based on how many are displayed
           // Remove 1/10th of the notifications each time, or 1, whichever is larger
           const amountToRemove = Math.floor(
-            Math.max(state.notifications.length / 10, 1)
+            Math.max(state.notifications.length / 10, 1),
           )
           state.notifications = notifications.slice(
             amountToRemove,
-            notifications.length
+            notifications.length,
           )
         })
       }, 6000)

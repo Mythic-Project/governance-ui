@@ -26,7 +26,7 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
   activeTab,
   onChange,
   tabs,
-  vsrMode
+  vsrMode,
 }) => {
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
@@ -55,7 +55,7 @@ const MembersTabs: FunctionComponent<MembersTabsProps> = ({
         style={{
           transform: `translateY(${
             tabs.findIndex(
-              (t) => t.walletAddress === activeTab?.walletAddress
+              (t) => t.walletAddress === activeTab?.walletAddress,
             ) * 100
           }%)`,
         }}
@@ -89,14 +89,14 @@ const MemberItems = ({
   activeTab,
   tokenName,
   onChange,
-  vsrMode
+  vsrMode,
 }: {
   member: Member
   mint?: MintInfo
   councilMint?: MintInfo
   activeTab: Member
   tokenName: string
-  onChange: (member: Member) => void,
+  onChange: (member: Member) => void
   vsrMode?: boolean
 }) => {
   const {
@@ -135,7 +135,7 @@ const MemberItems = ({
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-    [walletAddress]
+    [walletAddress],
   )
   return (
     <button
@@ -154,8 +154,9 @@ const MemberItems = ({
         </div>
         <div>
           <h3 className="flex mb-1 text-base font-bold">{renderAddressName}</h3>
-          {vsrMode ?
-            '' :
+          {vsrMode ? (
+            ''
+          ) : (
             <span className="text-xs text-fgd-3">
               {(communityAmount || !councilAmount) && (
                 <span className="flex items-center">
@@ -174,7 +175,7 @@ const MemberItems = ({
                 </span>
               )}
             </span>
-          }
+          )}
         </div>
       </div>
     </button>

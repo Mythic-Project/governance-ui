@@ -152,7 +152,7 @@ const PerpEdit = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup, getAdditionalLabelInfo } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const [perps, setPerps] = useState<NameMarketIndexVal[]>([])
@@ -164,7 +164,7 @@ const PerpEdit = ({
       ((mangoGroup?.admin &&
         x.extensions.transferAddress?.equals(mangoGroup.admin)) ||
         (mangoGroup?.securityAdmin &&
-          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin)))
+          x.extensions.transferAddress?.equals(mangoGroup.securityAdmin))),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [form, setForm] = useState<PerpEditForm>({ ...defaultFormValues })
@@ -188,12 +188,12 @@ const PerpEdit = ({
       wallet?.publicKey
     ) {
       const perpMarket = mangoGroup!.perpMarketsMapByMarketIndex.get(
-        form.perp!.value
+        form.perp!.value,
       )!
       const values = getChangedValues<PerpEditForm>(
         originalFormValues,
         form,
-        forcedValues
+        forcedValues,
       )
 
       const oracleConfFilter =
@@ -239,7 +239,7 @@ const PerpEdit = ({
           getNullOrTransform(
             values.stablePriceDelayIntervalSeconds,
             null,
-            Number
+            Number,
           ),
           getNullOrTransform(values.stablePriceDelayGrowthLimit, null, Number),
           getNullOrTransform(values.stablePriceGrowthLimit, null, Number),
@@ -250,7 +250,7 @@ const PerpEdit = ({
           getNullOrTransform(values.positivePnlLiquidationFee, null, Number),
           getNullOrTransform(values.name, null, String),
           values.forceClose!,
-          getNullOrTransform(values.platformLiquidationFee, null, Number)
+          getNullOrTransform(values.platformLiquidationFee, null, Number),
         )
         .accounts({
           group: mangoGroup!.publicKey,
@@ -262,7 +262,7 @@ const PerpEdit = ({
         .instruction()
 
       serializedInstruction = serializeInstructionToBase64(
-        forwarderProgramHelpers.withForwarderWrapper(ix)
+        forwarderProgramHelpers.withForwarderWrapper(ix),
       )
     }
     const obj: UiInstruction = {
@@ -278,7 +278,7 @@ const PerpEdit = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [
@@ -296,7 +296,7 @@ const PerpEdit = ({
       .string()
       .required()
       .test('is-valid-address', 'Please enter a valid PublicKey', (value) =>
-        value ? validatePubkey(value) : true
+        value ? validatePubkey(value) : true,
       ),
   })
   useEffect(() => {
@@ -321,13 +321,14 @@ const PerpEdit = ({
       mangoGroup!.perpMarketsMapByMarketIndex.get(form.perp.value)
     ) {
       const currentPerp = mangoGroup!.perpMarketsMapByMarketIndex.get(
-        form.perp.value
+        form.perp.value,
       )!
       const vals = {
         oraclePk: currentPerp.oracle.toBase58(),
         name: currentPerp.name,
         oracleConfFilter: currentPerp.oracleConfig.confFilter.toNumber(),
-        maxStalenessSlots: currentPerp.oracleConfig.maxStalenessSlots.toNumber(),
+        maxStalenessSlots:
+          currentPerp.oracleConfig.maxStalenessSlots.toNumber(),
         baseDecimals: currentPerp.baseDecimals,
         maintBaseAssetWeight: currentPerp.maintBaseAssetWeight.toNumber(),
         initBaseAssetWeight: currentPerp.initBaseAssetWeight.toNumber(),
@@ -352,11 +353,13 @@ const PerpEdit = ({
           currentPerp.stablePriceModel.delayGrowthLimit,
         stablePriceGrowthLimit: currentPerp.stablePriceModel.stableGrowthLimit,
         settlePnlLimitFactor: currentPerp.settlePnlLimitFactor,
-        settlePnlLimitWindowSize: currentPerp.settlePnlLimitWindowSizeTs.toNumber(),
+        settlePnlLimitWindowSize:
+          currentPerp.settlePnlLimitWindowSizeTs.toNumber(),
         reduceOnly: currentPerp.reduceOnly,
         resetStablePrice: false,
         forceClose: currentPerp.forceClose,
-        positivePnlLiquidationFee: currentPerp.positivePnlLiquidationFee.toNumber(),
+        positivePnlLiquidationFee:
+          currentPerp.positivePnlLiquidationFee.toNumber(),
       }
       setForm((prevForm) => ({
         ...prevForm,

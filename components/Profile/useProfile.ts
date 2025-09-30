@@ -12,7 +12,7 @@ const profileIsSet = (profile: BaseProfile): boolean =>
   !!profile.name || !!profile.image || !!profile.headline
 
 export const useProfile = (
-  publicKey?: PublicKey
+  publicKey?: PublicKey,
 ): { profile: Profile | undefined; loading: boolean } => {
   const connection = useLegacyConnectionContext()
   const connectedWallet = useWalletOnePointOh()
@@ -32,7 +32,7 @@ export const useProfile = (
         ...data,
         exists: profileIsSet(data),
       }),
-    }
+    },
   )
 
   return { profile, loading: isLoading }

@@ -26,7 +26,7 @@ export default function StickyScrolledContainer(props: Props) {
     <div
       className={cx(
         props.className,
-        allowScroll ? 'overflow-y-auto' : 'overflow-hidden'
+        allowScroll ? 'overflow-y-auto' : 'overflow-hidden',
       )}
       ref={container}
     >

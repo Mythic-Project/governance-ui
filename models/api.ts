@@ -4,7 +4,7 @@ import {
   booleanFilter,
   getGovernanceAccounts,
   VoteRecord,
-  Proposal
+  Proposal,
 } from '@solana/spl-governance'
 
 import { pubkeyFilter, MemcmpFilter } from '@solana/spl-governance'
@@ -15,7 +15,7 @@ import { arrayToRecord } from '@tools/core/script'
 export async function getUnrelinquishedVoteRecords(
   connection: Connection,
   programId: PublicKey,
-  tokenOwnerRecordPk: PublicKey
+  tokenOwnerRecordPk: PublicKey,
 ) {
   return getGovernanceAccounts(connection, programId, VoteRecord, [
     pubkeyFilter(1 + 32, tokenOwnerRecordPk)!,
@@ -26,7 +26,7 @@ export async function getUnrelinquishedVoteRecords(
 export async function getVoteRecordsByVoterMapByProposal(
   connection: Connection,
   programId: PublicKey,
-  voter: PublicKey
+  voter: PublicKey,
 ) {
   return getGovernanceAccounts(connection, programId, VoteRecord, [
     pubkeyFilter(33, voter)!,
@@ -38,13 +38,15 @@ export async function getVoteRecordsByVoterMapByProposal(
 export async function getProposalsAtVotingStateByTOR(
   connection: Connection,
   programId: PublicKey,
-  tokenOwnerRecordPk: PublicKey
+  tokenOwnerRecordPk: PublicKey,
 ) {
-
-  const enumFilter: MemcmpFilter = new MemcmpFilter(65, Buffer.from(Uint8Array.from([2])))
+  const enumFilter: MemcmpFilter = new MemcmpFilter(
+    65,
+    Buffer.from(Uint8Array.from([2])),
+  )
 
   return getGovernanceAccounts(connection, programId, Proposal, [
     enumFilter,
-    pubkeyFilter(1 + 32 + 32 + 1, tokenOwnerRecordPk)!
+    pubkeyFilter(1 + 32 + 32 + 1, tokenOwnerRecordPk)!,
   ])
 }

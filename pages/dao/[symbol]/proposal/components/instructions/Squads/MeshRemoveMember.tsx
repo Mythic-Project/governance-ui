@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useMemo } from 'react'
 import * as yup from 'yup'
 import { isFormValid, validatePubkey } from '@utils/formValidation'
 import { UiInstruction } from '@utils/uiTypes/proposalCreationTypes'
@@ -16,6 +16,9 @@ import Squads from '@sqds/mesh'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { PublicKey } from '@solana/web3.js'
 import { Wallet } from '@coral-xyz/anchor'
+import { resolveDomain } from '@utils/domains'
+import { RefreshIcon } from '@heroicons/react/outline'
+import debounce from 'lodash/debounce'
 
 const MeshRemoveMember = ({
   index,
@@ -35,6 +38,30 @@ const MeshRemoveMember = ({
   })
   const [formErrors, setFormErrors] = useState({})
   const { handleSetInstructions } = useContext(NewProposalContext)
+  const [isResolvingDomain, setIsResolvingDomain] = useState(false)
+
+  const resolveDomainDebounced = useMemo(
+    () =>
+      debounce(async (domain: string) => {
+        try {
+          console.log('Attempting to resolve domain:', domain)
+          const resolved = await resolveDomain(connection.current, domain)
+          console.log('Domain resolved to:', resolved?.toBase58() || 'null')
+
+          if (resolved) {
+            setForm((prevForm) => ({
+              ...prevForm,
+              member: resolved.toBase58(),
+            }))
+          }
+        } catch (error) {
+          console.error('Error resolving domain:', error)
+        } finally {
+          setIsResolvingDomain(false)
+        }
+      }, 500),
+    [connection],
+  )
 
   const validateInstruction = async (): Promise<boolean> => {
     const { isValid, validationErrors } = await isFormValid(schema, form)
@@ -57,7 +84,7 @@ const MeshRemoveMember = ({
       const instruction = await squads.buildRemoveMember(
         new PublicKey(form.vault),
         form.governedAccount.governance.pubkey,
-        new PublicKey(form.member)
+        new PublicKey(form.member),
       )
       return {
         serializedInstruction: serializeInstructionToBase64(instruction),
@@ -78,7 +105,7 @@ const MeshRemoveMember = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -102,7 +129,7 @@ const MeshRemoveMember = ({
         'Invalid Member Account',
         function (val: string) {
           return val ? validatePubkey(val) : true
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [
@@ -128,6 +155,18 @@ const MeshRemoveMember = ({
       type: InstructionInputType.INPUT,
       inputType: 'text',
       name: 'member',
+      placeholder: 'Member wallet or domain name (e.g. domain.solana)',
+      additionalComponent: isResolvingDomain ? (
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+          <RefreshIcon className="h-4 w-4 animate-spin text-primary-light" />
+        </div>
+      ) : null,
+      onBlur: () => {
+        if (form.member.includes('.')) {
+          setIsResolvingDomain(true)
+          resolveDomainDebounced(form.member)
+        }
+      },
     },
   ]
 

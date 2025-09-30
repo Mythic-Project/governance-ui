@@ -20,7 +20,9 @@ const AccountItem = ({
   useEffect(() => {
     const fetchAccounAssetInfo = async () => {
       try {
-        const info = await getTreasuryAccountItemInfoV2Async(governedAccountTokenAccount)
+        const info = await getTreasuryAccountItemInfoV2Async(
+          governedAccountTokenAccount,
+        )
         setAccountAssetInfo(info)
       } catch (error) {
         console.error('Error fetching treasury account info:', error)
@@ -32,9 +34,9 @@ const AccountItem = ({
 
   const { data } = useTokenMetadata(
     governedAccountTokenAccount.extensions.mint?.publicKey,
-    !accountAssetInfo.logo
+    !accountAssetInfo.logo,
   )
-  
+
   const symbolFromMeta = useMemo(() => {
     return data?.symbol
   }, [data?.symbol])

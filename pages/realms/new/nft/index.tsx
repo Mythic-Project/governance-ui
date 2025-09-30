@@ -4,7 +4,6 @@ import { PublicKey } from '@solana/web3.js'
 import createNFTRealm from 'actions/createNFTRealm'
 import { DEFAULT_GOVERNANCE_PROGRAM_ID } from '@components/instructions/tools'
 
-
 import useQueryContext from '@hooks/useQueryContext'
 
 import { notify } from '@utils/notifications'
@@ -38,6 +37,8 @@ import YesVotePercentageForm, {
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { DEFAULT_NFT_VOTER_PLUGIN } from '@tools/constants'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { usePlausible } from 'next-plausible'
+import dayjs from 'dayjs'
 
 export const FORM_NAME = 'nft'
 
@@ -48,8 +49,11 @@ export default function NFTWizard() {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
   const { push } = useRouter()
+  const router = useRouter()
+  const { cluster } = router.query
   const { fmtUrlWithCluster } = useQueryContext()
   const [requestPending, setRequestPending] = useState(false)
+  const plausible = usePlausible()
 
   const steps = [
     {
@@ -160,11 +164,31 @@ export default function NFTWizard() {
             })
 
       if (results) {
-        push(
-          fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`),
-          undefined,
-          { shallow: true }
-        )
+        try {
+          plausible('DaoCreated', {
+            props: {
+              realm: results.realmPk.toBase58(),
+              params: JSON.stringify({
+                realm: results.realmPk.toBase58(),
+                cluster: connection.cluster,
+                date: dayjs(new Date()).format('DD-MM-YYYY HH:MM'),
+                link: fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`),
+              }),
+            },
+          })
+          // eslint-disable-next-line no-empty
+        } catch (e) {}
+
+        if (cluster === 'devnet') {
+          push(fmtUrlWithCluster(`/dao/${results.realmPk.toBase58()}`), undefined, {
+            shallow: true,
+          })
+        } else {
+          push(`https://v2.realms.today/dao/${results.realmPk.toBase58()}`, undefined, {
+            shallow: true,
+          })
+        }
+        
       } else {
         throw new Error('Something bad happened during this request.')
       }

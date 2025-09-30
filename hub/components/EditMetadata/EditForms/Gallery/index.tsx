@@ -49,16 +49,17 @@ interface Props {
 }
 
 export function Gallery(props: Props) {
-  const gallery = (props.gallery.length
-    ? [...props.gallery]
-    : [
-        {
-          caption: null,
-          url: '',
-          height: 0,
-          width: 0,
-        },
-      ]
+  const gallery = (
+    props.gallery.length
+      ? [...props.gallery]
+      : [
+          {
+            caption: null,
+            url: '',
+            height: 0,
+            width: 0,
+          },
+        ]
   ).concat(
     props.gallery.length < 15
       ? {

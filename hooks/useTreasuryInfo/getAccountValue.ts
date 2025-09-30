@@ -13,8 +13,8 @@ export const getAccountValue = (account: AssetAccount) => {
   const count = getAccountAssetCount(account)
   const value = new BigNumber(
     tokenPriceService.getUSDTokenPrice(
-      account.extensions.mint.publicKey.toBase58()
-    )
+      account.extensions.mint.publicKey.toBase58(),
+    ),
   )
 
   return count.multipliedBy(value)

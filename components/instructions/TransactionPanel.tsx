@@ -48,7 +48,7 @@ export function TransactionPanel() {
         getProgramVersionForRealm(realmInfo!),
         wallet!,
         connection.current,
-        connection.endpoint
+        connection.endpoint,
       )
 
       const timer = setTimeout(() => {
@@ -66,9 +66,9 @@ export function TransactionPanel() {
   const proposalTransactions = useMemo(
     () =>
       (transactions ?? []).sort(
-        (i1, i2) => i1.account.instructionIndex - i2.account.instructionIndex
+        (i1, i2) => i1.account.instructionIndex - i2.account.instructionIndex,
       ),
-    [transactions]
+    [transactions],
   )
   const [playing, setPlaying] = useState(PlayState.Unplayed)
 
@@ -76,7 +76,7 @@ export function TransactionPanel() {
     setPlaying(
       proposalTransactions.every((x) => x.account.executedAt)
         ? PlayState.Played
-        : PlayState.Unplayed
+        : PlayState.Unplayed,
     )
   }, [proposalTransactions])
 
@@ -86,12 +86,12 @@ export function TransactionPanel() {
       wallet!,
       null,
       [],
-      [...proposalTransactions.flatMap((x) => x.account.getAllInstructions())]
+      [...proposalTransactions.flatMap((x) => x.account.getAllInstructions())],
     )
 
     const inspectUrl = await getExplorerInspectorUrl(
       connection,
-      result.transaction
+      result.transaction,
     )
     window.open(inspectUrl, '_blank')
   }
@@ -145,7 +145,7 @@ export function TransactionPanel() {
                     proposalInstructions={proposalTransactions.filter(
                       (x) =>
                         x.account.executionStatus ===
-                        InstructionExecutionStatus.None
+                        InstructionExecutionStatus.None,
                     )}
                     playing={playing}
                     setPlaying={setPlaying}

@@ -24,25 +24,25 @@ export const calcCostOfNftVote = async (
   proposalPk: PublicKey,
   votingPlugin: VotingClient,
   realmPk: PublicKey,
-  userPk: PublicKey
+  userPk: PublicKey,
 ) => {
   let nftToVoteCount = 0
   const votingNfts = await getVotingNfts(connection, realmPk, userPk)
 
   const nftsAlreadyUsedToVote = await getUsedNftsForProposal(
     votingPlugin.client as NftVoterClient,
-    proposalPk
+    proposalPk,
   )
   if (nftsAlreadyUsedToVote.length > 0) {
     for (const nft of votingNfts) {
       const { nftVoteRecord } = await getNftVoteRecordProgramAddress(
         proposalPk,
         nft.id,
-        votingPlugin.client!.program.programId!
+        votingPlugin.client!.program.programId!,
       )
       if (
         !nftsAlreadyUsedToVote.find(
-          (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58()
+          (x) => x.publicKey.toBase58() === nftVoteRecord.toBase58(),
         )
       ) {
         nftToVoteCount++
@@ -65,7 +65,7 @@ export const calcCostOfNftVote = async (
 export const checkHasEnoughSolToVote = async (
   totalVoteCost: number,
   walletPk: PublicKey,
-  connection: Connection
+  connection: Connection,
 ) => {
   const currentWalletSol = await connection.getBalance(walletPk)
   const hasEnoughSol = currentWalletSol - totalVoteCost > 0

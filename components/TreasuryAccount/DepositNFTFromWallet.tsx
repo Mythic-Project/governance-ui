@@ -51,7 +51,7 @@ const useMetaplexDeposit = () => {
           toOwner,
           nftId,
           wallet.publicKey,
-          wallet.publicKey
+          wallet.publicKey,
         )
 
     await sendTransactionsV3({
@@ -78,7 +78,7 @@ const DepositNFTFromWallet = ({ additionalBtns }: { additionalBtns?: any }) => {
   const deposit = useMetaplexDeposit()
 
   const [selectedGovernance, setSelectedGovernance] = useGovernanceSelect(
-    currentAccount?.governance.pubkey
+    currentAccount?.governance.pubkey,
   )
   const realm = useRealmQuery().data?.result
 
@@ -98,7 +98,7 @@ const DepositNFTFromWallet = ({ additionalBtns }: { additionalBtns?: any }) => {
       if (nft.compression.compressed === false) {
         const owner = await getNativeTreasuryAddress(
           realm.owner,
-          selectedGovernance
+          selectedGovernance,
         )
 
         const ataPk = await Token.getAssociatedTokenAddress(
@@ -106,7 +106,7 @@ const DepositNFTFromWallet = ({ additionalBtns }: { additionalBtns?: any }) => {
           TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
           nftMint, // mint
           owner!, // owner
-          true
+          true,
         )
 
         const ataQueried = await connection.current.getAccountInfo(ataPk)
@@ -117,7 +117,7 @@ const DepositNFTFromWallet = ({ additionalBtns }: { additionalBtns?: any }) => {
             wallet,
             nftMint,
             owner!,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
       }

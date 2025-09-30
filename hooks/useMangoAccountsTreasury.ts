@@ -12,7 +12,7 @@ export function useMangoAccountsTreasury(assetAccounts: AssetAccount[]) {
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const [mangoAccountsValue, setMangoAccountsValue] = useState(new BigNumber(0))
   const [isFetching, setIsFetching] = useState(true)
@@ -26,17 +26,17 @@ export function useMangoAccountsTreasury(assetAccounts: AssetAccount[]) {
       setIsFetchingMangoAcc(true)
       setMangoAccountsValue(new BigNumber(0))
       const filteredAssetAccounts = assetAccounts.filter(
-        (a) => a.type !== AccountType.PROGRAM && a.type !== AccountType.NFT
+        (a) => a.type !== AccountType.PROGRAM && a.type !== AccountType.NFT,
       )
       const assets = (
         await Promise.all(
-          filteredAssetAccounts.map((a) => convertAccountToAsset(a))
+          filteredAssetAccounts.map((a) => convertAccountToAsset(a)),
         )
       ).filter((asset): asset is Asset => asset !== null)
       const { mangoAccountsValue: newMangoValue } = await fetchMangoAccounts(
         assets!,
         mangoClient!,
-        mangoGroup
+        mangoGroup,
       )
 
       setIsFetchingMangoAcc(false)

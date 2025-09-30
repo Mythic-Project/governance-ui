@@ -116,16 +116,17 @@ interface Props {
 export function Roadmap(props: Props) {
   const isDesktop = useMediaQuery({ query: '(min-width:640px)' });
   const [keyCounter, setKeyCounter] = useState(0);
-  const items = (props.roadmap.items.length
-    ? [...props.roadmap.items]
-    : [
-        {
-          date: null,
-          resource: null,
-          status: null,
-          title: '',
-        },
-      ]
+  const items = (
+    props.roadmap.items.length
+      ? [...props.roadmap.items]
+      : [
+          {
+            date: null,
+            resource: null,
+            status: null,
+            title: '',
+          },
+        ]
   ).concat({
     date: null,
     resource: null,

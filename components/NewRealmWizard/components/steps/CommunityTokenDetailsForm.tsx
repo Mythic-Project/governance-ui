@@ -33,13 +33,13 @@ export const CommunityTokenSchema = {
       otherwise: yup.string().optional(),
     })
     .test('is-valid-address', 'Please enter a valid Solana address', (value) =>
-      value ? validatePubkey(value) : true
+      value ? validatePubkey(value) : true,
     ),
   transferCommunityMintAuthority: yup
     .boolean()
     .oneOf(
       [true, false],
-      'You must specify whether you which to transfer mint authority'
+      'You must specify whether you which to transfer mint authority',
     )
     .when('useExistingCommunityToken', {
       is: true,
@@ -64,7 +64,7 @@ export const CommunityTokenSchema = {
     .boolean()
     .oneOf(
       [true, false],
-      'You must specify what type of max voter weight you want to use.'
+      'You must specify what type of max voter weight you want to use.',
     )
     .required('Required'),
   communityAbsoluteMaxVoteWeight: yup
@@ -133,7 +133,7 @@ export default function CommunityTokenForm({
       const coefficients = await getCoefficients(
         undefined,
         new PublicKey(communityTokenMintAddress),
-        connection
+        connection,
       )
       setValue('coefficientA', coefficients[0].toFixed(2))
       setValue('coefficientB', coefficients[1])
@@ -177,7 +177,7 @@ export default function CommunityTokenForm({
     if (suggestedMinTokenAmount > 0) {
       setValue(
         'minimumNumberOfCommunityTokensToGovern',
-        suggestedMinTokenAmount
+        suggestedMinTokenAmount,
       )
     } else {
       setValue('minimumNumberOfCommunityTokensToGovern', undefined)
@@ -345,17 +345,20 @@ export default function CommunityTokenForm({
                 advancedOption
                 className="mt-6"
               >
-                {isQuadratic && <div className="body-sm mb-2 text-fgd-2">
-                  <div>
-                    <span className="text-[#5DC9EB]">Note:&nbsp;</span>
-                    Quadratic Voting DAOs typically have a lower circulating supply factor
-                    than non-quadratic DAOs. This is because the quadratic formula
-                    reduces the weight of votes overall.
+                {isQuadratic && (
+                  <div className="body-sm mb-2 text-fgd-2">
+                    <div>
+                      <span className="text-[#5DC9EB]">Note:&nbsp;</span>
+                      Quadratic Voting DAOs typically have a lower circulating
+                      supply factor than non-quadratic DAOs. This is because the
+                      quadratic formula reduces the weight of votes overall.
+                    </div>
+                    <div>
+                      Consider optionally setting a value &lt; 1 here to
+                      increase the accuracy of approval thresholds.
+                    </div>
                   </div>
-                  <div>
-                    Consider optionally setting a value &lt; 1 here to increase the accuracy of approval thresholds.
-                  </div>
-                </div>}
+                )}
                 <Input
                   type="tel"
                   placeholder={`1`}
@@ -373,10 +376,10 @@ export default function CommunityTokenForm({
           />
         )}
 
-        <Controller
-            name="isQuadratic"
-            control={control}
-            defaultValue={true}
+        {/* <Controller
+          name="isQuadratic"
+          control={control}
+          defaultValue={true}
           render={({ field: { ref: _, ...field } }) => (
             <div className="pt-3 mb-6">
               <FormField
@@ -394,7 +397,7 @@ export default function CommunityTokenForm({
               </FormField>
             </div>
           )}
-        />
+        /> */}
 
         {isQuadratic && (
           <AdvancedOptionsDropdown

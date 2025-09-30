@@ -4,7 +4,7 @@ import useWalletOnePointOh from './useWalletOnePointOh'
 import { useLegacyVoterWeight } from './queries/governancePower'
 
 const useProposalCreationButtonTooltip = (
-  governances?: ProgramAccount<Governance>[]
+  governances?: ProgramAccount<Governance>[],
 ) => {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
@@ -18,8 +18,8 @@ const useProposalCreationButtonTooltip = (
     ? 'Loading...'
     : !connected
     ? 'Connect your wallet to create new proposal'
-    : !governances.some((g) =>
-        ownVoterWeight?.canCreateProposal(g.account.config)
+    : !governances.some(
+        (g) => ownVoterWeight?.canCreateProposal(g.account.config),
       )
     ? "You don't have enough governance power to create a new proposal"
     : toManyCommunityOutstandingProposalsForUser

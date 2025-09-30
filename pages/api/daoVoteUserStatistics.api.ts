@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     daoPk = new PublicKey(dao!)
   } catch (e) {
     const pk = mainnetList.find(
-      (x) => x.symbol.toLowerCase() === dao?.toString()!.toLowerCase()
+      (x) => x.symbol.toLowerCase() === dao?.toString()!.toLowerCase(),
     )?.realmId
     if (pk) {
       daoPk = new PublicKey(pk)
@@ -86,7 +86,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       current: conn,
       endpoint: conn.rpcEndpoint,
     },
-    realm.owner
+    realm.owner,
   )
 
   const votes = proposalsByGovernance
@@ -94,7 +94,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     .filter((x) => x.account.state !== ProposalState.Draft)
     .map((proposal) => {
       const vote = Object.values(voteRecordByVoter).find((vote) =>
-        vote.account.proposal.equals(proposal.pubkey)
+        vote.account.proposal.equals(proposal.pubkey),
       )
 
       return {
@@ -102,7 +102,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         creationDate: dayjs(
           (proposal?.account.signingOffAt
             ? proposal?.account.signingOffAt
-            : proposal?.account.draftAt)!.toNumber() * 1000
+            : proposal?.account.draftAt)!.toNumber() * 1000,
         ).format('DD-MM-YYYY HH:MM'),
         status: proposal
           ? ProposalState[proposal.account.state].toString()
@@ -111,18 +111,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         yesVotes: fmtTokenAmount(
           proposal.account.getYesVoteCount(),
           proposal.account.governingTokenMint.equals(
-            realm.account.communityMint
+            realm.account.communityMint,
           )
             ? communityMintDecimals
-            : councilMintDecimals
+            : councilMintDecimals,
         ),
         noVotes: fmtTokenAmount(
           proposal.account.getNoVoteCount(),
           proposal.account.governingTokenMint.equals(
-            realm.account.communityMint
+            realm.account.communityMint,
           )
             ? communityMintDecimals
-            : councilMintDecimals
+            : councilMintDecimals,
         ),
         voted: vote?.account.vote
           ? YesNoVote[vote.account.vote!.toYesNoVote()!]
@@ -135,7 +135,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ? proposal?.account.signingOffAt.toNumber()
           : proposal?.account.draftAt.toNumber(),
         totalVotersNumber: allProgramVoteRecords.filter((x) =>
-          x.account.proposal.equals(proposal.pubkey)
+          x.account.proposal.equals(proposal.pubkey),
         ).length,
       }
     })
@@ -147,7 +147,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     abstainVotesCount: votes.filter((x) => x.voted === null).length,
     totalVotesCasts: votes.filter((x) => x.voted).length,
     votes: votes.sort(
-      (a, b) => b.creationDateTimestamp - a.creationDateTimestamp
+      (a, b) => b.creationDateTimestamp - a.creationDateTimestamp,
     ),
   })
 }

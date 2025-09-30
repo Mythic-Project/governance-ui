@@ -27,7 +27,7 @@ const UpdateConfigAuthority = ({
   const { anchorProvider } = useWalletDeprecated()
 
   const [configAccount, setConfigAccount] = useState<ConfigAccountType | null>(
-    null
+    null,
   )
 
   const [isConfigLoading, setIsConfigLoading] = useState(true)
@@ -74,7 +74,7 @@ const UpdateConfigAuthority = ({
     const ix = await actions.getUpdateConfigAuthorityInstruction(
       anchorProvider,
       form.governedAccount.pubkey,
-      newAuthorityPubkey
+      newAuthorityPubkey,
     )
     return {
       serializedInstruction: serializeInstructionToBase64(ix),
@@ -99,7 +99,7 @@ const UpdateConfigAuthority = ({
   useEffect(() => {
     if (configAccount) {
       const configAuthority = governedNativeAccounts.find(
-        (a) => a.pubkey.toBase58() === configAccount.configAuthority.toBase58()
+        (a) => a.pubkey.toBase58() === configAccount.configAuthority.toBase58(),
       )
 
       setForm({
@@ -116,7 +116,7 @@ const UpdateConfigAuthority = ({
         governedAccount: form.governedAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])

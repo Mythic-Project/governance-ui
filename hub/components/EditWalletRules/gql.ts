@@ -7,7 +7,7 @@ import { GovernanceVoteTipping } from '@hub/types/decoders/GovernanceVoteTipping
 import { PublicKey } from '@hub/types/decoders/PublicKey';
 
 export const getGovernanceRules = gql`
-  query($realmUrlId: String!, $governancePublicKey: PublicKey!) {
+  query ($realmUrlId: String!, $governancePublicKey: PublicKey!) {
     me {
       publicKey
     }
@@ -61,7 +61,7 @@ const Rules = IT.type({
   vetoQuorumPercent: IT.number,
   voteTipping: GovernanceVoteTipping,
   votingPowerToCreateProposals: BigNumber,
-  tokenMintAddress: PublicKey
+  tokenMintAddress: PublicKey,
 });
 
 export const getGovernanceRulesResp = IT.type({

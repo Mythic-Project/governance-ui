@@ -38,7 +38,7 @@ const getFormatter = (() => {
 export function formatNumber(
   number: BigNumber | number | bigint,
   locale?: string,
-  options?: Intl.NumberFormatOptions
+  options?: Intl.NumberFormatOptions,
 ) {
   const format = getFormatter(locale || getUserLocale(), options)
 

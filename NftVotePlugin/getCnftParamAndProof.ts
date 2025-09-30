@@ -27,17 +27,17 @@ function bufferToArray(buffer: Buffer): number[] {
  */
 export async function getCnftParamAndProof(
   connection: Connection,
-  compressedNft: any
+  compressedNft: any,
 ) {
   const network = getNetworkFromEndpoint(connection.rpcEndpoint)
   if (network === 'localnet') throw new Error()
   const { result: assetProof } = await fetchDasAssetProofById(
     network,
-    new PublicKey(compressedNft.id)
+    new PublicKey(compressedNft.id),
   )
   const treeAccount = await ConcurrentMerkleTreeAccount.fromAccountAddress(
     connection,
-    new PublicKey(compressedNft.compression.tree)
+    new PublicKey(compressedNft.compression.tree),
   )
   const canopyHeight = treeAccount.getCanopyDepth()
   const root = decode(assetProof.root)
@@ -45,7 +45,7 @@ export async function getCnftParamAndProof(
 
   const reducedProofs = assetProof.proof.slice(
     0,
-    proofLength - (canopyHeight ? canopyHeight : 0)
+    proofLength - (canopyHeight ? canopyHeight : 0),
   )
 
   const creators = compressedNft.creators.map((creator) => {
@@ -57,7 +57,7 @@ export async function getCnftParamAndProof(
   })
 
   const rawCollection = compressedNft.grouping.find(
-    (x) => x.group_key === 'collection'
+    (x) => x.group_key === 'collection',
   )
   const param = {
     name: compressedNft.content.metadata.name,
@@ -75,7 +75,7 @@ export async function getCnftParamAndProof(
     root,
     leafOwner: new PublicKey(compressedNft.ownership.owner),
     leafDelegate: new PublicKey(
-      compressedNft.ownership.delegate || compressedNft.ownership.owner
+      compressedNft.ownership.delegate || compressedNft.ownership.owner,
     ),
     nonce: new anchor.BN(compressedNft.compression.leaf_id),
     index: compressedNft.compression.leaf_id,

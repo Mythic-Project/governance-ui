@@ -19,15 +19,18 @@ import {
   txBatchesToInstructionSetWithSigners,
 } from '@utils/sendTransactions'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {useHeliumClient} from "../../VoterWeightPlugins/useHeliumClient";
+import { useHeliumClient } from '../../VoterWeightPlugins/useHeliumClient'
 
 export const useCreatePosition = () => {
   const { connection, wallet } = useWalletDeprecated()
   const realm = useRealmQuery().data?.result
   const { realmInfo } = useRealm()
-  const {heliumClient} = useHeliumClient();
-  const registrarPk = realm && heliumClient ?
-      heliumClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint).registrar : undefined;
+  const { heliumClient } = useHeliumClient()
+  const registrarPk =
+    realm && heliumClient
+      ? heliumClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint)
+          .registrar
+      : undefined
 
   const { error, loading, execute } = useAsyncCallback(
     async ({
@@ -59,9 +62,10 @@ export const useCreatePosition = () => {
         const mintKeypair = Keypair.generate()
         const position = positionKey(mintKeypair.publicKey)[0]
         const instructions: TransactionInstruction[] = []
-        const mintRent = await connection.current.getMinimumBalanceForRentExemption(
-          MintLayout.span
-        )
+        const mintRent =
+          await connection.current.getMinimumBalanceForRentExemption(
+            MintLayout.span,
+          )
 
         instructions.push(
           SystemProgram.createAccount({
@@ -70,7 +74,7 @@ export const useCreatePosition = () => {
             lamports: mintRent,
             space: MintLayout.span,
             programId: TOKEN_PROGRAM_ID,
-          })
+          }),
         )
 
         instructions.push(
@@ -79,8 +83,8 @@ export const useCreatePosition = () => {
             mintKeypair.publicKey,
             0,
             position,
-            position
-          )
+            position,
+          ),
         )
 
         if (!tokenOwnerRecordPk) {
@@ -91,7 +95,7 @@ export const useCreatePosition = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -107,7 +111,7 @@ export const useCreatePosition = () => {
               depositMint: realm.account.communityMint,
               recipient: wallet!.publicKey!,
             })
-            .instruction()
+            .instruction(),
         )
 
         instructions.push(
@@ -120,7 +124,7 @@ export const useCreatePosition = () => {
               position,
               mint: realm.account.communityMint,
             })
-            .instruction()
+            .instruction(),
         )
 
         notify({ message: 'Locking' })
@@ -130,7 +134,7 @@ export const useCreatePosition = () => {
               instructionsSet: txBatchesToInstructionSetWithSigners(
                 instructions,
                 [[mintKeypair]],
-                0
+                0,
               ),
               sequenceType: SequenceType.Sequential,
             },
@@ -146,7 +150,7 @@ export const useCreatePosition = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

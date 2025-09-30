@@ -11,6 +11,7 @@ import {
 } from '@solana/spl-governance'
 import { ProgramAccount } from '@solana/spl-governance'
 import { PublicKey } from '@solana/web3.js'
+import { ProposalState } from '@realms-today/spl-governance'
 
 interface VoterWeightInterface {
   votingPower?: BN
@@ -22,13 +23,13 @@ interface VoterWeightInterface {
   hasMinCouncilWeight: (minCouncilWeight: BN) => boolean | undefined
   canCreateProposal: (config: GovernanceConfig) => boolean | undefined
   canCreateGovernanceUsingCommunityTokens: (
-    realm: ProgramAccount<Realm>
+    realm: ProgramAccount<Realm>,
   ) => boolean | undefined
   canCreateGovernanceUsingCouncilTokens: () => boolean | undefined
   canCreateGovernance: (realm: ProgramAccount<Realm>) => boolean | undefined
   getTokenRecordToCreateProposal: (
     config: GovernanceConfig,
-    voteByCouncil: boolean
+    voteByCouncil: boolean,
   ) => ProgramAccount<TokenOwnerRecord>
   hasMinAmountToVote: (mintPk: PublicKey) => boolean | undefined
 }
@@ -46,7 +47,7 @@ export class VoteRegistryVoterWeight implements VoterWeightInterface {
   constructor(
     communityTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
     councilTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
-    votingPower: BN
+    votingPower: BN,
   ) {
     this.communityTokenRecord = communityTokenRecord
     this.councilTokenRecord = councilTokenRecord
@@ -83,7 +84,7 @@ export class VoteRegistryVoterWeight implements VoterWeightInterface {
     return (
       this.councilTokenRecord &&
       this.councilTokenRecord.account.governingTokenDepositAmount.cmp(
-        minCouncilWeight
+        minCouncilWeight,
       ) >= 0
     )
   }
@@ -97,7 +98,7 @@ export class VoteRegistryVoterWeight implements VoterWeightInterface {
 
   canCreateGovernanceUsingCommunityTokens(realm: ProgramAccount<Realm>) {
     return this.hasMinCommunityWeight(
-      realm.account.config.minCommunityTokensToCreateGovernance
+      realm.account.config.minCommunityTokensToCreateGovernance,
     )
   }
   canCreateGovernanceUsingCouncilTokens() {
@@ -152,7 +153,7 @@ export class VoteNftWeight implements VoterWeightInterface {
   constructor(
     communityTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
     councilTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
-    votingPower: BN
+    votingPower: BN,
   ) {
     this.communityTokenRecord = communityTokenRecord
     this.councilTokenRecord = councilTokenRecord
@@ -188,7 +189,7 @@ export class VoteNftWeight implements VoterWeightInterface {
     return (
       this.councilTokenRecord &&
       this.councilTokenRecord.account.governingTokenDepositAmount.cmp(
-        minCouncilWeight
+        minCouncilWeight,
       ) >= 0
     )
   }
@@ -201,7 +202,7 @@ export class VoteNftWeight implements VoterWeightInterface {
   }
   canCreateGovernanceUsingCommunityTokens(realm: ProgramAccount<Realm>) {
     return this.hasMinCommunityWeight(
-      realm.account.config.minCommunityTokensToCreateGovernance
+      realm.account.config.minCommunityTokensToCreateGovernance,
     )
   }
   canCreateGovernanceUsingCouncilTokens() {
@@ -255,7 +256,7 @@ export class VoterWeight implements VoterWeightInterface {
 
   constructor(
     communityTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
-    councilTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined
+    councilTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
   ) {
     this.communityTokenRecord = communityTokenRecord
     this.councilTokenRecord = councilTokenRecord
@@ -285,7 +286,7 @@ export class VoterWeight implements VoterWeightInterface {
     return (
       this.communityTokenRecord &&
       this.communityTokenRecord.account.governingTokenDepositAmount.cmp(
-        minCommunityWeight
+        minCommunityWeight,
       ) >= 0
     )
   }
@@ -293,7 +294,7 @@ export class VoterWeight implements VoterWeightInterface {
     return (
       this.councilTokenRecord &&
       this.councilTokenRecord.account.governingTokenDepositAmount.cmp(
-        minCouncilWeight
+        minCouncilWeight,
       ) >= 0
     )
   }
@@ -306,7 +307,7 @@ export class VoterWeight implements VoterWeightInterface {
   }
   canCreateGovernanceUsingCommunityTokens(realm: ProgramAccount<Realm>) {
     return this.hasMinCommunityWeight(
-      realm.account.config.minCommunityTokensToCreateGovernance
+      realm.account.config.minCommunityTokensToCreateGovernance,
     )
   }
   canCreateGovernanceUsingCouncilTokens() {
@@ -338,11 +339,14 @@ export class VoterWeight implements VoterWeightInterface {
 
   getTokenRecordToCreateProposal(
     config: GovernanceConfig,
-    voteByCouncil: boolean
+    voteByCouncil: boolean,
   ) {
     // if the vote is by council, prefer council token
     if (voteByCouncil) {
-      if (this.councilTokenRecord && this.hasMinCouncilWeight(config.minCouncilTokensToCreateProposal)) {
+      if (
+        this.councilTokenRecord &&
+        this.hasMinCouncilWeight(config.minCouncilTokensToCreateProposal)
+      ) {
         return this.councilTokenRecord
       }
       if (this.communityTokenRecord) {
@@ -373,7 +377,7 @@ export class LegacyVoterWeightAdapter extends VoterWeight {
     tokenOwnerRecords: {
       community: ProgramAccount<TokenOwnerRecord> | undefined
       council: ProgramAccount<TokenOwnerRecord> | undefined
-    }
+    },
   ) {
     super(tokenOwnerRecords.community, tokenOwnerRecords.council)
   }
@@ -421,7 +425,7 @@ export class SimpleGatedVoterWeight implements VoterWeightInterface {
   constructor(
     public communityTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
     public councilTokenRecord: ProgramAccount<TokenOwnerRecord> | undefined,
-    public votingPower: BN
+    public votingPower: BN,
   ) {}
 
   hasAnyWeight() {
@@ -458,7 +462,7 @@ export class SimpleGatedVoterWeight implements VoterWeightInterface {
 
   getTokenRecordToCreateProposal(
     config: GovernanceConfig,
-    voteByCouncil: boolean
+    voteByCouncil: boolean,
   ) {
     if (voteByCouncil && this.councilTokenRecord) {
       return this.councilTokenRecord
@@ -473,7 +477,7 @@ export class SimpleGatedVoterWeight implements VoterWeightInterface {
 /** Returns max VoteWeight for given mint and max source */
 export function getMintMaxVoteWeight(
   mint: MintInfo,
-  maxVoteWeightSource: MintMaxVoteWeightSource
+  maxVoteWeightSource: MintMaxVoteWeightSource,
 ) {
   if (maxVoteWeightSource.isFullSupply()) {
     return mint.supply
@@ -499,10 +503,12 @@ export function getProposalMaxVoteWeight(
   proposal: Proposal,
   governingTokenMint: MintInfo,
   // For vetos we want to override the proposal.governingTokenMint
-  governingTokenMintPk?: PublicKey
+  governingTokenMintPk?: PublicKey,
 ) {
+  const isVetoed = proposal.state === ProposalState.Vetoed
+
   // For finalized proposals the max is stored on the proposal in case it can change in the future
-  if (proposal.isVoteFinalized() && proposal.maxVoteWeight) {
+  if (proposal.isVoteFinalized() && proposal.maxVoteWeight && !isVetoed) {
     return proposal.maxVoteWeight
   }
 
@@ -516,6 +522,6 @@ export function getProposalMaxVoteWeight(
 
   return getMintMaxVoteWeight(
     governingTokenMint,
-    realm.config.communityMintMaxVoteWeightSource
+    realm.config.communityMintMaxVoteWeightSource,
   )
 }

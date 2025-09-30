@@ -1,11 +1,21 @@
-import { PublicKey } from "@metaplex-foundation/js";
-import { Governance, ProgramAccount, Realm, VoteThresholdType, VoteTipping } from "@solana/spl-governance";
-import BigNumber from "bignumber.js";
-import { secondsToHours } from "date-fns";
-import { MAX_NUM } from "./constants";
-import { GovernanceTokenType } from "@hub/types/GovernanceTokenType";
-import { isNil } from "lodash";
-import { GovernanceVoteTipping } from "@hub/types/GovernanceVoteTipping";
+import { PublicKey } from '@metaplex-foundation/js';
+import {
+  Governance,
+  ProgramAccount,
+  Realm,
+  VoteThresholdType,
+  VoteTipping,
+} from '@solana/spl-governance';
+import BigNumber from 'bignumber.js';
+import { secondsToHours } from 'date-fns';
+
+import { isNil } from 'lodash';
+
+import { GovernanceTokenType } from '@hub/types/GovernanceTokenType';
+
+import { GovernanceVoteTipping } from '@hub/types/GovernanceVoteTipping';
+
+import { MAX_NUM } from './constants';
 
 function voteTippingToGovernanceVoteTipping(voteTipping: VoteTipping | string) {
   switch (voteTipping) {
@@ -32,7 +42,7 @@ function voteTippingToGovernanceVoteTipping(voteTipping: VoteTipping | string) {
 function getGovernanceRules(
   programPublicKey: PublicKey,
   governanceAccount: ProgramAccount<Governance>,
-  realm: ProgramAccount<Realm>
+  realm: ProgramAccount<Realm>,
 ) {
   const onChainConfig = governanceAccount.account.config;
 
@@ -50,15 +60,18 @@ function getGovernanceRules(
           canVeto:
             onChainConfig.councilVetoVoteThreshold?.type ===
               VoteThresholdType.YesVotePercentage ||
-            onChainConfig.councilVetoVoteThreshold?.type === VoteThresholdType.QuorumPercentage
+            onChainConfig.councilVetoVoteThreshold?.type ===
+              VoteThresholdType.QuorumPercentage
               ? true
               : false,
           canVote:
-            onChainConfig.councilVoteThreshold?.type === VoteThresholdType.Disabled
+            onChainConfig.councilVoteThreshold?.type ===
+            VoteThresholdType.Disabled
               ? false
               : true,
           quorumPercent: onChainConfig.councilVoteThreshold
-            ? onChainConfig.councilVoteThreshold.type === VoteThresholdType.Disabled
+            ? onChainConfig.councilVoteThreshold.type ===
+              VoteThresholdType.Disabled
               ? 60
               : onChainConfig.councilVoteThreshold.value || 60
             : 60,
@@ -69,14 +82,17 @@ function getGovernanceRules(
           //   -councilMintInfo.account.decimals,
           // ),
           vetoQuorumPercent: onChainConfig.councilVetoVoteThreshold
-            ? onChainConfig.councilVetoVoteThreshold.type === VoteThresholdType.Disabled
+            ? onChainConfig.councilVetoVoteThreshold.type ===
+              VoteThresholdType.Disabled
               ? 60
               : onChainConfig.councilVetoVoteThreshold.value || 60
             : 60,
-          voteTipping: voteTippingToGovernanceVoteTipping(onChainConfig.councilVoteTipping),
+          voteTipping: voteTippingToGovernanceVoteTipping(
+            onChainConfig.councilVoteTipping,
+          ),
           votingPowerToCreateProposals: new BigNumber(
             onChainConfig.minCouncilTokensToCreateProposal.toString(),
-          )
+          ),
         }
       : null,
     communityTokenRules: {
@@ -84,14 +100,20 @@ function getGovernanceRules(
         onChainConfig.minCommunityTokensToCreateProposal.toString(),
       ).isLessThan(MAX_NUM),
       canVeto:
-        onChainConfig.communityVetoVoteThreshold?.type === VoteThresholdType.YesVotePercentage ||
-        onChainConfig.communityVetoVoteThreshold?.type === VoteThresholdType.QuorumPercentage
+        onChainConfig.communityVetoVoteThreshold?.type ===
+          VoteThresholdType.YesVotePercentage ||
+        onChainConfig.communityVetoVoteThreshold?.type ===
+          VoteThresholdType.QuorumPercentage
           ? true
           : false,
       canVote:
-        onChainConfig.communityVoteThreshold?.type === VoteThresholdType.Disabled ? false : true,
+        onChainConfig.communityVoteThreshold?.type ===
+        VoteThresholdType.Disabled
+          ? false
+          : true,
       quorumPercent: onChainConfig.communityVoteThreshold
-        ? onChainConfig.communityVoteThreshold.type === VoteThresholdType.Disabled
+        ? onChainConfig.communityVoteThreshold.type ===
+          VoteThresholdType.Disabled
           ? 60
           : onChainConfig.communityVoteThreshold.value || 60
         : 60,
@@ -102,20 +124,26 @@ function getGovernanceRules(
       //   -communityMintInfo.account.decimals,
       // ),
       vetoQuorumPercent: onChainConfig.communityVetoVoteThreshold
-        ? onChainConfig.communityVetoVoteThreshold.type === VoteThresholdType.Disabled
+        ? onChainConfig.communityVetoVoteThreshold.type ===
+          VoteThresholdType.Disabled
           ? 60
           : onChainConfig.communityVetoVoteThreshold.value || 60
         : 60,
-      voteTipping: voteTippingToGovernanceVoteTipping(onChainConfig.communityVoteTipping),
+      voteTipping: voteTippingToGovernanceVoteTipping(
+        onChainConfig.communityVoteTipping,
+      ),
       votingPowerToCreateProposals: new BigNumber(
         onChainConfig.minCommunityTokensToCreateProposal.toString(),
-      )
+      ),
     },
-    depositExemptProposalCount: isNil((onChainConfig as any)['depositExemptProposalCount'])
+    depositExemptProposalCount: isNil(
+      (onChainConfig as any)['depositExemptProposalCount'],
+    )
       ? 10
       : (onChainConfig as any)['depositExemptProposalCount'],
     maxVoteDays: secondsToHours(onChainConfig.baseVotingTime) / 24,
-    minInstructionHoldupDays: secondsToHours(onChainConfig.minInstructionHoldUpTime) / 24,
+    minInstructionHoldupDays:
+      secondsToHours(onChainConfig.minInstructionHoldUpTime) / 24,
     // version: programVersion,
   };
 

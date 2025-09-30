@@ -44,8 +44,8 @@ import {
 } from '@hooks/queries/mintInfo'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { useLegacyVoterWeight } from '@hooks/queries/governancePower'
-import {useVotingClients} from "@hooks/useVotingClients";
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVotingClients } from '@hooks/useVotingClients'
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const SOL_BUFFER = 0.02
 
@@ -70,11 +70,9 @@ export const Deposit: React.FC<{
   const { result: ownVoterWeight } = useLegacyVoterWeight()
 
   const { realmInfo } = useRealm()
-  const {
-    canUseTransferInstruction,
-    governedTokenAccountsWithoutNfts,
-  } = useGovernanceAssets()
-  const votingClients = useVotingClients();
+  const { canUseTransferInstruction, governedTokenAccountsWithoutNfts } =
+    useGovernanceAssets()
+  const votingClients = useVotingClients()
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
   const [ownedStrategyTokenAccount, setOwnedStrategyTokenAccount] = useState<
@@ -88,7 +86,7 @@ export const Deposit: React.FC<{
   >()
   const [depositReceiptPubkey, setDepositReceiptPubkey] = useState<PublicKey>()
   const [isDepositing, setIsDepositing] = useState(false)
-  const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle()
   const [form, setForm] = useState<PsyFiStrategyForm>({
     strategy: proposedInvestment,
     title: '',
@@ -103,13 +101,13 @@ export const Deposit: React.FC<{
   }, [])
   const tokenInfo = tokenPriceService.getTokenInfo(handledMint)
   const tokenSymbol = tokenPriceService.getTokenInfo(
-    governedTokenAccount.extensions.mint!.publicKey.toBase58()
+    governedTokenAccount.extensions.mint!.publicKey.toBase58(),
   )?.symbol
   const mintInfo = governedTokenAccount.extensions?.mint?.account
   const treasuryAmount = new BN(
     governedTokenAccount.isSol
       ? governedTokenAccount.extensions.amount!.toNumber()
-      : governedTokenAccount.extensions.token!.account.amount
+      : governedTokenAccount.extensions.token!.account.amount,
   )
   const mintMinAmount = mintInfo ? getMintMinAmountAsDecimal(mintInfo) : 1
   let maxAmount = mintInfo
@@ -127,8 +125,8 @@ export const Deposit: React.FC<{
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(form.amount))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(form.amount)),
+        ).toFixed(currentPrecision),
       ),
     })
   }, [handleSetForm, mintMinAmount, form.amount, currentPrecision])
@@ -145,14 +143,16 @@ export const Deposit: React.FC<{
         psyFiProgram,
         owner,
         form.strategy.vaultAccounts.pubkey,
-        form.strategy.vaultInfo.status.currentEpoch
+        form.strategy.vaultInfo.status.currentEpoch,
       )
       setDepositReceiptPubkey(address)
 
       // @ts-ignore: More anchor type stuff
-      const currentDepositReceipt = ((await psyFiProgram.account.depositReceipt.fetchNullable(
-        address
-      )) as unknown) as DepositReceipt | undefined
+      const currentDepositReceipt =
+        //@ts-ignore
+        (await psyFiProgram.account.depositReceipt.fetchNullable(
+          address,
+        )) as unknown as DepositReceipt | undefined
       setDepositReceipt(currentDepositReceipt)
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
@@ -167,27 +167,28 @@ export const Deposit: React.FC<{
       const tokenAddress = await getAssociatedTokenAddress(
         form.strategy.vaultAccounts.lpTokenMint,
         owner,
-        true
+        true,
       )
 
       // Cross ref with this governances' token accounts and pull holdings
       // NOTE: This knowingly restricts to ATAs.
-      const existingStrategyTokenAccount = governedTokenAccountsWithoutNfts.find(
-        (x) => x.pubkey.equals(tokenAddress)
-      )
+      const existingStrategyTokenAccount =
+        governedTokenAccountsWithoutNfts.find((x) =>
+          x.pubkey.equals(tokenAddress),
+        )
       setOwnedStrategyTokenAccount(existingStrategyTokenAccount)
       if (
         existingStrategyTokenAccount &&
         existingStrategyTokenAccount.extensions.amount!.gtn(0)
       ) {
         // Get the token supply
-        const strategyTokenSupply = existingStrategyTokenAccount.extensions
-          .mint!.account.supply
+        const strategyTokenSupply =
+          existingStrategyTokenAccount.extensions.mint!.account.supply
         const ownedAmount = existingStrategyTokenAccount.extensions.amount!
         // Get the amount of underlying represented by the vault
         const underlyingBn = getMintNaturalAmountFromDecimalAsBN(
           form.strategy.liquidity,
-          governedTokenAccount.extensions.mint!.account.decimals
+          governedTokenAccount.extensions.mint!.account.decimals,
         )
         // Calculate ownership from ratio
         const amountOwned = underlyingBn
@@ -195,7 +196,7 @@ export const Deposit: React.FC<{
           .div(strategyTokenSupply)
         const underlyingOwned = getMintDecimalAmountFromNatural(
           governedTokenAccount.extensions.mint!.account,
-          amountOwned
+          amountOwned,
         ).toNumber()
         setUnderlyingDeposited(underlyingOwned)
       }
@@ -210,11 +211,11 @@ export const Deposit: React.FC<{
         getProgramVersionForRealm(realmInfo!),
         wallet!,
         connection.current,
-        connection.endpoint
+        connection.endpoint,
       )
       const ownTokenRecord = ownVoterWeight!.getTokenRecordToCreateProposal(
         governedTokenAccount!.governance!.account.config,
-        voteByCouncil
+        voteByCouncil,
       )
       const defaultProposalMint = voteByCouncil
         ? realm?.account.config.councilMint
@@ -241,7 +242,7 @@ export const Deposit: React.FC<{
           action: Action.Deposit,
           bnAmount: getMintNaturalAmountFromDecimalAsBN(
             form.amount as number,
-            governedTokenAccount.extensions.mint!.account.decimals
+            governedTokenAccount.extensions.mint!.account.decimals,
           ),
         },
         psyFiProgram,
@@ -253,10 +254,10 @@ export const Deposit: React.FC<{
         governedTokenAccount!.governance!.account!.proposalCount,
         false,
         connection,
-        votingClients(voteByCouncil? 'council' : 'community')
+        votingClients(voteByCouncil ? 'council' : 'community'),
       )
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       router.push(url)
       setIsDepositing(false)
@@ -395,7 +396,7 @@ export const Deposit: React.FC<{
             {depositReceipt
               ? getMintDecimalAmountFromNatural(
                   governedTokenAccount.extensions.mint!.account,
-                  depositReceipt.depositAmount
+                  depositReceipt.depositAmount,
                 ).toNumber()
               : 0}{' '}
             <span className="font-normal text-fgd-3">{tokenInfo?.symbol}</span>

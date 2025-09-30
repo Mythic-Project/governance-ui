@@ -13,62 +13,78 @@ import { getMintMetadata } from '@components/instructions/programs/splToken'
 import { useTokenOwnerRecordsDelegatedToUser } from '@hooks/queries/tokenOwnerRecord'
 import { useMemo } from 'react'
 import { useSelectedDelegatorStore } from 'stores/useSelectedDelegatorStore'
+import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 interface Props {
-  className?: string,
-  votingPower: BN | undefined,
+  className?: string
+  votingPower: BN | undefined
   votingPowerLoading: boolean
   isLastPlugin: boolean
 }
 
-export default function VSRCommunityVotingPower({ className, votingPower, votingPowerLoading, isLastPlugin }: Props) {
+export default function VSRCommunityVotingPower({
+  className,
+  votingPower,
+  votingPowerLoading,
+  isLastPlugin,
+}: Props) {
   const realm = useRealmQuery().data?.result
   const mint = useRealmCommunityMintInfoQuery().data?.result
+  const config = useRealmConfigQuery().data?.result
 
   const deposits = useDepositStore((s) => s.state.deposits)
 
+  const isCustomBioPlugin = config?.account.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0]
+
+  const displayMint = isCustomBioPlugin ?
+    deposits[0].mint.account :
+    mint
+
+  const depositMint = isCustomBioPlugin ?
+    deposits[0].mint.publicKey :
+    realm?.account.communityMint
+
   const votingPowerFromDeposits = useDepositStore(
-    (s) => s.state.votingPowerFromDeposits
+    (s) => s.state.votingPowerFromDeposits,
   )
   const isLoading = useDepositStore((s) => s.state.isLoading)
 
   const depositRecord = deposits.find(
     (deposit) =>
       deposit.mint.publicKey.toBase58() ===
-        realm?.account.communityMint.toBase58() && deposit.lockup.kind.none
+        depositMint?.toBase58() && deposit.lockup.kind.none,
   )
-
-  const depositMint = realm?.account.communityMint
 
   const tokenName =
     getMintMetadata(depositMint)?.name ?? realm?.account.name ?? ''
 
   const tokenAmount =
-    depositRecord && mint
+    depositRecord && displayMint
       ? new BigNumber(
-          getMintDecimalAmount(mint, depositRecord.amountDepositedNative)
+          getMintDecimalAmount(displayMint, depositRecord.amountDepositedNative),
         )
       : new BigNumber('0')
 
-  const lockedTokensAmount = mint
+  const lockedTokensAmount = displayMint
     ? deposits
         .filter(
           (x) =>
             typeof x.lockup.kind['none'] === 'undefined' &&
             x.mint.publicKey.toBase58() ===
-              realm?.account.communityMint.toBase58()
+              depositMint?.toBase58(),
         )
         .reduce(
           (curr, next) =>
             curr.plus(new BigNumber(next.currentlyLocked.toString())),
-          new BigNumber(0)
+          new BigNumber(0),
         )
-        .shiftedBy(-mint.decimals)
+        .shiftedBy(-displayMint.decimals)
     : new BigNumber('0')
 
   const { data: delegatedTors } = useTokenOwnerRecordsDelegatedToUser()
   const selectedDelegator = useSelectedDelegatorStore(
-    (s) => s.communityDelegator
+    (s) => s.communityDelegator,
   )
   // memoize useAsync inputs to prevent constant refetch
   const relevantDelegators = useMemo(
@@ -79,10 +95,10 @@ export default function VSRCommunityVotingPower({ className, votingPower, voting
             ?.filter(
               (x) =>
                 x.account.governingTokenMint.toString() ===
-                realm?.account.communityMint.toString()
+                realm?.account.communityMint.toString(),
             )
             .map((x) => x.account.governingTokenOwner),
-    [delegatedTors, realm?.account.communityMint, selectedDelegator]
+    [delegatedTors, realm?.account.communityMint, selectedDelegator],
   )
   const { data: delegatorPowers } = useVsrGovpowerMulti(relevantDelegators)
   const totalDelegatorPower =
@@ -90,7 +106,7 @@ export default function VSRCommunityVotingPower({ className, votingPower, voting
     mint &&
     Object.values(delegatorPowers).reduce(
       (sum, curr) => sum.add(curr),
-      new BN(0)
+      new BN(0),
     )
   const formattedDelegatorPower =
     totalDelegatorPower &&
@@ -98,12 +114,12 @@ export default function VSRCommunityVotingPower({ className, votingPower, voting
 
   //const totalPower = votingPower.add(totalDelegatorPower ?? new BN(0))
 
-  if (isLoading || mint === undefined || votingPowerLoading) {
+  if (isLoading || mint === undefined || displayMint === undefined || votingPowerLoading) {
     return (
       <div
         className={classNames(
           className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )
@@ -113,7 +129,7 @@ export default function VSRCommunityVotingPower({ className, votingPower, voting
     <div className={className}>
       <VotingPowerBox
         votingPower={votingPower ?? new BN(0)}
-        mint={mint}
+        mint={displayMint}
         votingPowerFromDeposits={votingPowerFromDeposits}
         isLastPlugin={isLastPlugin}
         className="p-3"

@@ -31,15 +31,15 @@ import { useRealmQuery } from '@hooks/queries/realm'
 import { useConnection } from '@solana/wallet-adapter-react'
 import queryClient from '@hooks/queries/queryClient'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
-import {useVsrClient} from "../../../VoterWeightPlugins/useVsrClient";
+import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
 
 const DepositCard = ({
   deposit,
   vsrClient,
-  registrar
+  registrar,
 }: {
   deposit: DepositWithMintAccount
-  vsrClient?: VsrClient | undefined,
+  vsrClient?: VsrClient | undefined
   registrar?: Registrar | undefined
 }) => {
   const { getOwnedDeposits } = useDepositStore()
@@ -54,7 +54,7 @@ const DepositCard = ({
   const endpoint = connection.rpcEndpoint
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false)
   const handleWithDrawFromDeposit = async (
-    depositEntry: DepositWithMintAccount
+    depositEntry: DepositWithMintAccount,
   ) => {
     if (
       ownTokenRecord?.account?.unrelinquishedVotesCount &&
@@ -73,7 +73,7 @@ const DepositCard = ({
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection,
-      endpoint
+      endpoint,
     )
     await voteRegistryWithdraw({
       rpcContext,
@@ -96,7 +96,14 @@ const DepositCard = ({
       connection,
     })
     queryClient.invalidateQueries(
-      tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!)
+      tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!),
+    )
+    queryClient.invalidateQueries(
+      ['get-custom-vsr-token-account', {
+        realm: realm?.pubkey.toBase58(), 
+        mint: realm?.account.communityMint.toBase58(), 
+        pubkey: wallet?.publicKey?.toBase58()
+      }]
     )
     queryClient.invalidateQueries(['VoteRecord'])
   }
@@ -109,7 +116,7 @@ const DepositCard = ({
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection,
-      endpoint
+      endpoint,
     )
     await closeDeposit({
       rpcContext,
@@ -129,7 +136,7 @@ const DepositCard = ({
 
   const lockedTokens = fmtMintAmount(
     deposit.mint.account,
-    deposit.currentlyLocked.add(deposit.available)
+    deposit.currentlyLocked.add(deposit.available),
   )
   const type = Object.keys(deposit.lockup.kind)[0] as LockupType
   const isVest = type === 'monthly' || type === 'daily'
@@ -147,7 +154,7 @@ const DepositCard = ({
     )
   }
   const tokenInfo = tokenPriceService.getTokenInfo(
-    deposit.mint.publicKey.toBase58()
+    deposit.mint.publicKey.toBase58(),
   )
 
   return (
@@ -184,7 +191,7 @@ const DepositCard = ({
               label="Initial Amount"
               value={fmtMintAmount(
                 deposit.mint.account,
-                deposit.amountInitiallyLockedNative
+                deposit.amountInitiallyLockedNative,
               )}
             />
           )}
@@ -195,7 +202,7 @@ const DepositCard = ({
                 deposit.vestingRate &&
                 `${getMintDecimalAmount(
                   deposit.mint.account,
-                  deposit.vestingRate
+                  deposit.vestingRate,
                 ).toFormat(0)} ${
                   typeof deposit.lockup.kind.monthly !== 'undefined'
                     ? 'p/mo'
@@ -209,10 +216,10 @@ const DepositCard = ({
               label={`Next Vesting in ${getFormattedStringFromDays(
                 deposit!.nextVestingTimestamp
                   .sub(new BN(dayjs().unix()))
-                  .toNumber() / SECS_PER_DAY
+                  .toNumber() / SECS_PER_DAY,
               )}`}
               value={`${dayjs(
-                deposit!.nextVestingTimestamp!.toNumber() * 1000
+                deposit!.nextVestingTimestamp!.toNumber() * 1000,
               ).format('MM-DD-YYYY HH:mm')}`}
             />
           )}
@@ -221,17 +228,26 @@ const DepositCard = ({
               label="Vote Multiplier"
               value={(deposit.votingPower.isZero() ||
               deposit.votingPowerBaseline.isZero()
-                ? 
-                registrar && deposit.amountDepositedNative.gt(new BN(0)) ?
-                  deposit.votingPower.mul(new BN(100)).div(
-                    deposit.amountDepositedNative.mul(
-                      new BN(10).pow(
-                        new BN(registrar!.votingMints[deposit.votingMintConfigIdx].digitShift)
+                ? registrar && deposit.amountDepositedNative.gt(new BN(0))
+                  ? deposit.votingPower
+                      .mul(new BN(100))
+                      .div(
+                        deposit.amountDepositedNative.mul(
+                          new BN(10).pow(
+                            new BN(
+                              registrar!.votingMints[
+                                deposit.votingMintConfigIdx
+                              ].digitShift,
+                            ),
+                          ),
+                        ),
                       )
-                    )
-                  ).toNumber() / 100
+                      .toNumber() / 100
                   : 0
-                : deposit.votingPower.mul(new BN(100)).div(deposit.votingPowerBaseline).toNumber() / 100
+                : deposit.votingPower
+                    .mul(new BN(100))
+                    .div(deposit.votingPowerBaseline)
+                    .toNumber() / 100
               ).toFixed(2)}
             />
           )}
@@ -241,7 +257,7 @@ const DepositCard = ({
               isConstant
                 ? getMinDurationFmt(
                     deposit.lockup.startTs,
-                    deposit.lockup.endTs
+                    deposit.lockup.endTs,
                   )
                 : getTimeLeftFromNowFmt(deposit.lockup.endTs)
             }

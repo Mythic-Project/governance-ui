@@ -12,8 +12,8 @@ interface UserCreatedTopLevelFeedItemRepliesStore extends State {
   updateComment: (feedItemId: string, comment: FeedItemComment) => void;
 }
 
-export const useUserCreatedTopLevelFeedItemRepliesStore = create<UserCreatedTopLevelFeedItemRepliesStore>(
-  (set, get) => ({
+export const useUserCreatedTopLevelFeedItemRepliesStore =
+  create<UserCreatedTopLevelFeedItemRepliesStore>((set, get) => ({
     comments: {},
     deletedComments: [],
     addComment: (feedItemId, comment) => {
@@ -49,5 +49,4 @@ export const useUserCreatedTopLevelFeedItemRepliesStore = create<UserCreatedTopL
         });
       }
     },
-  }),
-);
+  }));

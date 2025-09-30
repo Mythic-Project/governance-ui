@@ -20,9 +20,11 @@ interface Args {
 }
 
 function getGovernedAccountPk(acc: AssetAccount): PublicKey {
-  return (acc.isSol
-    ? acc.extensions.transferAddress
-    : acc.extensions?.token?.account?.owner) as PublicKey
+  return (
+    acc.isSol
+      ? acc.extensions.transferAddress
+      : acc.extensions?.token?.account?.owner
+  ) as PublicKey
 }
 
 export default async function getMeanWithdrawFromAccountInstruction({
@@ -53,20 +55,19 @@ export default async function getMeanWithdrawFromAccountInstruction({
     const psAccount = new PublicKey(formPaymentStreamingAccount.id) // treasury
     const amount = parseMintNaturalAmountFromDecimal(
       form.amount,
-      form.mintInfo.decimals
+      form.mintInfo.decimals,
     )
     const autoWSol = true
     const destination = new PublicKey(form.destination)
-    const {
-      transaction,
-    } = await paymentStreaming.buildWithdrawFromAccountTransaction(
-      { psAccount, feePayer, destination },
-      amount,
-      autoWSol
-    )
+    const { transaction } =
+      await paymentStreaming.buildWithdrawFromAccountTransaction(
+        { psAccount, feePayer, destination },
+        amount,
+        autoWSol,
+      )
 
     const additionalSerializedInstructions = transaction.instructions.map(
-      serializeInstructionToBase64
+      serializeInstructionToBase64,
     )
 
     const obj: UiInstruction = {

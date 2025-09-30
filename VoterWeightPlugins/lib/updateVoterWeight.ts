@@ -1,9 +1,6 @@
-import {
-  PublicKey,
-  TransactionInstruction,
-} from '@solana/web3.js'
-import {VoterWeightAction} from "@solana/spl-governance";
-import {VoterWeightPluginInfo} from "./types";
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { VoterWeightAction } from '@solana/spl-governance'
+import { VoterWeightPluginInfo } from './types'
 
 interface UpdateVoterWeightRecordArgs {
   walletPublicKey: PublicKey
@@ -20,8 +17,11 @@ export const updateVoterWeight = async ({
   governanceMintPublicKey,
   plugins = [],
   action,
-  target
-}: UpdateVoterWeightRecordArgs): Promise<{ pre: TransactionInstruction[], post: TransactionInstruction[]}> => {
+  target,
+}: UpdateVoterWeightRecordArgs): Promise<{
+  pre: TransactionInstruction[]
+  post: TransactionInstruction[]
+}> => {
   const preIxes: TransactionInstruction[] = []
   const postIxes: TransactionInstruction[] = []
 
@@ -30,21 +30,30 @@ export const updateVoterWeight = async ({
   // so that it knows what the previous voter weight record was.
   // Most VWRs are derived the same way, but some (e.g. VSR) use a different derivation
   // function, so this decouples the plugins in this regard.
-  let getVoterWeightRecordCallback: (() => Promise<PublicKey>) | undefined = undefined;
+  let getVoterWeightRecordCallback: (() => Promise<PublicKey>) | undefined =
+    undefined
 
   for (const plugin of plugins) {
-    const updateVoterWeightRecordIx = await plugin.client.updateVoterWeightRecord(
-      walletPublicKey,
-      realmPublicKey,
-      governanceMintPublicKey,
-      action,
-      getVoterWeightRecordCallback,
-      target
-    )
+    const updateVoterWeightRecordIx =
+      await plugin.client.updateVoterWeightRecord(
+        walletPublicKey,
+        realmPublicKey,
+        governanceMintPublicKey,
+        action,
+        getVoterWeightRecordCallback,
+        target,
+      )
     preIxes.push(...updateVoterWeightRecordIx.pre)
-    postIxes.push(...updateVoterWeightRecordIx.post || [])
+    postIxes.push(...(updateVoterWeightRecordIx.post || []))
 
-    getVoterWeightRecordCallback = async () => (await plugin.client.getVoterWeightRecordPDA(realmPublicKey, governanceMintPublicKey, walletPublicKey)).voterWeightPk
+    getVoterWeightRecordCallback = async () =>
+      (
+        await plugin.client.getVoterWeightRecordPDA(
+          realmPublicKey,
+          governanceMintPublicKey,
+          walletPublicKey,
+        )
+      ).voterWeightPk
   }
 
   return { pre: preIxes, post: postIxes }

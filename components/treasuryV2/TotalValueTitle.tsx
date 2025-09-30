@@ -4,6 +4,9 @@ import React from 'react'
 
 import { Result, Status } from '@utils/uiTypes/Result'
 import { formatNumber } from '@utils/formatNumber'
+import Button, { SecondaryButton } from '@components/Button'
+import useQueryContext from '@hooks/useQueryContext'
+import { useRouter } from 'next/router'
 
 interface Props {
   className?: string
@@ -17,6 +20,10 @@ interface Props {
 }
 
 export default function TotalValueTitle(props: Props) {
+  const { symbol } = useRouter().query
+  const router = useRouter()
+  const { fmtUrlWithCluster } = useQueryContext()
+
   switch (props.data._tag) {
     case Status.Failed:
       return (
@@ -43,15 +50,24 @@ export default function TotalValueTitle(props: Props) {
                 className: cx(
                   props.data.data.realm.icon.props.className,
                   'w-4',
-                  'h-4'
+                  'h-4',
                 ),
               })}
             <span className="ml-1 text-white/50">
               {props.data.data.realm.name} Total Value
             </span>
           </div>
-          <div className="text-fgd-1 text-[52px] leading-[60px] font-bold">
-            ${formatNumber(props.data.data.value)}
+          <div className="text-fgd-1 text-[52px] leading-[60px] font-bold flex">
+            <div className="mr-3">${formatNumber(props.data.data.value)}</div>
+            <SecondaryButton
+              className="ml-auto"
+              small
+              onClick={() =>
+                router.push(fmtUrlWithCluster(`/dao/${symbol}/treasury/orders`))
+              }
+            >
+              Limit Orders
+            </SecondaryButton>
           </div>
         </div>
       )

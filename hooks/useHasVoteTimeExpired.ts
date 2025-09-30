@@ -4,7 +4,7 @@ import { useIsBeyondTimestamp } from './useIsBeyondTimestamp'
 
 export const useHasVoteTimeExpired = (
   governance: ProgramAccount<Governance> | undefined,
-  proposal: ProgramAccount<Proposal>
+  proposal: ProgramAccount<Proposal>,
 ) => {
   return useIsBeyondTimestamp(
     proposal
@@ -14,6 +14,6 @@ export const useHasVoteTimeExpired = (
         ? proposal.account.votingAt.toNumber() +
           governance.account.config.baseVotingTime
         : undefined
-      : undefined
+      : undefined,
   )
 }

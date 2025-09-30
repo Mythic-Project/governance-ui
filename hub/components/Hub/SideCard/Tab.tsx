@@ -46,13 +46,12 @@ const Inner = forwardRef<HTMLButtonElement, Props>(
   },
 );
 
-export const Tab = forwardRef<HTMLButtonElement, Props>(function Tab(
-  props,
-  ref,
-) {
-  return (
-    <Tabs.Trigger value={props.value} asChild>
-      <Inner {...props} ref={ref} />
-    </Tabs.Trigger>
-  );
-});
+export const Tab = forwardRef<HTMLButtonElement, Props>(
+  function Tab(props, ref) {
+    return (
+      <Tabs.Trigger value={props.value} asChild>
+        <Inner {...props} ref={ref} />
+      </Tabs.Trigger>
+    );
+  },
+);

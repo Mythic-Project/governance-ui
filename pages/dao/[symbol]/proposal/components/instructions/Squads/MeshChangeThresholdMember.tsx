@@ -64,7 +64,7 @@ const MeshChangeThresholdMember = ({
       const instruction = await squads.buildChangeThresholdMember(
         new PublicKey(form.vault),
         form.governedAccount.governance.pubkey,
-        form.newThreshold
+        form.newThreshold,
       )
       return {
         serializedInstruction: serializeInstructionToBase64(instruction),
@@ -85,7 +85,7 @@ const MeshChangeThresholdMember = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -109,7 +109,7 @@ const MeshChangeThresholdMember = ({
         "New threshold can't be 0",
         function (val: number) {
           return val > 0
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [

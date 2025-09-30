@@ -16,15 +16,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const adminProvider = new AnchorProvider(
     conn,
     new EmptyWallet(Keypair.generate()),
-    options
+    options,
   )
   const registrar = new PublicKey(
-    '4WQSYg21RrJNYhF4251XFpoy1uYbMHcMfZNLMXA3x5Mp'
+    '4WQSYg21RrJNYhF4251XFpoy1uYbMHcMfZNLMXA3x5Mp',
   )
 
   const vsr = await VsrClient.connect(
     adminProvider,
-    new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo')
+    new PublicKey('4Q6WW2ouZ6V3iaNm56MTd5n2tnTm4C5fiH8miFHnAFHo'),
   )
   const voters = await vsr.program.account['voter'].all()
   const resp: any[] = []

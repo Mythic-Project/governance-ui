@@ -8,7 +8,7 @@ export const withMintTo = async (
   mintPk: PublicKey,
   destinationPk: PublicKey,
   mintAuthorityPk: PublicKey,
-  amount: number | u64
+  amount: number | u64,
 ) => {
   instructions.push(
     Token.createMintToInstruction(
@@ -17,7 +17,7 @@ export const withMintTo = async (
       destinationPk,
       mintAuthorityPk,
       [],
-      amount
-    )
+      amount,
+    ),
   )
 }

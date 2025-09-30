@@ -29,7 +29,7 @@ export default function VotingPowerPct(props: Props) {
         'leading-[15px]',
         'text-xs',
         'text-right',
-        'text-fgd-2'
+        'text-fgd-2',
       )}
     >
       {getPct(props.amount, props.total)}% of total

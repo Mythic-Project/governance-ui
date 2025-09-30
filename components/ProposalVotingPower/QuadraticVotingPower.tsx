@@ -31,31 +31,32 @@ export default function QuadraticVotingPower({ role, className }: Props) {
   const mintInfo = useMintInfoByPubkeyQuery(realm?.account.communityMint).data
     ?.result
 
-  const activeMembers: Member[] | undefined = useMemo(() => activeMembersData?.map(member => ({
-    walletAddress: member.account.governingTokenOwner.toBase58(),
-    communityVotes: new BN(0),
-    councilVotes: new BN(0)
-  })), [activeMembersData])
+  const activeMembers: Member[] | undefined = useMemo(
+    () =>
+      activeMembersData?.map((member) => ({
+        walletAddress: member.account.governingTokenOwner.toBase58(),
+        communityVotes: new BN(0),
+        councilVotes: new BN(0),
+      })),
+    [activeMembersData],
+  )
 
   const isLoading = useDepositStore((s) => s.state.isLoading)
-  const {
-    isReady,
-    calculatedMaxVoterWeight,
-    plugins,
-  } = useRealmVoterWeightPlugins(role)
+  const { isReady, calculatedMaxVoterWeight, plugins } =
+    useRealmVoterWeightPlugins(role)
   const { result: ownVoterWeight } = useLegacyVoterWeight()
 
   const formattedTokenAmount = useMemo(
     () =>
       mintInfo && ownVoterWeight?.communityTokenRecord
         ? new BigNumber(
-            ownVoterWeight?.communityTokenRecord?.account?.governingTokenDepositAmount?.toString()
+            ownVoterWeight?.communityTokenRecord?.account?.governingTokenDepositAmount?.toString(),
           )
             .shiftedBy(-mintInfo.decimals)
             .toFixed(2)
             .toString()
         : undefined,
-    [mintInfo, ownVoterWeight?.communityTokenRecord]
+    [mintInfo, ownVoterWeight?.communityTokenRecord],
   )
 
   const formattedMax =
@@ -73,14 +74,14 @@ export default function QuadraticVotingPower({ role, className }: Props) {
             .toFixed(2)
             .toString()
         : undefined,
-    [mintInfo, voterWeight?.value]
+    [mintInfo, voterWeight?.value],
   )
 
   const { communityWeight, councilWeight } = useRealmVoterWeights()
   const { gatewayStatus } = useGateway()
   const isQVEnabled = plugins?.voterWeight.some((p) => p.name === 'QV')
   const isGatewayEnabled = plugins?.voterWeight.some(
-    (p) => p.name === 'gateway'
+    (p) => p.name === 'gateway',
   )
 
   const hasAnyVotingPower =
@@ -91,7 +92,7 @@ export default function QuadraticVotingPower({ role, className }: Props) {
       <div
         className={classNames(
           className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )

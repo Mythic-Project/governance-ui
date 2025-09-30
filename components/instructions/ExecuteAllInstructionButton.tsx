@@ -32,7 +32,7 @@ export enum PlayState {
 
 const useSignersNeeded = (
   proposalInstructions: ProgramAccount<ProposalTransaction>[],
-  proposal: ProgramAccount<Proposal>
+  proposal: ProgramAccount<Proposal>,
 ) => {
   const realm = useRealmQuery().data?.result
   const [signersNeeded, setSignersNeeded] = useState<PublicKey[]>()
@@ -49,7 +49,9 @@ const useSignersNeeded = (
 
       //we need to remove the governance and its treasury from the signers
       const signers = propInstructions
-        .map((x) => x.account.instructions.flatMap((inst) => inst.accounts))
+        .map(
+          (x) => x.account.instructions?.flatMap((inst) => inst.accounts) || [],
+        )
         .filter((x) => x)
         .flatMap((x) => x)
         .filter((x) => x.isSigner)
@@ -101,7 +103,7 @@ export function ExecuteAllInstructionButton({
     getProgramVersionForRealm(realmInfo!),
     wallet!,
     connection.current,
-    connection.endpoint
+    connection.endpoint,
   )
   // update the current slot every 5 seconds
   // if current slot > slot available to execute the transaction
@@ -124,7 +126,7 @@ export function ExecuteAllInstructionButton({
     signersNeeded === undefined
       ? undefined
       : signersNeeded.filter(
-          (x) => !wallet?.publicKey || !x.equals(wallet?.publicKey)
+          (x) => !wallet?.publicKey || !x.equals(wallet?.publicKey),
         ).length > 0
 
   const onExecuteInstructions = async () => {
@@ -135,7 +137,7 @@ export function ExecuteAllInstructionButton({
         rpcContext,
         proposal,
         proposalInstructions,
-        multiTransactionMode
+        multiTransactionMode,
       )
       queryClient.invalidateQueries({
         queryKey: proposalQueryKeys.all(connection.endpoint),
@@ -169,7 +171,7 @@ export function ExecuteAllInstructionButton({
   if (
     playing === PlayState.Unplayed &&
     proposalInstructions.every(
-      (itx) => itx.account.executionStatus !== InstructionExecutionStatus.Error
+      (itx) => itx.account.executionStatus !== InstructionExecutionStatus.Error,
     )
   ) {
     return (
@@ -181,7 +183,7 @@ export function ExecuteAllInstructionButton({
         tooltipMessage={
           otherSignerNeeded && signersNeeded !== undefined
             ? `This proposal must be executed by ${abbreviateAddress(
-                signersNeeded[0]
+                signersNeeded[0],
               )}`
             : undefined
         }
@@ -201,7 +203,7 @@ export function ExecuteAllInstructionButton({
   if (
     playing === PlayState.Error ||
     proposalInstructions.every(
-      (itx) => itx.account.executionStatus !== InstructionExecutionStatus.Error
+      (itx) => itx.account.executionStatus !== InstructionExecutionStatus.Error,
     )
   ) {
     return (

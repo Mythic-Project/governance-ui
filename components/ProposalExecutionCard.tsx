@@ -28,7 +28,7 @@ export default function ProposalExecutionCard(props: Props) {
   const timer = useRef<undefined | number>()
   const proposalTransactions = useProposalTransactions(
     allTransactions,
-    proposal
+    proposal,
   )
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function ProposalExecutionCard(props: Props) {
         'bg-bkg-2',
         'p-4',
         'rounded-lg',
-        'md:p-6'
+        'md:p-6',
       )}
     >
       <div className="flex items-center flex-col">

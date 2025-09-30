@@ -146,7 +146,7 @@ const NonprofitSelect = ({
                 nonprofitInformation?.description +
                 '\n' +
                 'https://getchange.io/solana/cause/' +
-                nonprofitInformation?.crypto.solana_address
+                nonprofitInformation?.crypto.solana_address,
             )
           }
         >

@@ -32,7 +32,7 @@ const DualGso = ({
     payer: undefined,
     strike: 0,
     subscriptionPeriodEnd: 0,
-    lockupRatio: 0
+    lockupRatio: 0,
   })
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
@@ -48,7 +48,7 @@ const DualGso = ({
     setFormErrors({})
     setForm({ ...form, [propertyName]: value })
   }
-  const schema = getDualFinanceGsoSchema({form})
+  const schema = getDualFinanceGsoSchema({ form })
   useEffect(() => {
     function getInstruction(): Promise<UiInstruction> {
       return getConfigGsoInstruction({
@@ -61,7 +61,7 @@ const DualGso = ({
     }
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
   }, [
     form,
@@ -93,17 +93,17 @@ const DualGso = ({
         />
       </Tooltip>
       <Input
-          label="Lockup Mint"
-          value={form.lockupMint}
-          type="text"
-          onChange={(evt) =>
-            handleSetForm({
-              value: evt.target.value,
-              propertyName: 'lockupMint',
-            })
-          }
-          error={formErrors['lockupMint']}
-        />
+        label="Lockup Mint"
+        value={form.lockupMint}
+        type="text"
+        onChange={(evt) =>
+          handleSetForm({
+            value: evt.target.value,
+            propertyName: 'lockupMint',
+          })
+        }
+        error={formErrors['lockupMint']}
+      />
       <Tooltip content="Treasury owned account providing the assets for the option. When the recipient exercises, these are the tokens they receive.">
         <GovernedAccountSelect
           label="Base Treasury"
@@ -221,7 +221,7 @@ const DualGso = ({
             (x) =>
               x.isSol &&
               form.baseTreasury?.governance &&
-              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey)
+              x.governance.pubkey.equals(form.baseTreasury.governance.pubkey),
           )}
           onChange={(value) => {
             handleSetForm({ value, propertyName: 'payer' })

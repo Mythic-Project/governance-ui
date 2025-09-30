@@ -9,7 +9,7 @@ import { HNT_MINT } from '@helium/spl-utils'
 export const getSubDaos = async (
   connection: Connection,
   provider: AnchorProvider,
-  programId: PublicKey = PROGRAM_ID
+  programId: PublicKey = PROGRAM_ID,
 ): Promise<SubDaoWithMeta[]> => {
   try {
     const subDaos: SubDaoWithMeta[] = []
@@ -31,8 +31,8 @@ export const getSubDaos = async (
       subdaos.map(async (subDao) =>
         metaplex.nfts().findByMint({
           mintAddress: subDao.account.dntMint,
-        })
-      )
+        }),
+      ),
     )
 
     subDaos.push(
@@ -42,7 +42,7 @@ export const getSubDaos = async (
           pubkey: subDao.publicKey,
           dntMetadata: dntMetadatas[idx],
         } as SubDaoWithMeta
-      })
+      }),
     )
 
     return subDaos

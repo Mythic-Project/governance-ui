@@ -1,5 +1,9 @@
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base'
-import { TransactionInstruction, Keypair, ComputeBudgetProgram } from '@solana/web3.js'
+import {
+  TransactionInstruction,
+  Keypair,
+  ComputeBudgetProgram,
+} from '@solana/web3.js'
 import {
   closeTransactionProcessUi,
   incrementProcessedTransactions,
@@ -48,8 +52,8 @@ export const sendTransactionsV3 = async ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   lookupTableAccounts,
   autoFee = true,
-  // dynamicComputeUnits = true
-}: sendSignAndConfirmTransactionsProps & {
+} // dynamicComputeUnits = true
+: sendSignAndConfirmTransactionsProps & {
   lookupTableAccounts?: any
   autoFee?: boolean
   // dynamicComputeUnits?: boolean
@@ -58,17 +62,17 @@ export const sendTransactionsV3 = async ({
   const fee = await getFeeEstimate(connection)
   for (const tx of transactionInstructions) {
     if (tx.instructionsSet.length) {
-      let newInstructionSet = tx.instructionsSet;
+      let newInstructionSet = tx.instructionsSet
       if (autoFee) {
         newInstructionSet = [
           new TransactionInstructionWithSigners(createComputeBudgetIx(fee)),
-          ...newInstructionSet
+          ...newInstructionSet,
         ]
       }
 
       const txObjWithFee = {
         ...tx,
-        instructionsSet: newInstructionSet
+        instructionsSet: newInstructionSet,
       }
       transactionInstructionsWithFee.push(txObjWithFee)
     }
@@ -88,8 +92,8 @@ export const sendTransactionsV3 = async ({
       closeTransactionProcessUi()
       transactionInstructionsWithFee.forEach((x) =>
         x.instructionsSet.forEach((x) =>
-          invalidateInstructionAccounts(x.transactionInstruction)
-        )
+          invalidateInstructionAccounts(x.transactionInstruction),
+        ),
       )
     },
     afterEveryTxConfirmation: () => {
@@ -110,12 +114,12 @@ export const sendTransactionsV3 = async ({
             autoFee: false,
           }),
         getErrorMsg(e),
-        e.txid
+        e.txid,
       )
       transactionInstructionsWithFee.forEach((x) =>
         x.instructionsSet.forEach((x) =>
-          invalidateInstructionAccounts(x.transactionInstruction)
-        )
+          invalidateInstructionAccounts(x.transactionInstruction),
+        ),
       )
     },
   }
@@ -123,7 +127,7 @@ export const sendTransactionsV3 = async ({
   const cfg = {
     maxTxesInBatch:
       transactionInstructionsWithFee.filter(
-        (x) => x.sequenceType === SequenceType.Sequential
+        (x) => x.sequenceType === SequenceType.Sequential,
       ).length > 0
         ? 20
         : 30,
@@ -140,7 +144,7 @@ export const sendTransactionsV3 = async ({
     timeoutStrategy,
     callbacks: callbacksWithUiComponent,
     config: cfg,
-    confirmLevel: 'confirmed',  
+    confirmLevel: 'confirmed',
     backupConnections: BACKUP_CONNECTIONS, //TODO base this on connection confirmation level
     //lookupTableAccounts,
   })
@@ -170,7 +174,7 @@ const tryStringify = (obj) => {
 export const txBatchesToInstructionSetWithSigners = (
   txBatch: TransactionInstruction[],
   signerBatches: Keypair[][],
-  batchIdx?: number
+  batchIdx?: number,
 ): { transactionInstruction: TransactionInstruction; signers: Keypair[] }[] => {
   return txBatch.map((tx, txIdx) => {
     let signers: Keypair[] = []

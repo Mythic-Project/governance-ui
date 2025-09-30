@@ -20,13 +20,12 @@ type UseRealmProposalVoteReturnType = typeof DEFAULT_VOTE
 export default function useRealmProposalVotes(
   proposal?: Proposal,
   realm?: Realm,
-  governance?: Governance
+  governance?: Governance,
 ) {
   const connection = useLegacyConnectionContext()
 
-  const [voteData, setVoteData] = useState<UseRealmProposalVoteReturnType>(
-    DEFAULT_VOTE
-  )
+  const [voteData, setVoteData] =
+    useState<UseRealmProposalVoteReturnType>(DEFAULT_VOTE)
 
   useEffect(() => {
     // https://stackoverflow.com/questions/61751728/asynchronous-calls-with-react-usememo
@@ -76,13 +75,13 @@ export default function useRealmProposalVotes(
       const yesVoteCount = !isMultiProposal
         ? fmtTokenAmount(
             proposal.getYesVoteCount(),
-            proposalMint.account.decimals
+            proposalMint.account.decimals,
           )
         : 0
       const noVoteCount = !isMultiProposal
         ? fmtTokenAmount(
             proposal.getNoVoteCount(),
-            proposalMint.account.decimals
+            proposalMint.account.decimals,
           )
         : 0
 

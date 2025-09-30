@@ -27,7 +27,7 @@ const calculateMintAuthority = async (lidoAddress, programId) => {
 const getDepositKeys = async (
   payer,
   recipient,
-  { lidoAddress, stSolMint, programId }
+  { lidoAddress, stSolMint, programId },
 ) => {
   const reserveAccount = await calculateReserveAccount(lidoAddress, programId)
   const mintAuthority = await calculateMintAuthority(lidoAddress, programId)
@@ -61,7 +61,7 @@ const depositInstruction = async (
   amount,
   recipient,
   transaction,
-  config
+  config,
 ) => {
   const { programId } = config
   const dataLayout = BufferLayout.struct([
@@ -75,7 +75,7 @@ const depositInstruction = async (
       instruction: 1,
       amount: new BN(amount),
     },
-    data
+    data,
   )
 
   const keys = await getDepositKeys(payer, recipient, config)
@@ -85,7 +85,7 @@ const depositInstruction = async (
       keys,
       programId,
       data,
-    })
+    }),
   )
 }
 

@@ -25,11 +25,11 @@ export const NFT_VOTER_INSTRUCTIONS = {
           const provider = new AnchorProvider(
             connection,
             new EmptyWallet(Keypair.generate()),
-            options
+            options,
           )
           const nftClient = await NftVoterClient.connect(provider)
           const decodedInstructionData = new BorshInstructionCoder(
-            nftClient.program.idl
+            nftClient.program.idl,
           ).decode(Buffer.from(data))?.data as any
           return (
             <div className="space-y-3">
@@ -56,24 +56,24 @@ export const NFT_VOTER_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         try {
           const options = AnchorProvider.defaultOptions()
           const provider = new AnchorProvider(
             connection,
             new EmptyWallet(Keypair.generate()),
-            options
+            options,
           )
           const realm = await getRealm(connection, accounts[1].pubkey)
           const mint = await tryGetMint(connection, realm.account.communityMint)
           const nftClient = await NftVoterClient.connect(provider)
           const decodedInstructionData = new BorshInstructionCoder(
-            nftClient.program.idl
+            nftClient.program.idl,
           ).decode(Buffer.from(data))?.data as any
           const weight = fmtTokenAmount(
             decodedInstructionData.weight,
-            mint?.account.decimals
+            mint?.account.decimals,
           )
           return (
             <div className="space-y-3">

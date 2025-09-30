@@ -31,10 +31,8 @@ export default function Program(props: Props) {
   const wallet = useWalletOnePointOh()
   const connected = !!wallet?.connected
   const [closeBuffersModalOpen, setOpenCloseBuffersModalOpen] = useState(false)
-  const [
-    transferAuthorityModalOpen,
-    setOpenTransferAuthorityModalOpen,
-  ] = useState(false)
+  const [transferAuthorityModalOpen, setOpenTransferAuthorityModalOpen] =
+    useState(false)
   const [upgradeModalOpen, setUpgradeModelOpen] = useState(false)
 
   const disabled =
@@ -63,7 +61,7 @@ export default function Program(props: Props) {
                 'stroke-white/50',
                 'transition-all',
                 'w-4',
-                'hover:stroke-fgd-1'
+                'hover:stroke-fgd-1',
               )}
             />
           </a>
@@ -83,7 +81,7 @@ export default function Program(props: Props) {
                   'stroke-white/50',
                   'transition-all',
                   'w-4',
-                  'hover:stroke-fgd-1'
+                  'hover:stroke-fgd-1',
                 )}
               />
             </Tooltip>
@@ -121,7 +119,7 @@ export default function Program(props: Props) {
               'space-x-1',
               'text-primary-light',
               'disabled:text-white/30',
-              'disabled:cursor-not-allowed'
+              'disabled:cursor-not-allowed',
             )}
             disabled={disabled}
             onClick={() => {
@@ -140,7 +138,7 @@ export default function Program(props: Props) {
                 'm-0',
                 'text-fgd-1',
                 'disabled:text-white/30',
-                'disabled:cursor-not-allowed'
+                'disabled:cursor-not-allowed',
               )}
               disabled={disabled}
             >
@@ -160,7 +158,7 @@ export default function Program(props: Props) {
                     'space-x-1',
                     'transition-colors',
                     'cursor-pointer',
-                    'hover:text-white'
+                    'hover:text-white',
                   )}
                   onClick={() => setOpenCloseBuffersModalOpen(true)}
                 >
@@ -176,7 +174,7 @@ export default function Program(props: Props) {
                     'mt-4',
                     'transition-colors',
                     'cursor-pointer',
-                    'hover:text-white'
+                    'hover:text-white',
                   )}
                   onClick={() => setOpenTransferAuthorityModalOpen(true)}
                 >

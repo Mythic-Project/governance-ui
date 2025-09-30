@@ -9,6 +9,7 @@ import { LockupKind } from 'VoteStakeRegistry/tools/types'
 import { AssetAccount, StakeAccount } from '@utils/uiTypes/assets'
 import { RealmInfo } from '@models/registry/api'
 import * as PaymentStreaming from '@mean-dao/payment-streaming'
+import { DasNftObject } from '@hooks/queries/digitalAssets'
 
 // Alphabetical order
 export enum PackageEnum {
@@ -25,14 +26,22 @@ export enum PackageEnum {
   Serum,
   Solend,
   Symmetry,
+  Manifest,
   Squads,
   Switchboard,
   VsrPlugin,
+  Raydium
 }
 
 export interface UiInstruction {
   serializedInstruction: string
-  additionalSerializedInstructions?: string[]
+  additionalSerializedInstructions?: (
+    | string
+    | {
+        serializedInstruction: string
+        holdUpTime: number
+      }
+  )[]
   isValid: boolean
   governance: ProgramAccount<Governance> | undefined
   customHoldUpTime?: number
@@ -121,7 +130,8 @@ export interface ClawbackForm {
   holdupTime: number
 }
 
-export interface SendTokenCompactViewForm extends Omit<SplTokenTransferForm, 'amount' | 'destinationAccount'> {
+export interface SendTokenCompactViewForm
+  extends Omit<SplTokenTransferForm, 'amount' | 'destinationAccount'> {
   destinationAccount: string[]
   amount: (number | undefined)[]
   txDollarAmount: (string | undefined)[]
@@ -294,6 +304,20 @@ export interface JoinDAOForm {
   amount?: number
 }
 
+export interface WithdrawDAOForm {
+  governedAccount?: AssetAccount
+  mintInfo: MintInfo | undefined
+  realm: string
+  amount?: number
+}
+
+export interface RelinquishDaoVoteForm {
+  governedAccount?: AssetAccount
+  mintInfo: MintInfo | undefined
+  realm: string
+  proposal: string
+}
+
 export enum Instructions {
   Base64,
   Burn,
@@ -323,12 +347,16 @@ export enum Instructions {
   DualFinanceStakingOptionWithdraw,
   DualFinanceDelegate,
   DualFinanceDelegateWithdraw,
+  RelinquishDaoVote,
   DualFinanceVoteDeposit,
   DaoVote,
   DistributionCloseVaults,
   DistributionFillVaults,
   DelegateStake,
   RemoveStakeLock,
+  PlaceLimitOrder,
+  SettleToken,
+  CancelLimitOrder,
   Grant,
   InitSolendObligationAccount,
   JoinDAO,
@@ -374,8 +402,12 @@ export enum Instructions {
   SquadsMeshAddMember,
   SquadsMeshChangeThresholdMember,
   SquadsMeshRemoveMember,
+  SquadsV4AddMember,
+  SquadsV4ChangeThresholdMember,
+  SquadsV4RemoveMember,
   PythRecoverAccount,
   PythUpdatePoolAuthority,
+  PythTransferAccount,
   StakeValidator,
   SwitchboardFundOracle,
   WithdrawFromOracle,
@@ -385,6 +417,7 @@ export enum Instructions {
   VotingMintConfig,
   WithdrawObligationCollateralAndRedeemReserveLiquidity,
   WithdrawValidatorStake,
+  WithdrawFromDAO,
   SplitStake,
   AddKeyToDID,
   RemoveKeyFromDID,
@@ -397,7 +430,10 @@ export enum Instructions {
   SymmetryCreateBasket,
   SymmetryEditBasket,
   SymmetryDeposit,
-  SymmetryWithdraw
+  SymmetryWithdraw,
+  TokenWithdrawFees,
+  CollectPoolFees,
+  CollectVestedTokens
 }
 
 export interface ComponentInstructionData {
@@ -556,57 +592,56 @@ export interface DualFinanceVoteDepositForm {
 }
 
 export interface SymmetryCreateBasketForm {
-  governedAccount?: AssetAccount,
-  basketType: number,
-  basketName: string,
-  basketSymbol: string,
-  basketMetadataUrl: string,
+  governedAccount?: AssetAccount
+  basketType: number
+  basketName: string
+  basketSymbol: string
+  basketMetadataUrl: string
   basketComposition: {
-    name: string,
-    symbol: string,
-    token: PublicKey;
-    weight: number;
-  }[],
-  rebalanceThreshold: number,
-  rebalanceSlippageTolerance: number,
-  depositFee: number,
-  feeCollectorAddress:string,
-  liquidityProvision: boolean,
-  liquidityProvisionRange: number,
+    name: string
+    symbol: string
+    token: PublicKey
+    weight: number
+  }[]
+  rebalanceThreshold: number
+  rebalanceSlippageTolerance: number
+  depositFee: number
+  feeCollectorAddress: string
+  liquidityProvision: boolean
+  liquidityProvisionRange: number
 }
 
-
 export interface SymmetryEditBasketForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  basketType: number,
-  basketName: string,
-  basketSymbol: string,
-  basketMetadataUrl: string,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  basketType: number
+  basketName: string
+  basketSymbol: string
+  basketMetadataUrl: string
   basketComposition: {
-    name: string,
-    symbol: string,
-    token: PublicKey;
-    weight: number;
-  }[],
-  rebalanceThreshold: number,
-  rebalanceSlippageTolerance: number,
-  depositFee: number,
-  feeCollectorAddress:string,
-  liquidityProvision: boolean,
-  liquidityProvisionRange: number,
+    name: string
+    symbol: string
+    token: PublicKey
+    weight: number
+  }[]
+  rebalanceThreshold: number
+  rebalanceSlippageTolerance: number
+  depositFee: number
+  feeCollectorAddress: string
+  liquidityProvision: boolean
+  liquidityProvisionRange: number
 }
 
 export interface SymmetryDepositForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  depositToken?: PublicKey,
-  depositAmount: number,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  depositToken?: PublicKey
+  depositAmount: number
 }
 
 export interface SymmetryWithdrawForm {
-  governedAccount?: AssetAccount,
-  basketAddress?: PublicKey,
-  withdrawAmount: number,
+  governedAccount?: AssetAccount
+  basketAddress?: PublicKey
+  withdrawAmount: number
   withdrawType: number
 }

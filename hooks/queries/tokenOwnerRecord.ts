@@ -29,12 +29,12 @@ export const tokenOwnerRecordQueryKeys = {
     ...tokenOwnerRecordQueryKeys.all(endpoint),
     'by Realm',
     realm.toString(),
-    type
+    type,
   ],
   byRealmXDelegate: (
     endpoint: string,
     realm: PublicKey,
-    delegate: PublicKey
+    delegate: PublicKey,
   ) => [
     ...tokenOwnerRecordQueryKeys.byRealm(endpoint, realm, 'all'),
     'by Delegate',
@@ -54,13 +54,13 @@ export const tokenOwnerRecordQueryKeys = {
 const fetchTokenOwnerRecordsByRealmByOwner = async (
   connection: Connection,
   program: PublicKey,
-  ownerPk: PublicKey
+  ownerPk: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: tokenOwnerRecordQueryKeys.byProgramXOwner(
       connection.rpcEndpoint,
       program,
-      ownerPk
+      ownerPk,
     ),
     queryFn: async () => {
       const filter = pubkeyFilter(1 + 32 + 32, ownerPk)
@@ -77,16 +77,16 @@ const fetchTokenOwnerRecordsByRealmByOwner = async (
  */
 export const fetchTokenOwnerRecordsByOwnerAnyRealm = async (
   connection: Connection,
-  ownerPk: PublicKey
+  ownerPk: PublicKey,
 ) => {
   const programs = [...new Set(mainnetBetaRealms.map((x) => x.programId))].map(
-    (x) => new PublicKey(x)
+    (x) => new PublicKey(x),
   )
   return (
     await Promise.all(
       programs.map((pk) =>
-        fetchTokenOwnerRecordsByRealmByOwner(connection, pk, ownerPk)
-      )
+        fetchTokenOwnerRecordsByRealmByOwner(connection, pk, ownerPk),
+      ),
     )
   ).flat()
 }
@@ -101,7 +101,7 @@ export const useTokenOwnerRecordsForRealmQuery = () => {
       ? tokenOwnerRecordQueryKeys.byRealm(
           connection.current.rpcEndpoint,
           realm.pubkey,
-          'all'
+          'all',
         )
       : undefined,
     queryFn: async () => {
@@ -114,7 +114,7 @@ export const useTokenOwnerRecordsForRealmQuery = () => {
         connection.current,
         realm.owner,
         TokenOwnerRecord,
-        [filter]
+        [filter],
       )
 
       // This may or may not be resource intensive for big DAOs, and is not too useful
@@ -144,7 +144,7 @@ export const useCouncilTokenOwnerRecordsForRealmQuery = () => {
       ? tokenOwnerRecordQueryKeys.byRealm(
           connection.current.rpcEndpoint,
           realm.pubkey,
-          'council'
+          'council',
         )
       : undefined,
     queryFn: async () => {
@@ -153,19 +153,22 @@ export const useCouncilTokenOwnerRecordsForRealmQuery = () => {
       const filter = pubkeyFilter(1, realm.pubkey)
       if (!filter) throw new Error() // unclear why this would ever happen, probably it just cannot
 
-      const votingType = await determineVotingPowerType(connection.current, realm.pubkey, "community")
+      const votingType = await determineVotingPowerType(
+        connection.current,
+        realm.pubkey,
+        'community',
+      )
       const councilOnly = !(votingType === 'vanilla' || votingType === 'NFT')
       const councilMint = realm.account.config.councilMint
 
-      const mintFilter = councilOnly && councilMint ? 
-        pubkeyFilter(33, councilMint) : 
-        null
+      const mintFilter =
+        councilOnly && councilMint ? pubkeyFilter(33, councilMint) : null
 
       const results = await getGovernanceAccounts(
         connection.current,
         realm.owner,
         TokenOwnerRecord,
-        mintFilter ? [filter, mintFilter] : [filter]
+        mintFilter ? [filter, mintFilter] : [filter],
       )
 
       // This may or may not be resource intensive for big DAOs, and is not too useful
@@ -198,7 +201,7 @@ export const useTokenOwnerRecordsDelegatedToUser = () => {
       ? tokenOwnerRecordQueryKeys.byRealmXDelegate(
           connection.current.rpcEndpoint,
           realm.pubkey,
-          walletPk
+          walletPk,
         )
       : undefined,
     queryFn: async () => {
@@ -207,11 +210,11 @@ export const useTokenOwnerRecordsDelegatedToUser = () => {
       const realmFilter = pubkeyFilter(1, realm.pubkey)
       const hasDelegateFilter = booleanFilter(
         1 + 32 + 32 + 32 + 8 + 4 + 4 + 1 + 1 + 6,
-        true
+        true,
       )
       const delegatedToUserFilter = pubkeyFilter(
         1 + 32 + 32 + 32 + 8 + 4 + 4 + 1 + 1 + 6 + 1,
-        walletPk
+        walletPk,
       )
       if (!realmFilter || !delegatedToUserFilter) throw new Error() // unclear why this would ever happen, probably it just cannot
 
@@ -219,7 +222,7 @@ export const useTokenOwnerRecordsDelegatedToUser = () => {
         connection.current,
         realm.owner,
         TokenOwnerRecord,
-        [realmFilter, hasDelegateFilter, delegatedToUserFilter]
+        [realmFilter, hasDelegateFilter, delegatedToUserFilter],
       )
 
       // This may or may not be resource intensive for big DAOs, and is not too useful
@@ -243,7 +246,7 @@ const queryFn = (connection: Connection, pubkey: PublicKey) =>
   asFindable(getTokenOwnerRecord)(connection, pubkey)
 
 export const useTokenOwnerRecordByPubkeyQuery = (
-  pubkey: PublicKey | undefined
+  pubkey: PublicKey | undefined,
 ) => {
   const connection = useLegacyConnectionContext()
   const enabled = pubkey !== undefined
@@ -251,7 +254,7 @@ export const useTokenOwnerRecordByPubkeyQuery = (
     queryKey: enabled
       ? tokenOwnerRecordQueryKeys.byPubkey(
           connection.current.rpcEndpoint,
-          pubkey
+          pubkey,
         )
       : undefined,
     queryFn: async () => {
@@ -265,12 +268,12 @@ export const useTokenOwnerRecordByPubkeyQuery = (
 
 export const fetchTokenOwnerRecordByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) =>
   queryClient.fetchQuery({
     queryKey: tokenOwnerRecordQueryKeys.byPubkey(
       connection.rpcEndpoint,
-      pubkey
+      pubkey,
     ),
     queryFn: () => queryFn(connection, pubkey),
   })

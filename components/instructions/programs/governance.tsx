@@ -75,36 +75,36 @@ export const GOVERNANCE_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const realm = await getRealm(connection, accounts[0].pubkey)
         const programVersion = await fetchProgramVersion(
           connection,
-          realm.owner
+          realm.owner,
         )
 
         //accounts[2] is token account not mint account
         const { result: tokenAccount } = await fetchTokenAccountByPubkey(
           connection,
-          accounts[2].pubkey
+          accounts[2].pubkey,
         )
         if (!tokenAccount) {
           throw new Error()
         }
         const mintInfoQuery = await fetchMintInfoByPubkey(
           connection,
-          tokenAccount.mint
+          tokenAccount.mint,
         )
 
         const args = deserializeBorsh(
           getGovernanceInstructionSchema(programVersion),
           DepositGoverningTokensArgs,
-          Buffer.from(data)
+          Buffer.from(data),
         ) as DepositGoverningTokensArgs
         console.log(
           args.amount,
           mintInfoQuery?.result,
-          accounts[2].pubkey.toBase58()
+          accounts[2].pubkey.toBase58(),
         )
         return (
           <>
@@ -119,20 +119,62 @@ export const GOVERNANCE_INSTRUCTIONS = {
         )
       },
     },
+    2: {
+      name: 'Withdraw Governing Tokens',
+      accounts: [
+        { name: 'Realm' },
+        { name: 'Governing Token Destination' },
+        { name: 'Governing Token Owner' },
+        { name: 'Token Owner Record Address' },
+      ],
+      getDataUI: async (
+        connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[],
+      ) => {
+        return (
+          <>
+            <p>Withdraw full amount</p>
+          </>
+        )
+      },
+    },
+    15: {
+      name: 'Relinquish vote',
+      accounts: [
+        { name: 'Realm' },
+        { name: 'Governance' },
+        { name: 'Proposal' },
+        { name: 'Token Owner Record' },
+        { name: 'Vote Record' },
+        { name: 'Mint' },
+      ],
+      getDataUI: async (
+        connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[],
+      ) => {
+        return (
+          <>
+            <p>Relinquish finalized vote</p>
+          </>
+        )
+      },
+    },
     19: {
       name: 'Set Governance Config',
       accounts: [{ name: 'Governance' }],
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const governance = await getGovernance(connection, accounts[0].pubkey)
         const realm = await getRealm(connection, governance.account.realm)
 
         const programVersion = await fetchProgramVersion(
           connection,
-          realm.owner
+          realm.owner,
         )
         let args: SetGovernanceConfigArgs = {} as SetGovernanceConfigArgs
         let proposalProgramVersion = programVersion
@@ -145,7 +187,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
             args = deserializeBorsh(
               getGovernanceInstructionSchema(programVersion),
               SetGovernanceConfigArgs,
-              Buffer.from(data)
+              Buffer.from(data),
             ) as SetGovernanceConfigArgs
             proposalProgramVersion = propProgVersion
             break
@@ -156,7 +198,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
 
         const communityMint = await tryGetMint(
           connection,
-          realm.account.communityMint
+          realm.account.communityMint,
         )
         const councilMint = realm.account.config.councilMint
           ? await tryGetMint(connection, realm.account.config.councilMint)
@@ -208,7 +250,8 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   minCommunityTokensToCreateProposal:{' '}
                   {fmtMintAmount(
                     communityMint?.account,
-                    governance.account.config.minCommunityTokensToCreateProposal
+                    governance.account.config
+                      .minCommunityTokensToCreateProposal,
                   )}{' '}
                   (
                   {governance.account.config.minCommunityTokensToCreateProposal.toString()}
@@ -223,7 +266,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   minCouncilTokensToCreateProposal:{' '}
                   {fmtMintAmount(
                     councilMint?.account,
-                    governance.account.config.minCouncilTokensToCreateProposal
+                    governance.account.config.minCouncilTokensToCreateProposal,
                   )}{' '}
                   (
                   {governance.account.config.minCouncilTokensToCreateProposal.toString()}
@@ -233,26 +276,26 @@ export const GOVERNANCE_INSTRUCTIONS = {
               <p>
                 {`minInstructionHoldUpTime:
           ${getDaysFromTimestamp(
-            governance.account.config.minInstructionHoldUpTime
+            governance.account.config.minInstructionHoldUpTime,
           )} day(s) | raw arg: ${
-                  governance.account.config.minInstructionHoldUpTime
-                } secs`}
+            governance.account.config.minInstructionHoldUpTime
+          } secs`}
               </p>
               <p>
                 {`baseVotingTime:
           ${getDaysFromTimestamp(
-            governance.account.config.baseVotingTime
+            governance.account.config.baseVotingTime,
           )} days(s) | raw arg: ${
-                  governance.account.config.baseVotingTime
-                } secs`}
+            governance.account.config.baseVotingTime
+          } secs`}
               </p>
               <p>
                 {`votingCoolOffTime:
           ${getHoursFromTimestamp(
-            governance.account.config.votingCoolOffTime
+            governance.account.config.votingCoolOffTime,
           )} hour(s) | raw arg: ${
-                  governance.account.config.votingCoolOffTime
-                } secs`}
+            governance.account.config.votingCoolOffTime
+          } secs`}
               </p>
               <p>
                 {`depositExemptProposalCount:
@@ -308,7 +351,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   minCommunityTokensToCreateProposal:{' '}
                   {fmtMintAmount(
                     communityMint?.account,
-                    args.config.minCommunityTokensToCreateProposal
+                    args.config.minCommunityTokensToCreateProposal,
                   )}{' '}
                   ({args.config.minCommunityTokensToCreateProposal.toString()})
                 </p>
@@ -321,7 +364,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   minCouncilTokensToCreateProposal:{' '}
                   {fmtMintAmount(
                     councilMint?.account,
-                    args.config.minCouncilTokensToCreateProposal
+                    args.config.minCouncilTokensToCreateProposal,
                   )}{' '}
                   ({args.config.minCouncilTokensToCreateProposal.toString()})
                 </p>
@@ -329,19 +372,19 @@ export const GOVERNANCE_INSTRUCTIONS = {
               <p>
                 {`minInstructionHoldUpTime:
           ${getDaysFromTimestamp(
-            args.config.minInstructionHoldUpTime
+            args.config.minInstructionHoldUpTime,
           )} day(s) | raw arg: ${args.config.minInstructionHoldUpTime} secs`}
               </p>
               <p>
                 {`baseVotingTime:
           ${getDaysFromTimestamp(
-            args.config.baseVotingTime
+            args.config.baseVotingTime,
           )} days(s) | raw arg: ${args.config.baseVotingTime} secs`}
               </p>
               <p>
                 {`votingCoolOffTime:
           ${getHoursFromTimestamp(
-            args.config.votingCoolOffTime
+            args.config.votingCoolOffTime,
           )} hour(s) | raw arg: ${args.config.votingCoolOffTime} secs`}
               </p>
               <p>
@@ -373,7 +416,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   {`minCommunityTokensToCreateProposal:
               ${fmtMintAmount(
                 communityMint?.account,
-                governance.account.config.minCommunityTokensToCreateProposal
+                governance.account.config.minCommunityTokensToCreateProposal,
               )}`}{' '}
                   (
                   {governance.account.config.minCommunityTokensToCreateProposal.toNumber()}
@@ -384,19 +427,19 @@ export const GOVERNANCE_INSTRUCTIONS = {
                 {`minCouncilTokensToCreateProposal:
               ${fmtMintAmount(
                 councilMint?.account,
-                governance.account.config.minCouncilTokensToCreateProposal
+                governance.account.config.minCouncilTokensToCreateProposal,
               )}`}
               </p>
               <p>
                 {`minInstructionHoldUpTime:
               ${getDaysFromTimestamp(
-                governance.account.config.minInstructionHoldUpTime
+                governance.account.config.minInstructionHoldUpTime,
               )} day(s)`}
               </p>
               <p>
                 {`baseVotingTime:
               ${getDaysFromTimestamp(
-                governance.account.config.baseVotingTime
+                governance.account.config.baseVotingTime,
               )} days(s)`}
               </p>
               <p>
@@ -417,7 +460,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                   {`minCommunityTokensToCreateProposal:
               ${fmtMintAmount(
                 communityMint?.account,
-                args.config.minCommunityTokensToCreateProposal
+                args.config.minCommunityTokensToCreateProposal,
               )}`}{' '}
                   ({args.config.minCommunityTokensToCreateProposal.toNumber()})
                 </div>
@@ -426,13 +469,13 @@ export const GOVERNANCE_INSTRUCTIONS = {
                 {`minCouncilTokensToCreateProposal:
               ${fmtMintAmount(
                 councilMint?.account,
-                args.config.minCouncilTokensToCreateProposal
+                args.config.minCouncilTokensToCreateProposal,
               )}`}
               </p>
               <p>
                 {`minInstructionHoldUpTime:
               ${getDaysFromTimestamp(
-                args.config.minInstructionHoldUpTime
+                args.config.minInstructionHoldUpTime,
               )} day(s)`}
               </p>
               <p>
@@ -458,18 +501,18 @@ export const GOVERNANCE_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const realm = await getRealm(connection, accounts[0].pubkey)
         const programVersion = await fetchProgramVersion(
           connection,
-          realm.owner
+          realm.owner,
         )
 
         const args = deserializeBorsh(
           getGovernanceInstructionSchema(programVersion),
           SetRealmAuthorityArgs,
-          Buffer.from(data)
+          Buffer.from(data),
         ) as SetRealmAuthorityArgs
 
         return (
@@ -488,18 +531,18 @@ export const GOVERNANCE_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const realm = await getRealm(connection, accounts[0].pubkey)
         const programVersion = await fetchProgramVersion(
           connection,
-          realm.owner
+          realm.owner,
         )
 
         const args = deserializeBorsh(
           getGovernanceInstructionSchema(programVersion),
           CastVoteArgs,
-          Buffer.from(data)
+          Buffer.from(data),
         ) as CastVoteArgs
         return (
           <>
@@ -524,7 +567,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         let isLoading = true
         const realm = await getRealm(connection, accounts[0].pubkey)
@@ -561,7 +604,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
             args = deserializeBorsh(
               getGovernanceInstructionSchema(propProgVersion),
               SetRealmConfigArgs,
-              Buffer.from(data)
+              Buffer.from(data),
             ) as SetRealmConfigArgs
             proposalProgramVersion = propProgVersion
             break
@@ -570,9 +613,10 @@ export const GOVERNANCE_INSTRUCTIONS = {
           }
         }
 
-        const possibleRealmConfigsAccounts = simulationResults.response.accounts?.filter(
-          (x) => x?.owner === realm.owner.toBase58()
-        )
+        const possibleRealmConfigsAccounts =
+          simulationResults.response.accounts?.filter(
+            (x) => x?.owner === realm.owner.toBase58(),
+          )
         let parsedRealmConfig: null | ProgramAccount<RealmConfigAccount> = null
         if (possibleRealmConfigsAccounts) {
           for (const acc of possibleRealmConfigsAccounts) {
@@ -583,15 +627,17 @@ export const GOVERNANCE_INSTRUCTIONS = {
                 {
                   data: Buffer.from(acc!.data[0], 'base64'),
                   owner: realm.owner,
-                } as any
+                } as any,
               )
               parsedRealmConfig = account as ProgramAccount<RealmConfigAccount>
               // eslint-disable-next-line no-empty
             } catch {}
           }
         }
-        const proposedPluginPk = parsedRealmConfig?.account?.communityTokenConfig?.voterWeightAddin?.toBase58()
-        const proposedMaxVoterWeightPk = parsedRealmConfig?.account?.communityTokenConfig?.maxVoterWeightAddin?.toBase58()
+        const proposedPluginPk =
+          parsedRealmConfig?.account?.communityTokenConfig?.voterWeightAddin?.toBase58()
+        const proposedMaxVoterWeightPk =
+          parsedRealmConfig?.account?.communityTokenConfig?.maxVoterWeightAddin?.toBase58()
         isLoading = false
 
         return isLoading ? (
@@ -602,11 +648,11 @@ export const GOVERNANCE_INSTRUCTIONS = {
               {`minCommunityTokensToCreateGovernance:
               ${fmtVoterWeightThresholdMintAmount(
                 communityMint?.account,
-                args.configArgs.minCommunityTokensToCreateGovernance
+                args.configArgs.minCommunityTokensToCreateGovernance,
               )}`}{' '}
               (
               {fmtBNAmount(
-                args.configArgs.minCommunityTokensToCreateGovernance
+                args.configArgs.minCommunityTokensToCreateGovernance,
               )}
               )
             </p>
@@ -619,7 +665,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                ${args.configArgs.communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage()}% supply`}{' '}
               (
               {fmtBNAmount(
-                args.configArgs.communityMintMaxVoteWeightSource.value
+                args.configArgs.communityMintMaxVoteWeightSource.value,
               )}
               )
             </p>
@@ -675,11 +721,11 @@ export const GOVERNANCE_INSTRUCTIONS = {
                 {`minCommunityTokensToCreateGovernance:
               ${fmtVoterWeightThresholdMintAmount(
                 communityMint?.account,
-                realm.account.config.minCommunityTokensToCreateGovernance
+                realm.account.config.minCommunityTokensToCreateGovernance,
               )}`}{' '}
                 (
                 {fmtBNAmount(
-                  realm.account.config.minCommunityTokensToCreateGovernance
+                  realm.account.config.minCommunityTokensToCreateGovernance,
                 )}
                 )
               </p>
@@ -688,7 +734,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                ${realm.account.config.communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage()}% supply`}{' '}
                 (
                 {fmtBNAmount(
-                  realm.account.config.communityMintMaxVoteWeightSource.value
+                  realm.account.config.communityMintMaxVoteWeightSource.value,
                 )}
                 )
               </p>
@@ -727,11 +773,11 @@ export const GOVERNANCE_INSTRUCTIONS = {
                 {`minCommunityTokensToCreateGovernance:
               ${fmtVoterWeightThresholdMintAmount(
                 communityMint?.account,
-                args.configArgs.minCommunityTokensToCreateGovernance
+                args.configArgs.minCommunityTokensToCreateGovernance,
               )}`}{' '}
                 (
                 {fmtBNAmount(
-                  args.configArgs.minCommunityTokensToCreateGovernance
+                  args.configArgs.minCommunityTokensToCreateGovernance,
                 )}
                 )
               </p>
@@ -740,7 +786,7 @@ export const GOVERNANCE_INSTRUCTIONS = {
                ${args.configArgs.communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage()}% supply`}{' '}
                 (
                 {fmtBNAmount(
-                  args.configArgs.communityMintMaxVoteWeightSource.value
+                  args.configArgs.communityMintMaxVoteWeightSource.value,
                 )}
                 )
               </p>
@@ -818,22 +864,22 @@ export const GOVERNANCE_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const realm = await getRealm(connection, accounts[0].pubkey)
         const programVersion = await fetchProgramVersion(
           connection,
-          realm.owner
+          realm.owner,
         )
         const mintInfoQuery = await fetchMintInfoByPubkey(
           connection,
-          accounts[3].pubkey
+          accounts[3].pubkey,
         )
 
         const args = deserializeBorsh(
           getGovernanceInstructionSchema(programVersion),
           RevokeGoverningTokensArgs,
-          Buffer.from(data)
+          Buffer.from(data),
         ) as RevokeGoverningTokensArgs
 
         return (

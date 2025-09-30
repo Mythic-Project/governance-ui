@@ -28,16 +28,16 @@ export const voteRecordQueryKeys = {
   byRealmXOwner: (
     cluster: EndpointTypes,
     realm: PublicKey,
-    owner: PublicKey
+    owner: PublicKey,
   ) => [...voteRecordQueryKeys.all(cluster), realm, owner],
 }
 
 // currently unused
 export const useVoteRecordByTokenOwnerRecordQuery = (
-  tokenOwnerRecordAddress?: PublicKey
+  tokenOwnerRecordAddress?: PublicKey,
 ) => {
   const pda = useAddressQuery_SelectedProposalVoteRecord(
-    tokenOwnerRecordAddress
+    tokenOwnerRecordAddress,
   )
   const query = useVoteRecordByPubkeyQuery(pda.data)
   return query
@@ -72,7 +72,7 @@ export const useVoteRecordsByOwnerQuery = (owner: PublicKey | undefined) => {
       ? voteRecordQueryKeys.byRealmXOwner(
           connection.cluster,
           realm?.pubkey,
-          owner
+          owner,
         )
       : undefined,
     queryFn: async () => {
@@ -81,14 +81,14 @@ export const useVoteRecordsByOwnerQuery = (owner: PublicKey | undefined) => {
         connection.current,
         realm.owner,
         VoteRecord,
-        [pubkeyFilter(33, owner)!]
+        [pubkeyFilter(33, owner)!],
       )
 
       // since we got the data for these accounts, lets save it
       results.forEach((x) => {
         queryClient.setQueryData(
           voteRecordQueryKeys.byPubkey(connection.cluster, x.pubkey),
-          { found: true, result: x }
+          { found: true, result: x },
         )
       })
 
@@ -102,7 +102,7 @@ export const useVoteRecordsByOwnerQuery = (owner: PublicKey | undefined) => {
 
 export const fetchVoteRecordByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   const cluster = getNetworkFromEndpoint(connection.rpcEndpoint)
   return queryClient.fetchQuery({
@@ -132,7 +132,7 @@ export const useProposalVoteRecordQuery = (quorum: 'electoral' | 'veto') => {
   const selectedTokenRecord = quorum === 'electoral' ? electoral : veto
 
   const pda = useAddressQuery_SelectedProposalVoteRecord(
-    selectedTokenRecord?.data
+    selectedTokenRecord?.data,
   )
 
   return useVoteRecordByPubkeyQuery(pda.data)

@@ -32,7 +32,7 @@ import {
   LIDO_PROGRAM_ID,
   LIDO_PROGRAM_ID_DEVNET,
 } from '@constants/pubkeys/lido'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 const defaultFormState = {
   destinationAccount: undefined,
@@ -56,7 +56,7 @@ const STSOL_MINT_DEVNET = '5nnLCgZn1EQaLj1ub8vYbQgBhkWi97x4JC5ARVPhci4V'
 
 const ConvertToStSol = () => {
   const realm = useRealmQuery().data?.result
-  const {symbol } = useRealm()
+  const { symbol } = useRealm()
   const { canUseTransferInstruction } = useGovernanceAssets()
   const { governedTokenAccounts } = useGovernanceAssets()
   const { fmtUrlWithCluster } = useQueryContext()
@@ -69,16 +69,17 @@ const ConvertToStSol = () => {
 
   const [formErrors, setFormErrors] = useState({})
   const [stSolTokenAccounts, setStSolTokenAccounts] = useState<AssetAccount[]>(
-    []
+    [],
   )
   const [form, setForm] = useState<StakingViewForm>(defaultFormState)
   const [showOptions, setShowOptions] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [isLoading, setIsLoading] = useState(false)
 
   const mintMinAmount = form.governedTokenAccount?.extensions?.mint
     ? getMintMinAmountAsDecimal(
-        form.governedTokenAccount.extensions.mint.account
+        form.governedTokenAccount.extensions.mint.account,
       )
     : 1
   const schema = getStakeSchema({ form })
@@ -139,7 +140,7 @@ const ConvertToStSol = () => {
           isDraft: false,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       } catch (ex) {
@@ -208,9 +209,9 @@ const ConvertToStSol = () => {
                   Number(mintMinAmount),
                   Math.min(
                     Number(Number.MAX_SAFE_INTEGER),
-                    Number(evt.target.value)
-                  )
-                ).toFixed(precision(mintMinAmount))
+                    Number(evt.target.value),
+                  ),
+                ).toFixed(precision(mintMinAmount)),
               ),
               propertyName: 'amount',
             })
@@ -262,12 +263,12 @@ const ConvertToStSol = () => {
               }
             />
             {shouldShowVoteByCouncilToggle && (
-                <VoteBySwitch
-                    checked={voteByCouncil}
-                    onChange={() => {
-                      setVoteByCouncil(!voteByCouncil)
-                    }}
-                ></VoteBySwitch>
+              <VoteBySwitch
+                checked={voteByCouncil}
+                onChange={() => {
+                  setVoteByCouncil(!voteByCouncil)
+                }}
+              ></VoteBySwitch>
             )}
           </>
         )}

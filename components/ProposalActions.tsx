@@ -47,7 +47,7 @@ const ProposalActionsPanel = () => {
   const { data: transactions } = useSelectedProposalTransactions()
   const governance = useProposalGovernanceQuery().data?.result
   const proposalOwner = useTokenOwnerRecordByPubkeyQuery(
-    proposal?.account.tokenOwnerRecord
+    proposal?.account.tokenOwnerRecord,
   ).data?.result
 
   const wallet = useWalletOnePointOh()
@@ -90,15 +90,15 @@ const ProposalActionsPanel = () => {
         : getSignatoryRecordAddress(
             realmInfo.programId,
             proposal.pubkey,
-            walletPk
+            walletPk,
           ),
-    [realmInfo, proposal, walletPk]
+    [realmInfo, proposal, walletPk],
   )
 
   const signatoryRecord = useGovernanceAccountByPubkeyQuery(
     SignatoryRecord,
     'SignatoryRecord',
-    signatoryRecordPk
+    signatoryRecordPk,
   ).data?.result
 
   const canSignOff =
@@ -114,7 +114,7 @@ const ProposalActionsPanel = () => {
     proposal.account.canWalletCancel(
       governance.account,
       proposalOwner.account,
-      wallet.publicKey
+      wallet.publicKey,
     )
 
   const canRepropose =
@@ -144,7 +144,7 @@ const ProposalActionsPanel = () => {
       !proposal?.account.canWalletCancel(
         governance.account,
         proposalOwner.account,
-        wallet.publicKey
+        wallet.publicKey,
       )
     ? 'Only the owner of the proposal can execute this action'
     : ''
@@ -164,7 +164,7 @@ const ProposalActionsPanel = () => {
           getProgramVersionForRealm(realmInfo),
           wallet!,
           connection.current,
-          connection.endpoint
+          connection.endpoint,
         )
 
         await finalizeVote(
@@ -172,7 +172,7 @@ const ProposalActionsPanel = () => {
           governance?.account.realm,
           proposal,
           maxVoterWeightPk,
-          proposalOwner
+          proposalOwner,
         )
       }
       queryClient.invalidateQueries({
@@ -197,14 +197,14 @@ const ProposalActionsPanel = () => {
           getProgramVersionForRealm(realmInfo),
           wallet!,
           connection.current,
-          connection.endpoint
+          connection.endpoint,
         )
 
         await signOffProposal(
           rpcContext,
           realmInfo.realmId,
           proposal,
-          signatoryRecord
+          signatoryRecord,
         )
       }
       queryClient.invalidateQueries({
@@ -221,7 +221,7 @@ const ProposalActionsPanel = () => {
     }
   }
   const handleCancelProposal = async (
-    proposal: ProgramAccount<Proposal> | undefined
+    proposal: ProgramAccount<Proposal> | undefined,
   ) => {
     try {
       if (proposal && realmInfo && proposalOwner) {
@@ -230,14 +230,14 @@ const ProposalActionsPanel = () => {
           getProgramVersionForRealm(realmInfo),
           wallet!,
           connection.current,
-          connection.endpoint
+          connection.endpoint,
         )
 
         await cancelProposal(
           rpcContext,
           realmInfo.realmId,
           proposal,
-          proposalOwner
+          proposalOwner,
         )
       }
       queryClient.invalidateQueries({
@@ -263,7 +263,7 @@ const ProposalActionsPanel = () => {
           voteByCouncil:
             !realmInfo.communityMint ||
             !proposal.account.governingTokenMint.equals(
-              realmInfo.communityMint
+              realmInfo.communityMint,
             ),
           instructionsData: transactions
             ? [
@@ -277,22 +277,22 @@ const ProposalActionsPanel = () => {
                               keys: inst.accounts,
                               programId: inst.programId,
                               data: Buffer.from(inst.data),
-                            })
+                            }),
                           ),
                           isValid: true,
                           governance: undefined,
                           customHoldUpTime: tx.account.holdUpTime,
                           chunkBy: 1,
                         },
-                      })
-                  )
+                      }),
+                  ),
                 ),
               ]
             : [],
           governance: proposal.account.governance,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${router.query.symbol}/proposal/${proposalAddress}`
+          `/dao/${router.query.symbol}/proposal/${proposalAddress}`,
         )
         router.push(url)
       }

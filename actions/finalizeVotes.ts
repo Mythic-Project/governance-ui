@@ -17,7 +17,7 @@ export const finalizeVote = async (
   realm: PublicKey,
   proposal: ProgramAccount<Proposal>,
   maxVoterWeightPk: PublicKey | undefined,
-  proposalOwner: ProgramAccount<TokenOwnerRecord>
+  proposalOwner: ProgramAccount<TokenOwnerRecord>,
 ) => {
   const signers: Keypair[] = []
   const instructions: TransactionInstruction[] = []
@@ -35,7 +35,7 @@ export const finalizeVote = async (
     proposal.pubkey,
     proposal.account.tokenOwnerRecord,
     proposal.account.governingTokenMint,
-    maxVoterWeightPk
+    maxVoterWeightPk,
   )
 
   //its possible that delegate payed for deposit created with someone else token owner record.
@@ -45,13 +45,13 @@ export const finalizeVote = async (
       ? getProposalDepositPk(
           proposal.pubkey,
           proposalOwner.account.governanceDelegate,
-          programId
+          programId,
         )
       : null,
     getProposalDepositPk(
       proposal.pubkey,
       proposalOwner.account.governingTokenOwner,
-      programId
+      programId,
     ),
   ]
 
@@ -76,7 +76,7 @@ export const finalizeVote = async (
       programId!,
       programVersion,
       proposal.pubkey,
-      refundAddress
+      refundAddress,
     )
   }
 

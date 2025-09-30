@@ -9,7 +9,7 @@ const queryClient = new QueryClient({
 export default queryClient
 
 export const invalidateInstructionAccounts = async (
-  ix: TransactionInstruction
+  ix: TransactionInstruction,
 ) =>
   Promise.all(
     ix.keys
@@ -19,11 +19,11 @@ export const invalidateInstructionAccounts = async (
         // await new Promise((r) => setTimeout(r, 1000))
         console.log(
           'automatically invalidating due to mutating transaction:',
-          x.toString()
+          x.toString(),
         )
         await queryClient.invalidateQueries({
           predicate: (q) =>
             q.queryKey?.includes(x.toString()) || q.queryKey?.includes(x),
         })
-      })
+      }),
   )

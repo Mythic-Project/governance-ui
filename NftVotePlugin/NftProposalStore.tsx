@@ -11,13 +11,13 @@ interface NftProposalStore extends State {
   getCountedNfts: (
     client: NftVoterClient,
     proposal: ProgramAccount<Proposal>,
-    connectedWallet: PublicKey
+    connectedWallet: PublicKey,
   ) => void
   openNftVotingCountingModal: () => void
   closeNftVotingCountingModal: (
     client: NftVoterClient,
     proposal: ProgramAccount<Proposal>,
-    connectedWallet: PublicKey
+    connectedWallet: PublicKey,
   ) => void
 }
 
@@ -36,7 +36,7 @@ const useNftProposalStore = create<NftProposalStore>((set, _get) => ({
       s.countedNftsForProposal = countedNfts.filter(
         (x) =>
           x.account.governingTokenOwner.toBase58() ===
-          connectedWallet.toBase58()
+          connectedWallet.toBase58(),
       )
     })
   },

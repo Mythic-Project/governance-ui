@@ -8,9 +8,8 @@ export const useSolanaUnixNow = () => {
 
   useEffect(() => {
     ;(async () => {
-      const clock = await anchorProvider.connection.getAccountInfo(
-        SYSVAR_CLOCK_PUBKEY
-      )
+      const clock =
+        await anchorProvider.connection.getAccountInfo(SYSVAR_CLOCK_PUBKEY)
       setUnixNow(Number(clock!.data.readBigInt64LE(8 * 4)))
     })()
   }, [setUnixNow, anchorProvider])

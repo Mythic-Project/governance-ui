@@ -80,7 +80,7 @@ const DelegateStake = ({
             bytes: form.governedTokenAccount.pubkey.toBase58(),
           },
         },
-      ]
+      ],
     )
 
     const accountsStaked = await getFilteredProgramAccounts(
@@ -99,18 +99,10 @@ const DelegateStake = ({
             bytes: form.governedTokenAccount.pubkey.toBase58(),
           },
         },
-      ]
+      ],
     )
 
-    const stakingAccounts = accountsNotYetStaked.concat(
-      accountsStaked.filter((x) => {
-        // filter all accounts which are not yet deactivated
-        const data = x.accountInfo.data.slice(172, 172 + 8)
-        return !data.equals(
-          Buffer.from([255, 255, 255, 255, 255, 255, 255, 255])
-        )
-      })
-    )
+    const stakingAccounts = accountsNotYetStaked.concat(accountsStaked)
 
     return stakingAccounts.map((x) => {
       return {
@@ -171,7 +163,7 @@ const DelegateStake = ({
     })
     return {
       serializedInstruction: serializeInstructionToBase64(
-        instruction.instructions[0]
+        instruction.instructions[0],
       ),
       isValid: true,
       governance: form.governedTokenAccount.governance,
@@ -192,7 +184,7 @@ const DelegateStake = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -200,7 +192,7 @@ const DelegateStake = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -217,7 +209,7 @@ const DelegateStake = ({
       <GovernedAccountSelect
         label="Treasury account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

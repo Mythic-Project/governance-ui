@@ -25,7 +25,7 @@ const Inner = forwardRef<HTMLButtonElement, Props>(
           props.className,
           props['data-state'] === 'active'
             ? 'text-primary-light'
-            : 'text-white/50'
+            : 'text-white/50',
         )}
         ref={ref}
       >
@@ -42,12 +42,12 @@ const Inner = forwardRef<HTMLButtonElement, Props>(
             'to-[#87F2FF]',
             'transition-opacity',
             'via-[#00E4FF]',
-            props['data-state'] === 'active' ? 'opacity-100' : 'opacity-0'
+            props['data-state'] === 'active' ? 'opacity-100' : 'opacity-0',
           )}
         />
       </button>
     )
-  }
+  },
 )
 
 export default function Tab(props: Props) {

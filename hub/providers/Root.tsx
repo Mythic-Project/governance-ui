@@ -26,13 +26,13 @@ export function RootProvider(props: Props) {
         'px-4',
       )}
     >
-        <ClusterProvider>
-          <WalletProvider>
-              <UserPrefsProvider>
-                <Tooltip.Provider>{props.children}</Tooltip.Provider>
-              </UserPrefsProvider>
-          </WalletProvider>
-        </ClusterProvider>
+      <ClusterProvider>
+        <WalletProvider>
+          <UserPrefsProvider>
+            <Tooltip.Provider>{props.children}</Tooltip.Provider>
+          </UserPrefsProvider>
+        </WalletProvider>
+      </ClusterProvider>
     </ToastProvider>
   );
 }

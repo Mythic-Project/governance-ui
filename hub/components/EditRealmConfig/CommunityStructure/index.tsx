@@ -252,8 +252,10 @@ export function CommunityStructure(props: Props) {
                 const newConfig = produce(
                   { ...props.configAccount },
                   (data) => {
-                    data.communityTokenConfig.maxVoterWeightAddin = maxVotingProgramId;
-                    data.communityTokenConfig.voterWeightAddin = votingProgramId;
+                    data.communityTokenConfig.maxVoterWeightAddin =
+                      maxVotingProgramId;
+                    data.communityTokenConfig.voterWeightAddin =
+                      votingProgramId;
                   },
                 );
 

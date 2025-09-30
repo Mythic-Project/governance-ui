@@ -1,12 +1,12 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { TokenInfoWithoutDecimals } from '@utils/services/tokenPrice'
+import { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import { useTokenMetadata } from '@hooks/queries/tokenMetadata'
 
 const BaseAccountHeader: React.FC<{
   isNFT?: boolean
-  tokenInfo?: TokenInfoWithoutDecimals
+  tokenInfo?: TokenInfoJupiter
   amountFormatted: string
   totalPrice?: string
   mintAddress: string
@@ -16,7 +16,7 @@ const BaseAccountHeader: React.FC<{
   const [symbol, setSymbol] = useState<undefined | string>(tokenInfo?.symbol)
   const { data } = useTokenMetadata(
     new PublicKey(mintAddress),
-    !tokenInfo?.symbol
+    !tokenInfo?.symbol,
   )
 
   useEffect(() => {

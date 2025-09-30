@@ -16,7 +16,7 @@ export const cancelProposal = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   realmPk: PublicKey,
   proposal: ProgramAccount<Proposal> | undefined,
-  proposalOwner: ProgramAccount<TokenOwnerRecord>
+  proposalOwner: ProgramAccount<TokenOwnerRecord>,
 ) => {
   const instructions: TransactionInstruction[] = []
   const signers: Keypair[] = []
@@ -34,7 +34,7 @@ export const cancelProposal = async (
     proposal!.account.governance,
     proposal!.pubkey,
     proposal!.account.tokenOwnerRecord,
-    governanceAuthority
+    governanceAuthority,
   )
 
   //its possible that delegate payed for deposit created with someone else token owner record.
@@ -44,13 +44,13 @@ export const cancelProposal = async (
       ? getProposalDepositPk(
           proposal!.pubkey,
           proposalOwner.account.governanceDelegate,
-          programId
+          programId,
         )
       : null,
     getProposalDepositPk(
       proposal!.pubkey,
       proposalOwner.account.governingTokenOwner,
-      programId
+      programId,
     ),
   ]
 
@@ -75,7 +75,7 @@ export const cancelProposal = async (
       programId!,
       programVersion,
       proposal!.pubkey,
-      refundAddress
+      refundAddress,
     )
   }
 

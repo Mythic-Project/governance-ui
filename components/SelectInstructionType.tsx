@@ -7,7 +7,7 @@ import ImageTextSelection from './ImageTextSelection'
 import TypeaheadSelect from './TypeaheadSelect'
 
 function sortInstructionTypes(
-  instructionTypes: InstructionType[]
+  instructionTypes: InstructionType[],
 ): InstructionType[] {
   return instructionTypes.sort((instructionTypeA, instructionTypeB) => {
     // Sort by package id
@@ -75,8 +75,8 @@ const SelectInstructionType = ({
 
     const filteredAndSortedInstructionTypes = sortInstructionTypes(
       instructionTypes.filter(
-        (instructionType) => instructionType.packageId === packageId
-      )
+        (instructionType) => instructionType.packageId === packageId,
+      ),
     )
 
     // Select first instruction by default
@@ -170,8 +170,8 @@ const SelectInstructionType = ({
 
             onChange(
               filteredAndSortedInstructionTypes.find(
-                (instructionType) => instructionType.id.toString() === id
-              ) ?? null
+                (instructionType) => instructionType.id.toString() === id,
+              ) ?? null,
             )
           }}
         />

@@ -17,8 +17,8 @@ import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
-import {configureCivicRegistrarIx} from "../../../../../../../GatewayPlugin/sdk/api";
-import {useGatewayVoterWeightPlugin} from "../../../../../../../VoterWeightPlugins";
+import { configureCivicRegistrarIx } from '../../../../../../../GatewayPlugin/sdk/api'
+import { useGatewayVoterWeightPlugin } from '../../../../../../../VoterWeightPlugins'
 
 interface ConfigureGatewayForm {
   governedAccount: AssetAccount | undefined
@@ -41,7 +41,7 @@ const ConfigureGatewayPlugin = ({
   const [form, setForm] = useState<ConfigureGatewayForm>()
   const [formErrors, setFormErrors] = useState({})
   const { handleSetInstructions } = useContext(NewProposalContext)
-  const { gatewayClient } = useGatewayVoterWeightPlugin();
+  const { gatewayClient } = useGatewayVoterWeightPlugin()
 
   const chosenGatekeeperNetwork = useMemo(() => {
     return form?.otherGatekeeperNetwork || form?.gatekeeperNetwork
@@ -54,12 +54,13 @@ const ConfigureGatewayPlugin = ({
       isValid &&
       form!.governedAccount?.governance?.account &&
       wallet?.publicKey &&
-        realm && gatewayClient
+      realm &&
+      gatewayClient
     ) {
       const configureRegistrarTx = await configureCivicRegistrarIx(
-          realm,
-          gatewayClient,
-          chosenGatekeeperNetwork!,
+        realm,
+        gatewayClient,
+        chosenGatekeeperNetwork!,
       )
       serializedInstruction = serializeInstructionToBase64(configureRegistrarTx)
     }
@@ -72,7 +73,7 @@ const ConfigureGatewayPlugin = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -92,7 +93,7 @@ const ConfigureGatewayPlugin = ({
             try {
               return !!getValidatedPublickKey(val)
             } catch (e) {
-              console.log("error with " + val, e)
+              console.log('error with ' + val, e)
               return this.createError({
                 message: `${e}`,
               })
@@ -102,7 +103,7 @@ const ConfigureGatewayPlugin = ({
               message: `Gatekeeper network address is required`,
             })
           }
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [
@@ -116,7 +117,7 @@ const ConfigureGatewayPlugin = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
     },
     {

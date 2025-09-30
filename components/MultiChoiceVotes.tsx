@@ -30,7 +30,7 @@ const MultiChoiceVotes = ({
 
   const totalVoteWeight = proposal.options.reduce(
     (a, b) => a.add(b.voteWeight),
-    new BN(0)
+    new BN(0),
   )
 
   const isComplete = proposal.state === ProposalState.Completed

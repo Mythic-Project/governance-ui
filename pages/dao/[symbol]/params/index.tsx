@@ -41,11 +41,8 @@ const Params = () => {
   const { symbol } = router.query
   const wallet = useWalletOnePointOh()
   const { fmtUrlWithCluster } = useQueryContext()
-  const {
-    canUseAuthorityInstruction,
-    assetAccounts,
-    auxiliaryTokenAccounts,
-  } = useGovernanceAssets()
+  const { canUseAuthorityInstruction, assetAccounts, auxiliaryTokenAccounts } =
+    useGovernanceAssets()
   const governancesArray = useRealmGovernancesQuery().data
   const mintGovernancesWithMintInfo = assetAccounts.filter((x) => {
     return x.type === AccountType.MINT
@@ -56,7 +53,7 @@ const Params = () => {
     const filteredMintGovernances = mintGovernancesWithMintInfo.filter(
       (mintGovernance) =>
         mintGovernance.governance.pubkey.toString() ===
-        governance.pubkey.toString()
+        governance.pubkey.toString(),
     )
 
     if (filteredMintGovernances.length == 0) {
@@ -70,22 +67,19 @@ const Params = () => {
   })
   const showCreateMetadataButton = !!hasAuthorityGovernances?.length
   const loadGovernedAccounts = useGovernanceAssetsStore(
-    (s) => s.loadGovernedAccounts
+    (s) => s.loadGovernedAccounts,
   )
 
   const realmAuthorityGovernance = governancesArray?.find(
-    (x) => x.pubkey.toBase58() === realm?.account.authority?.toBase58()
+    (x) => x.pubkey.toBase58() === realm?.account.authority?.toBase58(),
   )
 
   const [activeGovernance, setActiveGovernance] = useState<any>(null)
   const [activeTab, setActiveTab] = useState('Params')
-  const [isRealmAuthorityModalOpen, setRealmAuthorityModalIsOpen] = useState(
-    false
-  )
-  const [
-    isMetadataCreationModalOpen,
-    setIsMetadataCreationModalOpen,
-  ] = useState(false)
+  const [isRealmAuthorityModalOpen, setRealmAuthorityModalIsOpen] =
+    useState(false)
+  const [isMetadataCreationModalOpen, setIsMetadataCreationModalOpen] =
+    useState(false)
   const realmAccount = realm?.account
   const communityMint = realmAccount?.communityMint.toBase58()
   const councilMintPk = realmAccount?.config.councilMint?.toBase58()
@@ -224,15 +218,11 @@ const Params = () => {
                       MintMaxVoteWeightSourceType.SupplyFraction
                         ? `${communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage()}% of supply`
                         : formatTokenAmount
-                        ? fmtBNAmount(
-                            new BN(
-                              formatTokenAmount(
-                                communityMintMaxVoteWeightSource.value
-                              )
-                            )
+                        ? formatTokenAmount(
+                            communityMintMaxVoteWeightSource.value,
                           )
                         : `${fmtBNAmount(
-                            communityMintMaxVoteWeightSource.value
+                            communityMintMaxVoteWeightSource.value,
                           )} (raw)`
                     }`}
                   />
@@ -246,14 +236,14 @@ const Params = () => {
                   padding
                   label="Use community voter weight add-in"
                   val={getYesNoString(
-                    config?.account.communityTokenConfig.voterWeightAddin
+                    config?.account.communityTokenConfig.voterWeightAddin,
                   )}
                 />
                 <AddressField
                   padding
                   label="Use max community voter weight add-in"
                   val={getYesNoString(
-                    config?.account.communityTokenConfig.maxVoterWeightAddin
+                    config?.account.communityTokenConfig.maxVoterWeightAddin,
                   )}
                 />
                 <div className="flex">
@@ -270,7 +260,7 @@ const Params = () => {
                     }
                     onClick={() => {
                       router.push(
-                        fmtUrlWithCluster(`/dao/${symbol}/editConfig`)
+                        fmtUrlWithCluster(`/dao/${symbol}/editConfig`),
                       )
                     }}
                     className="ml-auto"
@@ -297,8 +287,8 @@ const Params = () => {
                   onChange={(g) =>
                     setActiveGovernance(
                       governancesArray.find(
-                        (acc) => acc.pubkey.toBase58() === g
-                      )
+                        (acc) => acc.pubkey.toBase58() === g,
+                      ),
                     )
                   }
                   placeholder="Please select..."
@@ -332,7 +322,7 @@ const Params = () => {
                   {assetAccounts.filter(
                     (x) =>
                       x.governance.pubkey.toBase58() ===
-                      activeGovernance.pubkey.toBase58()
+                      activeGovernance.pubkey.toBase58(),
                   ).length > 0 ? (
                     <Tabs
                       activeTab={activeTab}

@@ -14,7 +14,7 @@ import { fromOption } from 'fp-ts/Either'
 import { useRealmQuery } from './queries/realm'
 
 export default function useSignatories(
-  proposal?: Pick<ProgramAccount<Proposal>, 'pubkey'>
+  proposal?: Pick<ProgramAccount<Proposal>, 'pubkey'>,
 ) {
   const { getRpcContext } = useRpcContext()
   const [signatories, setSignatories] = useState<
@@ -39,7 +39,7 @@ export default function useSignatories(
         matchW((reason) => {
           console.log(reason)
           setSignatories([])
-        }, setSignatories)
+        }, setSignatories),
       )()
     }
   }, [context, proposal])

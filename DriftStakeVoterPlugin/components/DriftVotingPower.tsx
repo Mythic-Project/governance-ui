@@ -33,13 +33,12 @@ export default function DriftVotingPower({ role, className }: Props) {
   const mintInfo = useMintInfoByPubkeyQuery(realm?.account.communityMint).data
     ?.result
 
-  const { totalCalculatedVoterWeight, isReady } = useRealmVoterWeightPlugins(
-    role
-  )
+  const { totalCalculatedVoterWeight, isReady } =
+    useRealmVoterWeightPlugins(role)
 
   const vanillaValue = totalCalculatedVoterWeight?.initialValue
   const stakedValue = totalCalculatedVoterWeight?.value?.sub(
-    vanillaValue ?? new BN(0)
+    vanillaValue ?? new BN(0),
   )
 
   const formattedTotal = useMemo(
@@ -49,7 +48,7 @@ export default function DriftVotingPower({ role, className }: Props) {
             .shiftedBy(-mintInfo.decimals)
             .toFormat(2)
         : undefined,
-    [mintInfo, totalCalculatedVoterWeight?.value]
+    [mintInfo, totalCalculatedVoterWeight?.value],
   )
 
   const formattedStaked = useMemo(
@@ -59,7 +58,7 @@ export default function DriftVotingPower({ role, className }: Props) {
             .shiftedBy(-mintInfo.decimals)
             .toFormat(2)
         : undefined,
-    [mintInfo, stakedValue]
+    [mintInfo, stakedValue],
   )
 
   const formattedVanilla = useMemo(
@@ -69,7 +68,7 @@ export default function DriftVotingPower({ role, className }: Props) {
             .shiftedBy(-mintInfo.decimals)
             .toFormat(2)
         : undefined,
-    [mintInfo, vanillaValue]
+    [mintInfo, vanillaValue],
   )
 
   // There are two buttons available on this UI:
@@ -101,7 +100,7 @@ export default function DriftVotingPower({ role, className }: Props) {
       <div
         className={classNames(
           className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )

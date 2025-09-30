@@ -8,7 +8,7 @@ export type ProgramAssetAccount = Omit<AssetAccount, 'type'> & {
 
 export async function groupProgramsByWallet(
   programId: PublicKey,
-  programs: ProgramAssetAccount[]
+  programs: ProgramAssetAccount[],
 ) {
   const groups: { [wallet: string]: ProgramAssetAccount[] } = {}
 

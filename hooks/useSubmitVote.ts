@@ -33,6 +33,7 @@ import { useVotingClients } from '@hooks/useVotingClients'
 import { useNftClient } from '../VoterWeightPlugins/useNftClient'
 import { useRealmVoterWeightPlugins } from './useRealmVoterWeightPlugins'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
+import { usePlausible } from 'next-plausible'
 
 export const useSubmitVote = () => {
   const wallet = useWalletOnePointOh()
@@ -44,24 +45,23 @@ export const useSubmitVote = () => {
   const { closeNftVotingCountingModal } = useNftProposalStore.getState()
   const votingClients = useVotingClients() // TODO this should be passed the role
   const { nftClient } = useNftClient()
+  const plausible = usePlausible()
 
   const isNftPlugin = !!nftClient
 
   const selectedCommunityDelegator = useSelectedDelegatorStore(
-    (s) => s.communityDelegator
+    (s) => s.communityDelegator,
   )
   const selectedCouncilDelegator = useSelectedDelegatorStore(
-    (s) => s.councilDelegator
+    (s) => s.councilDelegator,
   )
   const communityDelegators = useBatchedVoteDelegators('community')
   const councilDelegators = useBatchedVoteDelegators('council')
 
-  const {
-    voterWeightForWallet: voterWeightForWalletCommunity,
-  } = useRealmVoterWeightPlugins('community')
-  const {
-    voterWeightForWallet: voterWeightForWalletCouncil,
-  } = useRealmVoterWeightPlugins('council')
+  const { voterWeightForWallet: voterWeightForWalletCommunity } =
+    useRealmVoterWeightPlugins('community')
+  const { voterWeightForWallet: voterWeightForWalletCouncil } =
+    useRealmVoterWeightPlugins('council')
 
   const { error, loading, execute } = useAsyncCallback(
     async ({
@@ -81,7 +81,7 @@ export const useSubmitVote = () => {
         getProgramVersionForRealm(realmInfo!),
         wallet!,
         connection.current,
-        connection.endpoint
+        connection.endpoint,
       )
 
       const msg = comment
@@ -93,7 +93,7 @@ export const useSubmitVote = () => {
 
       const confirmationCallback = async () => {
         await queryClient.invalidateQueries(
-          voteRecordQueryKeys.all(connection.cluster)
+          voteRecordQueryKeys.all(connection.cluster),
         )
       }
 
@@ -103,7 +103,7 @@ export const useSubmitVote = () => {
             proposal.account.governingTokenMint
           : // if it is a veto, the vetoing mint is the opposite of the governing mint
           realm.account.communityMint.equals(
-              proposal.account.governingTokenMint
+              proposal.account.governingTokenMint,
             )
           ? realm.account.config.councilMint
           : realm.account.communityMint
@@ -126,12 +126,11 @@ export const useSubmitVote = () => {
         realm.owner,
         realm.pubkey,
         relevantMint,
-        actingAsWalletPk
+        actingAsWalletPk,
       )
 
-      const relevantDelegators = (role === 'community'
-        ? communityDelegators
-        : councilDelegators
+      const relevantDelegators = (
+        role === 'community' ? communityDelegators : councilDelegators
       )?.map((x) => x.pubkey)
 
       const voterWeightForWallet =
@@ -158,8 +157,13 @@ export const useSubmitVote = () => {
           confirmationCallback,
           voteWeights,
           relevantDelegators,
-          ownVoterWeight?.value
+          ownVoterWeight?.value,
         )
+        try {
+          plausible('VoteCasted')
+          // eslint-disable-next-line no-empty
+        } catch (e) {}
+
         queryClient.invalidateQueries({
           queryKey: proposalQueryKeys.all(connection.current.rpcEndpoint),
         })
@@ -178,11 +182,11 @@ export const useSubmitVote = () => {
           closeNftVotingCountingModal(
             votingClient.client as NftVoterClient,
             proposal!,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
       }
-    }
+    },
   )
 
   return {
@@ -239,7 +243,7 @@ export const useCreateVoteIxs = () => {
               const votingPluginHelpers = await votingClient.withCastPluginVote(
                 instructions,
                 proposal,
-                torPk
+                torPk,
               )
 
               await withCastVote(
@@ -256,14 +260,20 @@ export const useCreateVoteIxs = () => {
                 vote,
                 walletPk,
                 votingPluginHelpers?.voterWeightPk,
-                votingPluginHelpers?.maxVoterWeightRecord
+                votingPluginHelpers?.maxVoterWeightRecord,
               )
 
               return instructions
             }
           }
         : undefined,
-    [getVotingTokenOwnerRecords, programVersion, realm, votingClients, walletPk]
+    [
+      getVotingTokenOwnerRecords,
+      programVersion,
+      realm,
+      votingClients,
+      walletPk,
+    ],
   )
 }
 

@@ -7,6 +7,13 @@ import {
   Web3Context,
 } from '@tools/governance/prepareRealmCreation'
 import { trySentryLog } from '@utils/logs'
+import { ComputeBudgetProgram, SystemProgram } from '@solana/web3.js'
+import { FEE_WALLET } from '@utils/orders'
+import {
+  lamportsToSol,
+  solToLamports,
+} from '@marinade.finance/marinade-ts-sdk/dist/src/util'
+import { BN } from '@coral-xyz/anchor'
 
 /// Creates multisig realm with community mint with 0 supply
 /// and council mint used as multisig token
@@ -29,25 +36,42 @@ export default async function createMultisigWallet({
   } = await prepareRealmCreation({
     connection,
     wallet,
+    isMultiSig: true,
     ...params,
   })
+  const solBalance = await connection.getBalance(wallet.publicKey!)
+  if (lamportsToSol(new BN(solBalance)) < 1.05) {
+    throw new Error('You need to have at least 1.05 SOL to create a realm')
+  }
 
   try {
     const councilMembersChunks = chunks(councilMembersInstructions, 8)
 
     const allSigners = [...mintsSetupSigners, ...realmSigners]
 
+    const cuLimtIx = ComputeBudgetProgram.setComputeUnitLimit({
+      units: 800_000,
+    })
+    realmInstructions.unshift(cuLimtIx)
+
     const txes = [
       ...chunks(mintsSetupInstructions, 5),
       ...councilMembersChunks,
       ...chunks(realmInstructions, 15),
+      [
+        SystemProgram.transfer({
+          fromPubkey: wallet.publicKey!,
+          toPubkey: FEE_WALLET,
+          lamports: solToLamports(2).toNumber(),
+        }),
+      ],
     ].map((txBatch) => {
       return {
         instructionsSet: txBatch.map((txInst) => {
           const signers = allSigners.filter((x) =>
             txInst.keys
               .filter((key) => key.isSigner)
-              .find((key) => key.pubkey.equals(x.publicKey))
+              .find((key) => key.pubkey.equals(x.publicKey)),
           )
           return {
             transactionInstruction: txInst,

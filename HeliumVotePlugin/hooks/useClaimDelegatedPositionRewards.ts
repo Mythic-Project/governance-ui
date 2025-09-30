@@ -57,9 +57,8 @@ export const useClaimDelegatedPositionRewards = () => {
         const currentEpoch = new BN(unixNow).div(new BN(EPOCH_LENGTH))
         const instructions: TransactionInstruction[] = []
         const delegatedPosKey = delegatedPositionKey(position.pubkey)[0]
-        const delegatedPosAcc = await hsdProgram.account.delegatedPositionV0.fetch(
-          delegatedPosKey
-        )
+        const delegatedPosAcc =
+          await hsdProgram.account.delegatedPositionV0.fetch(delegatedPosKey)
 
         if (!tokenOwnerRecordPk) {
           await withCreateTokenOwnerRecord(
@@ -69,7 +68,7 @@ export const useClaimDelegatedPositionRewards = () => {
             realm.pubkey,
             wallet!.publicKey!,
             realm.account.communityMint,
-            wallet!.publicKey!
+            wallet!.publicKey!,
           )
         }
 
@@ -88,7 +87,7 @@ export const useClaimDelegatedPositionRewards = () => {
                 position: position.pubkey,
                 subDao: delegatedPosAcc.subDao,
               })
-              .instruction()
+              .instruction(),
           )
         }
 
@@ -98,7 +97,7 @@ export const useClaimDelegatedPositionRewards = () => {
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Sequential,
         }))
@@ -117,7 +116,7 @@ export const useClaimDelegatedPositionRewards = () => {
           },
         })
       }
-    }
+    },
   )
 
   return {

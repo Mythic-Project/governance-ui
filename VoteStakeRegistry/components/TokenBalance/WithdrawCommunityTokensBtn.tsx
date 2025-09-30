@@ -28,6 +28,7 @@ import queryClient from '@hooks/queries/queryClient'
 import asFindable from '@utils/queries/asFindable'
 import { tokenAccountQueryKeys } from '@hooks/queries/tokenAccount'
 import { useVsrClient } from '../../../VoterWeightPlugins/useVsrClient'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 const WithDrawCommunityTokens = () => {
   const { getOwnedDeposits } = useDepositStore()
@@ -47,10 +48,15 @@ const WithDrawCommunityTokens = () => {
   const { connection } = useConnection()
   const deposits = useDepositStore((s) => s.state.deposits)
   const maxVoterWeight = useMaxVoteRecord()?.pubkey || undefined
+
+  const mint = vsrClient?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] ?
+    deposits[0].mint.publicKey :
+    realm?.account.communityMint
+    
   const depositRecord = deposits.find(
     (x) =>
-      x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
-      x.lockup.kind.none
+      x.mint.publicKey.toBase58() === mint?.toBase58() &&
+      x.lockup.kind.none,
   )
   const withdrawAllTokens = async function () {
     setIsLoading(true)
@@ -60,25 +66,39 @@ const WithDrawCommunityTokens = () => {
       const voteRecords = await getUnrelinquishedVoteRecords(
         connection,
         realmInfo!.programId,
-        ownTokenRecord!.account!.governingTokenOwner
+        ownTokenRecord!.account!.governingTokenOwner,
       )
 
       for (const voteRecord of Object.values(voteRecords)) {
         const proposalQuery = await queryClient.fetchQuery({
           queryKey: proposalQueryKeys.byPubkey(
             connection.rpcEndpoint,
-            voteRecord.account.proposal
+            voteRecord.account.proposal,
           ),
           staleTime: 0,
           queryFn: () =>
             asFindable(() =>
-              getProposal(connection, voteRecord.account.proposal)
+              getProposal(connection, voteRecord.account.proposal),
             )(),
         })
         const proposal = proposalQuery.result
 
-        if (!proposal) {
+        if (!proposal || !ownTokenRecord) {
           continue
+        }
+
+        if (voteRecord.account.vote?.veto) {
+          const vetoMint = realm?.account.config.councilMint
+          if (
+            vetoMint &&
+            !proposal.account.governingTokenMint.equals(vetoMint)
+          ) {
+            continue
+          }
+        } else {
+          if (!proposal.account.governingTokenMint.equals(ownTokenRecord.account.governingTokenMint)) {
+            continue
+          }
         }
 
         if (proposal.account.state === ProposalState.Voting) {
@@ -87,7 +107,7 @@ const WithDrawCommunityTokens = () => {
             const governance = (
               await fetchGovernanceByPubkey(
                 connection,
-                proposal.account.governance
+                proposal.account.governance,
               )
             ).result
             if (!governance) throw new Error('failed to fetch governance')
@@ -102,7 +122,7 @@ const WithDrawCommunityTokens = () => {
                 message: `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
               })
               throw new Error(
-                `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`
+                `Can't withdraw tokens while Proposal ${proposal.account.name} is being voted on. Please withdraw your vote first`,
               )
             } else {
               // finalize proposal before withdrawing tokens so we don't stop the vote from succeeding
@@ -115,7 +135,7 @@ const WithDrawCommunityTokens = () => {
                 proposal.pubkey,
                 proposal.account.tokenOwnerRecord,
                 proposal.account.governingTokenMint,
-                maxVoterWeight
+                maxVoterWeight,
               )
             }
           }
@@ -135,7 +155,7 @@ const WithDrawCommunityTokens = () => {
           proposal.account.governingTokenMint,
           voteRecord.pubkey,
           ownTokenRecord!.account.governingTokenOwner,
-          wallet!.publicKey!
+          wallet!.publicKey!,
         )
       }
     }
@@ -143,7 +163,7 @@ const WithDrawCommunityTokens = () => {
     await withVoteRegistryWithdraw({
       instructions,
       walletPk: wallet!.publicKey!,
-      mintPk: ownTokenRecord!.account.governingTokenMint,
+      mintPk: mint!,
       realmPk: realm!.pubkey!,
       amount: depositRecord!.amountDepositedNative,
       communityMintPk: realm!.account.communityMint,
@@ -185,13 +205,20 @@ const WithDrawCommunityTokens = () => {
       queryClient.invalidateQueries(
         tokenAccountQueryKeys.byOwner(
           connection.rpcEndpoint,
-          wallet!.publicKey!
-        )
+          wallet!.publicKey!,
+        ),
+      )
+      queryClient.invalidateQueries(
+        ['get-custom-vsr-token-account', {
+          realm: realm?.pubkey.toBase58(), 
+          mint: realm?.account.communityMint.toBase58(), 
+          pubkey: wallet?.publicKey?.toBase58()
+        }]
       )
     } catch (ex) {
       console.error(
         "Can't withdraw tokens, go to my proposals in account view to check outstanding proposals",
-        ex
+        ex,
       )
     }
     setIsLoading(false)

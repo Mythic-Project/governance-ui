@@ -1,12 +1,12 @@
 import { PublicKey } from '@solana/web3.js'
 import { BinaryReader, Schema, BorshError, BinaryWriter } from 'borsh'
 ;(BinaryReader.prototype as any).readPubkey = function () {
-  const reader = (this as unknown) as BinaryReader
+  const reader = this as unknown as BinaryReader
   const array = reader.readFixedArray(32)
   return new PublicKey(array)
 }
 ;(BinaryWriter.prototype as any).writePubkey = function (value: PublicKey) {
-  const writer = (this as unknown) as BinaryWriter
+  const writer = this as unknown as BinaryWriter
   writer.writeFixedArray(value.toBuffer())
 }
 
@@ -18,7 +18,7 @@ function deserializeField(
   schema: Schema,
   fieldName: string,
   fieldType: any,
-  reader: BinaryReader
+  reader: BinaryReader,
 ): any {
   try {
     if (typeof fieldType === 'string') {
@@ -31,7 +31,7 @@ function deserializeField(
       }
 
       return reader.readArray(() =>
-        deserializeField(schema, fieldName, fieldType[0], reader)
+        deserializeField(schema, fieldName, fieldType[0], reader),
       )
     }
 
@@ -56,7 +56,7 @@ function deserializeField(
 function deserializeStruct(
   schema: Schema,
   classType: any,
-  reader: BinaryReader
+  reader: BinaryReader,
 ) {
   const structSchema = schema.get(classType)
   if (!structSchema) {
@@ -82,7 +82,7 @@ function deserializeStruct(
   }
 
   throw new BorshError(
-    `Unexpected schema kind: ${structSchema.kind} for ${classType.constructor.name}`
+    `Unexpected schema kind: ${structSchema.kind} for ${classType.constructor.name}`,
   )
 }
 
@@ -90,7 +90,7 @@ function deserializeStruct(
 export function deserializeBorsh(
   schema: Schema,
   classType: any,
-  buffer: Buffer
+  buffer: Buffer,
 ): any {
   const reader = new BinaryReader(buffer)
   return deserializeStruct(schema, classType, reader)

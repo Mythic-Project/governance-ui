@@ -69,12 +69,11 @@ export function AdvancedOptions(props: Props) {
               : MintMaxVoteWeightSourceType.Absolute;
 
             const newConfig = produce({ ...props.config }, (data) => {
-              data.communityMintMaxVoteWeightSource = new MintMaxVoteWeightSource(
-                {
+              data.communityMintMaxVoteWeightSource =
+                new MintMaxVoteWeightSource({
                   type: newValue,
                   value: data.communityMintMaxVoteWeightSource.value,
-                },
-              );
+                });
             });
 
             props.onConfigChange?.(newConfig);
@@ -110,12 +109,11 @@ export function AdvancedOptions(props: Props) {
                       .multipliedBy(percent)
                       .div(100);
 
-                    data.communityMintMaxVoteWeightSource = new MintMaxVoteWeightSource(
-                      {
+                    data.communityMintMaxVoteWeightSource =
+                      new MintMaxVoteWeightSource({
                         type: data.communityMintMaxVoteWeightSource.type,
                         value: new BN(newValue.toString()),
-                      },
-                    );
+                      });
                   });
 
                   props.onConfigChange?.(newConfig);
@@ -188,16 +186,15 @@ export function AdvancedOptions(props: Props) {
                   const newConfig = produce({ ...props.config }, (data) => {
                     const newValue = value && !Number.isNaN(value) ? value : 0;
 
-                    data.communityMintMaxVoteWeightSource = new MintMaxVoteWeightSource(
-                      {
+                    data.communityMintMaxVoteWeightSource =
+                      new MintMaxVoteWeightSource({
                         type: data.communityMintMaxVoteWeightSource.type,
                         value: new BN(
                           new BigNumber(newValue)
                             .shiftedBy(props.communityMint.account.decimals)
                             .toString(),
                         ),
-                      },
-                    );
+                      });
                   });
 
                   props.onConfigChange?.(newConfig);

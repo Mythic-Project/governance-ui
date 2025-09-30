@@ -68,7 +68,7 @@ export const useGovernanceByPubkeyQuery = (pubkey: PublicKey | undefined) => {
     queryFn: async () => {
       if (!enabled) throw new Error()
       return asFindable(() =>
-        getGovernance(connection, pubkey).then(governanceWithDefaults)
+        getGovernance(connection, pubkey).then(governanceWithDefaults),
       )()
     },
     enabled,
@@ -80,7 +80,7 @@ export const useGovernanceByPubkeyQuery = (pubkey: PublicKey | undefined) => {
 const realmGoverancesQueryFn = async (
   connection: Connection,
   realmPk: PublicKey,
-  realmOwner: PublicKey
+  realmOwner: PublicKey,
 ) => {
   const filter = pubkeyFilter(1, realmPk)
   if (!filter) throw new Error() // unclear why this would ever happen, probably it just cannot
@@ -92,7 +92,7 @@ const realmGoverancesQueryFn = async (
   results.forEach((x) => {
     queryClient.setQueryData(
       governanceQueryKeys.byPubkey(connection.rpcEndpoint, x.pubkey),
-      { found: true, result: x }
+      { found: true, result: x },
     )
   })
 
@@ -120,7 +120,7 @@ export const useRealmGovernancesQuery = () => {
 
 export const fetchRealmGovernances = (
   connection: Connection,
-  realmPk: PublicKey
+  realmPk: PublicKey,
 ) => {
   return queryClient.fetchQuery({
     queryKey: governanceQueryKeys.byRealm(connection.rpcEndpoint, realmPk),
@@ -135,14 +135,14 @@ export const fetchRealmGovernances = (
 
 export const fetchGovernanceByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   const cluster = getNetworkFromEndpoint(connection.rpcEndpoint)
   return queryClient.fetchQuery({
     queryKey: governanceQueryKeys.byPubkey(cluster, pubkey),
     queryFn: () =>
       asFindable(() =>
-        getGovernance(connection, pubkey).then(governanceWithDefaults)
+        getGovernance(connection, pubkey).then(governanceWithDefaults),
       )(),
   })
 }

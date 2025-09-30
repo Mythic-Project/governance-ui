@@ -1,63 +1,41 @@
-
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  RecentPrioritizationFees,
-} from '@solana/web3.js'
-import { getClient, getGroupForClient } from '@utils/mangoV4Tools'
-import { groupBy, mapValues, maxBy, sampleSize } from 'lodash'
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import axios from 'axios'
 
 export const getFeeEstimate = async (connection: Connection) => {
-  const defaultFee = 50000
+  const defaultFee = 100000
   try {
-    // when the chain is congested global fee has to be considered.
-    // Use mango client to find good fee
-    // lockWriteableAccounts should be accounts that are used in the transaction
-    const MAINNET_MANGO_GROUP = new PublicKey(
-      '78b8f4cGCwmZ9ysPFMWLaLTkkaYnUjwMJYStWe5RTSSX'
-    )
-    const MAX_PRIORITY_FEE_KEYS = 128
-    const client = await getClient(connection)
-    const group = await getGroupForClient(client, MAINNET_MANGO_GROUP)
-    const feeMultiplier = 2
-    const altResponse = await connection.getAddressLookupTable(
-      group.addressLookupTables[0]
-    )
-    const altKeys = altResponse.value?.state.addresses
-    if (!altKeys) return defaultFee
-
-    const addresses = sampleSize(altKeys, MAX_PRIORITY_FEE_KEYS)
-    const fees = await connection.getRecentPrioritizationFees({
-      lockedWritableAccounts: addresses,
+    const response = await axios.request({
+      url: connection.rpcEndpoint,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify({
+        method: 'getRecentPrioritizationFees',
+        jsonrpc: '2.0',
+        params: [
+          ['RNXnAJV1DeBt6Lytjz4wYzvS3d6bhsfidS5Np4ovwZz'],
+          {
+            percentile: 5050,
+          },
+        ],
+        id: '1',
+      }),
     })
 
-    if (fees.length < 1) return defaultFee
-
-    // get max priority fee per slot (and sort by slot from old to new)
-    const maxFeeBySlot = mapValues(groupBy(fees, 'slot'), (items) =>
-      maxBy(items, 'prioritizationFee')
-    )
-    const maximumFees = Object.values(maxFeeBySlot).sort(
-      (a, b) => a!.slot - b!.slot
-    ) as RecentPrioritizationFees[]
-
-
-    // get median of last 20 fees
-    const recentFees = maximumFees.slice(Math.max(maximumFees.length - 20, 0))
-    const mid = Math.floor(recentFees.length / 2)
-  
-    const medianFee =
-      recentFees.length % 2 !== 0
-        ? recentFees[mid].prioritizationFee
-        : (recentFees[mid - 1].prioritizationFee +
-            recentFees[mid].prioritizationFee) /
-          2
-    const feeEstimate = Math.ceil(medianFee * feeMultiplier)
-
-    // compute budget unit price is in micro lamports. 
+    // compute budget unit price is in micro lamports.
     // 0.001 * 10**9 is very small.
-    return Math.min(feeEstimate, LAMPORTS_PER_SOL * 0.001)
+    // Calculate average of top 100 fees to get a competitive rate
+
+    const fees =
+      response.data.result.map((entry) => entry.prioritizationFee) || []
+    const topFees = fees.sort((a, b) => b - a).slice(0, 100)
+    const averageFee =
+      topFees.length > 0
+        ? Math.ceil(topFees.reduce((sum, fee) => sum + fee, 0) / topFees.length)
+        : 0
+    console.log(averageFee)
+    return Math.min(averageFee, LAMPORTS_PER_SOL * 0.0009)
   } catch (e) {
     return defaultFee
   }

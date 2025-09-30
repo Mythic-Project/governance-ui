@@ -26,7 +26,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'authority'
-              }
+              },
             ]
           }
         },
@@ -56,7 +56,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'orderPayer'
-              }
+              },
             ]
           }
         },
@@ -91,7 +91,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'boundedStrategy'
-              }
+              },
             ]
           }
         },
@@ -123,7 +123,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'openOrders'
-              }
+              },
             ]
           }
         },
@@ -147,7 +147,7 @@ export type Poseidon = {
           name: 'rent'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -173,7 +173,7 @@ export type Poseidon = {
         {
           name: 'openOrdersSpace'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -269,7 +269,7 @@ export type Poseidon = {
           name: 'rent'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -325,7 +325,7 @@ export type Poseidon = {
           name: 'dexProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -390,7 +390,7 @@ export type Poseidon = {
           isMut: false
           isSigner: false
           docs: ['The SPL Token program id']
-        }
+        },
       ]
       args: []
     },
@@ -418,7 +418,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'orderPayer'
-              }
+              },
             ]
           }
         },
@@ -433,7 +433,7 @@ export type Poseidon = {
           isSigner: false
           docs: [
             "TODO: The BoundedStrategy seeds will likely need another key. Otherwise DAO's and other",
-            'users will be uniquely constrained by these values.'
+            'users will be uniquely constrained by these values.',
           ]
           pda: {
             seeds: [
@@ -462,7 +462,7 @@ export type Poseidon = {
                 kind: 'const'
                 type: 'string'
                 value: 'boundedStrategy'
-              }
+              },
             ]
           }
         },
@@ -486,7 +486,7 @@ export type Poseidon = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -504,7 +504,7 @@ export type Poseidon = {
         {
           name: 'reclaimDate'
           type: 'i64'
-        }
+        },
       ]
     },
     {
@@ -536,13 +536,13 @@ export type Poseidon = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'additionalData'
           type: 'bytes'
-        }
+        },
       ]
     },
     {
@@ -576,10 +576,10 @@ export type Poseidon = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
-    }
+    },
   ]
   accounts: [
     {
@@ -604,7 +604,7 @@ export type Poseidon = {
           {
             name: 'reclaimAddress'
             docs: [
-              'The address that the assets are transferred to when being reclaimed.'
+              'The address that the assets are transferred to when being reclaimed.',
             ]
             type: 'publicKey'
           },
@@ -623,7 +623,7 @@ export type Poseidon = {
               'Buying SOL with USDC for $92.75',
               'Use a numerator of 92_750_000 because USDC has 6 decimals. So 92_750_000 is 92.75 USDC.',
               "Use a denominator of 1_000_000_000 because SOL has 9 decimal places. So that's 1 SOL.",
-              '92.75 USDC / 1 SOL'
+              '92.75 USDC / 1 SOL',
             ]
             type: 'u64'
           },
@@ -635,7 +635,7 @@ export type Poseidon = {
             name: 'bump'
             docs: ["The bump for the strategy's derived address"]
             type: 'u8'
-          }
+          },
         ]
       }
     },
@@ -647,7 +647,7 @@ export type Poseidon = {
           {
             name: 'authority'
             docs: [
-              'The PDA authority that owns the order_payer and open_orders account'
+              'The PDA authority that owns the order_payer and open_orders account',
             ]
             type: 'publicKey'
           },
@@ -659,14 +659,14 @@ export type Poseidon = {
           {
             name: 'openOrders'
             docs: [
-              'The open_orders account that is owned by the authority and used to place orders'
+              'The open_orders account that is owned by the authority and used to place orders',
             ]
             type: 'publicKey'
           },
           {
             name: 'orderPayer'
             docs: [
-              'The SPL TokenAccount that contains the tokens that will be put into Serum for trading'
+              'The SPL TokenAccount that contains the tokens that will be put into Serum for trading',
             ]
             type: 'publicKey'
           },
@@ -674,7 +674,7 @@ export type Poseidon = {
             name: 'orderSide'
             docs: [
               'The side of the order book the market order will be placed',
-              '0 for Bid, 1 for Ask'
+              '0 for Bid, 1 for Ask',
             ]
             type: 'u8'
           },
@@ -686,7 +686,7 @@ export type Poseidon = {
           {
             name: 'reclaimAddress'
             docs: [
-              'The address that the assets are transferred to when being reclaimed.'
+              'The address that the assets are transferred to when being reclaimed.',
             ]
             type: 'publicKey'
           },
@@ -704,7 +704,7 @@ export type Poseidon = {
             name: 'boundedPrice'
             docs: [
               'The price of the base asset that governs the bound. The decimals are',
-              "equivalent to the price on the Serum Market's order book"
+              "equivalent to the price on the Serum Market's order book",
             ]
             type: 'u64'
           },
@@ -715,13 +715,13 @@ export type Poseidon = {
           {
             name: 'serumDexId'
             docs: [
-              'The address of the serum dex program this strategy trades on'
+              'The address of the serum dex program this strategy trades on',
             ]
             type: 'publicKey'
-          }
+          },
         ]
       }
-    }
+    },
   ]
   types: [
     {
@@ -732,7 +732,7 @@ export type Poseidon = {
           {
             name: 'val'
             type: 'u128'
-          }
+          },
         ]
       }
     },
@@ -746,7 +746,7 @@ export type Poseidon = {
           },
           {
             name: 'Raydium'
-          }
+          },
         ]
       }
     },
@@ -760,7 +760,7 @@ export type Poseidon = {
           },
           {
             name: 'Stable'
-          }
+          },
         ]
       }
     },
@@ -792,7 +792,7 @@ export type Poseidon = {
           },
           {
             name: 'Stable'
-          }
+          },
         ]
       }
     },
@@ -824,10 +824,10 @@ export type Poseidon = {
           },
           {
             name: 'Stable'
-          }
+          },
         ]
       }
-    }
+    },
   ]
   errors: [
     {
@@ -969,7 +969,7 @@ export type Poseidon = {
       code: 6027
       name: 'TooManyAccounts'
       msg: 'Cannot handle more than 30 accounts'
-    }
+    },
   ]
 }
 

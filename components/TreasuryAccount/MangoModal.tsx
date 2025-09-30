@@ -50,7 +50,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup, getMaxWithdrawForBank } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { fmtUrlWithCluster } = useQueryContext()
   const { handleCreateProposal } = useCreateProposal()
@@ -58,9 +58,8 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
   const { symbol } = useRealm()
   const [isProposing, setIsProposing] = useState(false)
   const { voteByCouncil, setVoteByCouncil } = useVoteByCouncilToggle()
-  const [isLoadingMangoAccount, setIsLoadingMangoAccount] = useState<boolean>(
-    true
-  )
+  const [isLoadingMangoAccount, setIsLoadingMangoAccount] =
+    useState<boolean>(true)
   const [mangoAccounts, setMangoAccounts] = useState<MangoAccount[]>([])
   const tabs = [ProposalType.DEPOSIT, ProposalType.WITHDRAW]
   const [proposalType, setProposalType] = useState(ProposalType.DEPOSIT)
@@ -103,7 +102,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
       mangoAccount: undefined,
       title: `${proposalType} ${
         tokenPriceService.getTokenInfo(
-          account.extensions.mint!.publicKey.toBase58()
+          account.extensions.mint!.publicKey.toBase58(),
         )?.symbol || 'tokens'
       } ${proposalType === 'Withdraw' ? 'from' : 'to'} Mango`,
     })
@@ -114,7 +113,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
   const treasuryAmount = new BN(
     account.isSol
       ? account.extensions.amount!.toNumber()
-      : account.extensions.token!.account.amount
+      : account.extensions.token!.account.amount,
   )
   const mintInfo = account.extensions.mint!.account!
   const mintMinAmount = mintInfo ? getMintMinAmountAsDecimal(mintInfo) : 1
@@ -134,7 +133,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
       .test(
         'is-not-undefined',
         'Please select an Account',
-        (value) => value !== undefined
+        (value) => value !== undefined,
       ),
     accountName: yup.string().when('mangoAccount', {
       is: null,
@@ -149,7 +148,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
       .max(
         proposalType === ProposalType.DEPOSIT
           ? maxAmount.toNumber()
-          : maxWithdrawBalance
+          : maxWithdrawBalance,
       ),
     delegate: yup.boolean().required('Delegate is required'),
     delegateWallet: yup
@@ -168,13 +167,17 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
 
   useEffect(() => {
     const getMangoAccounts = async () => {
-      const accounts = await mangoClient?.getMangoAccountsForOwner(
-        mangoGroup!,
-        account.extensions.token!.account.owner!
-      )
+      try {
+        const accounts = await mangoClient?.getMangoAccountsForOwner(
+          mangoGroup!,
+          account.extensions.token!.account.owner!,
+        )
 
-      if (accounts) {
-        setMangoAccounts(accounts)
+        if (accounts) {
+          setMangoAccounts(accounts)
+        }
+      } catch (e) {
+        console.log(e)
       }
     }
     if (mangoClient && mangoGroup) {
@@ -188,12 +191,12 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
     if (proposalType === ProposalType.DEPOSIT) return
     if (!mangoGroup || !form.mangoAccount) return
     const bank = mangoGroup!.getFirstBankByMint(
-      account.extensions.mint!.publicKey!
+      account.extensions.mint!.publicKey!,
     )
     const maxWithdrawForBank = getMaxWithdrawForBank(
       mangoGroup,
       bank,
-      form.mangoAccount
+      form.mangoAccount,
     )
     setMaxWithdrawBalance(maxWithdrawForBank.toNumber())
   }, [proposalType, mangoGroup, form])
@@ -207,7 +210,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
       const instructions: InstructionDataWithHoldUpTime[] = []
       let mangoAccountPk = form.mangoAccount?.publicKey
       const bank = mangoGroup!.getFirstBankByMint(
-        account.extensions.mint!.publicKey!
+        account.extensions.mint!.publicKey!,
       )
 
       if (form.mangoAccount === null) {
@@ -219,7 +222,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
             4,
             4,
             32,
-            form.accountName || `Account ${newAccountNum + 1}`
+            form.accountName || `Account ${newAccountNum + 1}`,
           )
           .accounts({
             group: mangoGroup!.publicKey,
@@ -230,7 +233,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
 
         const createAccInstData = {
           data: getInstructionDataFromBase64(
-            serializeInstructionToBase64(createAccIx)
+            serializeInstructionToBase64(createAccIx),
           ),
           holdUpTime:
             account?.governance.account?.config.minInstructionHoldUpTime,
@@ -250,21 +253,21 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
             account.extensions.token!.account.owner!.toBuffer(),
             acctNumBuffer,
           ],
-          mangoClient!.programId
+          mangoClient!.programId,
         )
         mangoAccountPk = mangoAccount
       }
 
       const tokens = toNative(
         form.amount,
-        account.extensions.mint!.account!.decimals
+        account.extensions.mint!.account!.decimals,
       )
 
       if (proposalType === ProposalType.DEPOSIT) {
         const methodByProposal = mangoClient!.program.methods.tokenDeposit
         const methodByProposalInstruction = await methodByProposal(
           tokens,
-          false
+          false,
         )
           .accounts({
             group: mangoGroup!.publicKey,
@@ -283,14 +286,14 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
                   pubkey: pk,
                   isWritable: false,
                   isSigner: false,
-                } as AccountMeta)
-            )
+                }) as AccountMeta,
+            ),
           )
           .instruction()
 
         const depositAccInstData = {
           data: getInstructionDataFromBase64(
-            serializeInstructionToBase64(methodByProposalInstruction!)
+            serializeInstructionToBase64(methodByProposalInstruction!),
           ),
           holdUpTime:
             account?.governance.account?.config.minInstructionHoldUpTime,
@@ -307,13 +310,13 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
           form.mangoAccount!,
           account.extensions.mint!.publicKey!,
           tokens,
-          false
+          false,
         )
 
         for (const withdrawTx of withdrawTxs) {
           const withdrawAccInsData = {
             data: getInstructionDataFromBase64(
-              serializeInstructionToBase64(withdrawTx)
+              serializeInstructionToBase64(withdrawTx),
             ),
             holdUpTime:
               account?.governance.account?.config.minInstructionHoldUpTime,
@@ -337,7 +340,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
 
         const delegateAccInstData = {
           data: getInstructionDataFromBase64(
-            serializeInstructionToBase64(delegateIx!)
+            serializeInstructionToBase64(delegateIx!),
           ),
           holdUpTime:
             account?.governance.account?.config.minInstructionHoldUpTime,
@@ -356,7 +359,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
         governance: account.governance!,
       })
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       router.push(url)
     } catch (e) {
@@ -484,9 +487,9 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
                       Number(mintMinAmount),
                       Math.min(
                         Number(Number.MAX_SAFE_INTEGER),
-                        Number(form.amount)
-                      )
-                    ).toFixed(currentPrecision)
+                        Number(form.amount),
+                      ),
+                    ).toFixed(currentPrecision),
                   ),
                 })
               }}
@@ -656,9 +659,9 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
                       Number(mintMinAmount),
                       Math.min(
                         Number(Number.MAX_SAFE_INTEGER),
-                        Number(form.amount)
-                      )
-                    ).toFixed(currentPrecision)
+                        Number(form.amount),
+                      ),
+                    ).toFixed(currentPrecision),
                   ),
                 })
               }}
@@ -741,17 +744,21 @@ const MangoAccountItem = ({
   account: MangoAccount | null
   group: Group | null
 }) => {
-  return account && group ? (
-    <div>
-      <div>Name: {account.name}</div>
-      <div>{account.publicKey.toBase58()}</div>
+  try {
+    return account && group ? (
       <div>
-        Account Value: ${toUiDecimals(account.getAssetsValue(group), 6)}
+        <div>Name: {account.name}</div>
+        <div>{account.publicKey.toBase58()}</div>
+        <div>
+          Account Value: ${toUiDecimals(account.getAssetsValue(group), 6)}
+        </div>
       </div>
-    </div>
-  ) : (
-    <div>Create new account</div>
-  )
+    ) : (
+      <div>Create new account</div>
+    )
+  } catch (e) {
+    return null
+  }
 }
 
 const getNextAccountNumber = (accounts: MangoAccount[]): number => {

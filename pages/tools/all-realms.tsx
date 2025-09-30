@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 
 const AllRealmsPage = () => {
   const realms = useRealmsByProgramQuery(
-    new PublicKey(DEFAULT_GOVERNANCE_PROGRAM_ID)
+    new PublicKey(DEFAULT_GOVERNANCE_PROGRAM_ID),
   )
 
   return realms.isLoading ? (

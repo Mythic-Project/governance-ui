@@ -58,7 +58,7 @@ const PythRecoverAccount = ({
       const stakeAccountPublicKey = new PublicKey(form.stakeAccount)
       const instruction = await pythClient.getRecoverAccountInstruction(
         stakeAccountPublicKey,
-        form.governedAccount.governance.pubkey
+        form.governedAccount.governance.pubkey,
       )
 
       return {
@@ -80,7 +80,7 @@ const PythRecoverAccount = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -98,7 +98,7 @@ const PythRecoverAccount = ({
         'Invalid Stake Account',
         function (val: string) {
           return val ? validatePubkey(val) : true
-        }
+        },
       ),
   })
   const inputs: InstructionInput[] = [

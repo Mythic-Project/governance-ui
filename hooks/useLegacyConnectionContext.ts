@@ -16,7 +16,7 @@ const useLegacyConnectionContext = () => {
         ? ('devnet' as const)
         : ('mainnet' as const),
     }),
-    [connection]
+    [connection],
   )
 }
 

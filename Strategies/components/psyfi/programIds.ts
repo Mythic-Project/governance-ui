@@ -10,5 +10,5 @@ export const DEVNET_PROGRAM_KEYS = {
 }
 
 export const EURO_PRIMITIVE_PROGRAM_ID = new PublicKey(
-  'FASQhaZQT53W9eT9wWnPoBFw8xzZDey9TbMmJj6jCQTs'
+  'FASQhaZQT53W9eT9wWnPoBFw8xzZDey9TbMmJj6jCQTs',
 )

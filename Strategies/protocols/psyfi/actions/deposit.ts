@@ -29,7 +29,7 @@ export const deposit = async (
   psyFiStrategyInfo: PsyFiStrategyInfo,
   form: PsyFiActionForm,
   owner: PublicKey,
-  transferAddress: PublicKey
+  transferAddress: PublicKey,
 ) => {
   const instructions: InstructionDataWithHoldUpTime[] = []
 
@@ -47,7 +47,7 @@ export const deposit = async (
       TOKEN_PROGRAM_ID,
       form.strategy.vaultAccounts.lpTokenMint,
       owner,
-      true
+      true,
     )
     const createAtaIx = Token.createAssociatedTokenAccountInstruction(
       ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -55,7 +55,7 @@ export const deposit = async (
       form.strategy.vaultAccounts.lpTokenMint,
       address,
       owner,
-      rpcContext.walletPubkey
+      rpcContext.walletPubkey,
     )
     prerequisiteInstructions.push(createAtaIx)
     vaultOwnershipAccount = address
@@ -71,7 +71,7 @@ export const deposit = async (
       TOKEN_PROGRAM_ID,
       NATIVE_MINT,
       owner,
-      true
+      true,
     )
 
     if (
@@ -85,8 +85,8 @@ export const deposit = async (
           NATIVE_MINT,
           poolMintATA,
           owner,
-          rpcContext.walletPubkey
-        )
+          rpcContext.walletPubkey,
+        ),
       )
     }
 
@@ -97,10 +97,10 @@ export const deposit = async (
     })
 
     serializedTransferToReceiptIxs.push(
-      serializeInstructionToBase64(wsolTransferIx)
+      serializeInstructionToBase64(wsolTransferIx),
     )
     serializedTransferToReceiptIxs.push(
-      serializeInstructionToBase64(syncNative(poolMintATA))
+      serializeInstructionToBase64(syncNative(poolMintATA)),
     )
   }
 
@@ -108,13 +108,14 @@ export const deposit = async (
   if (form.strategy.vaultInfo.status.optionsActive) {
     if (!psyFiStrategyInfo.depositReceipt) {
       // Add init deposit receipt instruction
-      const initReceiptIx = await psyFiInstructions.initializeDepositReceiptInstruction(
-        // @ts-ignore: Anchor version differences.
-        psyFiProgram,
-        form.strategy.vaultInfo.status.currentEpoch,
-        owner,
-        form.strategy.vaultAccounts.pubkey
-      )
+      const initReceiptIx =
+        await psyFiInstructions.initializeDepositReceiptInstruction(
+          // @ts-ignore: Anchor version differences.
+          psyFiProgram,
+          form.strategy.vaultInfo.status.currentEpoch,
+          owner,
+          form.strategy.vaultAccounts.pubkey,
+        )
       const uiInstruction: UiInstruction = {
         governance: treasuryAssetAccount.governance,
         serializedInstruction: serializeInstructionToBase64(initReceiptIx),
@@ -138,11 +139,11 @@ export const deposit = async (
       form.strategy.vaultInfo.status.currentEpoch,
       owner,
       form.strategy.vaultAccounts.pubkey,
-      treasuryAssetAccount.isSol ? poolMintATA : transferAddress
+      treasuryAssetAccount.isSol ? poolMintATA : transferAddress,
     )
 
     serializedTransferToReceiptIxs.push(
-      serializeInstructionToBase64(coreDepositIx)
+      serializeInstructionToBase64(coreDepositIx),
     )
   } else {
     // Create the actual deposit instruction
@@ -153,10 +154,10 @@ export const deposit = async (
       owner,
       form.strategy.vaultAccounts.pubkey,
       transferAddress,
-      vaultOwnershipAccount
+      vaultOwnershipAccount,
     )
     serializedTransferToReceiptIxs.push(
-      serializeInstructionToBase64(coreDepositIx)
+      serializeInstructionToBase64(coreDepositIx),
     )
   }
 

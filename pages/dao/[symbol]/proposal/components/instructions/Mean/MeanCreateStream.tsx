@@ -80,7 +80,7 @@ const MeanCreateStreamComponent = ({ index, governance }: Props) => {
         governedAccount: form.governedTokenAccount?.governance,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form])
@@ -102,7 +102,7 @@ const MeanCreateStreamComponent = ({ index, governance }: Props) => {
       governedTokenAccountsWithoutNfts.find(
         (acc) =>
           acc.governance.pubkey.toBase58() ===
-            formPaymentStreamingAccount.owner.toString() && acc.isSol
+            formPaymentStreamingAccount.owner.toString() && acc.isSol,
       )
     setForm((prevForm) => ({
       ...prevForm,
@@ -140,8 +140,8 @@ const MeanCreateStreamComponent = ({ index, governance }: Props) => {
       value: parseFloat(
         Math.max(
           mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)
-        ).toFixed(currentPrecision)
+          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'allocationAssigned',
     })
@@ -164,8 +164,8 @@ const MeanCreateStreamComponent = ({ index, governance }: Props) => {
       value: parseFloat(
         Math.max(
           mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)
-        ).toFixed(currentPrecision)
+          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'rateAmount',
     })

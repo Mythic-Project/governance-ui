@@ -20,23 +20,31 @@ import VanillaVotingPower from '@components/GovernancePower/Power/Vanilla/Vanill
 import React from 'react'
 import ParclAccountDetails from 'ParclVotePlugin/components/ParclAccountDetails'
 import BonkBalanceCard from 'BonkVotePlugin/components/BalanceCard'
+import TokenVoterBalanceCard from 'TokenVoterPlugin/components/BalanceCard'
+import { USDC_MINT } from '@blockworks-foundation/mango-v4'
+import { SecondaryButton } from '@components/Button'
+import ImgWithLoader from '@components/ImgWithLoader'
+import TokenIcon from '@components/treasuryV2/icons/TokenIcon'
+import { useRealmQuery } from '@hooks/queries/realm'
+import { abbreviateAddress } from '@utils/formatting'
+import tokenPriceService from '@utils/services/tokenPrice'
 
 const LockPluginTokenBalanceCard = dynamic(
   () =>
     import(
       'VoteStakeRegistry/components/TokenBalance/LockPluginTokenBalanceCard'
-    )
+    ),
 )
 
 const HeliumVotingPowerCard = dynamic(() =>
   import('HeliumVotePlugin/components/VotingPowerCard').then((module) => {
     const { VotingPowerCard } = module
     return VotingPowerCard
-  })
+  }),
 )
 
 const NftVotingPower = dynamic(
-  () => import('../ProposalVotingPower/NftVotingPower')
+  () => import('../ProposalVotingPower/NftVotingPower'),
 )
 
 export const GovernancePowerTitle = () => {
@@ -80,8 +88,9 @@ const TokenBalanceCardInner = ({
   const showNftCard = requiredCards?.includes('NFT')
   const showGatewayCard = requiredCards?.includes('gateway')
   const showQvCard = requiredCards?.includes('QV')
-  const showParclCard = requiredCards?.includes('parcl');
-  const showBonkCard = requiredCards?.includes('bonk');
+  const showParclCard = requiredCards?.includes('parcl')
+  const showBonkCard = requiredCards?.includes('bonk')
+  const showTokenVoterCard = requiredCards?.includes('token_voter')
 
   if (showDefaultVSRCard && inAccountDetails) {
     return <LockPluginTokenBalanceCard inAccountDetails={inAccountDetails} /> // does this ever actually occur in the component hierarchy?
@@ -99,7 +108,7 @@ const TokenBalanceCardInner = ({
         {!inAccountDetails && <GovernancePowerTitle />}
         <HeliumVotingPowerCard inAccountDetails={inAccountDetails} />
         <ClaimUnreleasedPositions inAccountDetails={inAccountDetails} />
-      </React.Fragment>
+      </React.Fragment>,
     )
   }
 
@@ -111,15 +120,13 @@ const TokenBalanceCardInner = ({
           <ClaimUnreleasedNFTs inAccountDetails={inAccountDetails} />
         </div>
         <VanillaAccountDetails />
-      </div>
+      </div>,
     )
   }
 
   if (showBonkCard) {
     cards.push(
-      <React.Fragment key="bonk">
-        {<BonkBalanceCard />}
-      </React.Fragment>
+      <React.Fragment key="bonk">{<BonkBalanceCard />}</React.Fragment>,
     )
   }
 
@@ -127,7 +134,15 @@ const TokenBalanceCardInner = ({
     cards.push(
       <React.Fragment key="pyth">
         {inAccountDetails ? <PythAccountDetails /> : <GovernancePowerCard />}
-      </React.Fragment>
+      </React.Fragment>,
+    )
+  }
+
+  if (showTokenVoterCard) {
+    cards.push(
+      <React.Fragment key="token_voter">
+        {<TokenVoterBalanceCard />}
+      </React.Fragment>,
     )
   }
 
@@ -139,7 +154,7 @@ const TokenBalanceCardInner = ({
         ) : (
           <GovernancePowerCard />
         )}
-      </React.Fragment>
+      </React.Fragment>,
     )
   }
 
@@ -152,7 +167,7 @@ const TokenBalanceCardInner = ({
             <VanillaVotingPower role="council" hideIfZero />
           </>
         )}
-      </React.Fragment>
+      </React.Fragment>,
     )
   }
 
@@ -161,7 +176,7 @@ const TokenBalanceCardInner = ({
       <React.Fragment key="parcl">
         {!inAccountDetails && <GovernancePowerTitle />}
         <ParclAccountDetails />
-      </React.Fragment>
+      </React.Fragment>,
     )
   }
 
@@ -170,11 +185,56 @@ const TokenBalanceCardInner = ({
     cards.push(
       <React.Fragment key="vanilla">
         {inAccountDetails ? <VanillaAccountDetails /> : <GovernancePowerCard />}
-      </React.Fragment>
+      </React.Fragment>,
     )
   }
 
   return <>{cards}</>
+}
+
+export const GovernanceTokenSwap = () => {
+  const realm = useRealmQuery().data?.result
+  const realmAccount = realm?.account
+  const communityMint = realmAccount?.communityMint.toBase58()
+  let tokenInfo = tokenPriceService._tokenList.find(
+    (x) => x.address === communityMint,
+  )
+
+  if (communityMint === 'ELPrcU7qRV3DUz8AP6siTE7GkR3gkkBvGmgBRiLnC19Y') {
+    //@ts-ignore
+    tokenInfo = { symbol: 'SFM' }
+  }
+
+  return communityMint && tokenInfo ? (
+    <div className="flex items-center justify-end py-2">
+      <SecondaryButton
+        className="relative -bottom-[18px] -right-[15px] rounded-none border-0"
+        onClick={() => {
+          window.open(
+            `https://cabana.exchange/swap/${USDC_MINT.toBase58()}-${communityMint.toString()}?partner=realms`,
+            '_blank',
+          )
+        }}
+      >
+        <div className="flex items-center space-x-1">
+          <span>Swap</span>
+          <span>
+            {tokenInfo?.symbol
+              ? tokenInfo.symbol
+              : abbreviateAddress(communityMint)}{' '}
+          </span>
+          {tokenInfo?.logoURI ? (
+            <ImgWithLoader
+              className="ml-1 h-4 w-4"
+              src={tokenInfo?.logoURI}
+            ></ImgWithLoader>
+          ) : (
+            <TokenIcon className="ml-1 h-4 w-4 stroke-white" />
+          )}{' '}
+        </div>
+      </SecondaryButton>
+    </div>
+  ) : null
 }
 
 const TokenBalanceCardWrapper = ({
@@ -188,6 +248,7 @@ const TokenBalanceCardWrapper = ({
     >
       <TokenBalanceCardInner inAccountDetails={inAccountDetails} />
       <SelectPrimaryDelegators />
+      <GovernanceTokenSwap></GovernanceTokenSwap>
     </div>
   )
 }

@@ -44,13 +44,13 @@ export type VoterStakeRegistry = {
           name: 'rent'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'registrarBump'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -70,7 +70,7 @@ export type VoterStakeRegistry = {
           name: 'mint'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -98,7 +98,7 @@ export type VoterStakeRegistry = {
           type: {
             option: 'publicKey'
           }
-        }
+        },
       ]
     },
     {
@@ -143,7 +143,7 @@ export type VoterStakeRegistry = {
           name: 'instructions'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -153,7 +153,7 @@ export type VoterStakeRegistry = {
         {
           name: 'voterWeightRecordBump'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -208,7 +208,7 @@ export type VoterStakeRegistry = {
           name: 'rent'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -234,7 +234,7 @@ export type VoterStakeRegistry = {
         {
           name: 'allowClawback'
           type: 'bool'
-        }
+        },
       ]
     },
     {
@@ -269,7 +269,7 @@ export type VoterStakeRegistry = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -279,7 +279,7 @@ export type VoterStakeRegistry = {
         {
           name: 'amount'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -324,7 +324,7 @@ export type VoterStakeRegistry = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -334,7 +334,7 @@ export type VoterStakeRegistry = {
         {
           name: 'amount'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -409,7 +409,7 @@ export type VoterStakeRegistry = {
           name: 'rent'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -443,7 +443,7 @@ export type VoterStakeRegistry = {
         {
           name: 'amount'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -478,13 +478,13 @@ export type VoterStakeRegistry = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
           name: 'depositEntryIndex'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -499,13 +499,13 @@ export type VoterStakeRegistry = {
           name: 'voterAuthority'
           isMut: false
           isSigner: true
-        }
+        },
       ]
       args: [
         {
           name: 'depositEntryIndex'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -525,7 +525,7 @@ export type VoterStakeRegistry = {
           name: 'voterAuthority'
           isMut: false
           isSigner: true
-        }
+        },
       ]
       args: [
         {
@@ -541,7 +541,7 @@ export type VoterStakeRegistry = {
         {
           name: 'periods'
           type: 'u32'
-        }
+        },
       ]
     },
     {
@@ -561,7 +561,7 @@ export type VoterStakeRegistry = {
           name: 'voterAuthority'
           isMut: false
           isSigner: true
-        }
+        },
       ]
       args: [
         {
@@ -575,7 +575,7 @@ export type VoterStakeRegistry = {
         {
           name: 'amount'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -595,7 +595,7 @@ export type VoterStakeRegistry = {
           name: 'voterAuthority'
           isMut: false
           isSigner: true
-        }
+        },
       ]
       args: [
         {
@@ -609,7 +609,7 @@ export type VoterStakeRegistry = {
         {
           name: 'amount'
           type: 'u64'
-        }
+        },
       ]
     },
     {
@@ -634,7 +634,7 @@ export type VoterStakeRegistry = {
           name: 'systemProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -650,7 +650,7 @@ export type VoterStakeRegistry = {
           name: 'maxVoteWeightRecord'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -681,7 +681,7 @@ export type VoterStakeRegistry = {
           name: 'tokenProgram'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: []
     },
@@ -697,7 +697,7 @@ export type VoterStakeRegistry = {
           name: 'voter'
           isMut: false
           isSigner: false
-        }
+        },
       ]
       args: [
         {
@@ -707,7 +707,7 @@ export type VoterStakeRegistry = {
         {
           name: 'depositEntryCount'
           type: 'u8'
-        }
+        },
       ]
     },
     {
@@ -722,15 +722,15 @@ export type VoterStakeRegistry = {
           name: 'realmAuthority'
           isMut: false
           isSigner: true
-        }
+        },
       ]
       args: [
         {
           name: 'timeOffset'
           type: 'i64'
-        }
+        },
       ]
-    }
+    },
   ]
   accounts: [
     {
@@ -767,7 +767,7 @@ export type VoterStakeRegistry = {
                 {
                   defined: 'VotingMintConfig'
                 },
-                4
+                4,
               ]
             }
           },
@@ -790,7 +790,7 @@ export type VoterStakeRegistry = {
             type: {
               array: ['u64', 11]
             }
-          }
+          },
         ]
       }
     },
@@ -814,7 +814,7 @@ export type VoterStakeRegistry = {
                 {
                   defined: 'DepositEntry'
                 },
-                32
+                32,
               ]
             }
           },
@@ -831,10 +831,10 @@ export type VoterStakeRegistry = {
             type: {
               array: ['u8', 94]
             }
-          }
+          },
         ]
       }
-    }
+    },
   ]
   types: [
     {
@@ -849,7 +849,7 @@ export type VoterStakeRegistry = {
           {
             name: 'nextTimestamp'
             type: 'u64'
-          }
+          },
         ]
       }
     },
@@ -875,7 +875,7 @@ export type VoterStakeRegistry = {
                 defined: 'VestingInfo'
               }
             }
-          }
+          },
         ]
       }
     },
@@ -915,7 +915,7 @@ export type VoterStakeRegistry = {
             type: {
               array: ['u8', 29]
             }
-          }
+          },
         ]
       }
     },
@@ -943,7 +943,7 @@ export type VoterStakeRegistry = {
             type: {
               array: ['u8', 15]
             }
-          }
+          },
         ]
       }
     },
@@ -987,7 +987,7 @@ export type VoterStakeRegistry = {
             type: {
               array: ['u64', 7]
             }
-          }
+          },
         ]
       }
     },
@@ -1010,10 +1010,10 @@ export type VoterStakeRegistry = {
           },
           {
             name: 'Constant'
-          }
+          },
         ]
       }
-    }
+    },
   ]
   events: [
     {
@@ -1028,7 +1028,7 @@ export type VoterStakeRegistry = {
           name: 'votingPowerBaseline'
           type: 'u64'
           index: false
-        }
+        },
       ]
     },
     {
@@ -1067,9 +1067,9 @@ export type VoterStakeRegistry = {
             }
           }
           index: false
-        }
+        },
       ]
-    }
+    },
   ]
   errors: [
     {
@@ -1261,7 +1261,7 @@ export type VoterStakeRegistry = {
       code: 6037
       name: 'InvalidTimestampArguments'
       msg: ''
-    }
+    },
   ]
 }
 

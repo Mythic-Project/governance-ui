@@ -47,24 +47,33 @@ const useCountdown = ({
     const votingStartedAt = proposal.votingAt?.toNumber() ?? 0 // TODO when and why would this be null ?
 
     const totalSecondsElapsed = Math.max(0, now - votingStartedAt)
-    const maxVotingTime =
-      governance.config.baseVotingTime + governance.config.votingCoolOffTime
+    const baseVotingTime = governance.config.baseVotingTime
+    const coolOffTime = governance.config.votingCoolOffTime
 
-    const totalSecondsRemaining = Math.max(
-      0,
-      maxVotingTime - totalSecondsElapsed
-    )
-    if (totalSecondsRemaining <= 0) {
-      return { state: 'done' } as const
+    // If we're still in normal voting period
+    if (totalSecondsElapsed < baseVotingTime) {
+      return {
+        state: 'voting',
+        total: {
+          secondsRemaining: baseVotingTime - totalSecondsElapsed,
+          secondsElapsed: totalSecondsElapsed,
+        },
+      } as const
     }
 
-    return {
-      state: 'voting',
-      total: {
-        secondsRemaining: totalSecondsRemaining,
-        secondsElapsed: totalSecondsElapsed,
-      },
-    } as const
+    // If we're in cool-off period
+    const coolOffSecondsElapsed = totalSecondsElapsed - baseVotingTime
+    if (coolOffSecondsElapsed < coolOffTime) {
+      return {
+        state: 'cooloff',
+        total: {
+          secondsRemaining: coolOffTime - coolOffSecondsElapsed,
+          secondsElapsed: coolOffSecondsElapsed,
+        },
+      } as const
+    }
+
+    return { state: 'done' } as const
   }, [
     governance.config.baseVotingTime,
     governance.config.votingCoolOffTime,
@@ -97,7 +106,9 @@ const ProposalTimer = ({
 }) => {
   const countdown = useCountdown({ proposal, governance })
 
-  return countdown && countdown.state === 'voting' ? (
+  if (!countdown || countdown.state === 'done') return null
+
+  return (
     <div className="flex items-center gap-1">
       <div className="min-w-[115px] bg-neutral-900 rounded-md py-1 px-2 flex flex-col">
         <div className="text-white flex justify-between items-center mb-1 gap-3 flex-nowrap">
@@ -113,24 +124,40 @@ const ProposalTimer = ({
       <Tooltip
         content={
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-1 items-center">
-                <div className="rounded-sm h-2 w-2 bg-sky-500 inline-block" />
-                <div className="text-white">Unrestricted Voting Time</div>
-              </div>
-              <div>
-                The amount of time a voter has to approve or deny a proposal.
-              </div>
-            </div>
-            {governance.config.votingCoolOffTime !== 0 && (
+            {countdown.state === 'voting' ? (
+              <>
+                <div className="flex flex-col gap-1">
+                  <div className="flex gap-1 items-center">
+                    <div className="rounded-sm h-2 w-2 bg-sky-500 inline-block" />
+                    <div className="text-white">Unrestricted Voting Time</div>
+                  </div>
+                  <div>
+                    The amount of time a voter has to approve or deny a
+                    proposal.
+                  </div>
+                </div>
+                {governance.config.votingCoolOffTime > 0 && (
+                  <div className="flex flex-col gap-1">
+                    <div className="text-neutral-400">
+                      After voting time ends, a{' '}
+                      {formatDuration(governance.config.votingCoolOffTime)
+                        .filter((x) => !x.startsWith('00'))
+                        .join(' ')}{' '}
+                      cool-off period will begin where voters can only deny,
+                      veto, or withdraw their vote.
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
               <div className="flex flex-col gap-1">
                 <div className="flex gap-1 items-center">
                   <div className="rounded-sm h-2 w-2 bg-amber-400 inline-block" />
                   <div className="text-white">Cool-Off Voting Time</div>
                 </div>
                 <div>
-                  After the unrestricted voting time, this is the amount of time
-                  a voter has to deny, veto, or withdraw a vote on a proposal.
+                  During this period, voters can only deny, veto, or withdraw
+                  their vote on the proposal.
                 </div>
               </div>
             )}
@@ -140,7 +167,7 @@ const ProposalTimer = ({
         <InformationFilled className="cursor-help h-3 w-3" />
       </Tooltip>
     </div>
-  ) : null
+  )
 }
 
 export const TimerBar = ({
@@ -154,76 +181,45 @@ export const TimerBar = ({
 }) => {
   const countdown = useCountdown({ proposal, governance })
 
-  return countdown && countdown.state === 'voting' ? (
-    <div
-      /** The colored bar */ className={clsx(
-        'flex',
-        size === 'xs' ? 'h-[1.5px]' : 'h-[4px]'
-      )}
-    >
-      <div
-        /** Unrestricted voting time elapsed */ style={{
-          flex: Math.min(
-            countdown.total.secondsElapsed,
-            governance.config.baseVotingTime
-          ),
-        }}
-        className="bg-sky-900"
-      />
-      <Notch
-        /** White notch (unrestricted voting time) */ className={
-          countdown.total.secondsElapsed > governance.config.baseVotingTime
-            ? 'hidden'
-            : undefined
-        }
-        size={size}
-      />
-      <div
-        /** Unrestricted voting time remaining */ style={{
-          flex: Math.max(
-            0,
-            governance.config.baseVotingTime - countdown.total.secondsElapsed
-          ),
-        }}
-        className="bg-sky-500"
-      />
-      <div className="w-[1px]" />
-      <div
-        /** Cooloff time elapsed */ style={{
-          flex: Math.min(
-            countdown.total.secondsElapsed - governance.config.baseVotingTime,
-            governance.config.baseVotingTime +
-              governance.config.votingCoolOffTime
-          ),
-        }}
-        className="bg-[#665425]"
-      />
-      <Notch
-        /** White notch (cooloff) */
-        className={
-          countdown.total.secondsElapsed <= governance.config.baseVotingTime
-            ? 'hidden'
-            : undefined
-        }
-        size={size}
-      />
+  if (!countdown || countdown.state === 'done') return null
 
-      <div
-        /** Cooloff time remaining */ style={{
-          flex: Math.max(
-            0,
-            governance.config.votingCoolOffTime -
-              Math.max(
-                0,
-                countdown.total.secondsElapsed -
-                  governance.config.baseVotingTime
-              )
-          ),
-        }}
-        className="bg-amber-500"
-      />
+  return (
+    <div className={clsx('flex', size === 'xs' ? 'h-[1.5px]' : 'h-[4px]')}>
+      {countdown.state === 'voting' ? (
+        <>
+          <div
+            style={{
+              flex: countdown.total.secondsElapsed,
+            }}
+            className="bg-sky-900"
+          />
+          <Notch size={size} />
+          <div
+            style={{
+              flex: countdown.total.secondsRemaining,
+            }}
+            className="bg-sky-500"
+          />
+        </>
+      ) : (
+        <>
+          <div
+            style={{
+              flex: countdown.total.secondsElapsed,
+            }}
+            className="bg-[#665425]"
+          />
+          <Notch size={size} />
+          <div
+            style={{
+              flex: countdown.total.secondsRemaining,
+            }}
+            className="bg-amber-500"
+          />
+        </>
+      )}
     </div>
-  ) : null
+  )
 }
 
 const Notch = ({
@@ -238,7 +234,7 @@ const Notch = ({
       size={20}
       className={clsx(
         'absolute text-white left-1/2 -translate-x-1/2',
-        size === 'xs' ? 'top-[-13px] scale-50' : 'top-[-16px]'
+        size === 'xs' ? 'top-[-13px] scale-50' : 'top-[-16px]',
       )}
     />
   </div>

@@ -20,9 +20,7 @@ import { secondsToHours } from 'date-fns'
 import WarningFilledIcon from '@carbon/icons-react/lib/WarningFilled'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Market } from '@project-serum/serum'
-import tokenPriceService, {
-  TokenInfoWithoutDecimals,
-} from '@utils/services/tokenPrice'
+import tokenPriceService, { TokenInfoJupiter } from '@utils/services/tokenPrice'
 import {
   LISTING_PRESETS_KEY,
   MidPriceImpact,
@@ -50,7 +48,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -71,7 +69,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -88,7 +86,7 @@ const instructions = () => ({
     accounts: [{ name: 'Group' }, { name: 'Admin' }],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -110,7 +108,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -127,7 +125,7 @@ const instructions = () => ({
     accounts: [{ name: 'Group' }, { name: 'Admin' }, { name: 'Oracle' }],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -153,7 +151,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -170,7 +168,7 @@ const instructions = () => ({
     accounts: [{ name: 'Group' }, { name: 'Admin' }],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -193,7 +191,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -220,34 +218,29 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const proposedMint = accounts[2].pubkey
       const oracle = accounts[6].pubkey
       const isMintOnCurve = PublicKey.isOnCurve(proposedMint)
 
-      const [
-        info,
-        proposedOracle,
-        args,
-        oracleAi,
-        mintInfo,
-      ] = await Promise.all([
-        displayArgs(connection, data),
-        getOracle(connection, oracle),
-        getDataObjectFlattened<FlatListingArgs>(connection, data),
-        connection.getAccountInfo(oracle),
-        tryGetMint(connection, proposedMint),
-      ])
+      const [info, proposedOracle, args, oracleAi, mintInfo] =
+        await Promise.all([
+          displayArgs(connection, data),
+          getOracle(connection, oracle),
+          getDataObjectFlattened<FlatListingArgs>(connection, data),
+          connection.getAccountInfo(oracle),
+          tryGetMint(connection, proposedMint),
+        ])
 
       const oracleData = await decodePriceFromOracleAi(
         oracleAi!,
         connection,
-        proposedOracle.type
+        proposedOracle.type,
       )
 
       const presetInfo = await getSuggestedCoinPresetInfo(
-        proposedMint.toBase58()
+        proposedMint.toBase58(),
       )
 
       const formattedProposedArgs = getFormattedListingValues(args)
@@ -255,11 +248,11 @@ const instructions = () => ({
       const formattedSuggestedPresets = getFormattedListingPresets(
         0,
         mintInfo?.account.decimals || 0,
-        oracleData.uiPrice
+        oracleData.uiPrice,
       )
 
       const currentListingArgsMatchedTier = Object.values(
-        formattedSuggestedPresets
+        formattedSuggestedPresets,
       ).find((preset) => {
         const formattedPreset = getFormattedListingValues({
           tokenIndex: args.tokenIndex,
@@ -284,7 +277,7 @@ const instructions = () => ({
       const suggestedPreset = formattedSuggestedPresets[presetInfo.presetKey]
 
       const suggestedFormattedPreset: ListingArgsFormatted = Object.keys(
-        suggestedPreset
+        suggestedPreset,
       ).length
         ? getFormattedListingValues({
             tokenIndex: args.tokenIndex,
@@ -295,11 +288,11 @@ const instructions = () => ({
         : ({} as ListingArgsFormatted)
 
       const invalidKeys: (keyof ListingArgsFormatted)[] = Object.keys(
-        suggestedPreset
+        suggestedPreset,
       ).length
         ? compareObjectsAndGetDifferentKeys<ListingArgsFormatted>(
             formattedProposedArgs,
-            suggestedFormattedPreset
+            suggestedFormattedPreset,
           )
         : []
 
@@ -309,7 +302,7 @@ const instructions = () => ({
           if (x === 'depositLimit') {
             return !isDifferenceWithin5Percent(
               Number(formattedProposedArgs['depositLimit'] || 0),
-              Number(suggestedFormattedPreset['depositLimit'] || 0)
+              Number(suggestedFormattedPreset['depositLimit'] || 0),
             )
           }
           return true
@@ -577,7 +570,7 @@ const instructions = () => ({
                   mintInfo && formattedProposedArgs.depositLimit
                     ? toUiDecimals(
                         new BN(formattedProposedArgs.depositLimit.toString()),
-                        mintInfo.account.decimals
+                        mintInfo.account.decimals,
                       )
                     : formattedProposedArgs.depositLimit
                 } ${args.name} ($${
@@ -585,7 +578,7 @@ const instructions = () => ({
                     ? (
                         toUiDecimals(
                           new BN(formattedProposedArgs.depositLimit.toString()),
-                          mintInfo.account.decimals
+                          mintInfo.account.decimals,
                         ) * oracleData.uiPrice
                       ).toFixed(0)
                     : 0
@@ -594,11 +587,11 @@ const instructions = () => ({
                   mintInfo && invalidFields?.depositLimit
                     ? `${toUiDecimals(
                         new BN(invalidFields.depositLimit.toString()),
-                        mintInfo.account.decimals
+                        mintInfo.account.decimals,
                       )} ${args.name} ($${(
                         toUiDecimals(
                           new BN(invalidFields.depositLimit.toString()),
-                          mintInfo.account.decimals
+                          mintInfo.account.decimals,
                         ) * oracleData.uiPrice
                       ).toFixed(0)})`
                     : undefined
@@ -650,7 +643,7 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const group = accounts[0].pubkey
       const baseBank = accounts[7].pubkey
@@ -668,7 +661,7 @@ const instructions = () => ({
         connection,
         openbookMarketPk,
         undefined,
-        openBookProgram
+        openBookProgram,
       )
       if (!baseMint || !quoteMint) {
         baseMint = currentMarket.baseMintAddress
@@ -766,7 +759,7 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const oracle = accounts[6].pubkey
 
@@ -779,7 +772,7 @@ const instructions = () => ({
       const oracleData = await decodePriceFromOracleAi(
         oracleAi!,
         connection,
-        proposedOracle.type
+        proposedOracle.type,
       )
       try {
         return (
@@ -806,7 +799,7 @@ const instructions = () => ({
     accounts: [{ name: 'Group' }, { name: 'Admin' }, { name: 'Market' }],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -831,10 +824,10 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       try {
-        let mintData: null | TokenInfoWithoutDecimals | undefined = null
+        let mintData: null | TokenInfoJupiter | undefined = null
 
         const mintInfo = accounts[2].pubkey
         const group = accounts[0].pubkey
@@ -846,7 +839,7 @@ const instructions = () => ({
         ])
         let priceImpact: MidPriceImpact | undefined
         const mint = [...mangoGroup.mintInfosMapByMint.values()].find((x) =>
-          x.publicKey.equals(mintInfo)
+          x.publicKey.equals(mintInfo),
         )?.mint
 
         let liqudityTier: Partial<{
@@ -896,7 +889,7 @@ const instructions = () => ({
           adjustmentFactor:
             args['interestRateParamsOpt.adjustmentFactor'] !== undefined
               ? (args['interestRateParamsOpt.adjustmentFactor'] * 100).toFixed(
-                  2
+                  2,
                 )
               : undefined,
           loanFeeRate:
@@ -983,12 +976,12 @@ const instructions = () => ({
           mintData = tokenPriceService.getTokenInfo(mint.toBase58())
 
           const midPriceImpacts = getMidPriceImpacts(
-            mangoGroup.pis.length ? mangoGroup.pis : []
+            mangoGroup.pis.length ? mangoGroup.pis : [],
           )
 
           const tokenToPriceImpact = midPriceImpacts
             .filter(
-              (x) => x.avg_price_impact_percent < 1 || x.target_amount <= 1000
+              (x) => x.avg_price_impact_percent < 1 || x.target_amount <= 1000,
             )
             .reduce(
               (acc: { [key: string]: MidPriceImpact }, val: MidPriceImpact) => {
@@ -1000,7 +993,7 @@ const instructions = () => ({
                 }
                 return acc
               },
-              {}
+              {},
             )
 
           priceImpact = tokenToPriceImpact[getApiTokenName(bank.name)]
@@ -1009,7 +1002,7 @@ const instructions = () => ({
             ? getProposedKey(
                 priceImpact.avg_price_impact_percent < 1
                   ? priceImpact?.target_amount
-                  : undefined
+                  : undefined,
               )
             : 'UNTRUSTED'
 
@@ -1028,7 +1021,7 @@ const instructions = () => ({
           const suggestedPreset = getFormattedListingPresets(
             bank.uiDeposits(),
             bank.mintDecimals,
-            bank.uiPrice
+            bank.uiPrice,
           )[liqudityTier.presetKey!]
 
           const suggestedFormattedPreset:
@@ -1042,7 +1035,8 @@ const instructions = () => ({
                   ...suggestedPreset,
                 }),
                 groupInsuranceFund: suggestedPreset.groupInsuranceFund,
-                maintWeightShiftStart: args.maintWeightShiftStartOpt?.toNumber(),
+                maintWeightShiftStart:
+                  args.maintWeightShiftStartOpt?.toNumber(),
                 maintWeightShiftEnd: args.maintWeightShiftEndOpt?.toNumber(),
                 maintWeightShiftAssetTarget:
                   args.maintWeightShiftAssetTargetOpt,
@@ -1054,11 +1048,12 @@ const instructions = () => ({
               }
             : {}
 
-          invalidKeys = (Object.keys(suggestedPreset).length
-            ? compareObjectsAndGetDifferentKeys<
-                Partial<EditTokenArgsFormatted>
-              >(parsedArgs, suggestedFormattedPreset)
-            : []
+          invalidKeys = (
+            Object.keys(suggestedPreset).length
+              ? compareObjectsAndGetDifferentKeys<
+                  Partial<EditTokenArgsFormatted>
+                >(parsedArgs, suggestedFormattedPreset)
+              : []
           )
             .filter((x) => parsedArgs[x] !== undefined)
             .filter((x) => {
@@ -1066,7 +1061,7 @@ const instructions = () => ({
               if (x === 'depositLimit') {
                 return !isDifferenceWithin5Percent(
                   Number(parsedArgs['depositLimit'] || 0),
-                  Number(suggestedFormattedPreset['depositLimit'] || 0)
+                  Number(suggestedFormattedPreset['depositLimit'] || 0),
                 )
               }
               if (x === 'netBorrowLimitPerWindowQuote') {
@@ -1074,8 +1069,8 @@ const instructions = () => ({
                   Number(parsedArgs['netBorrowLimitPerWindowQuote'] || 0),
                   Number(
                     suggestedFormattedPreset['netBorrowLimitPerWindowQuote'] ||
-                      0
-                  )
+                      0,
+                  ),
                 )
               }
               if (x === 'collateralFeePerDay') {
@@ -1119,14 +1114,16 @@ const instructions = () => ({
                 {coinTiersToNames[liqudityTier.presetKey]}.
               </h3>
             )}
-            {invalidKeys && invalidKeys!.length > 0 && liqudityTier.presetKey && (
-              <h3 className="text-orange flex items-center">
-                <WarningFilledIcon className="h-4 w-4 fill-current mr-2 flex-shrink-0" />
-                Proposal params do not match suggested token tier -{' '}
-                {coinTiersToNames[liqudityTier.presetKey]} check params
-                carefully
-              </h3>
-            )}
+            {invalidKeys &&
+              invalidKeys!.length > 0 &&
+              liqudityTier.presetKey && (
+                <h3 className="text-orange flex items-center">
+                  <WarningFilledIcon className="h-4 w-4 fill-current mr-2 flex-shrink-0" />
+                  Proposal params do not match suggested token tier -{' '}
+                  {coinTiersToNames[liqudityTier.presetKey]} check params
+                  carefully
+                </h3>
+              )}
             <div className="py-4">
               <div className="flex mb-2">
                 <div className="w-3 h-3 bg-white mr-2"></div> - Current values
@@ -1529,13 +1526,13 @@ const instructions = () => ({
                     bank && parsedArgs.depositLimit
                       ? toUiDecimals(
                           new BN(parsedArgs.depositLimit),
-                          bank.mintDecimals
+                          bank.mintDecimals,
                         )
                       : parsedArgs.depositLimit
                   } ${bank?.name} ($${(
                     toUiDecimals(
                       new BN(parsedArgs.depositLimit.toString()),
-                      bank.mintDecimals
+                      bank.mintDecimals,
                     ) * bank.uiPrice
                   ).toFixed(0)})`
                 }
@@ -1546,13 +1543,13 @@ const instructions = () => ({
                     bank && bankFormattedValues?.depositLimit
                       ? toUiDecimals(
                           new BN(bankFormattedValues.depositLimit),
-                          bank.mintDecimals
+                          bank.mintDecimals,
                         )
                       : bankFormattedValues?.depositLimit
                   } ${bank?.name} ($${(
                     toUiDecimals(
                       new BN(bankFormattedValues.depositLimit.toString()),
-                      bank.mintDecimals
+                      bank.mintDecimals,
                     ) * bank.uiPrice
                   ).toFixed(0)})`
                 }
@@ -1563,13 +1560,13 @@ const instructions = () => ({
                     bank && invalidFields?.depositLimit
                       ? toUiDecimals(
                           new BN(invalidFields.depositLimit),
-                          bank.mintDecimals
+                          bank.mintDecimals,
                         )
                       : invalidFields?.depositLimit
                   } ${bank?.name}  ($${(
                     toUiDecimals(
                       new BN(invalidFields.depositLimit.toString()),
-                      bank.mintDecimals
+                      bank.mintDecimals,
                     ) * bank.uiPrice
                   ).toFixed(0)})`
                 }
@@ -1657,7 +1654,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -1680,14 +1677,14 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const group = accounts[0].pubkey
       const bank = accounts[1].pubkey
       const client = await getClient(connection)
       const mangoGroup = await getGroupForClient(client, group)
       const mint = [...mangoGroup.banksMapByMint.values()].find(
-        (x) => x[0]!.publicKey.equals(bank)!
+        (x) => x[0]!.publicKey.equals(bank)!,
       )![0]!.mint!
       const tokenSymbol = tokenPriceService.getTokenInfo(mint.toBase58())
         ?.symbol
@@ -1718,18 +1715,18 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const args = await getDataObjectFlattened<any>(connection, data)
       const accountInfo = await connection.getParsedAccountInfo(
-        accounts[6].pubkey
+        accounts[6].pubkey,
       )
       const mint = await tryGetMint(
         connection,
-        new PublicKey(accountInfo.value?.data['parsed'].info.mint)
+        new PublicKey(accountInfo.value?.data['parsed'].info.mint),
       )
       const tokenInfo = tokenPriceService.getTokenInfo(
-        accountInfo.value?.data['parsed'].info.mint
+        accountInfo.value?.data['parsed'].info.mint,
       )
 
       try {
@@ -1739,7 +1736,7 @@ const instructions = () => ({
               amount:{' '}
               {mint?.account.decimals
                 ? formatNumber(
-                    toUiDecimals(args.amount, mint?.account.decimals)
+                    toUiDecimals(args.amount, mint?.account.decimals),
                   )
                 : args.amount}{' '}
               {tokenInfo?.symbol}
@@ -1765,15 +1762,15 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const group = accounts[0].pubkey
       const perpMarket = accounts[1].pubkey
       const client = await getClient(connection)
       const mangoGroup = await getGroupForClient(client, group)
-      const marketName = [
-        ...mangoGroup.perpMarketsMapByName.values(),
-      ].find((x) => x.publicKey.equals(perpMarket))?.name
+      const marketName = [...mangoGroup.perpMarketsMapByName.values()].find(
+        (x) => x.publicKey.equals(perpMarket),
+      )?.name
       try {
         return (
           <div>
@@ -1796,7 +1793,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -1819,18 +1816,18 @@ const instructions = () => ({
     getDataUI: async (
       connection: Connection,
       data: Uint8Array,
-      accounts: AccountMetaData[]
+      accounts: AccountMetaData[],
     ) => {
       const args = await getDataObjectFlattened<any>(connection, data)
       const accountInfo = await connection.getParsedAccountInfo(
-        accounts[6].pubkey
+        accounts[6].pubkey,
       )
       const mint = await tryGetMint(
         connection,
-        new PublicKey(accountInfo.value?.data['parsed'].info.mint)
+        new PublicKey(accountInfo.value?.data['parsed'].info.mint),
       )
       const tokenInfo = tokenPriceService.getTokenInfo(
-        accountInfo.value?.data['parsed'].info.mint
+        accountInfo.value?.data['parsed'].info.mint,
       )
       try {
         return (
@@ -1839,7 +1836,7 @@ const instructions = () => ({
               amount:{' '}
               {mint?.account.decimals
                 ? formatNumber(
-                    toUiDecimals(args.amount, mint?.account.decimals)
+                    toUiDecimals(args.amount, mint?.account.decimals),
                   )
                 : args.amount}{' '}
               {tokenInfo?.symbol}
@@ -1863,7 +1860,7 @@ const instructions = () => ({
     ],
     getDataUI: async (
       connection: Connection,
-      data: Uint8Array
+      data: Uint8Array,
       //accounts: AccountMetaData[]
     ) => {
       const info = await displayArgs(connection, data)
@@ -1884,12 +1881,12 @@ export const MANGO_V4_INSTRUCTIONS = {
 
 async function getDataObjectFlattened<T>(
   connection: Connection,
-  data: Uint8Array
+  data: Uint8Array,
 ) {
   try {
     const client = await getClient(connection)
     const decodedInstructionData = new BorshInstructionCoder(
-      client.program.idl
+      client.program.idl,
     ).decode(Buffer.from(data))?.data as any
 
     //   console.log(
@@ -2074,22 +2071,22 @@ const getFormattedListingValues = (args: FlatListingArgs) => {
     minVaultToDepositsRatio: (args['minVaultToDepositsRatio'] * 100).toFixed(2),
     netBorrowLimitPerWindowQuote: toUiDecimals(
       args['netBorrowLimitPerWindowQuote'],
-      6
+      6,
     ),
     netBorrowLimitWindowSizeTs: secondsToHours(args.netBorrowLimitWindowSizeTs),
     borrowWeightScaleStartQuote: toUiDecimals(
       args.borrowWeightScaleStartQuote,
-      6
+      6,
     ),
     depositWeightScaleStartQuote: toUiDecimals(
       args.depositWeightScaleStartQuote,
-      6
+      6,
     ),
     stablePriceDelayGrowthLimit: (
       args.stablePriceDelayGrowthLimit * 100
     ).toFixed(2),
     stablePriceDelayIntervalSeconds: secondsToHours(
-      args.stablePriceDelayIntervalSeconds
+      args.stablePriceDelayIntervalSeconds,
     ),
     stablePriceGrowthLimit: (args.stablePriceGrowthLimit * 100).toFixed(2),
     tokenConditionalSwapMakerFeeRate: args.tokenConditionalSwapMakerFeeRate,

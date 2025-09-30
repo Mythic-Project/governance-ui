@@ -95,17 +95,18 @@ interface Props {
 export function Overview(props: Props) {
   const [keyCounter, setKeyCounter] = useState(0);
 
-  const about = (props.about.length
-    ? [...props.about]
-    : [
-        {
-          content: {
-            attachments: [],
-            content: [],
+  const about = (
+    props.about.length
+      ? [...props.about]
+      : [
+          {
+            content: {
+              attachments: [],
+              content: [],
+            },
+            heading: 'Introduction',
           },
-          heading: 'Introduction',
-        },
-      ]
+        ]
   ).concat(
     props.about.length < 8
       ? {

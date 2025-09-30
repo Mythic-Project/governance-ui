@@ -19,6 +19,7 @@ import {
 import { getMintCfgIdx, tryGetVoter } from './api'
 import { getPeriod } from 'VoteStakeRegistry/tools/deposits'
 import { VsrClient } from './client'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const withCreateNewDeposit = async ({
   instructions,
@@ -57,26 +58,27 @@ export const withCreateNewDeposit = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    clientProgramId
+    clientProgramId,
   )
-  const { voter } = getVoterPDA(
-    registrar,
-    walletPk,
-    clientProgramId
-  )
+  const { voter } = getVoterPDA(registrar, walletPk, clientProgramId)
   const { voterWeightPk } = getVoterWeightPDA(
     registrar,
     walletPk,
-    clientProgramId
+    clientProgramId,
   )
   const existingVoter = await tryGetVoter(voter, client)
+  const mintInfo =
+    await client.program.provider.connection.getAccountInfo(mintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID
+    : TOKEN_PROGRAM_ID
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    tokenProgram,
     mintPk,
     voter,
-    true
+    true,
   )
 
   //spl governance tokenownerrecord pubkey
@@ -88,12 +90,16 @@ export const withCreateNewDeposit = async ({
       realmPk,
       walletPk,
       communityMintPk,
-      walletPk
+      walletPk,
     )
   }
 
   if (!existingVoter) {
-    const createVoterIx = await client?.createVoterWeightRecord(walletPk, realmPk, communityMintPk)
+    const createVoterIx = await client?.createVoterWeightRecord(
+      walletPk,
+      realmPk,
+      communityMintPk,
+    )
     instructions.push(createVoterIx)
   }
   const mintCfgIdx = await getMintCfgIdx(registrar, mintPk, client)
@@ -106,7 +112,7 @@ export const withCreateNewDeposit = async ({
           (x) =>
             x.isUsed &&
             typeof x.lockup.kind[lockupKind] !== 'undefined' &&
-            x.votingMintConfigIdx === mintCfgIdx
+            x.votingMintConfigIdx === mintCfgIdx,
         )
       : -1
 
@@ -130,7 +136,7 @@ export const withCreateNewDeposit = async ({
         //lockup starts now
         null,
         period,
-        allowClawback
+        allowClawback,
       )
       .accounts({
         registrar: registrar,
@@ -140,7 +146,7 @@ export const withCreateNewDeposit = async ({
         depositMint: mintPk,
         rent: SYSVAR_RENT_PUBKEY,
         systemProgram: systemProgram,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         vault: voterATAPk,
       })
@@ -156,5 +162,6 @@ export const withCreateNewDeposit = async ({
     voter,
     tokenOwnerRecordPubKey,
     voterWeightPk,
+    tokenProgram,
   }
 }

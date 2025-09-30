@@ -25,7 +25,7 @@ interface Props {
 
 export default function SummaryButton(props: Props) {
   const containsTokens = props.wallet.assets.some(
-    (asset) => asset.type === AssetType.Token || asset.type === AssetType.Sol
+    (asset) => asset.type === AssetType.Token || asset.type === AssetType.Sol,
   )
 
   const [treasurySelect] = useTreasurySelectState()
@@ -39,7 +39,7 @@ export default function SummaryButton(props: Props) {
       props.wallet.governanceAddress
         ? new PublicKey(props.wallet.governanceAddress)
         : undefined,
-    [props.wallet.governanceAddress]
+    [props.wallet.governanceAddress],
   )
 
   return (
@@ -65,7 +65,7 @@ export default function SummaryButton(props: Props) {
           ? 'bg-bkg-1'
           : props.expanded
           ? 'bg-bkg-2 hover:bg-bkg-1'
-          : undefined
+          : undefined,
       )}
       onClick={props.onClick}
     >
@@ -80,7 +80,7 @@ export default function SummaryButton(props: Props) {
           props.selected &&
             props.expanded &&
             !props.selectedAsset &&
-            'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
+            'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]',
         )}
       />
       <div>
@@ -94,7 +94,7 @@ export default function SummaryButton(props: Props) {
                 'top-0',
                 'left-0',
                 'transition-opacity',
-                selected ? 'opacity-100' : 'opacity-0'
+                selected ? 'opacity-100' : 'opacity-0',
               )}
             />
             <UnselectedWalletIcon
@@ -105,12 +105,15 @@ export default function SummaryButton(props: Props) {
                 'top-0',
                 'left-0',
                 'transition-opacity',
-                selected ? 'opacity-0' : 'opacity-100'
+                selected ? 'opacity-0' : 'opacity-100',
               )}
             />
           </div>
           <div className="font-bold text-left whitespace-nowrap text-ellipsis overflow-hidden">
-            {props.wallet.name || abbreviateAddress(props.wallet.address)}
+            {props.wallet.name ||
+              (props.wallet.favoriteDomain?.name
+                ? `${props.wallet.favoriteDomain?.name}.sol`
+                : abbreviateAddress(props.wallet.address))}
           </div>
         </div>
       </div>
@@ -135,7 +138,7 @@ export default function SummaryButton(props: Props) {
             'transition-all',
             'w-5',
             props.expanded ? '' : '-rotate-90',
-            props.selected ? 'text-[#00C2FF]' : 'text-white/50'
+            props.selected ? 'text-[#00C2FF]' : 'text-white/50',
           )}
           onClick={(e) => {
             e.stopPropagation()

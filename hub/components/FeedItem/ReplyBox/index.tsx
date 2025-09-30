@@ -37,10 +37,8 @@ export function Content(props: Props) {
   );
   const [documentKey, setDocumentKey] = useState(0);
   const [meResult] = useQuery(gql.getUserResp, { query: gql.getUser });
-  const [
-    richTextDocument,
-    setRichTextDocument,
-  ] = useState<RichTextDocument | null>(null);
+  const [richTextDocument, setRichTextDocument] =
+    useState<RichTextDocument | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { publish } = useToast();
   const addTopLevelComment = useUserCreatedTopLevelFeedItemRepliesStore(

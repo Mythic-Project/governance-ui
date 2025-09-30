@@ -6,7 +6,7 @@ import useSWR from 'swr'
 const fetchTokenAccountBalance = async (
   connection: Connection,
   owner?: PublicKey | null,
-  mint?: PublicKey
+  mint?: PublicKey,
 ) => {
   if (!owner || !mint) throw new Error('No owner or mint provided')
 
@@ -16,7 +16,7 @@ const fetchTokenAccountBalance = async (
 
 export default function useTokenAccountBalance(
   owner?: PublicKey | null,
-  mint?: PublicKey
+  mint?: PublicKey,
 ) {
   const { connection } = useConnection()
 
@@ -33,7 +33,7 @@ export default function useTokenAccountBalance(
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
-    }
+    },
   )
   const loading = !data && !error
 

@@ -69,7 +69,7 @@ export default function WalletList(props: Props) {
             'h-full',
             'grid',
             'grid-rows-[28px_1fr]',
-            'gap-5'
+            'gap-5',
           )}
         >
           <div className="flex items-center justify-between">
@@ -86,8 +86,9 @@ export default function WalletList(props: Props) {
                   There are no wallets in this treasury
                 </div>
               )}
-            {props.data.data.wallets.map((wallet) => (
+            {props.data.data.wallets.map((wallet, index) => (
               <WalletListItem
+                firstWallet={index === 0}
                 key={wallet.address}
                 expanded={expanded.includes(wallet.address)}
                 selected={
@@ -106,7 +107,7 @@ export default function WalletList(props: Props) {
                   setExpanded((list) => {
                     if (list.includes(wallet.address)) {
                       return list.filter(
-                        (address) => address !== wallet.address
+                        (address) => address !== wallet.address,
                       )
                     } else {
                       return list.concat(wallet.address)

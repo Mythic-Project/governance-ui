@@ -82,12 +82,12 @@ const DeactivateValidatorStake = ({
             bytes: bs58.encode([255, 255, 255, 255, 255, 255, 255, 255]), // equivalent to u64::max for deactivation epoch / not deactivated yet
           },
         },
-      ]
+      ],
     )
 
     return stakingAccounts.map((x) => {
       const validatorPk = web3.PublicKey.decode(
-        x.accountInfo.data.slice(124, 124 + 32)
+        x.accountInfo.data.slice(124, 124 + 32),
       )
       return {
         stakeAccount: x.publicKey,
@@ -142,7 +142,7 @@ const DeactivateValidatorStake = ({
     })
     return {
       serializedInstruction: serializeInstructionToBase64(
-        instruction.instructions[0]
+        instruction.instructions[0],
       ),
       isValid: true,
       governance: form.governedTokenAccount.governance,
@@ -155,7 +155,7 @@ const DeactivateValidatorStake = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -163,7 +163,7 @@ const DeactivateValidatorStake = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -180,7 +180,7 @@ const DeactivateValidatorStake = ({
       <GovernedAccountSelect
         label="Treasury account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

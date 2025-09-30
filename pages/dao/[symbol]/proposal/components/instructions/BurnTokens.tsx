@@ -1,18 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Input from '@components/inputs/Input'
-import { getMintMinAmountAsDecimal, parseMintNaturalAmountFromDecimal } from '@tools/sdk/units'
+import {
+  getMintMinAmountAsDecimal,
+  parseMintNaturalAmountFromDecimal,
+} from '@tools/sdk/units'
 import { precision } from '@utils/formatting'
 import {
-    BurnTokensForm,
-    UiInstruction,
+  BurnTokensForm,
+  UiInstruction,
 } from '@utils/uiTypes/proposalCreationTypes'
 import { NewProposalContext } from '../../new'
 import { getBurnTokensSchema } from '@utils/validations'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
-import { Governance, serializeInstructionToBase64 } from '@solana/spl-governance'
+import {
+  Governance,
+  serializeInstructionToBase64,
+} from '@solana/spl-governance'
 import { ProgramAccount } from '@solana/spl-governance'
 import GovernedAccountSelect from '../GovernedAccountSelect'
-import { TOKEN_PROGRAM_ID, Token, u64} from "@solana/spl-token"
+import { TOKEN_PROGRAM_ID, Token, u64 } from '@solana/spl-token'
 import { validateInstruction } from '@utils/instructionTools'
 
 const BurnTokens = ({
@@ -60,8 +66,8 @@ const BurnTokens = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -70,51 +76,51 @@ const BurnTokens = ({
   async function getInstruction(): Promise<UiInstruction> {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
     let serializedInstruction = ''
-    
+
     if (form.amount && isValid && form.governedTokenAccount) {
-        const mintPK = form.governedTokenAccount.extensions.mint!.publicKey
-        const tokenAccount = form.governedTokenAccount.extensions.transferAddress!
-        const sourceWallet = form.governedTokenAccount.extensions.token!.account.owner
-        
-        const burnAmount = parseMintNaturalAmountFromDecimal(
-            form.amount!,
-            form.governedTokenAccount.extensions.mint!.account.decimals
-        )
-        
-        const burnIx = Token.createBurnInstruction(
-            TOKEN_PROGRAM_ID,
-            mintPK,
-            tokenAccount,
-            sourceWallet,
-            [],
-            new u64(burnAmount.toString())
-        )
-        
-        serializedInstruction = serializeInstructionToBase64(burnIx)
+      const mintPK = form.governedTokenAccount.extensions.mint!.publicKey
+      const tokenAccount = form.governedTokenAccount.extensions.transferAddress!
+      const sourceWallet =
+        form.governedTokenAccount.extensions.token!.account.owner
+
+      const burnAmount = parseMintNaturalAmountFromDecimal(
+        form.amount!,
+        form.governedTokenAccount.extensions.mint!.account.decimals,
+      )
+
+      const burnIx = Token.createBurnInstruction(
+        TOKEN_PROGRAM_ID,
+        mintPK,
+        tokenAccount,
+        sourceWallet,
+        [],
+        new u64(burnAmount.toString()),
+      )
+
+      serializedInstruction = serializeInstructionToBase64(burnIx)
     }
 
     return {
-        serializedInstruction,
-        isValid,
-        governance: form.governedTokenAccount?.governance,
-        chunkBy: 4
+      serializedInstruction,
+      isValid,
+      governance: form.governedTokenAccount?.governance,
+      chunkBy: 4,
     }
   }
 
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
-  
+
   useEffect(() => {
     setGovernedAccount(form.governedTokenAccount?.governance)
     setMintInfo(form.governedTokenAccount?.extensions.mint?.account)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form.governedTokenAccount])
-  
 
   const schema = getBurnTokensSchema({ form })
 

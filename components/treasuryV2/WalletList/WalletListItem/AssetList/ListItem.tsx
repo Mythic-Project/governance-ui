@@ -31,7 +31,7 @@ export default function ListItem(props: Props) {
           : props.onSelect
           ? 'bg-bkg-2 hover:bg-bkg-1'
           : '',
-        props.onSelect ? 'cursor-pointer' : 'cursor-default'
+        props.onSelect ? 'cursor-pointer' : 'cursor-default',
       )}
       onClick={props.onSelect}
     >
@@ -44,7 +44,7 @@ export default function ListItem(props: Props) {
           'transition-colors',
           'w-1',
           props.selected &&
-            'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
+            'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]',
         )}
       />
       <div className="grid grid-cols-[max-content_1fr] items-center gap-x-3">

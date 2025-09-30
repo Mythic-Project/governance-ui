@@ -48,7 +48,7 @@ const SanctumWithdrawStake = ({
   const connection = useLegacyConnectionContext()
   const stakeProgramId: PublicKey = StakeProgram.programId
   const sanctumStakeProgramId = new PublicKey(
-    'SP12tWFxD9oJsVWNavTTBZvMbA6gkAmxtVgxdqvyvhY'
+    'SP12tWFxD9oJsVWNavTTBZvMbA6gkAmxtVgxdqvyvhY',
   )
   const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
   const shouldBeGoverned = !!(index !== 0 && governance)
@@ -112,30 +112,30 @@ const SanctumWithdrawStake = ({
 
     const stakePool = await getStakePoolAccount(
       connection.current,
-      new PublicKey(form.stakePool)
+      new PublicKey(form.stakePool),
     )
 
     const [withdrawAuthPk] = await PublicKey.findProgramAddress(
       [new PublicKey(form.stakePool).toBuffer(), Buffer.from('withdraw')],
-      sanctumStakeProgramId
+      sanctumStakeProgramId,
     )
 
     const poolAmount = Number(Number(form.amount) * LAMPORTS_PER_SOL)
 
-    const stakeAccountRentExemption = await connection.current.getMinimumBalanceForRentExemption(
-      StakeProgram.space
-    )
+    const stakeAccountRentExemption =
+      await connection.current.getMinimumBalanceForRentExemption(
+        StakeProgram.space,
+      )
 
     const [stakeAccountAddress] = await PublicKey.findProgramAddress(
       [
         new PublicKey(form.voteAccount).toBuffer(),
         new PublicKey(form.stakePool).toBuffer(),
       ],
-      sanctumStakeProgramId
+      sanctumStakeProgramId,
     )
-    const stakeAccount = await connection.current.getAccountInfo(
-      stakeAccountAddress
-    )
+    const stakeAccount =
+      await connection.current.getAccountInfo(stakeAccountAddress)
     if (!stakeAccount) {
       console.log('error')
       throw new Error('Invalid Stake Account')
@@ -143,18 +143,18 @@ const SanctumWithdrawStake = ({
 
     const availableForWithdrawal = calcLamportsWithdrawAmount(
       stakePool.account.data,
-      stakeAccount.lamports - LAMPORTS_PER_SOL - stakeAccountRentExemption
+      stakeAccount.lamports - LAMPORTS_PER_SOL - stakeAccountRentExemption,
     )
 
     if (availableForWithdrawal < poolAmount) {
       // noinspection ExceptionCaughtLocallyJS
       throw new Error(
         `Not enough lamports available for withdrawal from ${stakeAccountAddress},
-            ${poolAmount} asked, ${availableForWithdrawal} available.`
+            ${poolAmount} asked, ${availableForWithdrawal} available.`,
       )
     }
-    const tokenAccAuthority = form.governedTokenAccount!.extensions.token!
-      .account.owner!
+    const tokenAccAuthority =
+      form.governedTokenAccount!.extensions.token!.account.owner!
     const withdrawAccount = {
       stakeAddress: stakeAccountAddress,
       voteAddress: new PublicKey(form.voteAccount),
@@ -164,7 +164,7 @@ const SanctumWithdrawStake = ({
     const stakeReceiver = await genShortestUnusedSeed(
       connection.current,
       tokenAccAuthority,
-      StakeProgram.programId
+      StakeProgram.programId,
     )
 
     const createAccIx = SystemProgram.createAccountWithSeed({
@@ -200,7 +200,7 @@ const SanctumWithdrawStake = ({
             programId: sanctumStakeProgramId,
             keys: stakeIx.keys,
             data: stakeIx.data,
-          })
+          }),
         ),
       ],
       isValid: true,
@@ -214,7 +214,7 @@ const SanctumWithdrawStake = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -222,7 +222,7 @@ const SanctumWithdrawStake = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -290,7 +290,7 @@ export function encodeData(type: any, fields?: any): Buffer {
 
 export function calcLamportsWithdrawAmount(
   stakePool: StakePool,
-  poolTokens: number
+  poolTokens: number,
 ): number {
   const numerator = new BN(poolTokens).mul(stakePool.totalLamports)
   const denominator = stakePool.poolTokenSupply

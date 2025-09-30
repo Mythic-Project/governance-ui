@@ -13,7 +13,7 @@ export default function RealmDetails({ tokenOwnerRecord, governance }: Props) {
 
   const { data: proposals } = useARealmProposalsQuery(tor?.account.realm)
   const votingProposals = proposals?.filter(
-    (x) => x.account.state === ProposalState.Voting
+    (x) => x.account.state === ProposalState.Voting,
   )
 
   return tor === undefined || votingProposals === undefined ? null : (

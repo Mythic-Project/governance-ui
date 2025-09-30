@@ -1,7 +1,7 @@
 import { AccountType, AssetAccount } from '@utils/uiTypes/assets'
 import { Instructions, PackageEnum } from '@utils/uiTypes/proposalCreationTypes'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
-import { HELIUM_VSR_PLUGINS_PKS, VSR_PLUGIN_PKS } from '../constants/plugins'
+import { HELIUM_VSR_PLUGINS_PKS, TOKEN_VOTER_PK, VSR_PLUGIN_PKS } from '../constants/plugins'
 import { useRealmQuery } from './queries/realm'
 import { useRealmConfigQuery } from './queries/realmConfig'
 import { useRealmGovernancesQuery } from './queries/governance'
@@ -52,26 +52,27 @@ export default function useGovernanceAssets() {
   const canCreateProposal = (config: GovernanceConfig) => {
     return (
       ownVoterWeights.community?.gte(
-        config.minCommunityTokensToCreateProposal
+        config.minCommunityTokensToCreateProposal,
       ) || ownVoterWeights.council?.gte(config.minCouncilTokensToCreateProposal)
     )
   }
 
   const governedTokenAccounts: AssetAccount[] = useGovernanceAssetsStore(
-    (s) => s.governedTokenAccounts
+    (s) => s.governedTokenAccounts,
   )
 
   const assetAccounts = useGovernanceAssetsStore((s) =>
-    s.assetAccounts.filter((x) => x.type !== AccountType.AUXILIARY_TOKEN)
+    s.assetAccounts.filter((x) => x.type !== AccountType.AUXILIARY_TOKEN),
   )
   const auxiliaryTokenAccounts = useGovernanceAssetsStore(
-    (s) => s.assetAccounts
+    (s) => s.assetAccounts,
   ).filter((x) => x.type === AccountType.AUXILIARY_TOKEN)
   const currentPluginPk = config?.account.communityTokenConfig.voterWeightAddin
   const governancesQuery = useRealmGovernancesQuery()
-  const governancesArray = useMemo(() => governancesQuery.data ?? [], [
-    governancesQuery.data,
-  ])
+  const governancesArray = useMemo(
+    () => governancesQuery.data ?? [],
+    [governancesQuery.data],
+  )
 
   function canUseGovernanceForInstruction(types: AccountType[]) {
     return (
@@ -84,12 +85,12 @@ export default function useGovernanceAssets() {
   const canMintRealmCouncilToken = () => {
     return !!assetAccounts.find(
       (x) =>
-        x.pubkey.toBase58() == realm?.account.config.councilMint?.toBase58()
+        x.pubkey.toBase58() == realm?.account.config.councilMint?.toBase58(),
     )
   }
   const canUseTransferInstruction = governedTokenAccounts.some((acc) => {
     const governance = governancesArray.find(
-      (x) => acc.governance.pubkey.toBase58() === x.pubkey.toBase58()
+      (x) => acc.governance.pubkey.toBase58() === x.pubkey.toBase58(),
     )
     return governance && canCreateProposal(governance?.account?.config)
   })
@@ -109,27 +110,27 @@ export default function useGovernanceAssets() {
   const realmAuth =
     realm &&
     governancesArray.find(
-      (x) => x.pubkey.toBase58() === realm.account.authority?.toBase58()
+      (x) => x.pubkey.toBase58() === realm.account.authority?.toBase58(),
     )
   const canUseAuthorityInstruction =
     realmAuth && canCreateProposal(realmAuth?.account.config)
 
   const governedSPLTokenAccounts = governedTokenAccounts.filter(
-    (x) => x.type === AccountType.TOKEN
+    (x) => x.type === AccountType.TOKEN,
   )
   const governedTokenAccountsWithoutNfts = governedTokenAccounts.filter(
-    (x) => x.type !== AccountType.NFT
+    (x) => x.type !== AccountType.NFT,
   )
   const governedNativeAccounts = governedTokenAccounts.filter(
-    (x) => x.type === AccountType.SOL
+    (x) => x.type === AccountType.SOL,
   )
   const canUseTokenTransferInstruction = governedTokenAccountsWithoutNfts.some(
     (acc) => {
       const governance = governancesArray.find(
-        (x) => acc.governance.pubkey.toBase58() === x.pubkey.toBase58()
+        (x) => acc.governance.pubkey.toBase58() === x.pubkey.toBase58(),
       )
       return governance && canCreateProposal(governance?.account?.config)
-    }
+    },
   )
 
   // Alphabetical order
@@ -164,6 +165,9 @@ export default function useGovernanceAssets() {
     [PackageEnum.MangoMarketV4]: {
       name: 'Mango Market v4',
       image: '/img/mango.png',
+    },
+    [PackageEnum.Manifest]: {
+      name: 'Manifest',
     },
     [PackageEnum.MeanFinance]: {
       name: 'Mean Finance',
@@ -200,12 +204,16 @@ export default function useGovernanceAssets() {
       name: 'Switchboard',
       image: '/img/switchboard.png',
     },
+    [PackageEnum.Raydium]: {
+      name: 'Raydium',
+      image: '/img/raydium.png',
+    },
     [PackageEnum.VsrPlugin]: {
       name: 'Vsr Plugin',
       isVisible:
         currentPluginPk &&
-        [...VSR_PLUGIN_PKS, ...HELIUM_VSR_PLUGINS_PKS].includes(
-          currentPluginPk.toBase58()
+        [...VSR_PLUGIN_PKS, ...HELIUM_VSR_PLUGINS_PKS, ...TOKEN_VOTER_PK].includes(
+          currentPluginPk.toBase58(),
         ),
     },
   }
@@ -293,6 +301,10 @@ export default function useGovernanceAssets() {
       name: 'Join a DAO',
       packageId: PackageEnum.Common,
     },
+    [Instructions.WithdrawFromDAO]: {
+      name: 'Withdraw from DAO',
+      packageId: PackageEnum.Common,
+    },
     [Instructions.Mint]: {
       name: 'Mint Tokens',
       isVisible: canUseMintInstruction,
@@ -368,10 +380,20 @@ export default function useGovernanceAssets() {
       isVisible: canUseTransferInstruction,
       packageId: PackageEnum.Common,
     },
+    [Instructions.RelinquishDaoVote]: {
+      name: 'Relinquish Vote from DAO',
+      isVisible: canUseTransferInstruction,
+      packageId: PackageEnum.Common,
+    },
     [Instructions.DualFinanceVoteDeposit]: {
       name: 'Join a VSR DAO',
       isVisible: canUseTransferInstruction,
       packageId: PackageEnum.Common,
+    },
+    [Instructions.TokenWithdrawFees]: {
+      name: 'Token 2022 withdraw fees',
+      packageId: PackageEnum.Common,
+      isVisible: canUseTransferInstruction,
     },
     /*
       ██████  ██    ██  █████  ██          ███████ ██ ███    ██  █████  ███    ██  ██████ ███████
@@ -590,7 +612,21 @@ export default function useGovernanceAssets() {
       ██  ██  ██ ██      ██   ██ ██  ██ ██     ██      ██ ██  ██ ██ ██   ██ ██  ██ ██ ██      ██
       ██      ██ ███████ ██   ██ ██   ████     ██      ██ ██   ████ ██   ██ ██   ████  ██████ ███████
     */
-
+    [Instructions.PlaceLimitOrder]: {
+      name: 'Place limit order',
+      packageId: PackageEnum.Manifest,
+      isVisible: canUseAnyInstruction,
+    },
+    [Instructions.SettleToken]: {
+      name: 'Settle Token',
+      packageId: PackageEnum.Manifest,
+      isVisible: canUseAnyInstruction,
+    },
+    [Instructions.CancelLimitOrder]: {
+      name: 'Cancel limit order',
+      packageId: PackageEnum.Manifest,
+      isVisible: canUseAnyInstruction,
+    },
     [Instructions.MeanCreateAccount]: {
       name: 'Payment Stream: New account',
       packageId: PackageEnum.MeanFinance,
@@ -650,6 +686,10 @@ export default function useGovernanceAssets() {
     },
     [Instructions.PythUpdatePoolAuthority]: {
       name: 'Update Pool Authority',
+      packageId: PackageEnum.Pyth,
+    },
+    [Instructions.PythTransferAccount]: {
+      name: 'Transfer Account',
       packageId: PackageEnum.Pyth,
     },
     /*
@@ -764,6 +804,18 @@ export default function useGovernanceAssets() {
       name: 'Mesh Remove Member',
       packageId: PackageEnum.Squads,
     },
+    [Instructions.SquadsV4AddMember]: {
+      name: 'SquadsV4 Add Member',
+      packageId: PackageEnum.Squads,
+    },
+    [Instructions.SquadsV4ChangeThresholdMember]: {
+      name: 'SquadsV4 Change Threshold',
+      packageId: PackageEnum.Squads,
+    },
+    [Instructions.SquadsV4RemoveMember]: {
+      name: 'SquadsV4 Remove Member',
+      packageId: PackageEnum.Squads,
+    },
     /*
       ███████ ██     ██ ██ ████████  ██████ ██   ██ ██████   ██████   █████  ██████  ██████
       ██      ██     ██ ██    ██    ██      ██   ██ ██   ██ ██    ██ ██   ██ ██   ██ ██   ██
@@ -781,6 +833,22 @@ export default function useGovernanceAssets() {
       packageId: PackageEnum.Switchboard,
     },
 
+    /*
+      ____                 _ _                 
+      |  _ \ __ _ _   _  __| (_)_   _ _ __ ___  
+      | |_) / _` | | | |/ _` | | | | | '_ ` _ \ 
+      |  _ < (_| | |_| | (_| | | |_| | | | | | |
+      |_| \_\__,_|\__, |\__,_|_|\__,_|_| |_| |_|
+                  |___/                         
+    */
+    [Instructions.CollectPoolFees]: {
+      name: 'Collect Pool Fees (CPMM)',
+      packageId: PackageEnum.Raydium,
+    },
+    [Instructions.CollectVestedTokens]: {
+      name: 'Collect Vested Tokens',
+      packageId: PackageEnum.Raydium,
+    },
     /*
       ██    ██ ███████ ██████      ██████  ██      ██    ██  ██████  ██ ███    ██
       ██    ██ ██      ██   ██     ██   ██ ██      ██    ██ ██       ██ ████   ██
@@ -814,7 +882,7 @@ export default function useGovernanceAssets() {
 
   const availablePackages: PackageType[] = Object.entries(packages)
     .filter(([, { isVisible }]) =>
-      typeof isVisible === 'undefined' ? true : isVisible
+      typeof isVisible === 'undefined' ? true : isVisible,
     )
     .map(([id, infos]) => ({
       id: Number(id) as PackageEnum,
@@ -838,7 +906,7 @@ export default function useGovernanceAssets() {
 
   const getPackageTypeById = (packageId: PackageEnum) => {
     return availablePackages.find(
-      (availablePackage) => availablePackage.id === packageId
+      (availablePackage) => availablePackage.id === packageId,
     )
   }
 

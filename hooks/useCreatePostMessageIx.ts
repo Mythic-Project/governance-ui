@@ -11,8 +11,8 @@ import { useRealmQuery } from '@hooks/queries/realm'
 import { useRouteProposalQuery } from '@hooks/queries/proposal'
 import { Keypair, TransactionInstruction } from '@solana/web3.js'
 import useUserOrDelegator from './useUserOrDelegator'
-import {useRealmVoterWeightPlugins} from "@hooks/useRealmVoterWeightPlugins";
-import {convertTypeToVoterWeightAction} from "../VoterWeightPlugins";
+import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
+import { convertTypeToVoterWeightAction } from '../VoterWeightPlugins'
 
 /** This is WIP and shouldn't be used
  * @deprecated
@@ -22,8 +22,11 @@ const useCreatePostMessageIx = () => {
   const realm = useRealmQuery().data?.result
   const walletPk = useWalletOnePointOh()?.publicKey ?? undefined
   const actingWalletPk = useUserOrDelegator()
-  const { updateVoterWeightRecords, voterWeightPks, voterWeightPkForWallet } = useRealmVoterWeightPlugins();
-  const voterWeightPk = actingWalletPk ? voterWeightPkForWallet(actingWalletPk) : undefined;
+  const { updateVoterWeightRecords, voterWeightPks, voterWeightPkForWallet } =
+    useRealmVoterWeightPlugins()
+  const voterWeightPk = actingWalletPk
+    ? voterWeightPkForWallet(actingWalletPk)
+    : undefined
   const proposal = useRouteProposalQuery().data?.result
 
   return useCallback(
@@ -45,12 +48,15 @@ const useCreatePostMessageIx = () => {
         realm.owner,
         realm.pubkey,
         proposal.account.governingTokenMint,
-        actingWalletPk
+        actingWalletPk,
       )
-        const updateVWRInstructions = await updateVoterWeightRecords(actingWalletPk, convertTypeToVoterWeightAction('commentProposal'));
+      const updateVWRInstructions = await updateVoterWeightRecords(
+        actingWalletPk,
+        convertTypeToVoterWeightAction('commentProposal'),
+      )
 
-      instructions.push(...updateVWRInstructions.pre);
-      createNftTicketsIxs.push(...updateVWRInstructions.post);
+      instructions.push(...updateVWRInstructions.pre)
+      createNftTicketsIxs.push(...updateVWRInstructions.post)
 
       const body = new ChatMessageBody({
         type: ChatMessageBodyType.Text,
@@ -70,10 +76,10 @@ const useCreatePostMessageIx = () => {
         walletPk,
         undefined,
         body,
-        voterWeightPk
+        voterWeightPk,
       )
     },
-    [actingWalletPk, proposal, realm, voterWeightPks, walletPk]
+    [actingWalletPk, proposal, realm, voterWeightPks, walletPk],
   )
 }
 

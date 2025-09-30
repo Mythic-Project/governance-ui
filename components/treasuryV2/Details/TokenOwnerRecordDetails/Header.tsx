@@ -40,9 +40,8 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
   const { symbol } = useRealm()
   const { fmtUrlWithCluster } = useQueryContext()
 
-  const tokenOwnerRecordData = useTokenOwnerRecordByPubkeyQuery(
-    tokenOwnerRecord
-  ).data?.result
+  const tokenOwnerRecordData =
+    useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecord).data?.result
   const realmPk = tokenOwnerRecordData?.account.realm
   const realm = useRealmByPubkeyQuery(realmPk).data?.result
 
@@ -63,7 +62,7 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
     const realm = (
       await fetchRealmByPubkey(
         connection.current,
-        tokenOwnerRecordData.account.realm
+        tokenOwnerRecordData.account.realm,
       )
     ).result
     if (realm === undefined) throw new Error()
@@ -75,13 +74,13 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
 
       const programVersion = await fetchProgramVersion(
         connection.current,
-        new PublicKey(tokenOwnerRecordData.owner)
+        new PublicKey(tokenOwnerRecordData.owner),
       )
 
       const ata = await getAssociatedTokenAddress(
         tokenOwnerRecordData.account.governingTokenMint,
         tokenOwnerRecordData.account.governingTokenOwner,
-        true
+        true,
       )
 
       try {
@@ -90,7 +89,7 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
         const [ix] = await createAssociatedTokenAccount(
           wallet.publicKey,
           tokenOwnerRecordData.account.governingTokenOwner,
-          tokenOwnerRecordData.account.governingTokenMint
+          tokenOwnerRecordData.account.governingTokenMint,
         )
         instructions.push(ix)
       }
@@ -102,11 +101,11 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
         tokenOwnerRecordData.account.realm,
         ata,
         tokenOwnerRecordData.account.governingTokenMint,
-        tokenOwnerRecordData.account.governingTokenOwner
+        tokenOwnerRecordData.account.governingTokenOwner,
       )
 
       const tx = new Transaction({ feePayer: wallet.publicKey }).add(
-        ...instructions
+        ...instructions,
       )
       const simulated = await connection.current.simulateTransaction(tx)
 
@@ -140,7 +139,7 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
 
       const governingMintInfo = await tryGetMint(
         connection.current,
-        tokenOwnerRecordData.account.governingTokenMint
+        tokenOwnerRecordData.account.governingTokenMint,
       )
       if (!governingMintInfo) {
         notify({ type: 'error', message: 'Could not find governing mint info' })
@@ -151,13 +150,13 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
         title: `Leave ${realm.account.name}`,
         description: `Withdrawing ${fmtMintAmount(
           governingMintInfo.account,
-          tokenOwnerRecordData.account.governingTokenDepositAmount
+          tokenOwnerRecordData.account.governingTokenDepositAmount,
         )} governing tokens from ${realm.account.name}`,
         instructionsData,
         governance: { pubkey: governance },
       })
       const url = fmtUrlWithCluster(
-        `/dao/${symbol}/proposal/${proposalAddress}`
+        `/dao/${symbol}/proposal/${proposalAddress}`,
       )
       await router.push(url)
     } catch (e) {
@@ -169,11 +168,11 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
   }
 
   const realmInfo = mainnetBetaRealms.find(
-    (x) => x.realmId === tokenOwnerRecordData?.account.realm.toString()
+    (x) => x.realmId === tokenOwnerRecordData?.account.realm.toString(),
   )
 
   const mint = useMintInfoByPubkeyQuery(
-    tokenOwnerRecordData?.account.governingTokenMint
+    tokenOwnerRecordData?.account.governingTokenMint,
   ).data?.result
 
   return (
@@ -185,7 +184,7 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
         'py-4',
         'flex',
         'items-center',
-        'justify-between'
+        'justify-between',
       )}
     >
       <div className="flex space-x-3 items-center">
@@ -224,8 +223,8 @@ export default function Header({ tokenOwnerRecord, governance }: Props) {
               mint,
               new BN(
                 tokenOwnerRecordData?.account.governingTokenDepositAmount.toString() ??
-                  0
-              )
+                  0,
+              ),
             )}
           </p>
         </div>

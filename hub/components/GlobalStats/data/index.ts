@@ -207,9 +207,8 @@ export async function fetchData(
                     governanceAddress,
                   );
 
-                  const solWallet = await connection.getAccountInfo(
-                    solWalletPk,
-                  );
+                  const solWallet =
+                    await connection.getAccountInfo(solWalletPk);
 
                   if (solWallet) {
                     if (solWallet.lamports > 0) {

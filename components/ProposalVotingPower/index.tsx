@@ -25,7 +25,7 @@ export default function ProposalVotingPower(props: Props) {
         'p-4',
         'rounded-lg',
         'space-y-4',
-        'md:p-6'
+        'md:p-6',
       )}
     >
       <h3 className="mb-3">My voting power</h3>

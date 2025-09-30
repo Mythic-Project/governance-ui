@@ -76,7 +76,7 @@ export default function TokenHaverVotingPower({ role, className }: Props) {
             .toFixed(0)
             .toString()
         : undefined,
-    [mintInfo, voterWeight?.value]
+    [mintInfo, voterWeight?.value],
   )
 
   if (isLoading || !isReady) {
@@ -84,7 +84,7 @@ export default function TokenHaverVotingPower({ role, className }: Props) {
       <div
         className={classNames(
           className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )

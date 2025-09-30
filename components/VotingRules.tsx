@@ -21,7 +21,7 @@ import { ACCOUNT_NAMES } from './instructions/tools'
 import { ExploreButton } from './treasuryV2/Details/ExploreLink'
 import Tooltip from './Tooltip'
 import { useRouteProposalQuery } from '@hooks/queries/proposal'
-import {ShortAddress} from "@components/Profile/ShortAddress";
+import { ShortAddress } from '@components/Profile/ShortAddress'
 
 const formatOneDecimal = (x: number) => x.toFixed(1).replace(/[.,]0$/, '')
 
@@ -72,7 +72,7 @@ const VotingRules = () => {
       governance !== undefined
         ? getNativeTreasuryAddress(governance.owner, governance.pubkey)
         : undefined,
-    [governance]
+    [governance],
   )
 
   return (
@@ -123,9 +123,11 @@ const VotingRules = () => {
             {treasuryAddress.result && (
               <div className="flex gap-1 items-center">
                 <div>
-                  {ACCOUNT_NAMES[treasuryAddress.result.toString()]
-                    ? ACCOUNT_NAMES[treasuryAddress.result.toString()]
-                    : <ShortAddress address={treasuryAddress.result} />}
+                  {ACCOUNT_NAMES[treasuryAddress.result.toString()] ? (
+                    ACCOUNT_NAMES[treasuryAddress.result.toString()]
+                  ) : (
+                    <ShortAddress address={treasuryAddress.result} />
+                  )}
                 </div>
                 <ExploreButton address={treasuryAddress.result.toString()} />
               </div>
@@ -188,7 +190,7 @@ const VotingRules = () => {
                     {governance?.account.config.baseVotingTime !== undefined
                       ? formatDays(
                           governance.account.config.baseVotingTime /
-                            secondsInDay
+                            secondsInDay,
                         )
                       : null}
                   </div>
@@ -217,7 +219,7 @@ const VotingRules = () => {
                     {governance?.account.config.votingCoolOffTime !== undefined
                       ? formatDays(
                           governance.account.config.votingCoolOffTime /
-                            secondsInDay
+                            secondsInDay,
                         )
                       : null}
                   </div>

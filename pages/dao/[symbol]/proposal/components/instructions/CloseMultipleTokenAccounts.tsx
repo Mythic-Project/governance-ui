@@ -80,31 +80,30 @@ const CloseMultipleTokenAccounts = ({
         const amount = tokenAccount.extensions.token!.account.amount
 
         //we find true receiver address if its wallet and we need to create ATA the ata address will be the receiver
-        const {
-          currentAddress: receiverAddress,
-          needToCreateAta,
-        } = await getATA({
-          connection: connection,
-          receiverAddress: destinationAccount,
-          mintPK,
-          wallet: wallet!,
-        })
+        const { currentAddress: receiverAddress, needToCreateAta } =
+          await getATA({
+            connection: connection,
+            receiverAddress: destinationAccount,
+            mintPK,
+            wallet: wallet!,
+          })
         //we push this createATA instruction to transactions to create right before creating proposal
         //we don't want to create ata only when instruction is serialized
         if (
           needToCreateAta &&
           !mintsOfCurrentlyPushedAtaInstructions.find(
-            (x) => x === mintPK.toBase58()
+            (x) => x === mintPK.toBase58(),
           )
         ) {
-          const createAtaInstruction = Token.createAssociatedTokenAccountInstruction(
-            ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-            TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-            mintPK, // mint
-            receiverAddress, // ata
-            destinationAccount, // owner of token account
-            wallet!.publicKey! // fee payer
-          )
+          const createAtaInstruction =
+            Token.createAssociatedTokenAccountInstruction(
+              ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+              TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+              mintPK, // mint
+              receiverAddress, // ata
+              destinationAccount, // owner of token account
+              wallet!.publicKey!, // fee payer
+            )
           mintsOfCurrentlyPushedAtaInstructions.push(mintPK.toBase58())
           prerequisiteInstructions.push(createAtaInstruction)
         }
@@ -116,10 +115,10 @@ const CloseMultipleTokenAccounts = ({
             receiverAddress,
             tokenAccount.extensions.token!.account.owner,
             [],
-            amount
+            amount,
           )
           additionalSerializedInstructions.push(
-            serializeInstructionToBase64(transferIx)
+            serializeInstructionToBase64(transferIx),
           )
         }
 
@@ -128,10 +127,10 @@ const CloseMultipleTokenAccounts = ({
           tokenAccount.pubkey,
           new PublicKey(form!.solRentDestination),
           tokenAccount.extensions.token!.account.owner,
-          []
+          [],
         )
         additionalSerializedInstructions.push(
-          serializeInstructionToBase64(closeInstruction)
+          serializeInstructionToBase64(closeInstruction),
         )
       }
     }
@@ -149,7 +148,7 @@ const CloseMultipleTokenAccounts = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form?.wallet?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -173,30 +172,30 @@ const CloseMultipleTokenAccounts = ({
                 (x.extensions.token?.account.owner.toBase58() ===
                   form.wallet?.extensions.transferAddress?.toBase58() ||
                   x.extensions.token?.account.owner.toBase58() ===
-                    form.wallet?.governance.pubkey.toBase58())
+                    form.wallet?.governance.pubkey.toBase58()),
             )
             .sort((a, b) => {
               const AAmount = fmtMintAmount(
                 a.extensions.mint!.account,
-                a!.extensions.token!.account.amount
+                a!.extensions.token!.account.amount,
               )
 
               const BAmount = fmtMintAmount(
                 b.extensions.mint!.account,
-                b!.extensions.token!.account.amount
+                b!.extensions.token!.account.amount,
               )
 
               return BAmount.length - AAmount.length
             })
             .map((x) => {
               const info = tokenPriceService.getTokenInfo(
-                x.extensions.mint!.publicKey.toBase58()
+                x.extensions.mint!.publicKey.toBase58(),
               )
               const pubkey = x.pubkey.toBase58()
               const tokenName = info?.name ? info.name : ''
               const amount = fmtMintAmount(
                 x.extensions.mint!.account,
-                x!.extensions.token!.account.amount
+                x!.extensions.token!.account.amount,
               )
               return (
                 <div className="mb-4" key={x.pubkey.toBase58()}>
@@ -205,7 +204,7 @@ const CloseMultipleTokenAccounts = ({
                     checked={
                       !!form.tokenAccounts?.find(
                         (toAcc) =>
-                          toAcc.pubkey.toBase58() === x.pubkey.toBase58()
+                          toAcc.pubkey.toBase58() === x.pubkey.toBase58(),
                       )
                     }
                     onChange={(e) => {
@@ -217,7 +216,7 @@ const CloseMultipleTokenAccounts = ({
                       } else {
                         newTokenAccounts = newTokenAccounts.filter(
                           (toAcc) =>
-                            toAcc.pubkey.toBase58() !== x.pubkey.toBase58()
+                            toAcc.pubkey.toBase58() !== x.pubkey.toBase58(),
                         )
                       }
                       setForm({

@@ -21,7 +21,7 @@ const SocialIcons = (props: Props) => {
         <a
           rel="noreferrer"
           target="_blank"
-          href="https://twitter.com/Realms_DAOs"
+          href="https://twitter.com/RealmsDAOs"
           className="shadow-sm duration-500 hover:scale-125 focus:scale-125"
         >
           <img src="/icons/twitter.svg" className="h-11" alt="twitter" />

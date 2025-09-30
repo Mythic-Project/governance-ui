@@ -1,10 +1,8 @@
 import { forwardRef } from 'react'
 import cx from 'classnames'
-
 import { Asset, AssetType } from '@models/treasury/Asset'
 import { AuxiliaryWallet, Wallet } from '@models/treasury/Wallet'
 import { Result, Status } from '@utils/uiTypes/Result'
-
 import AuxiliaryWalletDetails from './AuxiliaryWalletDetails'
 import MintDetails from './MintDetails'
 import NFTCollectionDetails from './NFTCollectionDetails'
@@ -17,9 +15,10 @@ import DomainsDetails from './DomainsDetails'
 import TokenOwnerRecordDetails from './TokenOwnerRecordDetails'
 import StakeDetails from './StakeDetails'
 import { useTreasurySelectState } from './treasurySelectStore'
+import DefiDetails from './DefiDetails'
 
 function walletIsNotAuxiliary(
-  wallet: AuxiliaryWallet | Wallet
+  wallet: AuxiliaryWallet | Wallet,
 ): wallet is Wallet {
   return 'address' in wallet
 }
@@ -54,7 +53,7 @@ const Details = forwardRef<HTMLDivElement, Props>((props, ref) => {
         <div
           className={cx(
             props.className,
-            'grid grid-rows-[1fr] gap-y-5 max-h-screen overflow-y-auto'
+            'grid grid-rows-[1fr] gap-y-5 max-h-screen overflow-y-auto',
           )}
           ref={ref}
         >
@@ -71,6 +70,11 @@ const Details = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 isStickied={props.isStickied}
                 governance={treasurySelect.selectedGovernance}
                 tokenOwnerRecord={treasurySelect.pubkey}
+              />
+            ) : treasurySelect?._kind === 'Defi' ? (
+              <DefiDetails
+                isStickied={props.isStickied}
+                wallet={treasurySelect.selectedWallet}
               />
             ) : (
               (null as never)

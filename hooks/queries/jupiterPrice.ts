@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useQuery } from '@tanstack/react-query'
 import queryClient from './queryClient'
 
-const URL = 'https://api.jup.ag/price/v2'
+const URL = 'https://lite-api.jup.ag/price/v2'
 
 /* example query
 # Unit price of 1 JUP & 1 SOL based on the Derived Price in USDC
@@ -106,6 +106,7 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
   const enabled = mints.length > 0
   const deduped = new Set(mints)
   const dedupedMints = Array.from(deduped)
+
   return useQuery({
     enabled,
     queryKey: jupiterPriceQueryKeys.byMints(dedupedMints),
@@ -116,11 +117,11 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
           const x = await fetch(`${URL}?ids=${batch.join(',')}`)
           const response = (await x.json()) as Response
           return response
-        })
+        }),
       )
       const data = responses.reduce(
         (acc, next) => ({ ...acc, ...next.data }),
-        {} as Response['data']
+        {} as Response['data'],
       )
 
       //override chai price if its broken
@@ -141,8 +142,8 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
           jupiterPriceQueryKeys.byMint(mint),
           data[mint.toString()]
             ? ({ found: true, result: data[mint.toString()] } as const)
-            : ({ found: false, result: undefined } as const)
-        )
+            : ({ found: false, result: undefined } as const),
+        ),
       )
     },
   })

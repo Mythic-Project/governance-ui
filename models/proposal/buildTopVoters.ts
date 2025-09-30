@@ -29,7 +29,7 @@ const buildResults = (
   amount: BN,
   label: VoteType,
   total: BN,
-  decimals: number
+  decimals: number,
 ) => ({
   decimals,
   name: key,
@@ -49,10 +49,10 @@ export function buildTopVoters(
   tokenOwnerRecords: ProgramAccount<TokenOwnerRecord>[],
   governingTokenMint: MintInfo,
   undecidedVoterWeightByWallets: { [walletPk: string]: BN },
-  maxVote: BN
+  maxVote: BN,
 ): VoterDisplayData[] {
   const electoralVotes = voteRecords.filter(
-    (x) => x.account.vote?.voteType !== VoteKind.Veto
+    (x) => x.account.vote?.voteType !== VoteKind.Veto,
   )
 
   const undecidedData = tokenOwnerRecords
@@ -61,15 +61,15 @@ export function buildTopVoters(
         !electoralVotes.some(
           (voteRecord) =>
             voteRecord.account.governingTokenOwner.toBase58() ===
-            tokenOwnerRecord.account.governingTokenOwner.toBase58()
-        )
+            tokenOwnerRecord.account.governingTokenOwner.toBase58(),
+        ),
     )
     .map((record) => {
       const tokenAmount = Object.keys(undecidedVoterWeightByWallets).length
         ? record.account.governingTokenDepositAmount.add(
             undecidedVoterWeightByWallets[
               record.account.governingTokenOwner.toBase58()
-            ] || new BN(0)
+            ] || new BN(0),
           )
         : record.account.governingTokenDepositAmount
       return buildResults(
@@ -77,7 +77,7 @@ export function buildTopVoters(
         tokenAmount,
         VoteType.Undecided,
         maxVote,
-        governingTokenMint.decimals
+        governingTokenMint.decimals,
       )
     })
     .filter((x) => !x.votesCast.isZero())
@@ -90,8 +90,8 @@ export function buildTopVoters(
         record.account.getNoVoteWeight()!,
         VoteType.No,
         maxVote,
-        governingTokenMint.decimals
-      )
+        governingTokenMint.decimals,
+      ),
     )
 
   const yesVoteData = electoralVotes
@@ -102,8 +102,8 @@ export function buildTopVoters(
         record.account.getYesVoteWeight()!,
         VoteType.Yes,
         maxVote,
-        governingTokenMint.decimals
-      )
+        governingTokenMint.decimals,
+      ),
     )
 
   return undecidedData

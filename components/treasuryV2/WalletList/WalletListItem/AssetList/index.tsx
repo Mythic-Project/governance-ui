@@ -40,6 +40,7 @@ import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
 import useTreasuryAddressForGovernance from '@hooks/useTreasuryAddressForGovernance'
 import { useDigitalAssetsByOwner } from '@hooks/queries/digitalAssets'
 import { SUPPORT_CNFTS } from '@constants/flags'
+import { useDefi } from '@hooks/useDefi'
 
 export type Section = 'tokens' | 'nfts' | 'others'
 
@@ -48,7 +49,7 @@ function isTokenLike(asset: Asset): asset is Token | Sol {
 }
 
 function isOther(
-  asset: Asset
+  asset: Asset,
 ): asset is
   | Mint
   | Programs
@@ -79,8 +80,14 @@ interface Props {
 }
 
 export default function AssetList(props: Props) {
+  const { indicatorTokens } = useDefi()
+  const assets = props.assets.filter(
+    (a) =>
+      a.type !== AssetType.Token ||
+      !indicatorTokens.includes(a.mintAddress ?? '')
+  )
   const tokensFromProps = useMemo(() => {
-    return props.assets
+    return assets
       .filter(isTokenLike)
       .sort((a, b) => b.value.comparedTo(a.value))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
@@ -89,12 +96,12 @@ export default function AssetList(props: Props) {
     (token) =>
       token.type != AssetType.Sol &&
       token.logo == undefined &&
-      token.mintAddress
+      token.mintAddress,
   ) as Token[]
   // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  const othersFromProps = useMemo(() => props.assets.filter(isOther), [])
+  const othersFromProps = useMemo(() => assets.filter(isOther), [])
   const otherFromPropsFiltred = othersFromProps.filter((token) =>
-    isMint(token)
+    isMint(token),
   ) as Mint[]
 
   const { data } = useTokensMetadata([
@@ -155,13 +162,14 @@ export default function AssetList(props: Props) {
             .flat()
             .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
         : undefined,
-    [governanceNfts, treasuryNfts]
+    [governanceNfts, treasuryNfts],
   )
 
   // NOTE possible source of bugs, state wont update if props do.
-  const [others, setOthers] = useState<
-    (Mint | Programs | Unknown | Domains | RealmAuthority | Stake | Mango)[]
-  >(othersFromProps)
+  const [others, setOthers] =
+    useState<
+      (Mint | Programs | Unknown | Domains | RealmAuthority | Stake | Mango)[]
+    >(othersFromProps)
   const [itemsToHide, setItemsToHide] = useState<string[]>([])
   useEffect(() => {
     const newItemsToHide: string[] = []
@@ -208,7 +216,6 @@ export default function AssetList(props: Props) {
     if (data) {
       getTokenData()
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [othersFromProps, data])
 
@@ -220,7 +227,7 @@ export default function AssetList(props: Props) {
 
   return (
     <div className={cx(props.className, 'relative', 'space-y-6')}>
-      {props.assets.length === 0 && (nfts?.length ?? 0) === 0 && (
+      {assets.length === 0 && (nfts?.length ?? 0) === 0 && (
         <div className="p-4 text-center text-sm text-fgd-1">
           This wallet contains no assets
         </div>

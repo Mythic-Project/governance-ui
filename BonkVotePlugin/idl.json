@@ -212,10 +212,7 @@
           {
             "name": "reserved",
             "type": {
-              "array": [
-                "u8",
-                8
-              ]
+              "array": ["u8", 8]
             }
           }
         ]
@@ -311,10 +308,7 @@
           {
             "name": "reserved",
             "type": {
-              "array": [
-                "u8",
-                8
-              ]
+              "array": ["u8", 8]
             }
           }
         ]

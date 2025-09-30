@@ -8,7 +8,7 @@ import { GovernanceRole } from '../@types/types'
 
 const onlyGovernanceAvailable = (
   availableVoteGovernanceOptions: GovernanceRole[],
-  role: GovernanceRole
+  role: GovernanceRole,
 ) =>
   availableVoteGovernanceOptions.length === 1 &&
   availableVoteGovernanceOptions[0] === role

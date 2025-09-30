@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const allProgramProposals = await getGovernanceAccounts(
       conn,
       new PublicKey(programId),
-      Proposal
+      Proposal,
     )
 
     allProposals = allProposals.concat(allProgramProposals)
@@ -43,7 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const allProgramVoteRecords = await getGovernanceAccounts(
       conn,
       new PublicKey(programId),
-      VoteRecord
+      VoteRecord,
     )
 
     allVoteRecords = allVoteRecords.concat(allProgramVoteRecords)
@@ -56,12 +56,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const allOwnerRecords = await getGovernanceAccounts(
       conn,
       new PublicKey(programId),
-      TokenOwnerRecord
+      TokenOwnerRecord,
     )
 
     for (const ownerRecord of allOwnerRecords) {
       allMembers = allMembers.add(
-        ownerRecord.account.governingTokenOwner.toBase58()
+        ownerRecord.account.governingTokenOwner.toBase58(),
       )
     }
   }

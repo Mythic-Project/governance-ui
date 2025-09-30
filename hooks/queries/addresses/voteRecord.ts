@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useRealmQuery } from '../realm'
 
 export const useAddressQuery_SelectedProposalVoteRecord = (
-  tokenOwnerRecordAddress?: PublicKey
+  tokenOwnerRecordAddress?: PublicKey,
 ) => {
   const router = useRouter()
   const { pk } = router.query
@@ -17,14 +17,14 @@ export const useAddressQuery_SelectedProposalVoteRecord = (
   return useAddressQuery_VoteRecord(
     programId,
     proposalAddress,
-    tokenOwnerRecordAddress
+    tokenOwnerRecordAddress,
   )
 }
 
 export const useAddressQuery_VoteRecord = (
   programId?: PublicKey,
   proposalAddress?: PublicKey,
-  tokenOwnerRecordAddress?: PublicKey
+  tokenOwnerRecordAddress?: PublicKey,
 ) => {
   const enabled =
     programId !== undefined &&
@@ -44,7 +44,7 @@ export const useAddressQuery_VoteRecord = (
       return getVoteRecordAddress(
         programId,
         proposalAddress,
-        tokenOwnerRecordAddress
+        tokenOwnerRecordAddress,
       )
     },
     enabled,

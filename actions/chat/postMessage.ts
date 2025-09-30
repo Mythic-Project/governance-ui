@@ -34,7 +34,7 @@ export async function postChatMessage(
   tokeOwnerRecord: ProgramAccount<TokenOwnerRecord>,
   body: ChatMessageBody,
   replyTo?: PublicKey,
-  client?: VotingClient
+  client?: VotingClient,
 ) {
   const signers: Keypair[] = []
   const instructions: TransactionInstruction[] = []
@@ -46,7 +46,7 @@ export async function postChatMessage(
   const plugin = await client?.withUpdateVoterWeightRecord(
     instructions,
     'commentProposal',
-    createNftTicketsIxs
+    createNftTicketsIxs,
   )
 
   // Check if the connected wallet is not SquadsX
@@ -64,7 +64,7 @@ export async function postChatMessage(
       payer,
       replyTo,
       body,
-      plugin?.voterWeightPk
+      plugin?.voterWeightPk,
     )
   } else {
     const chatMessage = await getEphemeralSigners(walletContext, 1)
@@ -82,7 +82,7 @@ export async function postChatMessage(
       replyTo,
       body,
       chatMessage[0], // Executing a chat message ix in Squads requires subbing in a custom ephemeral signer
-      plugin?.voterWeightPk
+      plugin?.voterWeightPk,
     )
   }
 
@@ -98,7 +98,7 @@ export async function postChatMessage(
         instructionsSet: txBatchesToInstructionSetWithSigners(
           txBatch,
           [],
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Parallel,
       }
@@ -108,7 +108,7 @@ export async function postChatMessage(
         instructionsSet: txBatchesToInstructionSetWithSigners(
           txBatch,
           [signers],
-          batchIdx
+          batchIdx,
         ),
         sequenceType: SequenceType.Sequential,
       }
@@ -127,7 +127,7 @@ export async function postComment(
   transactionProps: sendSignAndConfirmTransactionsProps & {
     lookupTableAccounts?: any
     autoFee?: boolean
-  }
+  },
 ) {
   try {
     await sendTransactionsV3(transactionProps)
@@ -137,7 +137,7 @@ export async function postComment(
       const [size, maxSize] = numbers ? numbers.map(Number) : [0, 0]
       if (size > maxSize) {
         throw new Error(
-          `You must reduce your comment by ${size - maxSize} character(s).`
+          `You must reduce your comment by ${size - maxSize} character(s).`,
         )
       }
     }

@@ -1,6 +1,8 @@
 import { WSOL_MINT, WSOL_MINT_PK } from '@components/instructions/tools'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
+  ComputeBudgetProgram,
+  Connection,
   PublicKey,
   SystemProgram,
   TransactionInstruction,
@@ -11,12 +13,14 @@ import {
   createAssociatedTokenAccountIdempotentInstruction,
   createCloseAccountInstruction,
 } from '@solana/spl-token-new'
+import { getFeeEstimate } from '@tools/feeEstimate'
+import { createComputeBudgetIx } from '@blockworks-foundation/mango-v4'
 
 export const AUTOBAHN_PROGRAM_ID = new PublicKey(
-  'AutobNFLMzX1rFCDgwWpwr3ztG5c1oDbSrGq7Jj2LgE'
+  'AutobNFLMzX1rFCDgwWpwr3ztG5c1oDbSrGq7Jj2LgE',
 )
 export const REALMS_TODAY_ATA = new PublicKey(
-  '6bUaUqnkEoCKFkRrbT89vkeBSY9w4EE29WHtj56y49EN'
+  '6bUaUqnkEoCKFkRrbT89vkeBSY9w4EE29WHtj56y49EN',
 )
 export function createChargeFeeIx(
   payer: PublicKey,
@@ -24,7 +28,7 @@ export function createChargeFeeIx(
   platformFeeAta: PublicKey,
   feeAmount: number,
   platformFeePct: number,
-  splittedFeeAta?: PublicKey
+  splittedFeeAta?: PublicKey,
 ) {
   const keys = [
     {
@@ -87,7 +91,12 @@ function buildFeeIxData(feeAmount: number, platformFeePct: number): Buffer {
   return buffer
 }
 
-export const chargeFee = (payer: PublicKey, fee: number) => {
+export const chargeFee = async (
+  payer: PublicKey,
+  fee: number,
+  connection: Connection,
+) => {
+  const txFee = await getFeeEstimate(connection)
   const instructions: TransactionInstruction[] = []
   const feeMint = WSOL_MINT_PK
   const payerAta = getAssociatedTokenAddressSync(feeMint, payer)
@@ -96,7 +105,7 @@ export const chargeFee = (payer: PublicKey, fee: number) => {
     payer,
     payerAta,
     payer,
-    feeMint
+    feeMint,
   )
   const solTransferIx = SystemProgram.transfer({
     fromPubkey: payer,
@@ -106,11 +115,13 @@ export const chargeFee = (payer: PublicKey, fee: number) => {
   const syncNative = createSyncNativeInstruction(payerAta)
   const close = createCloseAccountInstruction(payerAta, payer, payer)
   instructions.push(
+    createComputeBudgetIx(txFee),
+    ComputeBudgetProgram.setComputeUnitLimit({ units: 80000 }),
     createPayerAtaIx,
     solTransferIx,
     syncNative,
     createChargeFeeIx(payer, payerAta, REALMS_TODAY_ATA, fee, 100),
-    close
+    close,
   )
   return instructions
 }

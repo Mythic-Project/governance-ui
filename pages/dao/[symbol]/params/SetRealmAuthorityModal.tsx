@@ -29,7 +29,7 @@ const SetRealmAuthorityModal = ({
   const connection = useLegacyConnectionContext()
   const { governancesArray } = useGovernanceAssets()
   const [account, setAccount] = useState<ProgramAccount<Governance> | null>(
-    null
+    null,
   )
   const [settingAuthority, setSettingAuthority] = useState(false)
   const handleSetAuthority = async () => {
@@ -42,7 +42,7 @@ const SetRealmAuthorityModal = ({
       realm!.pubkey!,
       wallet!.publicKey!,
       account!.pubkey,
-      SetRealmAuthorityAction.SetChecked
+      SetRealmAuthorityAction.SetChecked,
     )
     const transaction = new Transaction({ feePayer: wallet!.publicKey })
     transaction.add(...instructions)

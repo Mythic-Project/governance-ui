@@ -38,13 +38,12 @@ const defaultProposalVotes: ProposalVotesInfoType = {
 export default function useProposalVotesForRealm(
   realm: ProgramAccount<Realm>,
   proposal: Proposal,
-  governance?: ProgramAccount<Governance>
+  governance?: ProgramAccount<Governance>,
 ) {
   const { connection } = useConnection()
 
-  const [proposalVotes, setProposalVotes] = useState<ProposalVotesInfoType>(
-    defaultProposalVotes
-  )
+  const [proposalVotes, setProposalVotes] =
+    useState<ProposalVotesInfoType>(defaultProposalVotes)
 
   const proposalMintKey = useMemo(
     () =>
@@ -52,7 +51,7 @@ export default function useProposalVotesForRealm(
       realm.account.communityMint.toBase58()
         ? realm.account.communityMint
         : realm.account.config.councilMint,
-    [realm, proposal]
+    [realm, proposal],
   )
 
   const [proposalMint, setProposalMint] = useState<MintInfo | null>(null)
@@ -76,7 +75,7 @@ export default function useProposalVotesForRealm(
       const maxVoteWeight = getProposalMaxVoteWeight(
         realm.account,
         proposal,
-        proposalMint
+        proposalMint,
       )
       const voteThresholdPct =
         (proposal.isVoteFinalized() && proposal.voteThreshold?.value) ||

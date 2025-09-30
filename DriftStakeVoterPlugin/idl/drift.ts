@@ -1,5 +1,5 @@
 export type Drift = {
-  "version": "2.92.0",
+  "version": "2.114.0",
   "name": "drift",
   "instructions": [
     {
@@ -89,6 +89,229 @@ export type Drift = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initializeSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "numOrders",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "resizeSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "numOrders",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "initializeSignedMsgWsDelegates",
+      "accounts": [
+        {
+          "name": "signedMsgWsDelegates",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "delegates",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "changeSignedMsgWsDelegateStatus",
+      "accounts": [
+        {
+          "name": "signedMsgWsDelegates",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "delegate",
+          "type": "publicKey"
+        },
+        {
+          "name": "add",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "initializeFuelOverflow",
+      "accounts": [
+        {
+          "name": "fuelOverflow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sweepFuel",
+      "accounts": [
+        {
+          "name": "fuelOverflow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resetFuelSeason",
+      "accounts": [
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -299,6 +522,133 @@ export type Drift = {
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "transferPools",
+      "accounts": [
+        {
+          "name": "fromUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "toUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "depositFromSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "depositToSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "borrowFromSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "borrowToSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "depositFromMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "depositToMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "borrowFromMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "borrowToMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "depositAmount",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "borrowAmount",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "transferPerpPosition",
+      "accounts": [
+        {
+          "name": "fromUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "toUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "marketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "amount",
+          "type": {
+            "option": "i64"
+          }
         }
       ]
     },
@@ -554,7 +904,7 @@ export type Drift = {
           }
         },
         {
-          "name": "makerOrderId",
+          "name": "successCondition",
           "type": {
             "option": "u32"
           }
@@ -605,6 +955,113 @@ export type Drift = {
         {
           "name": "takerOrderId",
           "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "placeAndMakeSignedMsgPerpOrder",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "taker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "takerStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "takerSignedMsgUserOrders",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "OrderParams"
+          }
+        },
+        {
+          "name": "signedMsgOrderUuid",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "placeSignedMsgTakerOrder",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "ixSysvar",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "the supplied Sysvar could be anything else.",
+            "The Instruction Sysvar has not been implemented",
+            "in the Anchor framework yet, so this is the safe approach."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "signedMsgOrderParamsMessageBytes",
+          "type": "bytes"
+        },
+        {
+          "name": "isDelegateSigner",
+          "type": "bool"
         }
       ]
     },
@@ -1098,6 +1555,31 @@ export type Drift = {
       ]
     },
     {
+      "name": "updateUserPoolId",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        },
+        {
+          "name": "poolId",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "updateUserDelegate",
       "accounts": [
         {
@@ -1173,6 +1655,41 @@ export type Drift = {
       ]
     },
     {
+      "name": "updateUserProtectedMakerOrders",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        },
+        {
+          "name": "protectedMakerOrders",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "deleteUser",
       "accounts": [
         {
@@ -1182,6 +1699,63 @@ export type Drift = {
         },
         {
           "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "forceDeleteUser",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "keeper",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deleteSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
           "isMut": true,
           "isSigner": false
         },
@@ -1228,6 +1802,37 @@ export type Drift = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "enableUserHighLeverageMode",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        }
+      ]
     },
     {
       "name": "fillPerpOrder",
@@ -1445,6 +2050,100 @@ export type Drift = {
       "args": []
     },
     {
+      "name": "logUserBalances",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "disableUserHighLeverageMode",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateUserFuelBonus",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateUserStatsReferrerStatus",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "updateUserOpenOrdersCount",
       "accounts": [
         {
@@ -1607,14 +2306,19 @@ export type Drift = {
       "name": "settleExpiredMarket",
       "accounts": [
         {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "state",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "authority",
-          "isMut": false,
-          "isSigner": true
+          "name": "perpMarket",
+          "isMut": true,
+          "isSigner": false
         }
       ],
       "args": [
@@ -1772,6 +2476,176 @@ export type Drift = {
       ]
     },
     {
+      "name": "liquidateSpotWithSwapBegin",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "liquidator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilitySpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilityTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Instructions Sysvar for instruction introspection"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "assetMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "liabilityMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "swapAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "liquidateSpotWithSwapEnd",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "liquidator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilitySpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilityTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Instructions Sysvar for instruction introspection"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "assetMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "liabilityMarketIndex",
+          "type": "u16"
+        }
+      ]
+    },
+    {
       "name": "liquidateBorrowForPerpPnl",
       "accounts": [
         {
@@ -1893,6 +2767,11 @@ export type Drift = {
           "name": "user",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -2338,6 +3217,27 @@ export type Drift = {
       "args": []
     },
     {
+      "name": "updateUserGovTokenInsuranceStakeDevnet",
+      "accounts": [
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "govStakeAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "initializeInsuranceFundStake",
       "accounts": [
         {
@@ -2745,6 +3645,32 @@ export type Drift = {
           "type": "bytes"
         }
       ]
+    },
+    {
+      "name": "pauseSpotMarketDepositWithdraw",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "keeper",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "spotMarket",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "spotMarketVault",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "initialize",
@@ -3898,6 +4824,36 @@ export type Drift = {
       ]
     },
     {
+      "name": "updatePerpMarketHighLeverageMarginRatio",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "perpMarket",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "marginRatioInitial",
+          "type": "u16"
+        },
+        {
+          "name": "marginRatioMaintenance",
+          "type": "u16"
+        }
+      ]
+    },
+    {
       "name": "updatePerpMarketFundingPeriod",
       "accounts": [
         {
@@ -4010,6 +4966,32 @@ export type Drift = {
         {
           "name": "insuranceFundUnstakingPeriod",
           "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "updateSpotMarketPoolId",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "spotMarket",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "poolId",
+          "type": "u8"
         }
       ]
     },
@@ -4393,6 +5375,11 @@ export type Drift = {
           "name": "oracle",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "oldOracle",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
@@ -4405,6 +5392,10 @@ export type Drift = {
           "type": {
             "defined": "OracleSource"
           }
+        },
+        {
+          "name": "skipInvariantCheck",
+          "type": "bool"
         }
       ]
     },
@@ -5013,6 +6004,11 @@ export type Drift = {
       "name": "updatePerpMarketOracle",
       "accounts": [
         {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "state",
           "isMut": false,
           "isSigner": false
@@ -5028,9 +6024,9 @@ export type Drift = {
           "isSigner": false
         },
         {
-          "name": "admin",
+          "name": "oldOracle",
           "isMut": false,
-          "isSigner": true
+          "isSigner": false
         }
       ],
       "args": [
@@ -5043,6 +6039,10 @@ export type Drift = {
           "type": {
             "defined": "OracleSource"
           }
+        },
+        {
+          "name": "skipInvariantCheck",
+          "type": "bool"
         }
       ]
     },
@@ -5495,7 +6495,7 @@ export type Drift = {
         {
           "name": "fuelBoostDeposits",
           "type": {
-            "option": "u32"
+            "option": "i32"
           }
         },
         {
@@ -5862,6 +6862,206 @@ export type Drift = {
           }
         }
       ]
+    },
+    {
+      "name": "initializePythLazerOracle",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "lazerOracle",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "feedId",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "postPythLazerOracleUpdate",
+      "accounts": [
+        {
+          "name": "keeper",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "pythLazerStorage",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ixSysvar",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "pythMessage",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "initializeHighLeverageModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "updateHighLeverageModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        },
+        {
+          "name": "reduceOnly",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "initializeProtectedMakerModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "updateProtectedMakerModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        },
+        {
+          "name": "reduceOnly",
+          "type": "bool"
+        },
+        {
+          "name": "currentUsers",
+          "type": {
+            "option": "u32"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -6062,6 +7262,35 @@ export type Drift = {
               "array": [
                 "u8",
                 4
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HighLeverageModeConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "maxUsers",
+            "type": "u32"
+          },
+          {
+            "name": "currentUsers",
+            "type": "u32"
+          },
+          {
+            "name": "reduceOnly",
+            "type": "u8"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                31
               ]
             }
           }
@@ -6457,12 +7686,134 @@ export type Drift = {
             "type": "u8"
           },
           {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
+            "name": "highLeverageMarginRatioInitial",
+            "type": "u16"
+          },
+          {
+            "name": "highLeverageMarginRatioMaintenance",
+            "type": "u16"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                43
+                38
               ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtectedMakerModeConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "maxUsers",
+            "type": "u32"
+          },
+          {
+            "name": "currentUsers",
+            "type": "u32"
+          },
+          {
+            "name": "reduceOnly",
+            "type": "u8"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                31
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PythLazerOracle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": "i64"
+          },
+          {
+            "name": "publishTime",
+            "type": "u64"
+          },
+          {
+            "name": "postedSlot",
+            "type": "u64"
+          },
+          {
+            "name": "exponent",
+            "type": "i32"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "conf",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgUserOrders",
+      "docs": [
+        "* This struct is a duplicate of SignedMsgUserOrdersZeroCopy\n * It is used to give anchor an struct to generate the idl for clients\n * The struct SignedMsgUserOrdersZeroCopy is used to load the data in efficiently"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authorityPubkey",
+            "type": "publicKey"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          },
+          {
+            "name": "signedMsgOrderData",
+            "type": {
+              "vec": {
+                "defined": "SignedMsgOrderId"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgWsDelegates",
+      "docs": [
+        "* Used to store authenticated delegates for swift-like ws connections"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "delegates",
+            "type": {
+              "vec": "publicKey"
             }
           }
         ]
@@ -6959,11 +8310,15 @@ export type Drift = {
             "type": "u8"
           },
           {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                41
+                40
               ]
             }
           }
@@ -7312,11 +8667,21 @@ export type Drift = {
             "type": "bool"
           },
           {
+            "name": "marginMode",
+            "type": {
+              "defined": "MarginMode"
+            }
+          },
+          {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
             "name": "padding1",
             "type": {
               "array": [
                 "u8",
-                5
+                3
               ]
             }
           },
@@ -7440,11 +8805,13 @@ export type Drift = {
             "type": "u16"
           },
           {
-            "name": "isReferrer",
+            "name": "referrerStatus",
             "docs": [
-              "Whether the user is a referrer. Sub account 0 can not be deleted if user is a referrer"
+              "Flags for referrer status:",
+              "First bit (LSB): 1 if user is a referrer, 0 otherwise",
+              "Second bit: 1 if user was referred, 0 otherwise"
             ],
-            "type": "bool"
+            "type": "u8"
           },
           {
             "name": "disableUpdatePerpBidAskTwap",
@@ -7455,9 +8822,16 @@ export type Drift = {
             "type": {
               "array": [
                 "u8",
-                2
+                1
               ]
             }
+          },
+          {
+            "name": "fuelOverflowStatus",
+            "docs": [
+              "whether the user has a FuelOverflow account"
+            ],
+            "type": "u8"
           },
           {
             "name": "fuelInsurance",
@@ -7555,6 +8929,62 @@ export type Drift = {
           }
         ]
       }
+    },
+    {
+      "name": "FuelOverflow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "The authority of this overflow account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "fuelInsurance",
+            "type": "u128"
+          },
+          {
+            "name": "fuelDeposits",
+            "type": "u128"
+          },
+          {
+            "name": "fuelBorrows",
+            "type": "u128"
+          },
+          {
+            "name": "fuelPositions",
+            "type": "u128"
+          },
+          {
+            "name": "fuelTaker",
+            "type": "u128"
+          },
+          {
+            "name": "fuelMaker",
+            "type": "u128"
+          },
+          {
+            "name": "lastFuelSweepTs",
+            "type": "u32"
+          },
+          {
+            "name": "lastResetTs",
+            "type": "u32"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u128",
+                6
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -7577,6 +9007,12 @@ export type Drift = {
           },
           {
             "name": "updateAmmSummaryStats",
+            "type": {
+              "option": "bool"
+            }
+          },
+          {
+            "name": "excludeTotalLiqFee",
             "type": {
               "option": "bool"
             }
@@ -8041,6 +9477,69 @@ export type Drift = {
       }
     },
     {
+      "name": "SignedMsgOrderParamsMessage",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "signedMsgOrderParams",
+            "type": {
+              "defined": "OrderParams"
+            }
+          },
+          {
+            "name": "subAccountId",
+            "type": "u16"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          },
+          {
+            "name": "uuid",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "takeProfitOrderParams",
+            "type": {
+              "option": {
+                "defined": "SignedMsgTriggerOrderParams"
+              }
+            }
+          },
+          {
+            "name": "stopLossOrderParams",
+            "type": {
+              "option": {
+                "defined": "SignedMsgTriggerOrderParams"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgTriggerOrderParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "triggerPrice",
+            "type": "u64"
+          },
+          {
+            "name": "baseAssetAmount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "ModifyOrderParams",
       "type": {
         "kind": "struct",
@@ -8132,9 +9631,7 @@ export type Drift = {
           {
             "name": "policy",
             "type": {
-              "option": {
-                "defined": "ModifyOrderPolicy"
-              }
+              "option": "u8"
             }
           }
         ]
@@ -8860,6 +10357,55 @@ export type Drift = {
       }
     },
     {
+      "name": "SignedMsgOrderId",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "uuid",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "maxSlot",
+            "type": "u64"
+          },
+          {
+            "name": "orderId",
+            "type": "u32"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgUserOrdersFixed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "userPubkey",
+            "type": "publicKey"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          },
+          {
+            "name": "len",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
       "name": "InsuranceFund",
       "type": {
         "kind": "struct",
@@ -9504,11 +11050,26 @@ export type Drift = {
             "type": "u8"
           },
           {
+            "name": "postedSlotTail",
+            "docs": [
+              "Last 8 bits of the slot the order was posted on-chain (not order slot for signed msg orders)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bitFlags",
+            "docs": [
+              "Bitflags for further classification",
+              "0: is_signed_message"
+            ],
+            "type": "u8"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                3
+                1
               ]
             }
           }
@@ -9853,6 +11414,9 @@ export type Drift = {
           },
           {
             "name": "OrderFilledWithOpenbookV2"
+          },
+          {
+            "name": "TransferPerpPosition"
           }
         ]
       }
@@ -9955,7 +11519,11 @@ export type Drift = {
             "name": "PlaceAndMake"
           },
           {
-            "name": "PlaceAndTake"
+            "name": "PlaceAndTake",
+            "fields": [
+              "bool",
+              "u8"
+            ]
           },
           {
             "name": "Liquidation"
@@ -9980,7 +11548,8 @@ export type Drift = {
             "name": "Match",
             "fields": [
               "publicKey",
-              "u16"
+              "u16",
+              "u64"
             ]
           }
         ]
@@ -10074,6 +11643,18 @@ export type Drift = {
           },
           {
             "name": "SwitchboardOnDemand"
+          },
+          {
+            "name": "PythLazer"
+          },
+          {
+            "name": "PythLazer1K"
+          },
+          {
+            "name": "PythLazer1M"
+          },
+          {
+            "name": "PythLazerStableCoin"
           }
         ]
       }
@@ -10104,10 +11685,24 @@ export type Drift = {
         "kind": "enum",
         "variants": [
           {
-            "name": "TryModify"
+            "name": "MustModify"
           },
           {
-            "name": "MustModify"
+            "name": "ExcludePreviousFill"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlaceAndTakeOrderSuccessCondition",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "PartialFill"
+          },
+          {
+            "name": "FullFill"
           }
         ]
       }
@@ -10134,6 +11729,9 @@ export type Drift = {
           },
           {
             "name": "Liquidation"
+          },
+          {
+            "name": "AmmImmediateFill"
           }
         ]
       }
@@ -10277,6 +11875,23 @@ export type Drift = {
       }
     },
     {
+      "name": "AMMAvailability",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Immediate"
+          },
+          {
+            "name": "AfterMinDuration"
+          },
+          {
+            "name": "Unavailable"
+          }
+        ]
+      }
+    },
+    {
       "name": "SettlePnlMode",
       "type": {
         "kind": "enum",
@@ -10366,6 +11981,9 @@ export type Drift = {
           },
           {
             "name": "SettlePnlPaused"
+          },
+          {
+            "name": "AmmImmediateFillPaused"
           }
         ]
       }
@@ -10386,6 +12004,9 @@ export type Drift = {
           },
           {
             "name": "AdvancedLp"
+          },
+          {
+            "name": "ProtectedMakerOrders"
           }
         ]
       }
@@ -10477,6 +12098,89 @@ export type Drift = {
           },
           {
             "name": "Perp"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ReferrerStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "IsReferrer"
+          },
+          {
+            "name": "IsReferred"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarginMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Default"
+          },
+          {
+            "name": "HighLeverage"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FuelOverflowStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Exists"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignatureVerificationError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InvalidEd25519InstructionProgramId"
+          },
+          {
+            "name": "InvalidEd25519InstructionDataLength"
+          },
+          {
+            "name": "InvalidSignatureIndex"
+          },
+          {
+            "name": "InvalidSignatureOffset"
+          },
+          {
+            "name": "InvalidPublicKeyOffset"
+          },
+          {
+            "name": "InvalidMessageOffset"
+          },
+          {
+            "name": "InvalidMessageDataSize"
+          },
+          {
+            "name": "InvalidInstructionIndex"
+          },
+          {
+            "name": "MessageOffsetOverflow"
+          },
+          {
+            "name": "InvalidMessageHex"
+          },
+          {
+            "name": "InvalidMessageData"
+          },
+          {
+            "name": "LoadInstructionAtFailed"
           }
         ]
       }
@@ -10885,6 +12589,53 @@ export type Drift = {
         {
           "name": "marketIndex",
           "type": "u16",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "SignedMsgOrderRecord",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "hash",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "matchingOrderParams",
+          "type": {
+            "defined": "OrderParams"
+          },
+          "index": false
+        },
+        {
+          "name": "userOrderId",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "signedMsgOrderMaxSlot",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "signedMsgOrderUuid",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          },
+          "index": false
+        },
+        {
+          "name": "ts",
+          "type": "i64",
           "index": false
         }
       ]
@@ -11518,6 +13269,163 @@ export type Drift = {
         {
           "name": "amount",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteUserRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "userAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "subAccountId",
+          "type": "u16",
+          "index": false
+        },
+        {
+          "name": "keeper",
+          "type": {
+            "option": "publicKey"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FuelSweepRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelInsurance",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelDeposits",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelBorrows",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelPositions",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelTaker",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelMaker",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelInsurance",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelDeposits",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelBorrows",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelPositions",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelTaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelMaker",
+          "type": "u128",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FuelSeasonRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fuelInsurance",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelDeposits",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelBorrows",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelPositions",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelTaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelMaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelTotal",
+          "type": "u128",
           "index": false
         }
       ]
@@ -12912,12 +14820,12 @@ export type Drift = {
     {
       "code": 6277,
       "name": "OracleMismatchedVaaAndPriceUpdates",
-      "msg": "Don't have the same remaining accounts number and merkle price updates left"
+      "msg": "Don't have the same remaining accounts number and pyth updates left"
     },
     {
       "code": 6278,
       "name": "OracleBadRemainingAccountPublicKey",
-      "msg": "Remaining account passed is not a valid pda"
+      "msg": "Remaining account passed does not match oracle update derived pda"
     },
     {
       "code": 6279,
@@ -12948,12 +14856,157 @@ export type Drift = {
       "code": 6284,
       "name": "InvalidPredictionMarketOrder",
       "msg": "Invalid prediction market order"
+    },
+    {
+      "code": 6285,
+      "name": "InvalidVerificationIxIndex",
+      "msg": "Ed25519 Ix must be before place and make SignedMsg order ix"
+    },
+    {
+      "code": 6286,
+      "name": "SigVerificationFailed",
+      "msg": "SignedMsg message verificaiton failed"
+    },
+    {
+      "code": 6287,
+      "name": "MismatchedSignedMsgOrderParamsMarketIndex",
+      "msg": "Market index mismatched b/w taker and maker SignedMsg order params"
+    },
+    {
+      "code": 6288,
+      "name": "InvalidSignedMsgOrderParam",
+      "msg": "Invalid SignedMsg order param"
+    },
+    {
+      "code": 6289,
+      "name": "PlaceAndTakeOrderSuccessConditionFailed",
+      "msg": "Place and take order success condition failed"
+    },
+    {
+      "code": 6290,
+      "name": "InvalidHighLeverageModeConfig",
+      "msg": "Invalid High Leverage Mode Config"
+    },
+    {
+      "code": 6291,
+      "name": "InvalidRFQUserAccount",
+      "msg": "Invalid RFQ User Account"
+    },
+    {
+      "code": 6292,
+      "name": "RFQUserAccountWrongMutability",
+      "msg": "RFQUserAccount should be mutable"
+    },
+    {
+      "code": 6293,
+      "name": "RFQUserAccountFull",
+      "msg": "RFQUserAccount has too many active RFQs"
+    },
+    {
+      "code": 6294,
+      "name": "RFQOrderNotFilled",
+      "msg": "RFQ order not filled as expected"
+    },
+    {
+      "code": 6295,
+      "name": "InvalidRFQOrder",
+      "msg": "RFQ orders must be jit makers"
+    },
+    {
+      "code": 6296,
+      "name": "InvalidRFQMatch",
+      "msg": "RFQ matches must be valid"
+    },
+    {
+      "code": 6297,
+      "name": "InvalidSignedMsgUserAccount",
+      "msg": "Invalid SignedMsg user account"
+    },
+    {
+      "code": 6298,
+      "name": "SignedMsgUserAccountWrongMutability",
+      "msg": "SignedMsg account wrong mutability"
+    },
+    {
+      "code": 6299,
+      "name": "SignedMsgUserOrdersAccountFull",
+      "msg": "SignedMsgUserAccount has too many active orders"
+    },
+    {
+      "code": 6300,
+      "name": "SignedMsgOrderDoesNotExist",
+      "msg": "Order with SignedMsg uuid does not exist"
+    },
+    {
+      "code": 6301,
+      "name": "InvalidSignedMsgOrderId",
+      "msg": "SignedMsg order id cannot be 0s"
+    },
+    {
+      "code": 6302,
+      "name": "InvalidPoolId",
+      "msg": "Invalid pool id"
+    },
+    {
+      "code": 6303,
+      "name": "InvalidProtectedMakerModeConfig",
+      "msg": "Invalid Protected Maker Mode Config"
+    },
+    {
+      "code": 6304,
+      "name": "InvalidPythLazerStorageOwner",
+      "msg": "Invalid pyth lazer storage owner"
+    },
+    {
+      "code": 6305,
+      "name": "UnverifiedPythLazerMessage",
+      "msg": "Verification of pyth lazer message failed"
+    },
+    {
+      "code": 6306,
+      "name": "InvalidPythLazerMessage",
+      "msg": "Invalid pyth lazer message"
+    },
+    {
+      "code": 6307,
+      "name": "PythLazerMessagePriceFeedMismatch",
+      "msg": "Pyth lazer message does not correspond to correct fed id"
+    },
+    {
+      "code": 6308,
+      "name": "InvalidLiquidateSpotWithSwap",
+      "msg": "InvalidLiquidateSpotWithSwap"
+    },
+    {
+      "code": 6309,
+      "name": "SignedMsgUserContextUserMismatch",
+      "msg": "User in SignedMsg message does not match user in ix context"
+    },
+    {
+      "code": 6310,
+      "name": "UserFuelOverflowThresholdNotMet",
+      "msg": "User fuel overflow threshold not met"
+    },
+    {
+      "code": 6311,
+      "name": "FuelOverflowAccountNotFound",
+      "msg": "FuelOverflow account not found"
+    },
+    {
+      "code": 6312,
+      "name": "InvalidTransferPerpPosition",
+      "msg": "Invalid Transfer Perp Position"
+    },
+    {
+      "code": 6313,
+      "name": "InvalidSignedMsgUserOrdersResize",
+      "msg": "Invalid SignedMsgUserOrders resize"
     }
   ]
 }
 
 export const IDL: Drift = {
-  "version": "2.92.0",
+  "version": "2.114.0",
   "name": "drift",
   "instructions": [
     {
@@ -13043,6 +15096,229 @@ export const IDL: Drift = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initializeSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "numOrders",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "resizeSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "numOrders",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "initializeSignedMsgWsDelegates",
+      "accounts": [
+        {
+          "name": "signedMsgWsDelegates",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "delegates",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "changeSignedMsgWsDelegateStatus",
+      "accounts": [
+        {
+          "name": "signedMsgWsDelegates",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "delegate",
+          "type": "publicKey"
+        },
+        {
+          "name": "add",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "initializeFuelOverflow",
+      "accounts": [
+        {
+          "name": "fuelOverflow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sweepFuel",
+      "accounts": [
+        {
+          "name": "fuelOverflow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resetFuelSeason",
+      "accounts": [
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -13253,6 +15529,133 @@ export const IDL: Drift = {
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "transferPools",
+      "accounts": [
+        {
+          "name": "fromUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "toUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "depositFromSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "depositToSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "borrowFromSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "borrowToSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "depositFromMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "depositToMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "borrowFromMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "borrowToMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "depositAmount",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "borrowAmount",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "transferPerpPosition",
+      "accounts": [
+        {
+          "name": "fromUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "toUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "marketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "amount",
+          "type": {
+            "option": "i64"
+          }
         }
       ]
     },
@@ -13508,7 +15911,7 @@ export const IDL: Drift = {
           }
         },
         {
-          "name": "makerOrderId",
+          "name": "successCondition",
           "type": {
             "option": "u32"
           }
@@ -13559,6 +15962,113 @@ export const IDL: Drift = {
         {
           "name": "takerOrderId",
           "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "placeAndMakeSignedMsgPerpOrder",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "taker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "takerStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "takerSignedMsgUserOrders",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "OrderParams"
+          }
+        },
+        {
+          "name": "signedMsgOrderUuid",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "placeSignedMsgTakerOrder",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signedMsgUserOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "ixSysvar",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "the supplied Sysvar could be anything else.",
+            "The Instruction Sysvar has not been implemented",
+            "in the Anchor framework yet, so this is the safe approach."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "signedMsgOrderParamsMessageBytes",
+          "type": "bytes"
+        },
+        {
+          "name": "isDelegateSigner",
+          "type": "bool"
         }
       ]
     },
@@ -14052,6 +16562,31 @@ export const IDL: Drift = {
       ]
     },
     {
+      "name": "updateUserPoolId",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        },
+        {
+          "name": "poolId",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "updateUserDelegate",
       "accounts": [
         {
@@ -14127,6 +16662,41 @@ export const IDL: Drift = {
       ]
     },
     {
+      "name": "updateUserProtectedMakerOrders",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        },
+        {
+          "name": "protectedMakerOrders",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "deleteUser",
       "accounts": [
         {
@@ -14136,6 +16706,63 @@ export const IDL: Drift = {
         },
         {
           "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "forceDeleteUser",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "keeper",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deleteSignedMsgUserOrders",
+      "accounts": [
+        {
+          "name": "signedMsgUserOrders",
           "isMut": true,
           "isSigner": false
         },
@@ -14182,6 +16809,37 @@ export const IDL: Drift = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "enableUserHighLeverageMode",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "subAccountId",
+          "type": "u16"
+        }
+      ]
     },
     {
       "name": "fillPerpOrder",
@@ -14399,6 +17057,100 @@ export const IDL: Drift = {
       "args": []
     },
     {
+      "name": "logUserBalances",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "disableUserHighLeverageMode",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateUserFuelBonus",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateUserStatsReferrerStatus",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "updateUserOpenOrdersCount",
       "accounts": [
         {
@@ -14561,14 +17313,19 @@ export const IDL: Drift = {
       "name": "settleExpiredMarket",
       "accounts": [
         {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "state",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "authority",
-          "isMut": false,
-          "isSigner": true
+          "name": "perpMarket",
+          "isMut": true,
+          "isSigner": false
         }
       ],
       "args": [
@@ -14726,6 +17483,176 @@ export const IDL: Drift = {
       ]
     },
     {
+      "name": "liquidateSpotWithSwapBegin",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "liquidator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilitySpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilityTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Instructions Sysvar for instruction introspection"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "assetMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "liabilityMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "swapAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "liquidateSpotWithSwapEnd",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "liquidator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilitySpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetSpotMarketVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liabilityTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "assetTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "driftSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Instructions Sysvar for instruction introspection"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "assetMarketIndex",
+          "type": "u16"
+        },
+        {
+          "name": "liabilityMarketIndex",
+          "type": "u16"
+        }
+      ]
+    },
+    {
       "name": "liquidateBorrowForPerpPnl",
       "accounts": [
         {
@@ -14847,6 +17774,11 @@ export const IDL: Drift = {
           "name": "user",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -15292,6 +18224,27 @@ export const IDL: Drift = {
       "args": []
     },
     {
+      "name": "updateUserGovTokenInsuranceStakeDevnet",
+      "accounts": [
+        {
+          "name": "userStats",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "govStakeAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "initializeInsuranceFundStake",
       "accounts": [
         {
@@ -15699,6 +18652,32 @@ export const IDL: Drift = {
           "type": "bytes"
         }
       ]
+    },
+    {
+      "name": "pauseSpotMarketDepositWithdraw",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "keeper",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "spotMarket",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "spotMarketVault",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "initialize",
@@ -16852,6 +19831,36 @@ export const IDL: Drift = {
       ]
     },
     {
+      "name": "updatePerpMarketHighLeverageMarginRatio",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "perpMarket",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "marginRatioInitial",
+          "type": "u16"
+        },
+        {
+          "name": "marginRatioMaintenance",
+          "type": "u16"
+        }
+      ]
+    },
+    {
       "name": "updatePerpMarketFundingPeriod",
       "accounts": [
         {
@@ -16964,6 +19973,32 @@ export const IDL: Drift = {
         {
           "name": "insuranceFundUnstakingPeriod",
           "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "updateSpotMarketPoolId",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "spotMarket",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "poolId",
+          "type": "u8"
         }
       ]
     },
@@ -17347,6 +20382,11 @@ export const IDL: Drift = {
           "name": "oracle",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "oldOracle",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
@@ -17359,6 +20399,10 @@ export const IDL: Drift = {
           "type": {
             "defined": "OracleSource"
           }
+        },
+        {
+          "name": "skipInvariantCheck",
+          "type": "bool"
         }
       ]
     },
@@ -17967,6 +21011,11 @@ export const IDL: Drift = {
       "name": "updatePerpMarketOracle",
       "accounts": [
         {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "state",
           "isMut": false,
           "isSigner": false
@@ -17982,9 +21031,9 @@ export const IDL: Drift = {
           "isSigner": false
         },
         {
-          "name": "admin",
+          "name": "oldOracle",
           "isMut": false,
-          "isSigner": true
+          "isSigner": false
         }
       ],
       "args": [
@@ -17997,6 +21046,10 @@ export const IDL: Drift = {
           "type": {
             "defined": "OracleSource"
           }
+        },
+        {
+          "name": "skipInvariantCheck",
+          "type": "bool"
         }
       ]
     },
@@ -18449,7 +21502,7 @@ export const IDL: Drift = {
         {
           "name": "fuelBoostDeposits",
           "type": {
-            "option": "u32"
+            "option": "i32"
           }
         },
         {
@@ -18816,6 +21869,206 @@ export const IDL: Drift = {
           }
         }
       ]
+    },
+    {
+      "name": "initializePythLazerOracle",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "lazerOracle",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "feedId",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "postPythLazerOracleUpdate",
+      "accounts": [
+        {
+          "name": "keeper",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "pythLazerStorage",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ixSysvar",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "pythMessage",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "initializeHighLeverageModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "updateHighLeverageModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "highLeverageModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        },
+        {
+          "name": "reduceOnly",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "initializeProtectedMakerModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "updateProtectedMakerModeConfig",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "protectedMakerModeConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxUsers",
+          "type": "u32"
+        },
+        {
+          "name": "reduceOnly",
+          "type": "bool"
+        },
+        {
+          "name": "currentUsers",
+          "type": {
+            "option": "u32"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -19016,6 +22269,35 @@ export const IDL: Drift = {
               "array": [
                 "u8",
                 4
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HighLeverageModeConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "maxUsers",
+            "type": "u32"
+          },
+          {
+            "name": "currentUsers",
+            "type": "u32"
+          },
+          {
+            "name": "reduceOnly",
+            "type": "u8"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                31
               ]
             }
           }
@@ -19411,12 +22693,134 @@ export const IDL: Drift = {
             "type": "u8"
           },
           {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
+            "name": "highLeverageMarginRatioInitial",
+            "type": "u16"
+          },
+          {
+            "name": "highLeverageMarginRatioMaintenance",
+            "type": "u16"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                43
+                38
               ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtectedMakerModeConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "maxUsers",
+            "type": "u32"
+          },
+          {
+            "name": "currentUsers",
+            "type": "u32"
+          },
+          {
+            "name": "reduceOnly",
+            "type": "u8"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                31
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PythLazerOracle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": "i64"
+          },
+          {
+            "name": "publishTime",
+            "type": "u64"
+          },
+          {
+            "name": "postedSlot",
+            "type": "u64"
+          },
+          {
+            "name": "exponent",
+            "type": "i32"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "conf",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgUserOrders",
+      "docs": [
+        "* This struct is a duplicate of SignedMsgUserOrdersZeroCopy\n * It is used to give anchor an struct to generate the idl for clients\n * The struct SignedMsgUserOrdersZeroCopy is used to load the data in efficiently"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authorityPubkey",
+            "type": "publicKey"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          },
+          {
+            "name": "signedMsgOrderData",
+            "type": {
+              "vec": {
+                "defined": "SignedMsgOrderId"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgWsDelegates",
+      "docs": [
+        "* Used to store authenticated delegates for swift-like ws connections"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "delegates",
+            "type": {
+              "vec": "publicKey"
             }
           }
         ]
@@ -19913,11 +23317,15 @@ export const IDL: Drift = {
             "type": "u8"
           },
           {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                41
+                40
               ]
             }
           }
@@ -20266,11 +23674,21 @@ export const IDL: Drift = {
             "type": "bool"
           },
           {
+            "name": "marginMode",
+            "type": {
+              "defined": "MarginMode"
+            }
+          },
+          {
+            "name": "poolId",
+            "type": "u8"
+          },
+          {
             "name": "padding1",
             "type": {
               "array": [
                 "u8",
-                5
+                3
               ]
             }
           },
@@ -20394,11 +23812,13 @@ export const IDL: Drift = {
             "type": "u16"
           },
           {
-            "name": "isReferrer",
+            "name": "referrerStatus",
             "docs": [
-              "Whether the user is a referrer. Sub account 0 can not be deleted if user is a referrer"
+              "Flags for referrer status:",
+              "First bit (LSB): 1 if user is a referrer, 0 otherwise",
+              "Second bit: 1 if user was referred, 0 otherwise"
             ],
-            "type": "bool"
+            "type": "u8"
           },
           {
             "name": "disableUpdatePerpBidAskTwap",
@@ -20409,9 +23829,16 @@ export const IDL: Drift = {
             "type": {
               "array": [
                 "u8",
-                2
+                1
               ]
             }
+          },
+          {
+            "name": "fuelOverflowStatus",
+            "docs": [
+              "whether the user has a FuelOverflow account"
+            ],
+            "type": "u8"
           },
           {
             "name": "fuelInsurance",
@@ -20509,6 +23936,62 @@ export const IDL: Drift = {
           }
         ]
       }
+    },
+    {
+      "name": "FuelOverflow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "The authority of this overflow account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "fuelInsurance",
+            "type": "u128"
+          },
+          {
+            "name": "fuelDeposits",
+            "type": "u128"
+          },
+          {
+            "name": "fuelBorrows",
+            "type": "u128"
+          },
+          {
+            "name": "fuelPositions",
+            "type": "u128"
+          },
+          {
+            "name": "fuelTaker",
+            "type": "u128"
+          },
+          {
+            "name": "fuelMaker",
+            "type": "u128"
+          },
+          {
+            "name": "lastFuelSweepTs",
+            "type": "u32"
+          },
+          {
+            "name": "lastResetTs",
+            "type": "u32"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u128",
+                6
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -20531,6 +24014,12 @@ export const IDL: Drift = {
           },
           {
             "name": "updateAmmSummaryStats",
+            "type": {
+              "option": "bool"
+            }
+          },
+          {
+            "name": "excludeTotalLiqFee",
             "type": {
               "option": "bool"
             }
@@ -20995,6 +24484,69 @@ export const IDL: Drift = {
       }
     },
     {
+      "name": "SignedMsgOrderParamsMessage",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "signedMsgOrderParams",
+            "type": {
+              "defined": "OrderParams"
+            }
+          },
+          {
+            "name": "subAccountId",
+            "type": "u16"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          },
+          {
+            "name": "uuid",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "takeProfitOrderParams",
+            "type": {
+              "option": {
+                "defined": "SignedMsgTriggerOrderParams"
+              }
+            }
+          },
+          {
+            "name": "stopLossOrderParams",
+            "type": {
+              "option": {
+                "defined": "SignedMsgTriggerOrderParams"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgTriggerOrderParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "triggerPrice",
+            "type": "u64"
+          },
+          {
+            "name": "baseAssetAmount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "ModifyOrderParams",
       "type": {
         "kind": "struct",
@@ -21086,9 +24638,7 @@ export const IDL: Drift = {
           {
             "name": "policy",
             "type": {
-              "option": {
-                "defined": "ModifyOrderPolicy"
-              }
+              "option": "u8"
             }
           }
         ]
@@ -21814,6 +25364,55 @@ export const IDL: Drift = {
       }
     },
     {
+      "name": "SignedMsgOrderId",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "uuid",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "maxSlot",
+            "type": "u64"
+          },
+          {
+            "name": "orderId",
+            "type": "u32"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignedMsgUserOrdersFixed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "userPubkey",
+            "type": "publicKey"
+          },
+          {
+            "name": "padding",
+            "type": "u32"
+          },
+          {
+            "name": "len",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
       "name": "InsuranceFund",
       "type": {
         "kind": "struct",
@@ -22458,11 +26057,26 @@ export const IDL: Drift = {
             "type": "u8"
           },
           {
+            "name": "postedSlotTail",
+            "docs": [
+              "Last 8 bits of the slot the order was posted on-chain (not order slot for signed msg orders)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bitFlags",
+            "docs": [
+              "Bitflags for further classification",
+              "0: is_signed_message"
+            ],
+            "type": "u8"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                3
+                1
               ]
             }
           }
@@ -22807,6 +26421,9 @@ export const IDL: Drift = {
           },
           {
             "name": "OrderFilledWithOpenbookV2"
+          },
+          {
+            "name": "TransferPerpPosition"
           }
         ]
       }
@@ -22909,7 +26526,11 @@ export const IDL: Drift = {
             "name": "PlaceAndMake"
           },
           {
-            "name": "PlaceAndTake"
+            "name": "PlaceAndTake",
+            "fields": [
+              "bool",
+              "u8"
+            ]
           },
           {
             "name": "Liquidation"
@@ -22934,7 +26555,8 @@ export const IDL: Drift = {
             "name": "Match",
             "fields": [
               "publicKey",
-              "u16"
+              "u16",
+              "u64"
             ]
           }
         ]
@@ -23028,6 +26650,18 @@ export const IDL: Drift = {
           },
           {
             "name": "SwitchboardOnDemand"
+          },
+          {
+            "name": "PythLazer"
+          },
+          {
+            "name": "PythLazer1K"
+          },
+          {
+            "name": "PythLazer1M"
+          },
+          {
+            "name": "PythLazerStableCoin"
           }
         ]
       }
@@ -23058,10 +26692,24 @@ export const IDL: Drift = {
         "kind": "enum",
         "variants": [
           {
-            "name": "TryModify"
+            "name": "MustModify"
           },
           {
-            "name": "MustModify"
+            "name": "ExcludePreviousFill"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlaceAndTakeOrderSuccessCondition",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "PartialFill"
+          },
+          {
+            "name": "FullFill"
           }
         ]
       }
@@ -23088,6 +26736,9 @@ export const IDL: Drift = {
           },
           {
             "name": "Liquidation"
+          },
+          {
+            "name": "AmmImmediateFill"
           }
         ]
       }
@@ -23231,6 +26882,23 @@ export const IDL: Drift = {
       }
     },
     {
+      "name": "AMMAvailability",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Immediate"
+          },
+          {
+            "name": "AfterMinDuration"
+          },
+          {
+            "name": "Unavailable"
+          }
+        ]
+      }
+    },
+    {
       "name": "SettlePnlMode",
       "type": {
         "kind": "enum",
@@ -23320,6 +26988,9 @@ export const IDL: Drift = {
           },
           {
             "name": "SettlePnlPaused"
+          },
+          {
+            "name": "AmmImmediateFillPaused"
           }
         ]
       }
@@ -23340,6 +27011,9 @@ export const IDL: Drift = {
           },
           {
             "name": "AdvancedLp"
+          },
+          {
+            "name": "ProtectedMakerOrders"
           }
         ]
       }
@@ -23431,6 +27105,89 @@ export const IDL: Drift = {
           },
           {
             "name": "Perp"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ReferrerStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "IsReferrer"
+          },
+          {
+            "name": "IsReferred"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarginMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Default"
+          },
+          {
+            "name": "HighLeverage"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FuelOverflowStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Exists"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SignatureVerificationError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InvalidEd25519InstructionProgramId"
+          },
+          {
+            "name": "InvalidEd25519InstructionDataLength"
+          },
+          {
+            "name": "InvalidSignatureIndex"
+          },
+          {
+            "name": "InvalidSignatureOffset"
+          },
+          {
+            "name": "InvalidPublicKeyOffset"
+          },
+          {
+            "name": "InvalidMessageOffset"
+          },
+          {
+            "name": "InvalidMessageDataSize"
+          },
+          {
+            "name": "InvalidInstructionIndex"
+          },
+          {
+            "name": "MessageOffsetOverflow"
+          },
+          {
+            "name": "InvalidMessageHex"
+          },
+          {
+            "name": "InvalidMessageData"
+          },
+          {
+            "name": "LoadInstructionAtFailed"
           }
         ]
       }
@@ -23839,6 +27596,53 @@ export const IDL: Drift = {
         {
           "name": "marketIndex",
           "type": "u16",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "SignedMsgOrderRecord",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "hash",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "matchingOrderParams",
+          "type": {
+            "defined": "OrderParams"
+          },
+          "index": false
+        },
+        {
+          "name": "userOrderId",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "signedMsgOrderMaxSlot",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "signedMsgOrderUuid",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          },
+          "index": false
+        },
+        {
+          "name": "ts",
+          "type": "i64",
           "index": false
         }
       ]
@@ -24472,6 +28276,163 @@ export const IDL: Drift = {
         {
           "name": "amount",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteUserRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "userAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "subAccountId",
+          "type": "u16",
+          "index": false
+        },
+        {
+          "name": "keeper",
+          "type": {
+            "option": "publicKey"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FuelSweepRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelInsurance",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelDeposits",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelBorrows",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelPositions",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelTaker",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "userStatsFuelMaker",
+          "type": "u32",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelInsurance",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelDeposits",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelBorrows",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelPositions",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelTaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelOverflowFuelMaker",
+          "type": "u128",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FuelSeasonRecord",
+      "fields": [
+        {
+          "name": "ts",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fuelInsurance",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelDeposits",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelBorrows",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelPositions",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelTaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelMaker",
+          "type": "u128",
+          "index": false
+        },
+        {
+          "name": "fuelTotal",
+          "type": "u128",
           "index": false
         }
       ]
@@ -25866,12 +29827,12 @@ export const IDL: Drift = {
     {
       "code": 6277,
       "name": "OracleMismatchedVaaAndPriceUpdates",
-      "msg": "Don't have the same remaining accounts number and merkle price updates left"
+      "msg": "Don't have the same remaining accounts number and pyth updates left"
     },
     {
       "code": 6278,
       "name": "OracleBadRemainingAccountPublicKey",
-      "msg": "Remaining account passed is not a valid pda"
+      "msg": "Remaining account passed does not match oracle update derived pda"
     },
     {
       "code": 6279,
@@ -25902,6 +29863,151 @@ export const IDL: Drift = {
       "code": 6284,
       "name": "InvalidPredictionMarketOrder",
       "msg": "Invalid prediction market order"
+    },
+    {
+      "code": 6285,
+      "name": "InvalidVerificationIxIndex",
+      "msg": "Ed25519 Ix must be before place and make SignedMsg order ix"
+    },
+    {
+      "code": 6286,
+      "name": "SigVerificationFailed",
+      "msg": "SignedMsg message verificaiton failed"
+    },
+    {
+      "code": 6287,
+      "name": "MismatchedSignedMsgOrderParamsMarketIndex",
+      "msg": "Market index mismatched b/w taker and maker SignedMsg order params"
+    },
+    {
+      "code": 6288,
+      "name": "InvalidSignedMsgOrderParam",
+      "msg": "Invalid SignedMsg order param"
+    },
+    {
+      "code": 6289,
+      "name": "PlaceAndTakeOrderSuccessConditionFailed",
+      "msg": "Place and take order success condition failed"
+    },
+    {
+      "code": 6290,
+      "name": "InvalidHighLeverageModeConfig",
+      "msg": "Invalid High Leverage Mode Config"
+    },
+    {
+      "code": 6291,
+      "name": "InvalidRFQUserAccount",
+      "msg": "Invalid RFQ User Account"
+    },
+    {
+      "code": 6292,
+      "name": "RFQUserAccountWrongMutability",
+      "msg": "RFQUserAccount should be mutable"
+    },
+    {
+      "code": 6293,
+      "name": "RFQUserAccountFull",
+      "msg": "RFQUserAccount has too many active RFQs"
+    },
+    {
+      "code": 6294,
+      "name": "RFQOrderNotFilled",
+      "msg": "RFQ order not filled as expected"
+    },
+    {
+      "code": 6295,
+      "name": "InvalidRFQOrder",
+      "msg": "RFQ orders must be jit makers"
+    },
+    {
+      "code": 6296,
+      "name": "InvalidRFQMatch",
+      "msg": "RFQ matches must be valid"
+    },
+    {
+      "code": 6297,
+      "name": "InvalidSignedMsgUserAccount",
+      "msg": "Invalid SignedMsg user account"
+    },
+    {
+      "code": 6298,
+      "name": "SignedMsgUserAccountWrongMutability",
+      "msg": "SignedMsg account wrong mutability"
+    },
+    {
+      "code": 6299,
+      "name": "SignedMsgUserOrdersAccountFull",
+      "msg": "SignedMsgUserAccount has too many active orders"
+    },
+    {
+      "code": 6300,
+      "name": "SignedMsgOrderDoesNotExist",
+      "msg": "Order with SignedMsg uuid does not exist"
+    },
+    {
+      "code": 6301,
+      "name": "InvalidSignedMsgOrderId",
+      "msg": "SignedMsg order id cannot be 0s"
+    },
+    {
+      "code": 6302,
+      "name": "InvalidPoolId",
+      "msg": "Invalid pool id"
+    },
+    {
+      "code": 6303,
+      "name": "InvalidProtectedMakerModeConfig",
+      "msg": "Invalid Protected Maker Mode Config"
+    },
+    {
+      "code": 6304,
+      "name": "InvalidPythLazerStorageOwner",
+      "msg": "Invalid pyth lazer storage owner"
+    },
+    {
+      "code": 6305,
+      "name": "UnverifiedPythLazerMessage",
+      "msg": "Verification of pyth lazer message failed"
+    },
+    {
+      "code": 6306,
+      "name": "InvalidPythLazerMessage",
+      "msg": "Invalid pyth lazer message"
+    },
+    {
+      "code": 6307,
+      "name": "PythLazerMessagePriceFeedMismatch",
+      "msg": "Pyth lazer message does not correspond to correct fed id"
+    },
+    {
+      "code": 6308,
+      "name": "InvalidLiquidateSpotWithSwap",
+      "msg": "InvalidLiquidateSpotWithSwap"
+    },
+    {
+      "code": 6309,
+      "name": "SignedMsgUserContextUserMismatch",
+      "msg": "User in SignedMsg message does not match user in ix context"
+    },
+    {
+      "code": 6310,
+      "name": "UserFuelOverflowThresholdNotMet",
+      "msg": "User fuel overflow threshold not met"
+    },
+    {
+      "code": 6311,
+      "name": "FuelOverflowAccountNotFound",
+      "msg": "FuelOverflow account not found"
+    },
+    {
+      "code": 6312,
+      "name": "InvalidTransferPerpPosition",
+      "msg": "Invalid Transfer Perp Position"
+    },
+    {
+      "code": 6313,
+      "name": "InvalidSignedMsgUserOrdersResize",
+      "msg": "Invalid SignedMsgUserOrders resize"
     }
   ]
 }

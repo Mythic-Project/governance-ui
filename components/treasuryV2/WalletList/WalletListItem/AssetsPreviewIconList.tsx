@@ -21,6 +21,7 @@ import useGovernanceNfts from './AssetList/useGovernanceNfts'
 import { PublicKey } from '@solana/web3.js'
 import NFTCollectionPreviewIcon from '@components/treasuryV2/icons/NFTCollectionPreviewIcon'
 import { useDigitalAssetById } from '@hooks/queries/digitalAssets'
+import { useDefi } from '@hooks/useDefi'
 
 function isDomains(asset: Asset): asset is Domains {
   return asset.type === AssetType.Domain
@@ -92,18 +93,17 @@ interface Props {
  * 5. If the wallet contains more than 3 assets, show a count after the icons
  */
 export default function AssetsPreviewIconList(props: Props) {
+  const { indicatorTokens } = useDefi()
   const nfts = useGovernanceNfts(props.governance) ?? []
-  const tokens = props.assets
-    .filter(isToken)
-    .sort((a, b) => b.value.comparedTo(a.value))
+  const tokens = (props.assets.filter(
+    (t) => isToken(t) && !indicatorTokens.includes(t.mintAddress ?? '')
+  ) as Token[]).sort((a, b) => b.value.comparedTo(a.value))
   const sol = props.assets.filter(isSol)
   const councilMint: Mint | undefined = props.assets.filter(isCouncilMint)[0]
-  const communityMint: Mint | undefined = props.assets.filter(
-    isCommunityMint
-  )[0]
-  const realmAuthority: RealmAuthority | undefined = props.assets.filter(
-    isRealmAuthority
-  )[0]
+  const communityMint: Mint | undefined =
+    props.assets.filter(isCommunityMint)[0]
+  const realmAuthority: RealmAuthority | undefined =
+    props.assets.filter(isRealmAuthority)[0]
   const assetCount = props.assets.length
   let unaccounted = [...props.assets]
   let otherCount = assetCount - tokens.length - nfts.length - sol.length
@@ -235,7 +235,7 @@ export default function AssetsPreviewIconList(props: Props) {
 
     if (remainingTokens) {
       summary.push(
-        `${remainingTokens} ${ntext(remainingTokens, 'other token')}`
+        `${remainingTokens} ${ntext(remainingTokens, 'other token')}`,
       )
     }
 
@@ -245,7 +245,7 @@ export default function AssetsPreviewIconList(props: Props) {
 
     if (remainingPrograms) {
       summary.push(
-        `${remainingPrograms} ${ntext(remainingPrograms, 'program')}`
+        `${remainingPrograms} ${ntext(remainingPrograms, 'program')}`,
       )
     }
 
@@ -272,7 +272,7 @@ export default function AssetsPreviewIconList(props: Props) {
             React.cloneElement(item, {
               className: cx(item.props.className, 'w-4', 'h-4'),
               key: i,
-            })
+            }),
           )}
           {remainingCount > 0 && (
             <div className="pl-1 text-fgd-1 text-base">+{remainingCount}</div>

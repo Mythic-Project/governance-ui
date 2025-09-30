@@ -144,39 +144,41 @@ export function Header(props: Props) {
               {authorName}
             </div>
           )}
-          {isCrosspost && props.feedItemRealm && props.feedItemRealmPublicKey && (
-            <div
-              className="flex items-center text-xs cursor-default ml-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-neutral-500">posted in</div>
-              <Link passHref href={`/realm/${props.feedItemRealm.urlId}`}>
-                <a
-                  className={cx(
-                    'bg-white',
-                    'flex',
-                    'font-medium',
-                    'items-center',
-                    'ml-2',
-                    'px-2',
-                    'py-1',
-                    'rounded',
-                    'text-neutral-900',
-                    'transition-colors',
-                    'hover:bg-neutral-200',
-                  )}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <RealmIcon
-                    className="h-4 w-4 text-[8px] mr-1"
-                    iconUrl={props.feedItemRealm.iconUrl}
-                    name={props.feedItemRealm.name}
-                  />
-                  <div>{props.feedItemRealm.name}</div>
-                </a>
-              </Link>
-            </div>
-          )}
+          {isCrosspost &&
+            props.feedItemRealm &&
+            props.feedItemRealmPublicKey && (
+              <div
+                className="flex items-center text-xs cursor-default ml-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-neutral-500">posted in</div>
+                <Link passHref href={`/realm/${props.feedItemRealm.urlId}`}>
+                  <a
+                    className={cx(
+                      'bg-white',
+                      'flex',
+                      'font-medium',
+                      'items-center',
+                      'ml-2',
+                      'px-2',
+                      'py-1',
+                      'rounded',
+                      'text-neutral-900',
+                      'transition-colors',
+                      'hover:bg-neutral-200',
+                    )}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <RealmIcon
+                      className="h-4 w-4 text-[8px] mr-1"
+                      iconUrl={props.feedItemRealm.iconUrl}
+                      name={props.feedItemRealm.name}
+                    />
+                    <div>{props.feedItemRealm.name}</div>
+                  </a>
+                </Link>
+              </div>
+            )}
         </div>
         {props.proposal ? (
           <a

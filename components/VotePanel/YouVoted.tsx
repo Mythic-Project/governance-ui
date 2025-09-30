@@ -72,7 +72,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
   const voterTokenRecord =
     quorum === 'electoral' ? electoralVoterTokenRecord : vetoVotertokenRecord
   const votingClient = useVotingClientForGoverningTokenMint(
-    proposal?.account.governingTokenMint
+    proposal?.account.governingTokenMint,
   )
 
   const isWithdrawEnabled =
@@ -110,7 +110,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
       getProgramVersionForRealm(realmInfo!),
       wallet!,
       connection.current,
-      connection.endpoint
+      connection.endpoint,
     )
 
     try {
@@ -134,7 +134,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
           proposal.pubkey,
           proposal.account.tokenOwnerRecord,
           proposal.account.governingTokenMint,
-          maxVoterWeight
+          maxVoterWeight,
         )
       }
 
@@ -145,7 +145,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
         voterTokenRecord.pubkey,
         ownVoteRecord.pubkey,
         instructions,
-        votingClient
+        votingClient,
       )
       queryClient.invalidateQueries({
         queryKey: proposalQueryKeys.all(connection.endpoint),
@@ -157,10 +157,10 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
   }
 
   const selectedCommunityDelegator = useSelectedDelegatorStore(
-    (s) => s.communityDelegator
+    (s) => s.communityDelegator,
   )
   const selectedCouncilDelegator = useSelectedDelegatorStore(
-    (s) => s.councilDelegator
+    (s) => s.councilDelegator,
   )
 
   const communityDelegators = useBatchedVoteDelegators('community')
@@ -197,14 +197,14 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
           const pda = await getVoteRecordAddress(
             proposal.owner,
             proposal.pubkey,
-            delegator.pubkey
+            delegator.pubkey,
           )
           const voteRecord = await fetchVoteRecordByPubkey(
             connection.current,
-            pda
+            pda,
           )
           return voteRecord
-        })
+        }),
       )
 
       const allVoted = !delegatorisVoteList
@@ -270,7 +270,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
                     </div>
                   </Button>
                 </div>
-              ) : null
+              ) : null,
             )
           ) : (
             <Tooltip content={`You voted "Yes"`}>

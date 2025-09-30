@@ -21,6 +21,7 @@ import AddMemberIcon from '@components/AddMemberIcon'
 import {
   ArrowCircleDownIcon,
   ArrowCircleUpIcon,
+  RefreshIcon,
 } from '@heroicons/react/outline'
 import useCreateProposal from '@hooks/useCreateProposal'
 import { AssetAccount } from '@utils/uiTypes/assets'
@@ -32,7 +33,9 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { DEFAULT_GOVERNANCE_PROGRAM_VERSION } from '@components/instructions/tools'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
+import { resolveDomain } from '@utils/domains'
+import debounce from 'lodash/debounce'
 
 interface AddMemberForm extends Omit<MintForm, 'mintAccount'> {
   description: string
@@ -51,7 +54,8 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
   const router = useRouter()
   const connection = useLegacyConnectionContext()
   const wallet = useWalletOnePointOh()
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
 
   const { fmtUrlWithCluster } = useQueryContext()
   const { symbol } = router.query
@@ -95,6 +99,44 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
   // note the lack of space is not a typo
   const proposalTitle = `Add ${govpop}member ${abbrevAddress}`
 
+  const [isResolvingDomain, setIsResolvingDomain] = useState(false)
+
+  const resolveDomainDebounced = useMemo(
+    () =>
+      debounce(async (domain: string) => {
+        try {
+          console.log('Attempting to resolve domain:', domain)
+          const resolved = await resolveDomain(connection.current, domain)
+          console.log('Domain resolved to:', resolved?.toBase58() || 'null')
+
+          if (resolved) {
+            handleSetForm({
+              value: resolved.toBase58(),
+              propertyName: 'destinationAccount',
+            })
+          }
+        } catch (error) {
+          console.error('Error resolving domain:', error)
+        } finally {
+          setIsResolvingDomain(false)
+        }
+      }, 500),
+    [connection],
+  )
+
+  const handleDestinationAccountChange = async (event) => {
+    const value = event.target.value
+    handleSetForm({
+      value,
+      propertyName: 'destinationAccount',
+    })
+
+    if (value.includes('.')) {
+      setIsResolvingDomain(true)
+      resolveDomainDebounced(value)
+    }
+  }
+
   const setAmount = (event) => {
     const value = event.target.value
 
@@ -116,8 +158,8 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
       value: parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value))
-        ).toFixed(currentPrecision)
+          Math.min(Number(Number.MAX_SAFE_INTEGER), Number(value)),
+        ).toFixed(currentPrecision),
       ),
       propertyName: 'amount',
     })
@@ -158,9 +200,9 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         new PublicKey(form.destinationAccount),
         getMintNaturalAmountFromDecimalAsBN(
           form.amount ?? 1,
-          mintInfo?.result.decimals
+          mintInfo?.result.decimals,
         ),
-        true // make recipient a signer
+        true, // make recipient a signer
       )
       const ix = goofySillyArrayForBuilderPattern[0]
 
@@ -238,12 +280,12 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         })
 
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}?share=true`,
         )
 
         router.push(url)
       } catch (error) {
-        console.log('Error creating proposal', error);
+        console.log('Error creating proposal', error)
         notify({
           type: 'error',
           message: `${error}`,
@@ -264,23 +306,25 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
         <h2 className="text-xl">Add new member to {realmInfo?.displayName}</h2>
       </div>
 
-      <Input
-        useDefaultStyle={false}
-        className="p-4 w-full bg-bkg-3 border border-bkg-3 default-transition text-sm text-fgd-1 rounded-md focus:border-bkg-3 focus:outline-none"
-        wrapperClassName="my-6"
-        label="Member's wallet"
-        placeholder="Member's wallet"
-        value={form.destinationAccount}
-        type="text"
-        onChange={(event) =>
-          handleSetForm({
-            value: event.target.value,
-            propertyName: 'destinationAccount',
-          })
-        }
-        noMaxWidth
-        error={formErrors['destinationAccount']}
-      />
+      <div className="relative">
+        <Input
+          useDefaultStyle={false}
+          className="p-4 w-full bg-bkg-3 border border-bkg-3 default-transition text-sm text-fgd-1 rounded-md focus:border-bkg-3 focus:outline-none"
+          wrapperClassName="my-6"
+          label="Member's wallet"
+          placeholder="Member's wallet or domain name (e.g. domain.solana)"
+          value={form.destinationAccount}
+          type="text"
+          onChange={handleDestinationAccountChange}
+          noMaxWidth
+          error={formErrors['destinationAccount']}
+        />
+        {isResolvingDomain && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <RefreshIcon className="h-4 w-4 animate-spin text-primary-light" />
+          </div>
+        )}
+      </div>
 
       <div
         className={'flex items-center hover:cursor-pointer w-24 my-3'}
@@ -346,12 +390,12 @@ const AddMemberForm: FC<{ close: () => void; mintAccount: AssetAccount }> = ({
           />
 
           {shouldShowVoteByCouncilToggle && (
-              <VoteBySwitch
-                  checked={voteByCouncil}
-                  onChange={() => {
-                    setVoteByCouncil(!voteByCouncil)
-                  }}
-              ></VoteBySwitch>
+            <VoteBySwitch
+              checked={voteByCouncil}
+              onChange={() => {
+                setVoteByCouncil(!voteByCouncil)
+              }}
+            ></VoteBySwitch>
           )}
         </>
       )}
@@ -384,9 +428,9 @@ const useCouncilMintAccount = () => {
     () =>
       assetAccounts.find(
         (x) =>
-          x.pubkey.toBase58() === realm?.account.config.councilMint?.toBase58()
+          x.pubkey.toBase58() === realm?.account.config.councilMint?.toBase58(),
       ),
-    [assetAccounts, realm?.account.config.councilMint]
+    [assetAccounts, realm?.account.config.councilMint],
   )
   return councilMintAccount
 }

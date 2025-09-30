@@ -2,7 +2,7 @@ import { MintInfo } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import useRealm from '@hooks/useRealm'
-import { getTokenOwnerRecordAddress, Proposal } from '@solana/spl-governance'
+import { getTokenOwnerRecordAddress, Proposal, RealmConfigAccount } from '@solana/spl-governance'
 import { Option } from '@tools/core/option'
 import { GoverningTokenRole } from '@solana/spl-governance'
 import { fmtMintAmount } from '@tools/sdk/units'
@@ -26,6 +26,7 @@ import {
   useRealmCouncilMintInfoQuery,
 } from '@hooks/queries/mintInfo'
 import { useVsrGovpower } from '@hooks/queries/plugins/vsr'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 /** UNUSED */
 const LockPluginTokenBalanceCard = ({
@@ -49,7 +50,7 @@ const LockPluginTokenBalanceCard = ({
 
   const isDepositVisible = (
     depositMint: MintInfo | undefined,
-    realmMint: PublicKey | undefined
+    realmMint: PublicKey | undefined,
   ) =>
     depositMint &&
     (!proposal ||
@@ -63,7 +64,7 @@ const LockPluginTokenBalanceCard = ({
 
   const councilDepositVisible = isDepositVisible(
     councilMint,
-    realm?.account.config.councilMint
+    realm?.account.config.councilMint,
   )
 
   const defaultMint =
@@ -81,7 +82,7 @@ const LockPluginTokenBalanceCard = ({
           realm.owner,
           realm.pubkey,
           defaultMint,
-          walletPublicKey
+          walletPublicKey,
         )
         setTokenOwnerRecordPk(tokenOwnerRecordAddress.toBase58())
       }
@@ -125,6 +126,7 @@ const LockPluginTokenBalanceCard = ({
               mint={mint}
               tokenRole={GoverningTokenRole.Community}
               councilVote={false}
+              realmConfig={config?.account}
               setHasGovPower={setHasGovPower}
             />
           )}
@@ -151,11 +153,13 @@ const LockPluginTokenBalanceCard = ({
 const TokenDepositLock = ({
   mint,
   tokenRole,
+  realmConfig,
   inAccountDetails,
   setHasGovPower,
 }: {
   mint: MintInfo | undefined
   tokenRole: GoverningTokenRole
+  realmConfig?: RealmConfigAccount
   councilVote?: boolean
   inAccountDetails?: boolean
   setHasGovPower: (hasGovPower: boolean) => void
@@ -168,20 +172,20 @@ const TokenDepositLock = ({
   const deposits = useDepositStore((s) => s.state.deposits)
   const votingPower = useVsrGovpower().data?.result ?? new BN(0)
   const votingPowerFromDeposits = useDepositStore(
-    (s) => s.state.votingPowerFromDeposits
+    (s) => s.state.votingPowerFromDeposits,
   )
   const lockedTokensAmount = deposits
     .filter(
       (x) =>
         typeof x.lockup.kind['none'] === 'undefined' &&
-        x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58()
+        x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58(),
     )
     .reduce((curr, next) => curr.add(next.currentlyLocked), new BN(0))
 
   const depositRecord = deposits.find(
     (x) =>
       x.mint.publicKey.toBase58() === realm?.account.communityMint.toBase58() &&
-      x.lockup.kind.none
+      x.lockup.kind.none,
   )
 
   const depositTokenAccount =
@@ -195,6 +199,11 @@ const TokenDepositLock = ({
       : realm?.account.config.councilMint
 
   const tokenName = getMintMetadata(depositMint)?.name ?? realm?.account.name
+
+  const displayMint = 
+    realmConfig?.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] ?
+      deposits[0].mint.account :
+      mint
 
   const depositTokenName = `${tokenName} ${
     tokenRole === GoverningTokenRole.Community ? '' : 'Council'
@@ -229,7 +238,7 @@ const TokenDepositLock = ({
       : 0
 
   // Do not show deposits for mints with zero supply because nobody can deposit anyway
-  if (!mint || mint.supply.isZero()) {
+  if (!displayMint || displayMint.supply.isZero()) {
     return null
   }
 
@@ -249,7 +258,7 @@ const TokenDepositLock = ({
         <div className="flex space-x-4 items-center mt-4">
           <VotingPowerBox
             votingPower={votingPower}
-            mint={mint}
+            mint={displayMint}
             votingPowerFromDeposits={votingPowerFromDeposits}
             className="w-full px-4 py-2"
           ></VotingPowerBox>

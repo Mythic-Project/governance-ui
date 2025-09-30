@@ -55,12 +55,12 @@ const RealmConfigFormComponent = ({
   const minCommunityTokensToCreateProposal =
     realm && mint
       ? DISABLED_VOTER_WEIGHT.eq(
-          realm.account.config.minCommunityTokensToCreateGovernance
+          realm.account.config.minCommunityTokensToCreateGovernance,
         )
         ? DISABLED_VOTER_WEIGHT
         : getMintDecimalAmount(
             mint,
-            realm.account.config.minCommunityTokensToCreateGovernance
+            realm.account.config.minCommunityTokensToCreateGovernance,
           )
       : new BigNumber(0)
 
@@ -110,7 +110,7 @@ const RealmConfigFormComponent = ({
       options: assetAccounts.filter(
         (x) =>
           x.governance.pubkey.toBase58() ===
-          realm?.account.authority?.toBase58()
+          realm?.account.authority?.toBase58(),
       ),
       hide: hideGovSelector,
     },

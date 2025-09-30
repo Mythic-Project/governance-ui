@@ -26,6 +26,10 @@ import { NewProposalContext } from '../../../new'
 import useMembershipTypes from './useMembershipTypes'
 import { useRealmQuery } from '@hooks/queries/realm'
 import Tooltip from '@components/Tooltip'
+import { resolveDomain } from '@utils/domains'
+import { RefreshIcon } from '@heroicons/react/outline'
+import debounce from 'lodash/debounce'
+import { useConnection } from '@solana/wallet-adapter-react'
 
 type Form = {
   memberKey?: string
@@ -78,23 +82,12 @@ const RevokeGoverningTokens: FC<{
     }
   }, [query])
 
-  // If there's only one membership type, we can just select that for the user.
-  // @asktree style note: I create a new variable rather than using `setForm` here because I don't like side effects
-  const selectedMembershipType = useMemo(
-    () =>
-      form.membershipPopulation ?? Object.keys(membershipTypes).length === 1
-        ? Object.keys(membershipTypes)[0]
-        : undefined,
-    [form.membershipPopulation, membershipTypes]
+  const [selectedMint, setSelectedMint] = useState<PublicKey | undefined>(
+    undefined,
   )
-
-  const selectedMint = useMemo(
-    () =>
-      selectedMembershipType === undefined
-        ? undefined
-        : (membershipTypes[selectedMembershipType] as PublicKey | undefined),
-    [membershipTypes, selectedMembershipType]
-  )
+  const [selectedMembershipType, setSelectedMembershipType] = useState<
+    string | undefined
+  >(undefined)
 
   const { data: mintInfo } = useMintInfoByPubkeyQuery(selectedMint)
   const governance = useGovernanceForGovernedAddress(selectedMint)
@@ -153,8 +146,8 @@ const RevokeGoverningTokens: FC<{
       revokeTokenAuthority,
       getMintNaturalAmountFromDecimalAsBN(
         parseFloat(form.amount),
-        mintInfo.result.decimals
-      )
+        mintInfo.result.decimals,
+      ),
     )
     return {
       isValid: true,
@@ -180,7 +173,7 @@ const RevokeGoverningTokens: FC<{
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -196,6 +189,42 @@ const RevokeGoverningTokens: FC<{
     governance,
   ])
 
+  // Add state for domain resolution
+  const [isResolvingDomain, setIsResolvingDomain] = useState(false)
+  const { connection } = useConnection()
+
+  // Add the debounced resolve function
+  const resolveDomainDebounced = useMemo(
+    () =>
+      debounce(async (domain: string) => {
+        try {
+          console.log('Attempting to resolve domain:', domain)
+          const resolved = await resolveDomain(connection, domain)
+          console.log('Domain resolved to:', resolved?.toBase58() || 'null')
+
+          if (resolved) {
+            setForm((prevForm) => ({
+              ...prevForm,
+              memberKey: resolved.toBase58(),
+            }))
+          }
+        } catch (error) {
+          console.error('Error resolving domain:', error)
+        } finally {
+          setIsResolvingDomain(false)
+        }
+      }, 500),
+    [connection],
+  )
+
+  const updateMembershipType = (x: 'council' | 'community' | undefined) => {
+    setForm((p) => ({ ...p, membershipPopulation: x }))
+    setSelectedMembershipType(x)
+    if (x) {
+      setSelectedMint(membershipTypes[x])
+    }
+  }
+
   return (
     <>
       <Tooltip
@@ -209,7 +238,7 @@ const RevokeGoverningTokens: FC<{
           label="Membership Token"
           disabled={Object.keys(membershipTypes).length === 0}
           value={selectedMembershipType}
-          onChange={(x) => setForm((p) => ({ ...p, membershipPopulation: x }))}
+          onChange={(x) => updateMembershipType(x)}
         >
           {Object.keys(membershipTypes).map((x) => (
             <Select.Option key={x} value={x}>
@@ -218,13 +247,29 @@ const RevokeGoverningTokens: FC<{
           ))}
         </Select>
       </Tooltip>
-      <Input
-        label="Member Public Key"
-        value={form.memberKey}
-        type="text"
-        onChange={(e) => setForm((p) => ({ ...p, memberKey: e.target.value }))}
-        error={formErrors.memberKey}
-      />
+      <div className="relative">
+        <Input
+          label="Member Public Key"
+          value={form.memberKey}
+          type="text"
+          placeholder="Member wallet or domain name (e.g. domain.solana)"
+          onChange={(e) => {
+            const value = e.target.value
+            setForm((p) => ({ ...p, memberKey: value }))
+
+            if (value.includes('.')) {
+              setIsResolvingDomain(true)
+              resolveDomainDebounced(value)
+            }
+          }}
+          error={formErrors.memberKey}
+        />
+        {isResolvingDomain && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <RefreshIcon className="h-4 w-4 animate-spin text-primary-light" />
+          </div>
+        )}
+      </div>
       <TokenAmountInput
         mint={selectedMint}
         label="Amount of weight to revoke"

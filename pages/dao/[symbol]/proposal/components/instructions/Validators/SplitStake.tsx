@@ -89,7 +89,7 @@ const SplitStake = ({
             bytes: form.governedTokenAccount.pubkey.toBase58(),
           },
         },
-      ]
+      ],
     )
 
     const accountsStaked = await getFilteredProgramAccounts(
@@ -108,7 +108,7 @@ const SplitStake = ({
             bytes: form.governedTokenAccount.pubkey.toBase58(),
           },
         },
-      ]
+      ],
     )
 
     const stakingAccounts = accountsNotYetStaked.concat(
@@ -116,9 +116,9 @@ const SplitStake = ({
         // filter all accounts which are not yet deactivated
         const data = x.accountInfo.data.slice(172, 172 + 8)
         return !data.equals(
-          Buffer.from([255, 255, 255, 255, 255, 255, 255, 255])
+          Buffer.from([255, 255, 255, 255, 255, 255, 255, 255]),
         )
-      })
+      }),
     )
 
     return stakingAccounts.map((x) => {
@@ -179,14 +179,14 @@ const SplitStake = ({
       return returnInvalid()
     }
     const realAmount = parseMintNaturalAmountFromDecimal(form.amount!, 9)
-    const authorizedPubkey = form.governedTokenAccount.extensions
-      .transferAddress!
+    const authorizedPubkey =
+      form.governedTokenAccount.extensions.transferAddress!
     const stakePubkey = new PublicKey(form.stakingAccount.stakeAccount)
     const rent = await connection.current.getMinimumBalanceForRentExemption(200)
     const splitStakeAccount = await genShortestUnusedSeed(
       connection.current,
       authorizedPubkey,
-      StakeProgram.programId
+      StakeProgram.programId,
     )
 
     const instruction = web3.StakeProgram.splitWithSeed({
@@ -201,7 +201,7 @@ const SplitStake = ({
     return {
       serializedInstruction: '',
       additionalSerializedInstructions: instruction.instructions.map((x) =>
-        serializeInstructionToBase64(x)
+        serializeInstructionToBase64(x),
       ),
       isValid: true,
       governance: form.governedTokenAccount.governance,
@@ -215,7 +215,7 @@ const SplitStake = ({
         governedAccount: governedAccount,
         getInstruction,
       },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -223,7 +223,7 @@ const SplitStake = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
@@ -240,7 +240,7 @@ const SplitStake = ({
       <GovernedAccountSelect
         label="Treasury account"
         governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (x) => x.isSol
+          (x) => x.isSol,
         )}
         onChange={(value) => {
           handleSetForm({ value, propertyName: 'governedTokenAccount' })

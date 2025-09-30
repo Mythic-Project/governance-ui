@@ -23,7 +23,7 @@ const useRealmAccount = (realmId?: PublicKey) => {
   const { data, mutate, isValidating, error } = useSWR(
     () => realmId && [realmId.toBase58(), connection.rpcEndpoint],
     () => fetcher({ connection, realm: realmId }),
-    { revalidateOnFocus: false, revalidateIfStale: false, errorRetryCount: 0 }
+    { revalidateOnFocus: false, revalidateIfStale: false, errorRetryCount: 0 },
   )
 
   const loading = !data && !error

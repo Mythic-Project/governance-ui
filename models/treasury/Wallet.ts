@@ -6,6 +6,7 @@ import type {
 } from '@solana/spl-governance'
 
 import { Asset, Mango, Sol, Token } from './Asset'
+import type { PublicKey } from '@metaplex-foundation/js'
 
 interface CommonRules {
   maxVotingTime: number
@@ -37,6 +38,10 @@ export interface Wallet {
     votingProposalCount?: number
   }
   totalValue: BigNumber
+  favoriteDomain?: {
+    name: string
+    address: PublicKey
+  } | null
 }
 
 export interface AuxiliaryWallet {

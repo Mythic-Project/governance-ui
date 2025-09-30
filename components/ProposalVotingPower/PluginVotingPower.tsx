@@ -38,13 +38,13 @@ export default function PluginVotingPower({
     () =>
       mintInfo && ownVoterWeight?.communityTokenRecord
         ? new BigNumber(
-            ownVoterWeight?.communityTokenRecord?.account?.governingTokenDepositAmount?.toString()
+            ownVoterWeight?.communityTokenRecord?.account?.governingTokenDepositAmount?.toString(),
           )
             .shiftedBy(-mintInfo.decimals)
             .toFixed(2)
             .toString()
         : undefined,
-    [mintInfo, ownVoterWeight?.communityTokenRecord]
+    [mintInfo, ownVoterWeight?.communityTokenRecord],
   )
 
   const relevantMint =
@@ -63,7 +63,7 @@ export default function PluginVotingPower({
             .toFixed(2)
             .toString()
         : undefined,
-    [mintInfo, voterWeight?.value]
+    [mintInfo, voterWeight?.value],
   )
 
   if (isLoading || !isReady) {
@@ -71,7 +71,7 @@ export default function PluginVotingPower({
       <div
         className={classNames(
           className,
-          'rounded-md bg-bkg-1 h-[76px] animate-pulse'
+          'rounded-md bg-bkg-1 h-[76px] animate-pulse',
         )}
       />
     )

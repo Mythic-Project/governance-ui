@@ -14,7 +14,7 @@ interface TransactionStore extends State {
   showTransactionError: (
     retryCallback: () => Promise<void>,
     e: any,
-    txid: string
+    txid: string,
   ) => void
 }
 

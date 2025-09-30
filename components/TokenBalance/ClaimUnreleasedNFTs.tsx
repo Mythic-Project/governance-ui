@@ -8,7 +8,12 @@ import {
   SequenceType,
   txBatchesToInstructionSetWithSigners,
 } from '@utils/sendTransactions'
-import { ProgramAccount, Proposal, ProposalState, getProposal } from '@solana/spl-governance'
+import {
+  ProgramAccount,
+  Proposal,
+  ProposalState,
+  getProposal,
+} from '@solana/spl-governance'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useAddressQuery_CommunityTokenOwner } from '@hooks/queries/addresses/tokenOwnerRecord'
 import { useRealmQuery } from '@hooks/queries/realm'
@@ -19,12 +24,12 @@ import {
   proposalQueryKeys,
   useRealmProposalsQuery,
 } from '@hooks/queries/proposal'
-import {useNftClient} from "../../VoterWeightPlugins/useNftClient";
+import { useNftClient } from '../../VoterWeightPlugins/useNftClient'
 
 const NFT_SOL_BALANCE = 0.0014616
 
 type NftRecordsSet = {
-  proposal: PublicKey,
+  proposal: PublicKey
   records: PublicKey[]
 }
 
@@ -40,7 +45,7 @@ const ClaimUnreleasedNFTs = ({
   const [solToBeClaimed, setSolToBeClaimed] = useState(0)
   const ownNftVoteRecordsFilterd = ownNftVoteRecords
   const realm = useRealmQuery().data?.result
-  const { nftClient } = useNftClient();
+  const { nftClient } = useNftClient()
   const { isNftMode } = useRealm()
 
   const { data: tokenOwnerRecord } = useAddressQuery_CommunityTokenOwner()
@@ -50,25 +55,34 @@ const ClaimUnreleasedNFTs = ({
     if (!wallet?.publicKey) throw new Error('no wallet')
     if (!realm) throw new Error()
     if (!tokenOwnerRecord) throw new Error()
-    if (!nftClient) throw new Error("not an NFT realm")
+    if (!nftClient) throw new Error('not an NFT realm')
 
     setIsLoading(true)
     const instructions: TransactionInstruction[] = []
-    const { registrar } = nftClient.getRegistrarPDA(realm.pubkey, realm.account.communityMint);
+    const { registrar } = nftClient.getRegistrarPDA(
+      realm.pubkey,
+      realm.account.communityMint,
+    )
 
-    const { voterWeightPk } = await nftClient.getVoterWeightRecordPDA(realm.pubkey, realm.account.communityMint, wallet.publicKey)
+    const { voterWeightPk } = await nftClient.getVoterWeightRecordPDA(
+      realm.pubkey,
+      realm.account.communityMint,
+      wallet.publicKey,
+    )
 
     const nfts = ownNftVoteRecordsFilterd.slice(
       0,
-      count ? count : ownNftVoteRecordsFilterd.length
+      count ? count : ownNftVoteRecordsFilterd.length,
     )
 
-    const fetchedProposals: ProgramAccount<Proposal>[]  = [];
-    const nftRecordsSet: NftRecordsSet[] = [];
+    const fetchedProposals: ProgramAccount<Proposal>[] = []
+    const nftRecordsSet: NftRecordsSet[] = []
 
     for (const i of nfts) {
-      const isProposalFetched = fetchedProposals.find(proposal => proposal.pubkey.equals(i.account.proposal))
-      let currentProposal: ProgramAccount<Proposal> | undefined;
+      const isProposalFetched = fetchedProposals.find((proposal) =>
+        proposal.pubkey.equals(i.account.proposal),
+      )
+      let currentProposal: ProgramAccount<Proposal> | undefined
 
       if (isProposalFetched) {
         currentProposal = isProposalFetched
@@ -76,7 +90,7 @@ const ClaimUnreleasedNFTs = ({
         const proposalQuery = await queryClient.fetchQuery({
           queryKey: proposalQueryKeys.byPubkey(
             connection.rpcEndpoint,
-            i.account.proposal
+            i.account.proposal,
           ),
           staleTime: 0,
           queryFn: () =>
@@ -87,7 +101,7 @@ const ClaimUnreleasedNFTs = ({
           fetchedProposals.push(proposalQuery.result)
           nftRecordsSet.push({
             proposal: proposalQuery.result.pubkey,
-            records: []
+            records: [],
           })
         }
       }
@@ -99,7 +113,9 @@ const ClaimUnreleasedNFTs = ({
         // ignore this one as it's still in voting
         continue
       }
-      const currentRecordsIndex = nftRecordsSet.findIndex(r => r.proposal.equals(currentProposal!.pubkey))
+      const currentRecordsIndex = nftRecordsSet.findIndex((r) =>
+        r.proposal.equals(currentProposal!.pubkey),
+      )
       nftRecordsSet[currentRecordsIndex].records.push(i.publicKey)
     }
 
@@ -107,7 +123,9 @@ const ClaimUnreleasedNFTs = ({
       const ixChunks = chunks(r.records, 25)
 
       for (const ix of ixChunks) {
-        const proposal = fetchedProposals.find(p => p.pubkey.equals(r.proposal))
+        const proposal = fetchedProposals.find((p) =>
+          p.pubkey.equals(r.proposal),
+        )
 
         const relinquishNftVoteIx = await nftClient.program.methods
           .relinquishNftVote()
@@ -121,13 +139,13 @@ const ClaimUnreleasedNFTs = ({
             voteRecord: ix[0],
             beneficiary: wallet!.publicKey!,
           })
-          .remainingAccounts(ix.map(c => (
-            { pubkey: c, isSigner: false, isWritable: true }
-          )))
+          .remainingAccounts(
+            ix.map((c) => ({ pubkey: c, isSigner: false, isWritable: true })),
+          )
           .instruction()
-        
+
         instructions.push(relinquishNftVoteIx)
-      } 
+      }
     }
 
     try {
@@ -136,18 +154,18 @@ const ClaimUnreleasedNFTs = ({
           instructionsSet: txBatchesToInstructionSetWithSigners(
             txBatch,
             [],
-            batchIdx
+            batchIdx,
           ),
           sequenceType: SequenceType.Parallel,
         }
       })
-    
+
       await sendTransactionsV3({
         connection,
         wallet: wallet!,
         transactionInstructions: insertChunks,
       })
-      
+
       setIsLoading(false)
       getNftsVoteRecord()
     } catch (e) {
@@ -156,7 +174,7 @@ const ClaimUnreleasedNFTs = ({
     }
   }
   const getNftsVoteRecord = async () => {
-    if (!nftClient) throw new Error("not an NFT realm");
+    if (!nftClient) throw new Error('not an NFT realm')
     const nftVoteRecords = await nftClient.program.account.nftVoteRecord?.all([
       {
         memcmp: {
@@ -168,7 +186,7 @@ const ClaimUnreleasedNFTs = ({
 
     const nftVoteRecordsFiltered = nftVoteRecords.filter((x) => {
       const proposal = proposals?.find((y) =>
-        y.pubkey.equals(x.account.proposal)
+        y.pubkey.equals(x.account.proposal),
       )
       return (
         proposal &&

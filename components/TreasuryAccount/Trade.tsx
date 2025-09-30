@@ -32,7 +32,6 @@ import { useRouter } from 'next/router'
 import useCreateProposal from '@hooks/useCreateProposal'
 import useQueryContext from '@hooks/useQueryContext'
 import {
-  AccountInfo,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   MintInfo,
   Token,
@@ -40,7 +39,7 @@ import {
 } from '@solana/spl-token'
 import { InstructionDataWithHoldUpTime } from 'actions/createProposal'
 import { AssetAccount } from '@utils/uiTypes/assets'
-import { TokenProgramAccount } from '@utils/tokens'
+import { TokenAccount, TokenProgramAccount } from '@utils/tokens'
 import useWalletDeprecated from '@hooks/useWalletDeprecated'
 import TokenSelect from '@components/inputs/TokenSelect'
 import DateTimePicker from '@components/inputs/DateTimePicker'
@@ -51,7 +50,7 @@ import {
 import { deriveAllBoundedStrategyKeysV2 } from '@utils/instructions/PsyFinance/poseidon'
 import { TokenInfo } from '@utils/services/types'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 type TradeProps = { tokenAccount: AssetAccount }
 
@@ -70,7 +69,7 @@ type TradeForm = {
 
 const formSchema = (
   mintInfo: TokenProgramAccount<MintInfo>,
-  token: TokenProgramAccount<AccountInfo>
+  token: TokenProgramAccount<TokenAccount>,
 ) => {
   return (
     yup
@@ -87,17 +86,17 @@ const formSchema = (
             function (val: number) {
               const mintValue = getMintNaturalAmountFromDecimalAsBN(
                 val,
-                mintInfo.account.decimals
+                mintInfo.account.decimals,
               )
               return token.account.amount.gte(mintValue)
-            }
+            },
           )
           .test(
             'amount',
             'Transfer amount must be greater than 0',
             function (val: number) {
               return val > 0
-            }
+            },
           ),
         limitPrice: yup
           .number()
@@ -107,7 +106,7 @@ const formSchema = (
             'limitPrice must be greater than 0',
             function (val: number) {
               return val > 0
-            }
+            },
           ),
         poseidonProgramId: yup
           .string()
@@ -121,7 +120,7 @@ const formSchema = (
                 return false
               }
               return true
-            }
+            },
           ),
         assetMint: yup
           .string()
@@ -135,7 +134,7 @@ const formSchema = (
                 return false
               }
               return true
-            }
+            },
           ),
         reclaimDate: yup.date().typeError('reclaimDate must be a valid date'),
         reclaimAddress: yup
@@ -150,7 +149,7 @@ const formSchema = (
                 return false
               }
               return true
-            }
+            },
           ),
       })
       // Check the Bound and Order Side are viable
@@ -164,7 +163,7 @@ const formSchema = (
 }
 
 const poseidonProgramId = new web3.PublicKey(
-  '8TJjyzq3iXc48MgV6TD5DumKKwfWKU14Jr9pwgnAbpzs'
+  '8TJjyzq3iXc48MgV6TD5DumKKwfWKU14Jr9pwgnAbpzs',
 )
 
 const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
@@ -174,7 +173,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   const { wallet, anchorProvider } = useWalletDeprecated()
   const { handleCreateProposal } = useCreateProposal()
   const { canUseTransferInstruction } = useGovernanceAssets()
-  const {symbol } = useRealm()
+  const { symbol } = useRealm()
   const { fmtUrlWithCluster } = useQueryContext()
   const [form, setForm] = useState<TradeForm>({
     amount: 0,
@@ -191,7 +190,8 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   })
   const [formErrors, setFormErrors] = useState({})
   const [showOptions, setShowOptions] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [isLoading, setIsLoading] = useState(false)
   const [destinationToken, setDestinationToken] = useState<TokenInfo>()
 
@@ -203,7 +203,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   const schema = formSchema(mintAccount, token)
 
   const tokenInfo = tokenPriceService.getTokenInfo(
-    mintAccount.publicKey.toString()
+    mintAccount.publicKey.toString(),
   )
   const inputTokenSym = tokenInfo?.symbol
     ? tokenInfo?.symbol
@@ -212,7 +212,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
   const totalValue = useTotalTokenValue({
     amount: getMintDecimalAmountFromNatural(
       mintAccount.account,
-      token.account.amount
+      token.account.amount,
     ).toNumber(),
     mintAddress: mintAccount.publicKey.toString(),
   })
@@ -235,35 +235,33 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
       const program = new Program<Poseidon>(
         PoseidonIDL,
         poseidonProgramId,
-        anchorProvider
+        anchorProvider,
       )
       // The minimum expected output amount
       const expectedOutput = form.amount * form.limitPrice
       // convert amount to mintAmount
       const inputAmount = getMintNaturalAmountFromDecimalAsBN(
         form.amount,
-        mintAccount.account.decimals
+        mintAccount.account.decimals,
       )
 
       const boundedPriceDenominator = getMintNaturalAmountFromDecimalAsBN(
         expectedOutput,
-        destinationToken.decimals
+        destinationToken.decimals,
       )
       const reclaimDate = new BN(form.reclaimDate.getTime() / 1_000)
 
       // Derive the BoundedStrategyV2 PDA
-      const {
-        collateralAccount,
-        boundedStrategy: boundedStrategyKey,
-      } = deriveAllBoundedStrategyKeysV2(
-        program,
-        new web3.PublicKey(form.assetMint),
-        {
-          boundPriceNumerator: inputAmount,
-          boundPriceDenominator: boundedPriceDenominator,
-          reclaimDate,
-        }
-      )
+      const { collateralAccount, boundedStrategy: boundedStrategyKey } =
+        deriveAllBoundedStrategyKeysV2(
+          program,
+          new web3.PublicKey(form.assetMint),
+          {
+            boundPriceNumerator: inputAmount,
+            boundPriceDenominator: boundedPriceDenominator,
+            reclaimDate,
+          },
+        )
 
       const proposalInstructions: InstructionDataWithHoldUpTime[] = []
       const prerequisiteInstructions: web3.TransactionInstruction[] = []
@@ -274,11 +272,10 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
         TOKEN_PROGRAM_ID,
         new web3.PublicKey(destinationToken.address),
         currentAccount!.extensions!.token!.account.owner,
-        true
+        true,
       )
-      const depositAccountInfo = await connection.current.getAccountInfo(
-        aTADepositAddress
-      )
+      const depositAccountInfo =
+        await connection.current.getAccountInfo(aTADepositAddress)
       if (!depositAccountInfo) {
         // generate the instruction for creating the ATA
         const createAtaIx = Token.createAssociatedTokenAccountInstruction(
@@ -287,7 +284,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
           new web3.PublicKey(destinationToken.address),
           aTADepositAddress,
           currentAccount!.extensions!.token!.account.owner,
-          wallet.publicKey
+          wallet.publicKey,
         )
         prerequisiteInstructions.push(createAtaIx)
       }
@@ -298,7 +295,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
           inputAmount,
           inputAmount,
           boundedPriceDenominator,
-          reclaimDate
+          reclaimDate,
         )
         .accounts({
           payer: currentAccount!.extensions!.token!.account.owner,
@@ -332,7 +329,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
           isDraft: false,
         })
         const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`
+          `/dao/${symbol}/proposal/${proposalAddress}`,
         )
 
         router.push(url)
@@ -377,7 +374,7 @@ const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
           amountFormatted={fmtTokenInfoWithMint(
             token.account.amount,
             mintAccount,
-            tokenInfo
+            tokenInfo,
           )}
           totalPrice={totalValue}
         />

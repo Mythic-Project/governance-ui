@@ -39,7 +39,7 @@ export const inputClasses = ({
           'bg-bkg-1',
           'focus:outline-none',
           !showErrorState && 'hover:border-primary-light',
-          !showErrorState && 'focus:border-primary-light'
+          !showErrorState && 'focus:border-primary-light',
         )
   } px-3 py-2 h-auto w-full border default-transition text-sm text-fgd-1 rounded-md ${className}`
 

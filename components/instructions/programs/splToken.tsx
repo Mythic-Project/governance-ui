@@ -1,13 +1,15 @@
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { AccountMetaData, SYSTEM_PROGRAM_ID } from '@solana/spl-governance'
 import { tryGetMint, tryGetTokenAccount } from '../../../utils/tokens'
 import BN from 'bn.js'
 import { getMintDecimalAmountFromNatural } from '@tools/sdk/units'
 import tokenPriceService from '@utils/services/tokenPrice'
-import { TokenInstruction } from '@solendprotocol/solend-sdk/dist/instructions/instruction'
-import { AuthorityType } from '@solana/spl-token'
+import { TokenInstruction } from '@solendprotocol/solend-sdk'
+import { AuthorityType, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { struct, u8 } from 'buffer-layout'
 import { publicKey } from '@coral-xyz/borsh'
+import { decodeTransferCheckedInstruction } from '@solana/spl-token-new'
+import { toUiDecimals } from '@blockworks-foundation/mango-v4'
 
 interface TokenMintMetadata {
   name: string
@@ -26,7 +28,7 @@ const MINT_METADATA = {
 }
 
 export function getMintMetadata(
-  tokenMintPk: PublicKey | undefined
+  tokenMintPk: PublicKey | undefined,
 ): TokenMintMetadata {
   const tokenMintAddress = tokenMintPk ? tokenMintPk.toBase58() : ''
   const tokenInfo = tokenMintAddress
@@ -49,11 +51,11 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenAccount = await tryGetTokenAccount(
           connection,
-          accounts[0].pubkey
+          accounts[0].pubkey,
         )
         const tokenMint = tokenAccount
           ? await tryGetMint(connection, tokenAccount!.account.mint)
@@ -90,12 +92,61 @@ export const SPL_TOKEN_INSTRUCTIONS = {
         )
       },
     },
+    12: {
+      name: 'Token: Transfer Checked',
+      accounts: [
+        { name: 'Source', important: true },
+        { name: 'Mint', important: true },
+        { name: 'Destination' },
+        { name: 'Authority' },
+      ],
+      getDataUI: async (
+        connection: Connection,
+        data: Uint8Array,
+        accounts: AccountMetaData[],
+      ) => {
+        const tokenMint = await tryGetMint(connection, accounts[1].pubkey)
+        const tokenMintDescriptor = getMintMetadata(accounts[1].pubkey)
+        const transferChecked = decodeTransferCheckedInstruction(
+          new TransactionInstruction({
+            keys: accounts,
+            data: Buffer.from(data),
+            programId: TOKEN_PROGRAM_ID,
+          }),
+          TOKEN_PROGRAM_ID,
+        )
+
+        const tokenAmount = tokenMint
+          ? toUiDecimals(
+              Number(transferChecked.data.amount),
+              transferChecked.data.decimals,
+            )
+          : transferChecked.data.amount.toString()
+
+        return (
+          <>
+            {tokenMint ? (
+              <div>
+                <div>
+                  <span>Amount:</span>
+                  <span>{`${tokenAmount} ${
+                    tokenMintDescriptor?.name ?? ''
+                  }`}</span>
+                </div>
+              </div>
+            ) : (
+              <div>{JSON.stringify(data)}</div>
+            )}
+          </>
+        )
+      },
+    },
     6: {
       name: 'Token: Set Mint Authority',
       accounts: [{ name: 'Mint', important: true }, { name: 'Mint Authority' }],
       getDataUI: async (
         connection: Connection,
-        data: Uint8Array
+        data: Uint8Array,
         //accounts: AccountMetaData[]
       ) => {
         interface SetAuthorityInstructionData {
@@ -116,12 +167,12 @@ export const SPL_TOKEN_INSTRUCTIONS = {
             u8('authorityType'),
             u8('newAuthorityOption'),
             publicKey('newAuthority'),
-          ]
+          ],
         )
         let authorityParams: SetAuthorityInstructionData | null = null
         try {
           authorityParams = setAuthorityInstructionData.decode(
-            Buffer.from(data)
+            Buffer.from(data),
           )
         } catch (e) {
           console.log(e)
@@ -162,7 +213,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const tokenMint = await tryGetMint(connection, accounts[0].pubkey)
 
@@ -185,7 +236,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
               <div>
                 <div>
                   <span>Amount:</span>
-                  <span>{`${tokenAmount.toNumber().toLocaleString()} ${
+                  <span>{`${tokenAmount.toNumber()} ${
                     tokenMintDescriptor?.name ?? ''
                   }`}</span>
                 </div>
@@ -207,7 +258,7 @@ export const SPL_TOKEN_INSTRUCTIONS = {
       getDataUI: async (
         connection: Connection,
         data: Uint8Array,
-        accounts: AccountMetaData[]
+        accounts: AccountMetaData[],
       ) => {
         const mint = accounts[1].pubkey
         const tokenMint = await tryGetMint(connection, mint)

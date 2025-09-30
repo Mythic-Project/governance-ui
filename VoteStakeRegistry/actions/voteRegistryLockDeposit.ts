@@ -4,7 +4,7 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js'
-import { RpcContext, TOKEN_PROGRAM_ID } from '@solana/spl-governance'
+import { RpcContext } from '@solana/spl-governance'
 import { sendTransaction } from 'utils/send'
 
 import { BN } from '@coral-xyz/anchor'
@@ -12,6 +12,7 @@ import { LockupType } from 'VoteStakeRegistry/sdk/accounts'
 import { withCreateNewDeposit } from '../sdk/withCreateNewDeposit'
 import { getPeriod } from 'VoteStakeRegistry/tools/deposits'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 export const voteRegistryLockDeposit = async ({
   rpcContext,
@@ -56,35 +57,31 @@ export const voteRegistryLockDeposit = async ({
     throw 'no wallet connected'
   }
   const fromWalletTransferAmount = totalTransferAmount.sub(
-    amountFromVoteRegistryDeposit
+    amountFromVoteRegistryDeposit,
   )
   const instructions: TransactionInstruction[] = []
-  const {
-    depositIdx,
-    voter,
-    registrar,
-    voterATAPk,
-  } = await withCreateNewDeposit({
-    instructions,
-    walletPk: rpcContext.walletPubkey,
-    mintPk,
-    realmPk,
-    programId,
-    programVersion,
-    tokenOwnerRecordPk,
-    lockUpPeriodInDays,
-    lockupKind,
-    communityMintPk,
-    client,
-    allowClawback,
-  })
+  const { depositIdx, voter, registrar, voterATAPk, tokenProgram } =
+    await withCreateNewDeposit({
+      instructions,
+      walletPk: rpcContext.walletPubkey,
+      mintPk,
+      realmPk,
+      programId,
+      programVersion,
+      tokenOwnerRecordPk,
+      lockUpPeriodInDays,
+      lockupKind,
+      communityMintPk,
+      client,
+      allowClawback,
+    })
 
   if (!amountFromVoteRegistryDeposit.isZero()) {
     const internalTransferUnlockedInstruction = await client?.program.methods
       .internalTransferUnlocked(
         sourceDepositIdx!,
         depositIdx,
-        amountFromVoteRegistryDeposit
+        amountFromVoteRegistryDeposit,
       )
       .accounts({
         registrar: registrar,
@@ -105,16 +102,25 @@ export const voteRegistryLockDeposit = async ({
         vault: voterATAPk,
         depositToken: sourceTokenAccount,
         depositAuthority: wallet!.publicKey!,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram,
       })
       .instruction()
+    
+    if (client.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK) {
+      depositInstruction.keys.splice(3, 0, {
+        pubkey: mintPk,
+        isSigner: false,
+        isWritable: false,
+      })
+    }
+    
     instructions.push(depositInstruction)
   }
 
   if (!amountFromVoteRegistryDeposit.isZero()) {
     const period = getPeriod(lockUpPeriodInDays, lockupKind)
     const resetLockup = await client?.program.methods
-        // The cast to any works around an anchor issue with interpreting enums
+      // The cast to any works around an anchor issue with interpreting enums
       .resetLockup(depositIdx, { [lockupKind]: {} } as any, period)
       .accounts({
         registrar: registrar,

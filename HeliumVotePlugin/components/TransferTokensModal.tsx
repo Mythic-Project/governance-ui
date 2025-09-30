@@ -44,9 +44,9 @@ export const TransferTokensModal: React.FC<TransferTokensModalProps> = ({
       parseFloat(
         Math.max(
           Number(mintMinAmount),
-          Math.min(Number(maxTransferAmount), Number(e.target.value))
-        ).toFixed(currentPrecision)
-      )
+          Math.min(Number(maxTransferAmount), Number(e.target.value)),
+        ).toFixed(currentPrecision),
+      ),
     )
   }
 
@@ -56,7 +56,7 @@ export const TransferTokensModal: React.FC<TransferTokensModalProps> = ({
         setIsSubmitting(true)
         await onSubmit(
           positions.find((pos) => pos.pubkey.equals(selectedPosPk))!,
-          amount
+          amount,
         )
         onClose()
       } catch (e) {
@@ -160,7 +160,7 @@ export const TransferTokensModal: React.FC<TransferTokensModalProps> = ({
                       isConstant
                         ? getMinDurationFmt(
                             pos.lockup.startTs,
-                            pos.lockup.endTs
+                            pos.lockup.endTs,
                           )
                         : getTimeLeftFromNowFmt(pos.lockup.endTs)
                     }

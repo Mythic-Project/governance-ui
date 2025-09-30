@@ -28,7 +28,7 @@ const CreateTokenMetadata = ({
   const { realmInfo } = useRealm()
   const { assetAccounts } = useGovernanceAssets()
   const mintGovernancesWithMintInfo = assetAccounts.filter(
-    (x) => x.type === AccountType.MINT
+    (x) => x.type === AccountType.MINT,
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const programId: PublicKey | undefined = realmInfo?.programId
@@ -84,7 +84,7 @@ const CreateTokenMetadata = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: governedAccount, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form, governedAccount])
@@ -94,7 +94,7 @@ const CreateTokenMetadata = ({
     const currentGovernanceSolTreasury = assetAccounts.filter(
       (x) =>
         x.governance.pubkey.toString() ===
-          form.mintAccount?.governance.pubkey.toString() && x.isSol
+          form.mintAccount?.governance.pubkey.toString() && x.isSol,
     )
     if (currentGovernanceSolTreasury.length !== 0) {
       setShouldMakeSolTreasury(false)

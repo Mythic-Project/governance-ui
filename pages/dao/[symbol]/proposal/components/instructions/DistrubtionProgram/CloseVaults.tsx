@@ -73,7 +73,7 @@ const CloseVaults = ({
           .nullable()
           .required('Program governed account is required'),
       }),
-    []
+    [],
   )
   const getInstruction = useCallback(async () => {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
@@ -93,16 +93,15 @@ const CloseVaults = ({
           TOKEN_PROGRAM_ID,
           v.mint,
           form.governedAccount.extensions.transferAddress!,
-          true
+          true,
         )
 
-        const depositAccountInfo = await connection.current.getAccountInfo(
-          ataAddress
-        )
+        const depositAccountInfo =
+          await connection.current.getAccountInfo(ataAddress)
         if (
           !depositAccountInfo &&
           !mintsOfCurrentlyPushedAtaInstructions.find(
-            (x) => x === v.mint.toBase58()
+            (x) => x === v.mint.toBase58(),
           )
         ) {
           // generate the instruction for creating the ATA
@@ -113,8 +112,8 @@ const CloseVaults = ({
               v.mint,
               ataAddress,
               form.governedAccount.extensions.transferAddress!,
-              wallet.publicKey
-            )
+              wallet.publicKey,
+            ),
           )
           mintsOfCurrentlyPushedAtaInstructions.push(v.mint.toBase58())
         }
@@ -154,7 +153,7 @@ const CloseVaults = ({
   ])
   const handleSelectDistribution = async (number: number) => {
     const distribution = await client?.loadDistribution(
-      Number(`${SEASON_PREFIX}${number}`)
+      Number(`${SEASON_PREFIX}${number}`),
     )
     setDistribution(distribution)
   }
@@ -165,12 +164,12 @@ const CloseVaults = ({
       const mint = distribution.metadata!.mints[i]
       const type = mint.properties.type
       const vaultAddress = distribution.findVaultAddress(
-        new PublicKey(mint.address)
+        new PublicKey(mint.address),
       )
       try {
         const tokenAccount = await tryGetTokenAccount(
           connection.current,
-          vaultAddress
+          vaultAddress,
         )
 
         v[vaultAddress.toString()] = {
@@ -196,15 +195,15 @@ const CloseVaults = ({
       new AnchorProvider(
         connection.current,
         new EmptyWallet(Keypair.generate()),
-        { skipPreflight: true }
-      )
+        { skipPreflight: true },
+      ),
     )
     setClient(client)
   }, [])
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
   }, [form, getInstruction, handleSetInstructions, index, vaults])
 

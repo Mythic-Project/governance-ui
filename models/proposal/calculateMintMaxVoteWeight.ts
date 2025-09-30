@@ -8,7 +8,7 @@ import {
 
 export function calculateMintMaxVoteWeight(
   mint: MintInfo,
-  maxVoteWeightSource: MintMaxVoteWeightSource
+  maxVoteWeightSource: MintMaxVoteWeightSource,
 ) {
   if (maxVoteWeightSource.isFullSupply()) {
     return mint.supply as BN

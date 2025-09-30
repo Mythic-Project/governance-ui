@@ -6,7 +6,7 @@ import { RealmCategory } from '@hub/types/decoders/RealmCategory';
 import { RichTextDocument } from '@hub/types/decoders/RichTextDocument';
 
 export const getRealm = gql`
-  query($publicKey: PublicKey!) {
+  query ($publicKey: PublicKey!) {
     realm(publicKey: $publicKey) {
       bannerImageUrl
       category

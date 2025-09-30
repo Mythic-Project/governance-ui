@@ -15,7 +15,7 @@ import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useUserCommunityTokenOwnerRecord } from '@hooks/queries/tokenOwnerRecord'
 import { useRealmQuery } from '@hooks/queries/realm'
 import { useRealmCommunityMintInfoQuery } from '@hooks/queries/mintInfo'
-import {useVotingClients} from "@hooks/useVotingClients";
+import { useVotingClients } from '@hooks/useVotingClients'
 
 interface Props {
   className?: string

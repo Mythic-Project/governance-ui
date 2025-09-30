@@ -9,12 +9,8 @@ type VoteResultsProps = {
 
 // TODO make component display well when data is loading
 const VoteResults = ({ isListView, proposal }: VoteResultsProps) => {
-  const {
-    yesVoteCount,
-    noVoteCount,
-    relativeNoVotes,
-    relativeYesVotes,
-  } = useProposalVotes(proposal)
+  const { yesVoteCount, noVoteCount, relativeNoVotes, relativeYesVotes } =
+    useProposalVotes(proposal)
 
   return (
     <div className="flex items-center space-x-4">

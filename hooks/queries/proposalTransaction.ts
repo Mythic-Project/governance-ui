@@ -33,7 +33,7 @@ export const useSelectedProposalTransactions = () => {
     queryKey: enabled
       ? proposalTransactionQueryKeys.byProposal(
           connection.cluster,
-          proposal.pubkey
+          proposal.pubkey,
         )
       : undefined,
     queryFn: async () => {
@@ -43,13 +43,13 @@ export const useSelectedProposalTransactions = () => {
         connection.current,
         realm.owner,
         ProposalTransaction,
-        [pubkeyFilter(1, proposal.pubkey)!]
+        [pubkeyFilter(1, proposal.pubkey)!],
       )
 
       results.forEach((x) => {
         queryClient.setQueryData(
           proposalTransactionQueryKeys.byPubkey(connection.cluster, x.pubkey),
-          { found: true, result: x }
+          { found: true, result: x },
         )
       })
 

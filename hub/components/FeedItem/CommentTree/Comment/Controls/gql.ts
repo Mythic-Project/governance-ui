@@ -17,7 +17,7 @@ export const toggleApproval = gql`
 `;
 
 export const deleteComment = gql`
-  mutation($commentId: RealmFeedItemCommentID!, $realm: PublicKey!) {
+  mutation ($commentId: RealmFeedItemCommentID!, $realm: PublicKey!) {
     deleteComment(commentId: $commentId, realm: $realm)
   }
 `;

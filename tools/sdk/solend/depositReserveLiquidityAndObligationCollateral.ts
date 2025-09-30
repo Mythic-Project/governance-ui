@@ -32,16 +32,15 @@ export async function depositReserveLiquidityAndObligationCollateral({
   const [usdcTokenAccount] = findATAAddrSync(obligationOwner, mint)
   const [cusdcTokenAccount] = findATAAddrSync(
     obligationOwner,
-    relatedCollateralMint.mint
+    relatedCollateralMint.mint,
   )
 
   const sourceLiquidity = usdcTokenAccount
   const sourceCollateral = cusdcTokenAccount
   const destinationCollateral = reserveCollateralSupplySplTokenAccount
 
-  const obligation = await deriveObligationAddressFromWalletAndSeed(
-    obligationOwner
-  )
+  const obligation =
+    await deriveObligationAddressFromWalletAndSeed(obligationOwner)
 
   const transferAuthority = obligationOwner
 
@@ -78,6 +77,6 @@ export async function depositReserveLiquidityAndObligationCollateral({
 
     // Wallet address of the one creating the proposal
     transferAuthority,
-    SolendConfiguration.programID
+    SolendConfiguration.programID,
   )
 }

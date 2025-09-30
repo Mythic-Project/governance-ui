@@ -27,7 +27,7 @@ export const useParsedAccountInfoQuery = (pubkey: PublicKey | undefined) => {
       return asFindable(
         (...x: Parameters<typeof connection.current.getParsedAccountInfo>) =>
           connection.current.getParsedAccountInfo(...x).then((x) => x?.value),
-        connection.current
+        connection.current,
       )(pubkey)
     },
     enabled,
@@ -38,7 +38,7 @@ export const useParsedAccountInfoQuery = (pubkey: PublicKey | undefined) => {
 
 export const fetchParsedAccountInfoByPubkey = (
   connection: Connection,
-  pubkey: PublicKey
+  pubkey: PublicKey,
 ) => {
   const cluster = getNetworkFromEndpoint(connection.rpcEndpoint)
   return queryClient.fetchQuery({
@@ -47,7 +47,7 @@ export const fetchParsedAccountInfoByPubkey = (
       asFindable(
         (...x: Parameters<typeof connection.getParsedAccountInfo>) =>
           connection.getParsedAccountInfo(...x).then((x) => x?.value),
-        connection
+        connection,
       )(pubkey),
   })
 }

@@ -31,6 +31,6 @@ export async function getSignatories({
 
   return pipe(
     accounts,
-    map((accounts) => Object.values(accounts))
+    map((accounts) => Object.values(accounts)),
   )
 }

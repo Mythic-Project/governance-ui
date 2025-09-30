@@ -26,7 +26,7 @@ type CalculateMaxVoterWeightParams = {
 const handlePluginSuccess = (
   inputVoterWeight: CalculatedWeight,
   nextPlugin: VoterWeightPluginInfo,
-  nextWeight: BN | null
+  nextWeight: BN | null,
 ): CalculatedWeight => {
   if (nextWeight === null) {
     // Plugin failed to calculate voter weight, but did not throw an error, so we just assign a generic error
@@ -61,7 +61,7 @@ const handlePluginSuccess = (
 const handlePluginError = (
   inputVoterWeight: CalculatedWeight,
   nextPlugin: VoterWeightPluginInfo,
-  error: Error
+  error: Error,
 ): CalculatedWeight => ({
   value: null,
   initialValue: inputVoterWeight.initialValue,
@@ -93,7 +93,7 @@ export const calculateVoterWeight = async ({
 
   const reducer = async (
     inputVoterWeight: CalculatedWeight,
-    nextPlugin: VoterWeightPluginInfo
+    nextPlugin: VoterWeightPluginInfo,
   ): Promise<CalculatedWeight> => {
     if (inputVoterWeight.value === null) return inputVoterWeight
 
@@ -102,7 +102,7 @@ export const calculateVoterWeight = async ({
         walletPublicKey,
         realmPublicKey,
         governanceMintPublicKey,
-        inputVoterWeight.value
+        inputVoterWeight.value,
       )
       return handlePluginSuccess(inputVoterWeight, nextPlugin, nextWeight)
     } catch (error) {
@@ -113,7 +113,7 @@ export const calculateVoterWeight = async ({
   return reduceAsync<VoterWeightPluginInfo, CalculatedWeight>(
     plugins,
     reducer,
-    startingWeight
+    startingWeight,
   )
 }
 
@@ -131,7 +131,7 @@ export const calculateMaxVoterWeight = async ({
 
   const reducer = async (
     inputVoterWeight: CalculatedWeight,
-    nextPlugin: VoterWeightPluginInfo
+    nextPlugin: VoterWeightPluginInfo,
   ): Promise<CalculatedWeight> => {
     if (inputVoterWeight.value === null) return inputVoterWeight
 
@@ -139,7 +139,7 @@ export const calculateMaxVoterWeight = async ({
       const nextWeight = await nextPlugin.client.calculateMaxVoterWeight(
         realmPublicKey,
         governanceMintPublicKey,
-        inputVoterWeight.value
+        inputVoterWeight.value,
       )
 
       return handlePluginSuccess(inputVoterWeight, nextPlugin, nextWeight)
@@ -151,6 +151,6 @@ export const calculateMaxVoterWeight = async ({
   return reduceAsync<VoterWeightPluginInfo, CalculatedWeight>(
     plugins,
     reducer,
-    startingWeight
+    startingWeight,
   )
 }

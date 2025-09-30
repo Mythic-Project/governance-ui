@@ -78,28 +78,28 @@ export type VestAccountType = {
 }
 
 const DEV_PROGRAM_ID = new PublicKey(
-  'EDV6BNBY6pLb4aCJCc5LnELdA9xTywnDZ2m3cWfCbpwZ'
+  'EDV6BNBY6pLb4aCJCc5LnELdA9xTywnDZ2m3cWfCbpwZ',
 )
 const MAIN_PROGRAM_ID = new PublicKey(
-  'FBcTbv5rLy7MQkkAU2uDzAEjjZDeu2BVLVRJGxyz6hnV'
+  'FBcTbv5rLy7MQkkAU2uDzAEjjZDeu2BVLVRJGxyz6hnV',
 )
 
 const DEV_SRM_MINT = new PublicKey(
-  '2xKASju8WCUK6zC54TP4h6WhHdqdcWMNoFpqAdvXvHV6'
+  '2xKASju8WCUK6zC54TP4h6WhHdqdcWMNoFpqAdvXvHV6',
 )
 const DEV_MSRM_MINT = new PublicKey(
-  'BoFBTKtdMXC4YALXtNV5tmw1xNWtjxTrR17PvZGmKhmP'
+  'BoFBTKtdMXC4YALXtNV5tmw1xNWtjxTrR17PvZGmKhmP',
 )
 
 const MAIN_SRM_MINT = new PublicKey(
-  'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'
+  'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt',
 )
 const MAIN_MSRM_MINT = new PublicKey(
-  'MSRMcoVyrFxnSgo5uXwone5SKcGhT1KEJMFEkMEWf9L'
+  'MSRMcoVyrFxnSgo5uXwone5SKcGhT1KEJMFEkMEWf9L',
 )
 const [DEV_GSRM_MINT] = PublicKey.findProgramAddressSync(
   [Buffer.from('gSRM')],
-  DEV_PROGRAM_ID
+  DEV_PROGRAM_ID,
 )
 
 export const SRM_DECIMALS = 6
@@ -119,83 +119,83 @@ interface SerumGovStore extends State {
     updateSerumGovAccounts: (cluster?: string) => void
     getGsrmBalance: (
       connection: Connection,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<TokenAmount | null>
     getConfigAccount: (
-      provider: anchor.AnchorProvider
+      provider: anchor.AnchorProvider,
     ) => Promise<ConfigAccountType | null>
     getUserAccount: (
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<UserAccountType | null>
     getClaimTickets: (
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<ClaimTicketType[]>
     getRedeemTickets: (
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<RedeemTicketType[]>
     getLockedAccounts: (
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<LockedAccountType[]>
     getVestAccounts: (
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ) => Promise<VestAccountType[]>
     claim: (
       connection: Connection,
       provider: anchor.AnchorProvider,
       claimTicket: ClaimTicketType,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ) => Promise<void>
     redeem: (
       connection: Connection,
       provider: anchor.AnchorProvider,
       redeemTicket: RedeemTicketType,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ) => Promise<void>
     getClaimInstruction: (
       provider: anchor.AnchorProvider,
       claimTicket: ClaimTicketType,
-      owner: PublicKey
+      owner: PublicKey,
     ) => Promise<TransactionInstruction>
     getRedeemInstruction: (
       provider: anchor.AnchorProvider,
       redeemTicket: RedeemTicketType,
-      owner: PublicKey
+      owner: PublicKey,
     ) => Promise<TransactionInstruction>
     burnLockedGsrm: (
       connection: Connection,
       provider: anchor.AnchorProvider,
       lockedAccount: LockedAccountType,
       amount: anchor.BN,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ) => Promise<void>
     getBurnLockedGsrmInstruction: (
       provider: anchor.AnchorProvider,
       lockedAccount: LockedAccountType,
       amount: anchor.BN,
-      owner: PublicKey
+      owner: PublicKey,
     ) => Promise<TransactionInstruction>
     burnVestGsrm: (
       connection: Connection,
       provider: anchor.AnchorProvider,
       vestAccount: VestAccountType,
       amount: anchor.BN,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ) => Promise<void>
     getBurnVestGsrmInstruction: (
       provider: anchor.AnchorProvider,
       vestAccount: VestAccountType,
       amount: anchor.BN,
-      owner: PublicKey
+      owner: PublicKey,
     ) => Promise<TransactionInstruction>
     getInitUserInstruction: (
       owner: PublicKey,
       payer: PublicKey,
-      provider: anchor.AnchorProvider
+      provider: anchor.AnchorProvider,
     ) => Promise<TransactionInstruction>
     getGrantLockedInstruction: (
       owner: PublicKey,
@@ -203,7 +203,7 @@ interface SerumGovStore extends State {
       payerTokenAccount: PublicKey,
       provider: anchor.AnchorProvider,
       amount: anchor.BN,
-      isMsrm: boolean
+      isMsrm: boolean,
     ) => Promise<TransactionInstruction>
     getGrantVestInstruction: (
       owner: PublicKey,
@@ -211,14 +211,14 @@ interface SerumGovStore extends State {
       payerTokenAccount: PublicKey,
       provider: anchor.AnchorProvider,
       amount: anchor.BN,
-      isMsrm: boolean
+      isMsrm: boolean,
     ) => Promise<TransactionInstruction>
     depositLocked: (
       connection: Connection,
       provider: anchor.AnchorProvider,
       amount: anchor.BN,
       isMsrm: boolean,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ) => Promise<void>
     getUpdateConfigParamInstruction: (
       provider: anchor.AnchorProvider,
@@ -226,12 +226,12 @@ interface SerumGovStore extends State {
       claimDelay: anchor.BN,
       redeemDelay: anchor.BN,
       cliffPeriod: anchor.BN,
-      linearVestingPeriod: anchor.BN
+      linearVestingPeriod: anchor.BN,
     ) => Promise<TransactionInstruction>
     getUpdateConfigAuthorityInstruction: (
       provider: anchor.AnchorProvider,
       configAuthority: PublicKey,
-      newAuthority: PublicKey
+      newAuthority: PublicKey,
     ) => Promise<TransactionInstruction>
   }
 }
@@ -241,11 +241,11 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
   gsrmMint: DEV_GSRM_MINT,
   authority: PublicKey.findProgramAddressSync(
     [Buffer.from('authority')],
-    DEV_PROGRAM_ID
+    DEV_PROGRAM_ID,
   )[0],
   config: PublicKey.findProgramAddressSync(
     [Buffer.from('config')],
-    DEV_PROGRAM_ID
+    DEV_PROGRAM_ID,
   )[0],
   srmMint: DEV_SRM_MINT,
   msrmMint: DEV_MSRM_MINT,
@@ -257,15 +257,15 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
       const [gsrmMint] = PublicKey.findProgramAddressSync(
         [Buffer.from('gSRM')],
-        programId
+        programId,
       )
       const [config] = PublicKey.findProgramAddressSync(
         [Buffer.from('config')],
-        programId
+        programId,
       )
       const [authority] = PublicKey.findProgramAddressSync(
         [Buffer.from('authority')],
-        programId
+        programId,
       )
       const set = get().set
       set((s) => {
@@ -279,7 +279,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     },
     async getGsrmBalance(
       connection: Connection,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<TokenAmount | null> {
       if (!owner) return null
 
@@ -289,7 +289,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       try {
         const tokenBalance = await connection.getTokenAccountBalance(
           ata,
-          'confirmed'
+          'confirmed',
         )
         return tokenBalance.value
       } catch (e) {
@@ -299,13 +299,13 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     },
 
     async getConfigAccount(
-      provider: anchor.AnchorProvider
+      provider: anchor.AnchorProvider,
     ): Promise<ConfigAccountType | null> {
       const config = get().config
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       try {
         const configAccount = await program.account.config.fetch(config)
@@ -324,17 +324,17 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
     async getUserAccount(
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<UserAccountType | null> {
       if (!owner) return null
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       const [account] = PublicKey.findProgramAddressSync(
         [Buffer.from('user'), owner.toBuffer()],
-        get().programId
+        get().programId,
       )
       try {
         const userAccount = await program.account.user.fetch(account)
@@ -352,13 +352,13 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
     async getClaimTickets(
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<ClaimTicketType[]> {
       if (!owner) return []
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       try {
         const tickets = await program.account.claimTicket.all([
@@ -385,13 +385,13 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
     async getRedeemTickets(
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<RedeemTicketType[]> {
       if (!owner) return []
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       const tickets = await program.account.redeemTicket.all([
         {
@@ -415,13 +415,13 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
     async getLockedAccounts(
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<LockedAccountType[]> {
       if (!owner) return []
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const accounts = await program.account.lockedAccount.all([
@@ -446,13 +446,13 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
     async getVestAccounts(
       provider: anchor.AnchorProvider,
-      owner?: PublicKey | null
+      owner?: PublicKey | null,
     ): Promise<VestAccountType[]> {
       if (!owner) return []
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const accounts = await program.account.vestAccount.all([
@@ -481,7 +481,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       connection: Connection,
       provider: anchor.AnchorProvider,
       claimTicket: ClaimTicketType,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ): Promise<void> {
       const gsrmMint = get().gsrmMint
 
@@ -490,24 +490,24 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           const program = new anchor.Program(
             IDL as anchor.Idl,
             get().programId,
-            provider
+            provider,
           )
           const ownerGsrmAccount = await getAssociatedTokenAddress(
             gsrmMint,
             owner.publicKey,
-            true
+            true,
           )
           const instructions: TransactionInstruction[] = []
           try {
             await connection.getTokenAccountBalance(
               ownerGsrmAccount,
-              'confirmed'
+              'confirmed',
             )
           } catch (e) {
             const [ix] = await createAssociatedTokenAccount(
               owner.publicKey,
               owner.publicKey,
-              gsrmMint
+              gsrmMint,
             )
             instructions.push(ix)
           }
@@ -546,38 +546,38 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       connection: Connection,
       provider: anchor.AnchorProvider,
       redeemTicket: RedeemTicketType,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ): Promise<void> {
       if (owner && owner.publicKey) {
         const program = new anchor.Program(
           IDL as anchor.Idl,
           get().programId,
-          provider
+          provider,
         )
         try {
           if (!redeemTicket.isMsrm) {
             const ownerSrmAccount = await getAssociatedTokenAddress(
               get().srmMint,
               owner.publicKey,
-              true
+              true,
             )
             const instructions: TransactionInstruction[] = []
             try {
               await connection.getTokenAccountBalance(
                 ownerSrmAccount,
-                'confirmed'
+                'confirmed',
               )
             } catch (e) {
               const [ix] = await createAssociatedTokenAccount(
                 owner.publicKey,
                 owner.publicKey,
-                get().srmMint
+                get().srmMint,
               )
               instructions.push(ix)
             }
             const [srmVault] = PublicKey.findProgramAddressSync(
               [Buffer.from('vault'), get().srmMint.toBuffer()],
-              program.programId
+              program.programId,
             )
             const ix = await program.methods
               .redeemSrm()
@@ -607,25 +607,25 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
             const ownerMsrmAccount = await getAssociatedTokenAddress(
               get().msrmMint,
               owner.publicKey,
-              true
+              true,
             )
             const instructions: TransactionInstruction[] = []
             try {
               await connection.getTokenAccountBalance(
                 ownerMsrmAccount,
-                'confirmed'
+                'confirmed',
               )
             } catch (e) {
               const [ix] = await createAssociatedTokenAccount(
                 owner.publicKey,
                 owner.publicKey,
-                get().msrmMint
+                get().msrmMint,
               )
               instructions.push(ix)
             }
             const [msrmVault] = PublicKey.findProgramAddressSync(
               [Buffer.from('vault'), get().msrmMint.toBuffer()],
-              program.programId
+              program.programId,
             )
             const ix = await program.methods
               .redeemMsrm()
@@ -664,12 +664,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     async getClaimInstruction(
       provider: anchor.AnchorProvider,
       claimTicket: ClaimTicketType,
-      owner: PublicKey
+      owner: PublicKey,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const gsrmMint = get().gsrmMint
@@ -677,7 +677,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       const ownerGsrmAccount = await getAssociatedTokenAddress(
         gsrmMint,
         owner,
-        true
+        true,
       )
       const ix = await program.methods
         .claim()
@@ -698,23 +698,23 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     async getRedeemInstruction(
       provider: anchor.AnchorProvider,
       redeemTicket: RedeemTicketType,
-      owner: PublicKey
+      owner: PublicKey,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       let ix: TransactionInstruction
       if (!redeemTicket.isMsrm) {
         const ownerSrmAccount = await getAssociatedTokenAddress(
           get().srmMint,
           owner,
-          true
+          true,
         )
         const [srmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().srmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
         ix = await program.methods
           .redeemSrm()
@@ -735,11 +735,11 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
         const ownerMsrmAccount = await getAssociatedTokenAddress(
           get().msrmMint,
           owner,
-          true
+          true,
         )
         const [msrmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().msrmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
         ix = await program.methods
           .redeemMsrm()
@@ -766,7 +766,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       provider: anchor.AnchorProvider,
       lockedAccount: LockedAccountType,
       amount: anchor.BN,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ): Promise<void> {
       const gsrmMint = get().gsrmMint
 
@@ -775,12 +775,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           const program = new anchor.Program(
             IDL as anchor.Idl,
             get().programId,
-            provider
+            provider,
           )
           const ownerGsrmAccount = await getAssociatedTokenAddress(
             gsrmMint,
             owner.publicKey,
-            true
+            true,
           )
           const [redeemTicket] = PublicKey.findProgramAddressSync(
             [
@@ -789,10 +789,10 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
               new anchor.BN(lockedAccount.redeemIndex).toArrayLike(
                 Buffer,
                 'le',
-                8
+                8,
               ),
             ],
-            program.programId
+            program.programId,
           )
           const tx = await program.methods
             .burnLockedGsrm(amount)
@@ -827,19 +827,19 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       provider: anchor.AnchorProvider,
       lockedAccount: LockedAccountType,
       amount: anchor.BN,
-      owner: PublicKey
+      owner: PublicKey,
     ): Promise<TransactionInstruction> {
       const gsrmMint = get().gsrmMint
 
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
       const ownerGsrmAccount = await getAssociatedTokenAddress(
         gsrmMint,
         owner,
-        true
+        true,
       )
       const [redeemTicket] = PublicKey.findProgramAddressSync(
         [
@@ -847,7 +847,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           lockedAccount.address.toBuffer(),
           new anchor.BN(lockedAccount.redeemIndex).toArrayLike(Buffer, 'le', 8),
         ],
-        program.programId
+        program.programId,
       )
       const ix = await program.methods
         .burnLockedGsrm(amount)
@@ -873,7 +873,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       provider: anchor.AnchorProvider,
       vestAccount: VestAccountType,
       amount: anchor.BN,
-      owner?: WalletSigner | null
+      owner?: WalletSigner | null,
     ): Promise<void> {
       const gsrmMint = get().gsrmMint
 
@@ -881,12 +881,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
         const program = new anchor.Program(
           IDL as anchor.Idl,
           get().programId,
-          provider
+          provider,
         )
         const ownerGsrmAccount = await getAssociatedTokenAddress(
           gsrmMint,
           owner.publicKey,
-          true
+          true,
         )
         const [redeemTicket] = PublicKey.findProgramAddressSync(
           [
@@ -894,7 +894,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
             vestAccount.address.toBuffer(),
             new anchor.BN(vestAccount.redeemIndex).toArrayLike(Buffer, 'le', 8),
           ],
-          program.programId
+          program.programId,
         )
         const tx = await program.methods
           .burnVestGsrm(amount)
@@ -926,20 +926,20 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       provider: anchor.AnchorProvider,
       vestAccount: VestAccountType,
       amount: anchor.BN,
-      owner: PublicKey
+      owner: PublicKey,
     ): Promise<TransactionInstruction> {
       const gsrmMint = get().gsrmMint
 
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const ownerGsrmAccount = await getAssociatedTokenAddress(
         gsrmMint,
         owner,
-        true
+        true,
       )
 
       const [redeemTicket] = PublicKey.findProgramAddressSync(
@@ -948,7 +948,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           vestAccount.address.toBuffer(),
           new anchor.BN(vestAccount.redeemIndex).toArrayLike(Buffer, 'le', 8),
         ],
-        program.programId
+        program.programId,
       )
 
       const ix = await program.methods
@@ -973,17 +973,17 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     async getInitUserInstruction(
       owner: PublicKey,
       payer: PublicKey,
-      provider: anchor.AnchorProvider
+      provider: anchor.AnchorProvider,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const [ownerUserAccount] = PublicKey.findProgramAddressSync(
         [Buffer.from('user'), owner.toBuffer()],
-        program.programId
+        program.programId,
       )
 
       const ix = await program.methods
@@ -1004,12 +1004,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       payerTokenAccount: PublicKey,
       provider: anchor.AnchorProvider,
       amount: anchor.BN,
-      isMsrm: boolean
+      isMsrm: boolean,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const userAccount = await get().actions.getUserAccount(provider, owner)
@@ -1017,7 +1017,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
 
       const [userAccountAddress] = PublicKey.findProgramAddressSync(
         [Buffer.from('user'), owner.toBuffer()],
-        get().programId
+        get().programId,
       )
 
       const [lockedAccount] = PublicKey.findProgramAddressSync(
@@ -1027,22 +1027,22 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           new anchor.BN(userAccount ? userAccount.lockIndex : 0).toArrayLike(
             Buffer,
             'le',
-            8
+            8,
           ),
         ],
-        program.programId
+        program.programId,
       )
 
       const [claimTicket] = PublicKey.findProgramAddressSync(
         [Buffer.from('claim_ticket'), lockedAccount.toBuffer()],
-        program.programId
+        program.programId,
       )
 
       let ix: TransactionInstruction
       if (!isMsrm) {
         const [srmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().srmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
         ix = await program.methods
           .depositLockedSrm(amount)
@@ -1067,7 +1067,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       } else {
         const [msrmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().msrmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
         ix = await program.methods
           .depositLockedMsrm(amount)
@@ -1100,19 +1100,19 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       payerTokenAccount: PublicKey,
       provider: anchor.AnchorProvider,
       amount: anchor.BN,
-      isMsrm: boolean
+      isMsrm: boolean,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const userAccount = await get().actions.getUserAccount(provider, owner)
 
       const [userAccountAddress] = PublicKey.findProgramAddressSync(
         [Buffer.from('user'), owner.toBuffer()],
-        get().programId
+        get().programId,
       )
 
       const [vestAccount] = PublicKey.findProgramAddressSync(
@@ -1122,15 +1122,15 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           new anchor.BN(userAccount ? userAccount.vestIndex : 0).toArrayLike(
             Buffer,
             'le',
-            8
+            8,
           ),
         ],
-        program.programId
+        program.programId,
       )
 
       const [claimTicket] = PublicKey.findProgramAddressSync(
         [Buffer.from('claim_ticket'), vestAccount.toBuffer()],
-        program.programId
+        program.programId,
       )
 
       let ix: TransactionInstruction
@@ -1138,7 +1138,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       if (!isMsrm) {
         const [srmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().srmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
 
         ix = await program.methods
@@ -1164,7 +1164,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       } else {
         const [msrmVault] = PublicKey.findProgramAddressSync(
           [Buffer.from('vault'), get().srmMint.toBuffer()],
-          program.programId
+          program.programId,
         )
         ix = await program.methods
           .depositVestMsrm(amount)
@@ -1196,7 +1196,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       provider,
       amount,
       isMsrm,
-      owner?
+      owner?,
     ): Promise<void> {
       if (!owner || !owner.publicKey) {
         notify({ type: 'error', message: 'Please connect your wallet.' })
@@ -1206,14 +1206,14 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
         const program = new anchor.Program(
           IDL as anchor.Idl,
           get().programId,
-          provider
+          provider,
         )
 
         const instructions: TransactionInstruction[] = []
 
         const ownerAta = await getAssociatedTokenAddress(
           !isMsrm ? get().srmMint : get().msrmMint,
-          owner.publicKey
+          owner.publicKey,
         )
 
         const [vault] = PublicKey.findProgramAddressSync(
@@ -1221,16 +1221,16 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
             Buffer.from('vault'),
             !isMsrm ? get().srmMint.toBuffer() : get().srmMint.toBuffer(),
           ],
-          program.programId
+          program.programId,
         )
 
         const [userAccountAddress] = PublicKey.findProgramAddressSync(
           [Buffer.from('user'), owner.publicKey.toBuffer()],
-          program.programId
+          program.programId,
         )
         const userAccount = await get().actions.getUserAccount(
           provider,
-          owner?.publicKey
+          owner?.publicKey,
         )
 
         if (!userAccount) {
@@ -1255,12 +1255,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
             owner.publicKey.toBuffer(),
             lockIndexBuffer,
           ],
-          program.programId
+          program.programId,
         )
 
         const [claimTicket] = PublicKey.findProgramAddressSync(
           [Buffer.from('claim_ticket'), lockedAccount.toBuffer()],
-          program.programId
+          program.programId,
         )
 
         if (!isMsrm) {
@@ -1328,12 +1328,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
       claimDelay: anchor.BN,
       redeemDelay: anchor.BN,
       cliffPeriod: anchor.BN,
-      linearVestingPeriod: anchor.BN
+      linearVestingPeriod: anchor.BN,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const ix = await program.methods
@@ -1341,7 +1341,7 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
           claimDelay,
           redeemDelay,
           cliffPeriod,
-          linearVestingPeriod
+          linearVestingPeriod,
         )
         .accounts({
           config: get().config,
@@ -1355,12 +1355,12 @@ const useSerumGovStore = create<SerumGovStore>((set, get) => ({
     async getUpdateConfigAuthorityInstruction(
       provider: anchor.AnchorProvider,
       configAuthority: PublicKey,
-      newAuthority: PublicKey
+      newAuthority: PublicKey,
     ): Promise<TransactionInstruction> {
       const program = new anchor.Program(
         IDL as anchor.Idl,
         get().programId,
-        provider
+        provider,
       )
 
       const ix = await program.methods

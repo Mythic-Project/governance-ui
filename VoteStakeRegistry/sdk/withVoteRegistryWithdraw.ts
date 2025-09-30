@@ -10,9 +10,10 @@ import {
   getVoterPDA,
   getVoterWeightPDA,
 } from 'VoteStakeRegistry/sdk/accounts'
-import { tryGetTokenAccount } from '@utils/tokens'
 import { VsrClient } from './client'
 import { withCreateTokenOwnerRecord } from '@solana/spl-governance'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 
 export const withVoteRegistryWithdraw = async ({
   instructions,
@@ -49,44 +50,49 @@ export const withVoteRegistryWithdraw = async ({
   }
   const clientProgramId = client!.program.programId
 
+  const mintInfo = await client.program.provider.connection.getAccountInfo(mintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID) ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+
   const { registrar } = getRegistrarPDA(
     realmPk,
     communityMintPk,
-    client!.program.programId
+    client!.program.programId,
   )
   const { voter } = getVoterPDA(registrar, walletPk, clientProgramId)
   const { voterWeightPk } = getVoterWeightPDA(
     registrar,
     walletPk,
-    clientProgramId
+    clientProgramId,
   )
 
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    tokenProgram,
     mintPk,
     voter,
-    true
+    true,
   )
 
   const ataPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-    TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+    tokenProgram,
     mintPk, // mint
     walletPk, // owner
-    true
+    true,
   )
-  const isExistingAta = await tryGetTokenAccount(connection, ataPk)
+
+  const isExistingAta = await connection.getAccountInfo(ataPk)
+
   if (!isExistingAta) {
     instructions.push(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+        tokenProgram,
         mintPk, // mint
         ataPk, // ata
         walletPk, // owner of token account
-        walletPk // fee payer
-      )
+        walletPk, // fee payer
+      ),
     )
   }
   //spl governance tokenownerrecord pubkey
@@ -98,7 +104,7 @@ export const withVoteRegistryWithdraw = async ({
       realmPk,
       walletPk,
       communityMintPk,
-      walletPk
+      walletPk,
     )
   }
   const withdrawInstruction = await client?.program.methods
@@ -111,9 +117,17 @@ export const withVoteRegistryWithdraw = async ({
       voterWeightRecord: voterWeightPk,
       vault: voterATAPk,
       destination: ataPk,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram
     })
     .instruction()
+
+    if (client.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK) {
+      withdrawInstruction.keys.splice(6, 0, {
+        pubkey: mintPk,
+        isSigner: false,
+        isWritable: false,
+      })
+    }
   instructions.push(withdrawInstruction)
 
   if (closeDepositAfterOperation) {

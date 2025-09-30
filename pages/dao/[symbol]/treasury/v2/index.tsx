@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { pipe } from 'fp-ts/function'
-
 import PreviousRouteBtn from '@components/PreviousRouteBtn'
 import TotalValueTitle from '@components/treasuryV2/TotalValueTitle'
 import WalletList from '@components/treasuryV2/WalletList'
@@ -35,7 +34,7 @@ export default function Treasury() {
           const item = entries[0]
           setIsStickied(item.intersectionRatio < 1)
         },
-        { threshold: [1] }
+        { threshold: [1] },
       )
 
       observer.current.observe(stickyTracker.current)
@@ -72,7 +71,7 @@ export default function Treasury() {
                 name: data.name,
               },
               value: data.totalValue,
-            }))
+            })),
           )}
         />
       </header>
@@ -84,7 +83,7 @@ export default function Treasury() {
             map((data) => ({
               auxiliaryWallets: data.auxiliaryWallets,
               wallets: data.wallets,
-            }))
+            })),
           )}
           selectedAsset={legacySelectedAsset}
           selectedWallet={legacySelectedWallet}

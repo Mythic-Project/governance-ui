@@ -1,5 +1,8 @@
 import { PublicKey } from '@solana/web3.js'
-import {Coefficients, QuadraticClient } from '@solana/governance-program-library'
+import {
+  Coefficients,
+  QuadraticClient,
+} from '@solana/governance-program-library'
 import {
   ProgramAccount,
   Realm,
@@ -24,9 +27,9 @@ export const toAnchorType = (coefficients: Coefficients) => ({
 
 export type AnchorParams = {
   quadraticCoefficients: {
-    a: number;
-    b: number;
-    c: number;
+    a: number
+    b: number
+    c: number
   }
 }
 
@@ -36,12 +39,12 @@ export const createQuadraticRegistrarIx = async (
   payer: PublicKey,
   quadraticClient: QuadraticClient,
   coefficients?: Coefficients,
-  predecessor?: PublicKey
+  predecessor?: PublicKey,
 ) => {
   const { registrar } = getRegistrarPDA(
     realm.pubkey,
     realm.account.communityMint,
-    quadraticClient.program.programId
+    quadraticClient.program.programId,
   )
 
   const remainingAccounts = predecessor
@@ -51,7 +54,7 @@ export const createQuadraticRegistrarIx = async (
   return quadraticClient!.program.methods
     .createRegistrar(
       toAnchorType(coefficients || DEFAULT_COEFFICIENTS),
-      !!predecessor
+      !!predecessor,
     )
     .accounts({
       registrar,
@@ -70,12 +73,12 @@ export const configureQuadraticRegistrarIx = async (
   realm: ProgramAccount<Realm>,
   quadraticClient: QuadraticClient,
   coefficients?: Coefficients,
-  predecessor?: PublicKey
+  predecessor?: PublicKey,
 ) => {
   const { registrar } = getRegistrarPDA(
     realm.pubkey,
     realm.account.communityMint,
-    quadraticClient.program.programId
+    quadraticClient.program.programId,
   )
   const remainingAccounts = predecessor
     ? [{ pubkey: predecessor, isSigner: false, isWritable: false }]
@@ -83,7 +86,7 @@ export const configureQuadraticRegistrarIx = async (
   return quadraticClient.program.methods
     .configureRegistrar(
       toAnchorType(coefficients || DEFAULT_COEFFICIENTS),
-      !!predecessor
+      !!predecessor,
     )
     .accounts({
       registrar,
@@ -94,7 +97,10 @@ export const configureQuadraticRegistrarIx = async (
     .instruction()
 }
 
-export const coefficientsEqual = (x: Coefficients, y: Coefficients | undefined): boolean => {
+export const coefficientsEqual = (
+  x: Coefficients,
+  y: Coefficients | undefined,
+): boolean => {
   if (!y) return false
   return x[0] === y[0] && x[1] === y[1] && x[2] === y[2]
 }

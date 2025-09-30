@@ -32,7 +32,7 @@ export default function FormField({
             {splitTitle
               .slice(
                 0,
-                splitTitle.length - (optional || advancedOption ? 1 : 0)
+                splitTitle.length - (optional || advancedOption ? 1 : 0),
               )
               .join(' ')}
           </span>

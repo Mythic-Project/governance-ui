@@ -21,13 +21,13 @@ const useVotingTokenOwnerRecords = () => {
       // TODO fetch in body
       if (realm === undefined)
         throw new Error(
-          'realm not yet fetched; the fetch should really be in the body of this fn'
+          'realm not yet fetched; the fetch should really be in the body of this fn',
         )
 
       // TODO fetch in body
       if (delegated === undefined)
         throw new Error(
-          'delegators not yet fetched; the fetch should really be in the body of this fn'
+          'delegators not yet fetched; the fetch should really be in the body of this fn',
         )
 
       const governingTokenMint =
@@ -46,12 +46,12 @@ const useVotingTokenOwnerRecords = () => {
         realm.owner,
         realm.pubkey,
         governingTokenMint,
-        wallet?.publicKey
+        wallet?.publicKey,
       )
 
       return [userTorPk, ...relevantDelegatedPks]
     },
-    [delegated, realm, wallet?.publicKey]
+    [delegated, realm, wallet?.publicKey],
   )
 
   return f

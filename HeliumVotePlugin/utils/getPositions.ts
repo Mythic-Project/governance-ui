@@ -35,7 +35,7 @@ export interface GetPositionsReturn {
 }
 
 export const getPositions = async (
-  args: GetPositionsArgs
+  args: GetPositionsArgs,
 ): Promise<GetPositionsReturn> => {
   const { realmPk, walletPk, communityMintPk, client, connection } = args
   const positions: PositionWithMeta[] = []
@@ -47,7 +47,7 @@ export const getPositions = async (
   const metaplex = new Metaplex(connection)
   const registrarPk = registrarKey(realmPk, communityMintPk)[0]
   const registrar = (await client.program.account.registrar.fetch(
-    registrarPk
+    registrarPk,
   )) as Registrar
   const mintCfgs = registrar.votingMints
   const mints = {}
@@ -63,13 +63,13 @@ export const getPositions = async (
   const positionAccInfos = (
     await Promise.all(
       chunks(posKeys, 99).map((chunk) =>
-        connection.getMultipleAccountsInfo(chunk)
-      )
+        connection.getMultipleAccountsInfo(chunk),
+      ),
     )
   ).flat()
 
   const delegatedPosKeys = posKeys.map(
-    (posKey) => delegatedPositionKey(posKey)[0]
+    (posKey) => delegatedPositionKey(posKey)[0],
   )
 
   const delegatedPositionAccs = isHNT
@@ -78,14 +78,14 @@ export const getPositions = async (
         const hsdProgram = await init(
           client.program.provider as any,
           PROGRAM_ID,
-          idl
+          idl,
         )
 
         return (
           await Promise.all(
             chunks(delegatedPosKeys, 99).map((chunk) =>
-              connection.getMultipleAccountsInfo(chunk)
-            )
+              connection.getMultipleAccountsInfo(chunk),
+            ),
           )
         )
           .flat()
@@ -93,9 +93,9 @@ export const getPositions = async (
             delegatedPos
               ? (hsdProgram.coder.accounts.decode(
                   'DelegatedPositionV0',
-                  delegatedPos.data
+                  delegatedPos.data,
                 ) as DelegatedPositionV0)
-              : null
+              : null,
           )
       })()
     : []
@@ -104,7 +104,7 @@ export const getPositions = async (
     ...positionAccInfos.map((posAccInfo, idx) => {
       const pos = client.program.coder.accounts.decode(
         'PositionV0',
-        posAccInfo!.data
+        posAccInfo!.data,
       ) as PositionV0
 
       const isDelegated = !!delegatedPositionAccs[idx]
@@ -113,7 +113,7 @@ export const getPositions = async (
         : null
       const hasRewards = isDelegated
         ? delegatedPositionAccs[idx]!.lastClaimedEpoch.add(new BN(1)).lt(
-            now.div(new BN(EPOCH_LENGTH))
+            now.div(new BN(EPOCH_LENGTH)),
           )
         : false
 
@@ -139,7 +139,7 @@ export const getPositions = async (
           mint: mints[mintCfgs[pos.votingMintConfigIdx].mint.toBase58()],
         },
       } as PositionWithMeta
-    })
+    }),
   )
 
   return {

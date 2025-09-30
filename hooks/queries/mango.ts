@@ -15,7 +15,7 @@ export const useMangoClient = (connection: Connection) => {
       const adminProvider = new AnchorProvider(
         connection,
         new EmptyWallet(Keypair.generate()),
-        options
+        options,
       )
       const client = await MangoClient.connect(
         adminProvider,
@@ -23,7 +23,7 @@ export const useMangoClient = (connection: Connection) => {
         MANGO_V4_ID[cluster],
         {
           idsSource: 'api',
-        }
+        },
       )
 
       return client

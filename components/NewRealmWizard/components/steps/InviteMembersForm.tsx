@@ -14,6 +14,10 @@ import { updateUserInput, validateSolAddress } from '@utils/formValidation'
 import { FORM_NAME as MULTISIG_FORM } from 'pages/realms/new/multisig'
 import { textToAddressList } from '@utils/textToAddressList'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
+import { resolveDomain } from '@utils/domains'
+import { Connection } from '@solana/web3.js'
+// import { DEFAULT_RPC_ENDPOINT } from '@constants/endpoints'
+import { useConnection } from '@solana/wallet-adapter-react'
 
 /**
  * Convert a list of addresses into a list of uniques and duplicates
@@ -72,7 +76,7 @@ function InviteAddress({
             'ml-4',
             'truncate',
             'input-base',
-            invalid && 'text-error-red'
+            invalid && 'text-error-red',
           )}
         >
           {address}
@@ -109,7 +113,7 @@ export const InviteMembersSchema = {
     .when(['$addCouncil', '$useExistingCouncilToken'], ((
       addCouncil,
       useExistingCouncilToken,
-      schema
+      schema,
     ) => {
       if (useExistingCouncilToken) {
         return schema.min(0).required('Required')
@@ -131,6 +135,64 @@ export interface InviteMembers {
   memberAddresses: string[]
 }
 
+/**
+ * Convert a list of addresses/domains into a list of resolved addresses
+ */
+async function resolveAddressList(connection: Connection, textBlock: string) {
+  const items = textBlock
+    .split(/[\n,]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+  console.log('Resolving items:', items)
+
+  const results = await Promise.all(
+    items.map(async (item) => {
+      try {
+        // If it's already a valid address, return it
+        if (validateSolAddress(item)) {
+          console.log(`${item} is already a valid address`)
+          return { input: item, resolved: item }
+        }
+
+        // Try to resolve as domain
+        console.log(`Attempting to resolve domain: ${item}`)
+        const resolved = await resolveDomain(connection, item)
+        console.log('Resolved:', resolved)
+        console.log(
+          `Domain ${item} resolved to:`,
+          resolved?.toBase58() || 'null',
+        )
+        return {
+          input: item,
+          resolved: resolved?.toBase58(),
+        }
+      } catch (error) {
+        console.error(`Error resolving ${item}:`, error)
+        return { input: item, resolved: undefined }
+      }
+    }),
+  )
+
+  const valid: string[] = []
+  const invalid: string[] = []
+
+  results.forEach(({ input, resolved }) => {
+    if (resolved && validateSolAddress(resolved)) {
+      valid.push(resolved)
+    } else {
+      invalid.push(input)
+    }
+  })
+
+  console.log('Final resolution results:', {
+    valid,
+    invalid,
+    results,
+  })
+
+  return { valid, invalid }
+}
+
 export default function InviteMembersForm({
   visible,
   type,
@@ -146,6 +208,7 @@ export default function InviteMembersForm({
   const [inviteList, setInviteList] = useState<string[]>([])
   const [invalidAddresses, setInvalidAddresses] = useState<string[]>([])
   const [lacksMintAuthority, setLackMintAuthority] = useState(false)
+  const { connection } = useConnection()
 
   const schema = yup.object(InviteMembersSchema)
   const {
@@ -175,7 +238,7 @@ export default function InviteMembersForm({
           (current) =>
             formData.memberAddresses?.filter((wallet) => {
               return validateSolAddress(wallet)
-            }) || current
+            }) || current,
         )
       }
     } else if (visible) {
@@ -211,19 +274,25 @@ export default function InviteMembersForm({
     onSubmit({ step: currentStep, data: values })
   }
 
-  function addToAddressList(textBlock: string) {
+  /**
+   * Update the addToAddressList function to be async
+   */
+  async function addToAddressList(textBlock: string) {
     if (lacksMintAuthority) {
       return
     }
 
-    const { valid, invalid } = textToAddressList(textBlock)
+    const { valid, invalid } = await resolveAddressList(connection, textBlock)
     const { unique, duplicate } = splitUniques(inviteList.concat(valid))
     setInviteList(unique)
     setInvalidAddresses((currentList) =>
-      currentList.concat(invalid).concat(duplicate)
+      currentList.concat(invalid).concat(duplicate),
     )
   }
 
+  /**
+   * Update the event handlers to handle async addToAddressList
+   */
   function handleBlur(ev) {
     addToAddressList(ev.currentTarget.value)
     ev.currentTarget.value = ''
@@ -232,13 +301,12 @@ export default function InviteMembersForm({
   function handlePaste(ev: React.ClipboardEvent<HTMLInputElement>) {
     addToAddressList(ev.clipboardData.getData('text'))
     ev.clipboardData.clearData()
-    // Don't allow the paste event to populate the input field
     ev.preventDefault()
   }
 
   function handleKeyDown(ev) {
     if (ev.defaultPrevented) {
-      return // Do nothing if the event was already processed
+      return
     }
 
     if (ev.key === 'Enter') {
@@ -323,7 +391,7 @@ export default function InviteMembersForm({
           <Input
             type="text"
             name="memberAddresses"
-            placeholder="e.g. CWvWQWt5mTv7Zx..."
+            placeholder="e.g. CWvWQWt5mTv7Zx... or domain.solana"
             data-testid="dao-member-list-input"
             disabled={lacksMintAuthority}
             ref={inputElement}

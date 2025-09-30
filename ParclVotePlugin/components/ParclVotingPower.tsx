@@ -45,14 +45,14 @@ export default function ParclVotingPower({
   const { result: personalAmount } = useAsync(
     async () =>
       wallet?.publicKey && role === 'community'
-         ? getParclGovPower(connection, wallet.publicKey)
-         : tokenAccounts?.find(
-              (a) => relevantMint && a.account.mint.equals(relevantMint)
-           )?.account.amount as BN,
-    [connection, wallet, role, relevantMint, tokenAccounts]
+        ? getParclGovPower(connection, wallet.publicKey)
+        : (tokenAccounts?.find(
+            (a) => relevantMint && a.account.mint.equals(relevantMint),
+          )?.account.amount as BN),
+    [connection, wallet, role, relevantMint, tokenAccounts],
   )
 
-  const parclScalingFactor = useParclScalingFactor() ?? 1;
+  const parclScalingFactor = useParclScalingFactor() ?? 1
 
   const totalAmount = personalAmount ?? new BN(0)
 
@@ -60,31 +60,27 @@ export default function ParclVotingPower({
     () =>
       mintInfo && totalAmount !== undefined
         ? new BigNumber(totalAmount.toString())
-            .multipliedBy(
-              role === 'community' 
-              ? parclScalingFactor
-              : 1
-            )
+            .multipliedBy(role === 'community' ? parclScalingFactor : 1)
             .shiftedBy(-mintInfo.decimals)
             .integerValue()
             .toString()
         : undefined,
-    [totalAmount, mintInfo]
+    [totalAmount, mintInfo],
   )
 
   const tokenName =
     getMintMetadata(relevantMint)?.name ?? realm?.account.name ?? ''
 
   const disabled =
-      realmConfig?.account.councilTokenConfig.tokenType ===
-        GoverningTokenType.Dormant
+    realmConfig?.account.councilTokenConfig.tokenType ===
+    GoverningTokenType.Dormant
 
   return (
     <div
       className={clsx(
         props.className,
         hideIfZero && totalAmount.isZero() && 'hidden',
-        disabled && 'hidden'
+        disabled && 'hidden',
       )}
     >
       <div className={'p-3 rounded-md bg-bkg-1'}>

@@ -12,25 +12,24 @@ export interface NftVoteRecord {
 
 export const getUsedNftsForProposal = async (
   client: NftVoterClient,
-  proposalPk: PublicKey
+  proposalPk: PublicKey,
 ) => {
-  const nftVoteRecordsFiltered = (await client.program.account.nftVoteRecord.all(
-    [
+  const nftVoteRecordsFiltered =
+    (await client.program.account.nftVoteRecord.all([
       {
         memcmp: {
           offset: 8,
           bytes: proposalPk.toBase58(),
         },
       },
-    ]
-  )) as NftVoteRecord[]
+    ])) as NftVoteRecord[]
   return nftVoteRecordsFiltered
 }
 
 export const getNftVoteRecordProgramAddress = async (
   proposalPk: PublicKey,
   nftMintAddress: string,
-  clientProgramId: PublicKey
+  clientProgramId: PublicKey,
 ) => {
   const [nftVoteRecord, nftVoteRecordBump] = await PublicKey.findProgramAddress(
     [
@@ -38,7 +37,7 @@ export const getNftVoteRecordProgramAddress = async (
       proposalPk.toBuffer(),
       new PublicKey(nftMintAddress).toBuffer(),
     ],
-    clientProgramId
+    clientProgramId,
   )
 
   return {
@@ -52,20 +51,18 @@ export const getNftActionTicketProgramAddress = (
   registrar: PublicKey,
   owner: PublicKey,
   nftMintAddress: string,
-  clientProgramId: PublicKey
+  clientProgramId: PublicKey,
 ) => {
-  const [
-    nftActionTicket,
-    nftActionTicketBump,
-  ] = PublicKey.findProgramAddressSync(
-    [
-      Buffer.from(ticketType),
-      registrar.toBuffer(),
-      owner.toBuffer(),
-      new PublicKey(nftMintAddress).toBuffer(),
-    ],
-    clientProgramId
-  )
+  const [nftActionTicket, nftActionTicketBump] =
+    PublicKey.findProgramAddressSync(
+      [
+        Buffer.from(ticketType),
+        registrar.toBuffer(),
+        owner.toBuffer(),
+        new PublicKey(nftMintAddress).toBuffer(),
+      ],
+      clientProgramId,
+    )
 
   return {
     nftActionTicket,

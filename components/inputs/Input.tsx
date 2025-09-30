@@ -28,12 +28,14 @@ export interface InputProps
   showErrorState?: boolean
   noMaxWidth?: boolean
   subtitle?: JSX.Element | string
+  labelAdditionalComponent?: JSX.Element
 }
 
 const Input = ({
   checkIcon = false,
   type,
   value = '',
+  labelAdditionalComponent,
   onChange,
   className,
   wrapperClassName = 'w-full',
@@ -66,7 +68,12 @@ const Input = ({
   }
   return (
     <div className={`flex flex-col relative ${wrapperClassName}`}>
-      {label && <StyledLabel>{label}</StyledLabel>}
+      <div className="flex">
+        {label && <StyledLabel>{label}</StyledLabel>}{' '}
+        <div className="ml-auto flex items-center">
+          {labelAdditionalComponent}
+        </div>
+      </div>
       {subtitle && <p className="text-fgd-3 mb-1 -mt-2">{subtitle}</p>}
       {prefix ? (
         <div

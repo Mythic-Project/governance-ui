@@ -27,7 +27,7 @@ export async function withPostChatMessageEphSigner(
   replyTo: PublicKey | undefined,
   body: ChatMessageBody,
   chatMessage: PublicKey,
-  voterWeightRecord?: PublicKey
+  voterWeightRecord?: PublicKey,
 ) {
   const args = new PostChatMessageArgs({
     body,
@@ -35,7 +35,7 @@ export async function withPostChatMessageEphSigner(
 
   const data = Buffer.from(serialize(GOVERNANCE_CHAT_SCHEMA, args))
 
-  let keys = [
+  const keys = [
     {
       pubkey: governanceProgramId,
       isWritable: false,
@@ -95,7 +95,7 @@ export async function withPostChatMessageEphSigner(
     keys,
     governanceProgramId,
     realm,
-    voterWeightRecord
+    voterWeightRecord,
   )
 
   instructions.push(
@@ -103,7 +103,7 @@ export async function withPostChatMessageEphSigner(
       keys,
       programId: chatProgramId,
       data,
-    })
+    }),
   )
 
   return chatMessage
@@ -114,7 +114,7 @@ export async function withRealmConfigPluginAccounts(
   programId: PublicKey,
   realm: PublicKey,
   voterWeightRecord?: PublicKey | undefined,
-  maxVoterWeightRecord?: PublicKey | undefined
+  maxVoterWeightRecord?: PublicKey | undefined,
 ) {
   const realmConfigAddress = await getRealmConfigAddress(programId, realm)
 

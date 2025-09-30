@@ -7,7 +7,7 @@ test('getCertifiedRealmInfo', async () => {
 
   const realmInfo = await getCertifiedRealmInfo(
     mango.symbol,
-    getConnectionContext('mainnet')
+    getConnectionContext('mainnet'),
   )
 
   expect(realmInfo!.realmId.toBase58()).toEqual(mango.realmId)

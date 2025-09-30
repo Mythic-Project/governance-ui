@@ -42,7 +42,7 @@ export type CreatePsyFiStrategy = (
   proposalIndex: number,
   isDraft: boolean,
   connection: ConnectionContext,
-  client?: VotingClient
+  client?: VotingClient,
 ) => Promise<PublicKey>
 
 export type PsyFiStrategyInfo = {

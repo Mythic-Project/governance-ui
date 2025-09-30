@@ -19,33 +19,37 @@ import { BN } from '@coral-xyz/anchor'
 import useGovernanceAssetsStore from 'stores/useGovernanceAssetsStore'
 import { PublicKey } from '@solana/web3.js'
 import { useRealmQuery } from './queries/realm'
-import { useRealmCommunityMintInfoQuery } from './queries/mintInfo'
+import {
+  useRealmCommunityMintInfoQuery,
+  useRealmCouncilMintInfoQuery,
+} from './queries/mintInfo'
 import useLegacyConnectionContext from './useLegacyConnectionContext'
 import { calculateMaxVoteScore } from '@models/proposal/calulateMaxVoteScore'
 import { getNetworkFromEndpoint } from '@utils/connection'
 import { fetchDigitalAssetsByOwner } from './queries/digitalAssets'
 import { useNftRegistrarCollection } from './useNftRegistrarCollection'
 import { useAsync } from 'react-async-hook'
-import {useVsrClient} from "../VoterWeightPlugins/useVsrClient";
-import {useNftRegistrar} from "@hooks/useNftRegistrar";
+import { useVsrClient } from '../VoterWeightPlugins/useVsrClient'
+import { useNftRegistrar } from '@hooks/useNftRegistrar'
 
 export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
   const { getRpcContext } = useRpcContext()
   const [voteRecords, setVoteRecords] = useState<ProgramAccount<VoteRecord>[]>(
-    []
+    [],
   )
   const [tokenOwnerRecords, setTokenOwnerRecords] = useState<
     ProgramAccount<TokenOwnerRecord>[]
   >([])
   const realm = useRealmQuery().data?.result
-  const mint = useRealmCommunityMintInfoQuery().data?.result
+  const communityMint = useRealmCommunityMintInfoQuery().data?.result
+  const councilMint = useRealmCouncilMintInfoQuery().data?.result
+
   const { vsrMode, isNftMode } = useRealm()
 
+  const isPyth = realm?.pubkey.equals(new PublicKey('pytGY6tWRgGinSCvRLnSv4fHfBTMoiDGiCsesmHWM6U'))
   //for vsr
-  const [
-    undecidedDepositByVoteRecord,
-    setUndecidedDepositByVoteRecord,
-  ] = useState<{ [walletPk: string]: BN }>({})
+  const [undecidedDepositByVoteRecord, setUndecidedDepositByVoteRecord] =
+    useState<{ [walletPk: string]: BN }>({})
   const assetAccounts = useGovernanceAssetsStore((s) => s.assetAccounts)
   const mintsUsedInRealm = assetAccounts
     .filter((x) => x.isToken)
@@ -53,16 +57,21 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
   ///
 
   const [context, setContext] = useState<RpcContext | null>(null)
-  const { vsrClient } = useVsrClient();
+  const { vsrClient } = useVsrClient()
   const connection = useLegacyConnectionContext()
   const governingTokenMintPk = proposal?.account.governingTokenMint
+  const mint =
+    realm?.account.config.councilMint &&
+    governingTokenMintPk?.equals(realm?.account.config.councilMint)
+      ? councilMint
+      : communityMint
 
   // for nft-voter
   // This part is to get the undecided nft-voter information for each proposal.
   // In buildTopVoters.ts, it checks whether the token_owner_record is in the vote_record.
   // If not, the function use record.account.governingTokenDepositAmount as the undecided vote weight, where nft-voter should be 0.
   // Thus, pre-calculating the undecided weight for each nft voter is necessary.
-  const nftMintRegistrar = useNftRegistrar();
+  const nftMintRegistrar = useNftRegistrar()
   const usedCollectionsPks: string[] = useNftRegistrarCollection()
 
   const { result: undecidedNftsByVoteRecord } = useAsync(async () => {
@@ -79,8 +88,8 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
           .some(
             (voteRecord) =>
               voteRecord.account.governingTokenOwner.toBase58() ===
-              tokenOwnerRecord.account.governingTokenOwner.toBase58()
-          )
+              tokenOwnerRecord.account.governingTokenOwner.toBase58(),
+          ),
     )
 
     // get every nft owned by the undecided voter, then sum it up as the undecided weight(voting power)
@@ -90,7 +99,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
         const ownedNfts = await fetchDigitalAssetsByOwner(network, walletPk)
         const verifiedNfts = ownedNfts.filter((nft) => {
           const collection = nft.grouping.find(
-            (x) => x.group_key === 'collection'
+            (x) => x.group_key === 'collection',
           )
           return (
             collection && usedCollectionsPks.includes(collection.group_value)
@@ -100,18 +109,21 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
           walletPk: walletPk,
           votingPower: verifiedNfts.length * 10 ** 6, //default decimal wieight is 10^6
         }
-      })
+      }),
     )
     // make it a dictionary structure
     const undecidedNftsByVoteRecord = Object.fromEntries(
-      undecidedVoters.map((x) => [x.walletPk.toBase58(), new BN(x.votingPower)])
+      undecidedVoters.map((x) => [
+        x.walletPk.toBase58(),
+        new BN(x.votingPower),
+      ]),
     )
     return undecidedNftsByVoteRecord
   }, [tokenOwnerRecords, voteRecords, usedCollectionsPks, isNftMode])
   ///
 
   useEffect(() => {
-    if (context && proposal && realm) {
+    if (context && proposal && realm && !isPyth) {
       // fetch vote records
       pipe(
         () =>
@@ -124,7 +136,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
         matchW((reason) => {
           console.log(reason)
           setVoteRecords([])
-        }, setVoteRecords)
+        }, setVoteRecords),
       )()
 
       // fetch token records
@@ -140,7 +152,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
         matchW((reason) => {
           console.log(reason)
           setTokenOwnerRecords([])
-        }, setTokenOwnerRecords)
+        }, setTokenOwnerRecords),
       )()
     }
   }, [context, governingTokenMintPk, proposal, realm])
@@ -158,25 +170,23 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
         tokenOwnerRecords,
         mint,
         undecidedDepositByVoteRecord,
-        maxVote
+        maxVote,
       )
     } else if (realm && proposal && mint && isNftMode) {
-      const nftVoterPluginTotalWeight = nftMintRegistrar?.collectionConfigs.reduce(
-        (prev, curr) => {
+      const nftVoterPluginTotalWeight =
+        nftMintRegistrar?.collectionConfigs.reduce((prev, curr) => {
           const size = curr.size
           const weight = curr.weight.toNumber()
           if (typeof size === 'undefined' || typeof weight === 'undefined')
             return prev
           return prev + size * weight
-        },
-        0
-      )
+        }, 0)
       return buildTopVoters(
         voteRecords,
         tokenOwnerRecords,
         mint,
         undecidedNftsByVoteRecord ?? {},
-        new BN(nftVoterPluginTotalWeight ?? 0)
+        new BN(nftVoterPluginTotalWeight ?? 0),
       )
     }
     return []
@@ -201,7 +211,7 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
         walletsPks,
         realm,
         vsrClient,
-        connection.current
+        connection.current,
       )
       setUndecidedDepositByVoteRecord(votingPerWallet)
     }
@@ -217,12 +227,17 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
             .some(
               (voteRecord) =>
                 voteRecord.account.governingTokenOwner.toBase58() ===
-                tokenOwnerRecord.account.governingTokenOwner.toBase58()
-            )
+                tokenOwnerRecord.account.governingTokenOwner.toBase58(),
+            ),
       )
-      if (undecidedData.length && mintsUsedInRealm.length && realm && vsrClient) {
+      if (
+        undecidedData.length &&
+        mintsUsedInRealm.length &&
+        realm &&
+        vsrClient
+      ) {
         handleGetVsrVotingPowers(
-          undecidedData.map((x) => x.account.governingTokenOwner)
+          undecidedData.map((x) => x.account.governingTokenOwner),
         )
       }
     }
@@ -230,13 +245,12 @@ export default function useVoteRecords(proposal?: ProgramAccount<Proposal>) {
     tokenOwnerRecords.length,
     voteRecords.length,
     vsrMode,
-    undecidedDepositByVoteRecord,
     tokenOwnerRecords,
     voteRecords,
     realm,
     vsrClient,
     connection,
-    mintsUsedInRealm,
+    assetAccounts,
   ])
   ///////
 

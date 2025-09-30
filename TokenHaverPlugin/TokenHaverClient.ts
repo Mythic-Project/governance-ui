@@ -12,17 +12,20 @@ import { TOKEN_HAVER_PLUGIN } from './constants'
 export class TokenHaverClient extends Client<TokenHaver> {
   readonly requiresInputVoterWeight = true
 
-  constructor(public program: Program<TokenHaver>, public devnet: boolean) {
+  constructor(
+    public program: Program<TokenHaver>,
+    public devnet: boolean,
+  ) {
     super(program, devnet)
   }
 
   async calculateMaxVoterWeight(
     _realm: PublicKey,
-    _mint: PublicKey
+    _mint: PublicKey,
   ): Promise<BN | null> {
     const { result: realm } = await fetchRealmByPubkey(
       this.program.provider.connection,
-      _realm
+      _realm,
     )
     return realm?.account.config?.communityMintMaxVoteWeightSource.value ?? null // TODO this code should not actually be called because this is not a max voter weight plugin
   }
@@ -30,7 +33,7 @@ export class TokenHaverClient extends Client<TokenHaver> {
   async calculateVoterWeight(
     voter: PublicKey,
     realm: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
   ): Promise<BN | null> {
     const { registrar: registrarPk } = this.getRegistrarPDA(realm, mint)
     const registrar = await this.program.account.registrar.fetch(registrarPk)
@@ -40,12 +43,12 @@ export class TokenHaverClient extends Client<TokenHaver> {
           const tokenAccountPk = await getAssociatedTokenAddress(mint, voter)
           const tokenAccount = await fetchTokenAccountByPubkey(
             this.program.provider.connection,
-            tokenAccountPk
+            tokenAccountPk,
           )
           return (tokenAccount.result?.amount ?? new BN(0)).gt(new BN(0))
             ? 1
             : 0
-        })
+        }),
       )
     ).reduce((acc, curr) => acc + curr, 0)
     return new BN(countOfTokensUserHas).muln(10 ** 6)
@@ -54,7 +57,7 @@ export class TokenHaverClient extends Client<TokenHaver> {
   async updateVoterWeightRecord(
     voter: PublicKey,
     realm: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
     //action?: VoterWeightAction | undefined,
     //inputRecordCallback?: (() => Promise<PublicKey>) | undefined
   ): Promise<{
@@ -68,7 +71,7 @@ export class TokenHaverClient extends Client<TokenHaver> {
     const { voterWeightPk } = await this.getVoterWeightRecordPDA(
       realm,
       mint,
-      voter
+      voter,
     )
     const { registrar: registrarPk } = this.getRegistrarPDA(realm, mint)
     const registrar = await this.program.account.registrar.fetch(registrarPk)
@@ -80,10 +83,10 @@ export class TokenHaverClient extends Client<TokenHaver> {
           // filter out empty accounts
           const account = await fetchTokenAccountByPubkey(
             this.program.provider.connection,
-            tokenAccountPk
+            tokenAccountPk,
           )
           return account.found ? tokenAccountPk : null
-        })
+        }),
       )
     ).filter((x) => x !== null) as PublicKey[]
 
@@ -98,7 +101,7 @@ export class TokenHaverClient extends Client<TokenHaver> {
           pubkey,
           isSigner: false,
           isWritable: false,
-        }))
+        })),
       )
       .instruction()
 
@@ -118,23 +121,23 @@ export class TokenHaverClient extends Client<TokenHaver> {
   static async connect(
     provider: Provider,
     programId = new PublicKey(TOKEN_HAVER_PLUGIN),
-    devnet = false
+    devnet = false,
   ) {
     return new TokenHaverClient(
       new Program<TokenHaver>(IDL, programId, provider),
-      devnet
+      devnet,
     )
   }
 
   async createVoterWeightRecord(
     voter: PublicKey,
     realm: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
   ): Promise<TransactionInstruction | null> {
     const { voterWeightPk } = await this.getVoterWeightRecordPDA(
       realm,
       mint,
-      voter
+      voter,
     )
     const { registrar } = this.getRegistrarPDA(realm, mint)
 

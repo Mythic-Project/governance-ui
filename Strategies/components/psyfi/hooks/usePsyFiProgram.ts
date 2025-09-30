@@ -14,12 +14,12 @@ export const usePsyFiProgram = () => {
     const anchorProvider = new AnchorProvider(
       connection.current,
       wallet as any,
-      {}
+      {},
     )
     return new Program<PsyFiEuros>(
       PsyFiIdl,
       MAINNET_PROGRAM_KEYS.PSYFI_V2,
-      anchorProvider
+      anchorProvider,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [connection.current, wallet])

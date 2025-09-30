@@ -5,7 +5,7 @@ import { DialectSolanaSdk } from '@dialectlabs/react-sdk-blockchain-solana'
 import { NotificationsButton } from '@dialectlabs/react-ui'
 
 const REALMS_PUBLIC_KEY = new web3.PublicKey(
-  'BUxZD6aECR5B5MopyvvYqJxwSKDBhx2jSSo1U32en6mj'
+  'BUxZD6aECR5B5MopyvvYqJxwSKDBhx2jSSo1U32en6mj',
 )
 
 export default function DialectNotifications() {

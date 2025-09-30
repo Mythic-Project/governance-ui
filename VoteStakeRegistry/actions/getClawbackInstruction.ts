@@ -7,6 +7,8 @@ import {
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
+import { CUSTOM_BIO_VSR_PLUGIN_PK } from '@constants/plugins'
 
 export const getClawbackInstruction = async ({
   realmPk,
@@ -32,20 +34,21 @@ export const getClawbackInstruction = async ({
   const { registrar } = getRegistrarPDA(
     realmPk,
     realmCommunityMintPk,
-    clientProgramId
+    clientProgramId,
   )
-  const { voter } = getVoterPDA(
-    registrar,
-    voterWalletAddress,
-    clientProgramId
-  )
+  const { voter } = getVoterPDA(registrar, voterWalletAddress, clientProgramId)
 
+  const mintInfo = await client?.program.provider.connection.getAccountInfo(grantMintPk)
+  const tokenProgram = mintInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID 
+    : TOKEN_PROGRAM_ID
+    
   const voterATAPk = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    tokenProgram,
     grantMintPk,
     voter,
-    true
+    true,
   )
 
   const clawbackIx = await client?.program.methods
@@ -56,8 +59,17 @@ export const getClawbackInstruction = async ({
       voter,
       vault: voterATAPk,
       destination,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram,
     })
     .instruction()
+
+  if (tokenProgram.equals(TOKEN_2022_PROGRAM_ID)) {
+    clawbackIx?.keys.splice(4, 0, {
+      pubkey: grantMintPk,
+      isWritable: false,
+      isSigner: false,
+    })
+  }
+  
   return clawbackIx
 }

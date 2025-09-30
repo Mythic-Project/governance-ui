@@ -40,7 +40,7 @@ async function runNotifier() {
     connection,
     realmInfo!.programId,
     Governance,
-    [pubkeyFilter(1, realmInfo!.realmId)!]
+    [pubkeyFilter(1, realmInfo!.realmId)!],
   )
 
   const governancesMap = accountsToPubkeyMap(governances)
@@ -51,7 +51,7 @@ async function runNotifier() {
       return getGovernanceAccounts(connection, realmInfo!.programId, Proposal, [
         pubkeyFilter(1, new PublicKey(governancePk))!,
       ])
-    })
+    }),
   )
 
   console.log(`- scanning all '${REALM}' proposals`)
@@ -89,11 +89,11 @@ async function runNotifier() {
           const votingTokenDecimals = 6
           const yesVotes = fmtTokenAmount(
             proposal.account.getYesVoteCount(),
-            votingTokenDecimals
+            votingTokenDecimals,
           )
           const noVotes = fmtTokenAmount(
             proposal.account.getNoVoteCount(),
-            votingTokenDecimals
+            votingTokenDecimals,
           )
 
           const minVotesNeeded =
@@ -124,7 +124,7 @@ async function runNotifier() {
           })}
           
           🔗 https://realms.today/dao/${escape(
-            REALM
+            REALM,
           )}/proposal/${proposal.pubkey.toBase58()}`
 
           console.log(msg)
@@ -158,7 +158,7 @@ async function runNotifier() {
         const msg = `“${
           proposal.account.name
         }” proposal just opened for voting 🗳 https://realms.today/dao/${escape(
-          REALM
+          REALM,
         )}/proposal/${proposal.pubkey.toBase58()}`
 
         console.log(msg)
@@ -195,7 +195,7 @@ async function runNotifier() {
         const msg = `“${
           proposal.account.name
         }” proposal will close for voting 🗳 https://realms.today/dao/${escape(
-          REALM
+          REALM,
         )}/proposal/${proposal.pubkey.toBase58()} in 24 hrs`
 
         console.log(msg)
@@ -206,7 +206,7 @@ async function runNotifier() {
     }
   }
   console.log(
-    `-- countOpenForVotingSinceSomeTime: ${countOpenForVotingSinceSomeTime}, countJustOpenedForVoting: ${countJustOpenedForVoting}, countVotingNotStartedYet: ${countVotingNotStartedYet}, countClosed: ${countClosed}, countCancelled: ${countCancelled}`
+    `-- countOpenForVotingSinceSomeTime: ${countOpenForVotingSinceSomeTime}, countJustOpenedForVoting: ${countJustOpenedForVoting}, countVotingNotStartedYet: ${countVotingNotStartedYet}, countClosed: ${countClosed}, countCancelled: ${countCancelled}`,
   )
 }
 

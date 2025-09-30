@@ -18,7 +18,7 @@ const AccountsView = ({
           !auxiliaryMode
             ? x.governance.pubkey.toBase58() ===
               activeGovernance.pubkey.toBase58()
-            : auxiliaryMode
+            : auxiliaryMode,
         )
         .map((x) => {
           const info = getTreasuryAccountItemInfoV2(x)
@@ -115,7 +115,7 @@ const AccountsView = ({
                     label="Supply"
                     val={fmtTokenAmount(
                       x.extensions.mint?.account.supply,
-                      x.extensions.mint?.account.decimals
+                      x.extensions.mint?.account.decimals,
                     )}
                   />
                 )}

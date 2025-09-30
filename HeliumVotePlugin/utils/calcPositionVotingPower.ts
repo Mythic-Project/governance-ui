@@ -29,7 +29,8 @@ export const calcPositionVotingPower = ({
     const lockupSecs = lockup.endTs.sub(currTs).toNumber()
     const amountLockedNative = position!.amountDepositedNative
     const baselineScaledFactorNum = baselineVoteWeightScaledFactor.toNumber()
-    const maxExtraLockupVoteWeightScaledFactorNum = maxExtraLockupVoteWeightScaledFactor.toNumber()
+    const maxExtraLockupVoteWeightScaledFactorNum =
+      maxExtraLockupVoteWeightScaledFactor.toNumber()
     const lockupSaturationSecsNum = lockupSaturationSecs.toNumber()
 
     const multiplier =

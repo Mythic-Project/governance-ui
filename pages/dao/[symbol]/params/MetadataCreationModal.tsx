@@ -24,13 +24,14 @@ import GovernedAccountSelect from '@components/inputs/GovernedAccountSelect'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
 import { AccountType } from '@utils/uiTypes/assets'
 import { WebBundlr } from '@bundlr-network/client'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { PublicKey } from '@solana/web3.js'
+import { WebSolana } from "@irys/web-upload-solana"
+import { WebUploader } from "@irys/web-upload";
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { Metaplex } from '@metaplex-foundation/js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 import { useRealmQuery } from '@hooks/queries/realm'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
-import {useVoteByCouncilToggle} from "@hooks/useVoteByCouncilToggle";
+import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
 
 interface GovernanceConfigForm {
   mintAccount: AssetAccount | undefined
@@ -52,7 +53,7 @@ const MetadataCreationModal = ({
 }) => {
   const router = useRouter()
   const realm = useRealmQuery().data?.result
-  const {symbol, realmInfo } = useRealm()
+  const { symbol, realmInfo } = useRealm()
   const programId: PublicKey | undefined = realmInfo?.programId
 
   const { assetAccounts } = useGovernanceAssets()
@@ -66,7 +67,8 @@ const MetadataCreationModal = ({
   const { handleCreateProposal } = useCreateProposal()
   const [formErrors, setFormErrors] = useState({})
   const [creatingProposal, setCreatingProposal] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle();
+  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
+    useVoteByCouncilToggle()
   const [selectedImage, setSelectedImage] = useState<null | string>(null)
   const [imageFile, setImageFile] = useState<null | Buffer>(null)
   const [mintAuthority, setMintAuthority] = useState<
@@ -162,7 +164,7 @@ const MetadataCreationModal = ({
             governance: form.mintAccount?.governance,
           })
           const url = fmtUrlWithCluster(
-            `/dao/${symbol}/proposal/${proposalAddress}`
+            `https://v2.realms.today/dao/${symbol}/proposal/${proposalAddress}?share=true`,
           )
           router.push(url)
         } else {
@@ -184,7 +186,7 @@ const MetadataCreationModal = ({
       wallet,
       {
         providerUrl: connection.current.rpcEndpoint,
-      }
+      },
     )
     try {
       await bundlr.utils.getBundlerAddress('solana')
@@ -203,28 +205,25 @@ const MetadataCreationModal = ({
   }
 
   const uploadImage = async () => {
-    const bundlr = await initBundlr()
-    if (!bundlr) return
+    const irysUploader = await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.endpoint);
     if (imageFile == null) return
 
-    const loadedBalance = await bundlr.getLoadedBalance()
-    const balance = bundlr.utils.unitConverter(loadedBalance.toNumber())
+    const loadedBalance = await irysUploader.getBalance()
+    const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await bundlr.utils.getPrice('solana', imageFile.length)
-    const amount = bundlr.utils.unitConverter(price)
-    const amountNum = amount.toNumber()
+    const price = await irysUploader.getPrice(imageFile.length)
+    const amount = irysUploader.utils.fromAtomic(price)
+    const amountNum = amount.toNumber() * 1.2
 
     if (balanceNum < amountNum) {
-      await bundlr.fund(Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL))
+      const fundAmount = Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL)
+      await irysUploader.fund(fundAmount)
     }
 
-    const imageResult = await bundlr.uploader.upload(imageFile, [
-      { name: 'Content-Type', value: 'image/png' },
-    ])
+    const imageResult = await irysUploader.uploader.uploadData(imageFile)
 
-    const arweaveImageUrl = `https://arweave.net/${imageResult.data.id}?ext=png`
-
+    const arweaveImageUrl = `https://gateway.irys.xyz/${imageResult.id}`
     return arweaveImageUrl
   }
 
@@ -236,31 +235,29 @@ const MetadataCreationModal = ({
       image: arweaveImageUrl,
     }
     const tokenMetadataJsonString = JSON.stringify(tokenMetadata)
-    const bundlr = await initBundlr()
-    if (!bundlr) return
+    const irysUploader = await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.endpoint);
     if (tokenMetadataJsonString == null) return
 
     const tokenMetadataJson = Buffer.from(tokenMetadataJsonString)
-    const loadedBalance = await bundlr.getLoadedBalance()
-    const balance = bundlr.utils.unitConverter(loadedBalance.toNumber())
+    const loadedBalance = await irysUploader.getBalance()
+    const balance = irysUploader.utils.fromAtomic(loadedBalance)
     const balanceNum = balance.toNumber()
 
-    const price = await bundlr.utils.getPrice(
-      'solana',
-      tokenMetadataJson.length
+    const price = await irysUploader.getPrice(
+      tokenMetadataJson.length,
     )
-    const amount = bundlr.utils.unitConverter(price)
-    const amountNum = amount.toNumber()
 
+    const amount = irysUploader.utils.fromAtomic(price)
+    const amountNum = amount.toNumber()
+    
     if (balanceNum < amountNum) {
-      await bundlr.fund(Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL))
+      const fundAmount = Math.ceil((amountNum - balanceNum) * LAMPORTS_PER_SOL)
+      await irysUploader.fund(fundAmount)
     }
 
-    const metadataResult = await bundlr.uploader.upload(tokenMetadataJson, [
-      { name: 'Content-Type', value: 'application/json' },
-    ])
+    const metadataResult = await irysUploader.uploader.uploadData(tokenMetadataJson)
 
-    const arweaveMetadataUrl = `https://arweave.net/${metadataResult.data.id}`
+    const arweaveMetadataUrl = `https://gateway.irys.xyz/${metadataResult.id}`
     return arweaveMetadataUrl
   }
 
@@ -289,7 +286,7 @@ const MetadataCreationModal = ({
     const currentGovernanceSolTreasury = assetAccounts.filter(
       (x) =>
         x.governance.pubkey.toString() ===
-          form.mintAccount?.governance.pubkey.toString() && x.isSol
+          form.mintAccount?.governance.pubkey.toString() && x.isSol,
     )
     if (currentGovernanceSolTreasury.length !== 0) {
       setShouldMakeSolTreasury(false)
@@ -402,12 +399,12 @@ const MetadataCreationModal = ({
         ></Textarea>
 
         {shouldShowVoteByCouncilToggle && (
-            <VoteBySwitch
-                checked={voteByCouncil}
-                onChange={() => {
-                  setVoteByCouncil(!voteByCouncil)
-                }}
-            ></VoteBySwitch>
+          <VoteBySwitch
+            checked={voteByCouncil}
+            onChange={() => {
+              setVoteByCouncil(!voteByCouncil)
+            }}
+          ></VoteBySwitch>
         )}
       </div>
       <div className="flex justify-end pt-6 mt-6 space-x-4 border-t border-fgd-4">

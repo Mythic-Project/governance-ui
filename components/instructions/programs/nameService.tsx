@@ -10,7 +10,7 @@ export const NAME_SERVICE_INSTRUCTIONS = {
       getDataUI: async (
         _connection: Connection,
         data: Uint8Array,
-        _accounts: AccountMetaData[]
+        _accounts: AccountMetaData[],
       ) => {
         const decodedData = new PublicKey(data.slice(1))
         return (

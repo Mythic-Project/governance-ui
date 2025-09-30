@@ -58,13 +58,13 @@ export function FlagInstructionErrorButton({
         getProgramVersionForRealm(realmInfo!),
         wallet!,
         connection.current,
-        connection.endpoint
+        connection.endpoint,
       )
 
       await flagInstructionError(
         rpcContext,
         proposal,
-        proposalInstruction.pubkey
+        proposalInstruction.pubkey,
       )
     } catch (error) {
       notify({

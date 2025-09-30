@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { PlusCircleIcon, ReplyIcon } from '@heroicons/react/outline'
+import { DocumentDuplicateIcon, PlusCircleIcon, ReplyIcon } from '@heroicons/react/outline'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token as SplToken,
@@ -20,6 +20,8 @@ import Address from '@components/Address'
 
 import AddAssetModal from '../WalletDetails/AddAssetModal'
 import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import Tooltip from '@components/Tooltip'
+import { notify } from '@utils/notifications'
 
 interface Props {
   className?: string
@@ -47,13 +49,27 @@ export default function Header(props: Props) {
           TOKEN_PROGRAM_ID,
           mint,
           new PublicKey(props.wallet.address),
-          true
+          true,
         ).then((ata) => {
           setIsATA(ata.toBase58() === props.asset.address)
         })
       }
     }
   }, [props.asset, props.wallet])
+
+  async function copyMintAddress() {
+    const mint = props.asset.raw.extensions.mint?.publicKey
+    const base58 = mint?.toBase58() || ''
+
+    try {
+      await navigator?.clipboard?.writeText(base58)
+    } catch {
+      notify({
+        type: 'error',
+        message: 'Could not copy address to clipboard',
+      })
+    }
+  }
 
   return (
     <div
@@ -66,7 +82,7 @@ export default function Header(props: Props) {
         'gap-x-4',
         'grid',
         'grid-cols-[1fr_max-content]',
-        'items-center'
+        'items-center',
       )}
     >
       <div className="overflow-hidden">
@@ -82,7 +98,7 @@ export default function Header(props: Props) {
                 props.asset.icon.props.className,
                 'h-10',
                 'rounded-full',
-                'w-10'
+                'w-10',
               ),
             })
           )}
@@ -93,7 +109,7 @@ export default function Header(props: Props) {
                 'text-ellipsis',
                 'text-sm',
                 'text-white/50',
-                'whitespace-nowrap'
+                'whitespace-nowrap',
               )}
             >
               {props.asset.type === AssetType.Sol ? 'SOL' : props.asset.name}
@@ -106,7 +122,7 @@ export default function Header(props: Props) {
                 'text-2xl',
                 'text-ellipsis',
                 'text-fgd-1',
-                'whitespace-nowrap'
+                'whitespace-nowrap',
               )}
               title={
                 formatNumber(props.asset.count) +
@@ -121,6 +137,11 @@ export default function Header(props: Props) {
                 {props.asset.type === AssetType.Sol
                   ? 'SOL'
                   : props.asset.symbol}
+              </span>
+              <span className="text-sm ml-2 inline-block relative top-1" onClick={copyMintAddress}>
+                <Tooltip content="Copy Mint Address">
+                  <DocumentDuplicateIcon className="cursor-pointer h-[1.25em] w-[1.25em]" />
+                </Tooltip>
               </span>
             </div>
           </div>
@@ -181,7 +202,8 @@ export default function Header(props: Props) {
                 : props.asset.logo,
             name:
               props.asset.type === AssetType.Sol ? 'SOL' : props.asset.symbol,
-            tokenAccountAddress: props.asset.raw.extensions.transferAddress.toBase58(),
+            tokenAccountAddress:
+              props.asset.raw.extensions.transferAddress.toBase58(),
             tokenMintAddress:
               props.asset.type === AssetType.Sol
                 ? undefined

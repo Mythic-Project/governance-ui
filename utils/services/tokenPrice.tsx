@@ -15,14 +15,14 @@ const CACHE_TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
 const PRICE_STORAGE_KEY = 'tokenPrices'
 const PRICE_CACHE_TTL_MS = 1000 * 60 * 5 // 5 minutes TTL
 
-export type TokenInfoWithoutDecimals = Omit<TokenInfo, 'decimals'>
+export type TokenInfoJupiter = TokenInfo
 
 class TokenPriceService {
   _tokenList: TokenInfo[]
   _tokenPriceToUSDlist: {
     [mintAddress: string]: Price
   }
-  _unverifiedTokenCache: { [mintAddress: string]: TokenInfoWithoutDecimals }
+  _unverifiedTokenCache: { [mintAddress: string]: TokenInfoJupiter }
 
   constructor() {
     this._tokenList = []
@@ -101,7 +101,7 @@ class TokenPriceService {
     const storage = useLocalStorage()
 
     const cachedPricesData = storage.getItem(PRICE_STORAGE_KEY)
-    let cachedPrices = cachedPricesData
+    const cachedPrices = cachedPricesData
       ? JSON.parse(cachedPricesData)
       : {
           prices: {},
@@ -109,14 +109,14 @@ class TokenPriceService {
         }
     const tokenList = await this.fetchSolanaTokenListV2()
     const symbolMap = Object.fromEntries(
-      tokenList.map((token) => [token.address, token.symbol])
+      tokenList.map((token) => [token.address, token.symbol]),
     )
 
     const mintAddressesWithSol = chunks([...mintAddresses, WSOL_MINT], 100)
 
     for (const mintChunk of mintAddressesWithSol) {
       const mintAddressesToProcess = mintChunk.filter(
-        (mint) => !this._tokenPriceToUSDlist[mint]
+        (mint) => !this._tokenPriceToUSDlist[mint],
       )
 
       if (mintAddressesToProcess.length > 0) {
@@ -133,9 +133,8 @@ class TokenPriceService {
 
         if (mintAddressesToFetch.length > 0) {
           try {
-            const response = await getJupiterPricesByMintStrings(
-              mintAddressesToFetch
-            )
+            const response =
+              await getJupiterPricesByMintStrings(mintAddressesToFetch)
             if (response) {
               const priceToUsd: Price[] = Object.entries(response).map(
                 ([address, data]) => ({
@@ -143,7 +142,7 @@ class TokenPriceService {
                   mintSymbol: symbolMap[address] || 'Unknown',
                   vsToken: USDC_MINT.toBase58(),
                   vsTokenSymbol: 'USDC',
-                })
+                }),
               )
 
               priceToUsd.forEach((priceData) => {
@@ -256,7 +255,7 @@ class TokenPriceService {
         return null
       }
 
-      let tokenInfo = (await this.getTokenInfoAsync(mintAddress)) || undefined
+      const tokenInfo = (await this.getTokenInfoAsync(mintAddress)) || undefined
 
       const priceData: Price = {
         id: mintAddress,
@@ -296,18 +295,18 @@ class TokenPriceService {
   /**
    * For decimals use on chain tryGetMint
    */
-  getTokenInfo(mintAddress: string): TokenInfoWithoutDecimals | undefined {
+  getTokenInfo(mintAddress: string): TokenInfoJupiter | undefined {
     const tokenListRecord = this._tokenList?.find(
-      (x) => x.address === mintAddress
+      (x) => x.address === mintAddress,
     )
     return tokenListRecord
   }
 
   // This async method is used to lookup additional tokens not on JUP's strict list
   async getTokenInfoAsync(
-    mintAddress: string
-  ): Promise<TokenInfoWithoutDecimals | undefined> {
-    let tokenInfo: TokenInfoWithoutDecimals | undefined =
+    mintAddress: string,
+  ): Promise<TokenInfoJupiter | undefined> {
+    const tokenInfo: TokenInfoJupiter | undefined =
       this._unverifiedTokenCache[mintAddress] || undefined
 
     if (tokenInfo) {
@@ -317,8 +316,8 @@ class TokenPriceService {
       return undefined
     }
     // Check the strict token list first
-    let tokenListRecord = this._tokenList?.find(
-      (x) => x.address === mintAddress
+    const tokenListRecord = this._tokenList?.find(
+      (x) => x.address === mintAddress,
     )
     if (tokenListRecord) {
       return tokenListRecord
@@ -366,10 +365,10 @@ class TokenPriceService {
    * For decimals use on chain tryGetMint
    */
   getTokenInfoFromCoingeckoId(
-    coingeckoId: string
-  ): TokenInfoWithoutDecimals | undefined {
+    coingeckoId: string,
+  ): TokenInfoJupiter | undefined {
     const tokenListRecord = this._tokenList?.find(
-      (x) => x.extensions?.coingeckoId === coingeckoId
+      (x) => x.extensions?.coingeckoId === coingeckoId,
     )
     return tokenListRecord
   }

@@ -3,7 +3,7 @@ import { Application } from '@verify-wallet/constants'
 
 export default () => {
   const parsedLocationHash = new URLSearchParams(
-    window.location.search.substring(1)
+    window.location.search.substring(1),
   )
 
   return (

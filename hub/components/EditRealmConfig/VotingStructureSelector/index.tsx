@@ -365,16 +365,18 @@ export function VotingStructureSelector(props: Props) {
             sideOffset={2}
             style={{ width }}
           >
-            {([
-              ...(props.allowCivic ? [DEFAULT_CIVIC_CONFIG] : []),
-              ...(props.allowNFT ? [DEFAULT_NFT_CONFIG] : []),
-              ...(props.allowVSR ? [DEFAULT_VSR_CONFIG] : []),
-              ...(props.allowQV ? [DEFAULT_QV_CONFIG] : []),
-              ...(isCustomConfig(props.currentStructure) && !isDefault
-                ? [props.currentStructure]
-                : [{}]),
-              'default',
-            ] as const)
+            {(
+              [
+                ...(props.allowCivic ? [DEFAULT_CIVIC_CONFIG] : []),
+                ...(props.allowNFT ? [DEFAULT_NFT_CONFIG] : []),
+                ...(props.allowVSR ? [DEFAULT_VSR_CONFIG] : []),
+                ...(props.allowQV ? [DEFAULT_QV_CONFIG] : []),
+                ...(isCustomConfig(props.currentStructure) && !isDefault
+                  ? [props.currentStructure]
+                  : [{}]),
+                'default',
+              ] as const
+            )
               .filter((config) => {
                 if (typeof config === 'string') {
                   return !isDefault;

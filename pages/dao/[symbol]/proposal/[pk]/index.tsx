@@ -1,6 +1,5 @@
-import ReactMarkdown from 'react-markdown/react-markdown.min'
 import remarkGfm from 'remark-gfm'
-import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { ExternalLinkIcon, FolderDownloadIcon } from '@heroicons/react/outline'
 import { useProposalGovernanceQuery } from 'hooks/useProposal'
 import ProposalStateBadge from '@components/ProposalStateBadge'
 import { TransactionPanel } from '@components/instructions/TransactionPanel'
@@ -10,7 +9,7 @@ import { ApprovalProgress, VetoProgress } from '@components/QuorumProgress'
 import useRealm from 'hooks/useRealm'
 import useProposalVotes from 'hooks/useProposalVotes'
 import ProposalTimeStatus from 'components/ProposalTimeStatus'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ProposalActionsPanel from '@components/ProposalActions'
 import { getRealmExplorerHost } from 'tools/routing'
 import {
@@ -40,12 +39,26 @@ import Modal from '@components/Modal'
 import dayjs from 'dayjs'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useTokenOwnerRecordByPubkeyQuery } from '@hooks/queries/tokenOwnerRecord'
+import useVoteRecords from '@hooks/useVoteRecords'
+import { BigNumber } from 'bignumber.js'
+import {
+  VoteType as ProposalVoteType,
+  VoterDisplayData,
+} from '@models/proposal'
+import { stringify } from 'csv-stringify/sync'
+import ReactMarkdown from 'react-markdown'
+import { formatPercentage } from '@utils/formatPercentage'
+import type { BN } from '@coral-xyz/anchor'
+import saveAs from 'file-saver'
 
 const Proposal = () => {
   const { realmInfo, symbol } = useRealm()
   const proposal = useRouteProposalQuery().data?.result
   const governance = useProposalGovernanceQuery().data?.result
-  const tor = useTokenOwnerRecordByPubkeyQuery(proposal?.account.tokenOwnerRecord).data?.result
+  const tor = useTokenOwnerRecordByPubkeyQuery(
+    proposal?.account.tokenOwnerRecord,
+  ).data?.result
+  const voteRecords = useVoteRecords(proposal)
   const { connection } = useConnection()
   const descriptionLink = proposal?.account.descriptionLink
   const allowDiscussion = realmInfo?.allowDiscussion ?? true
@@ -81,9 +94,7 @@ const Proposal = () => {
     }
   }, [descriptionLink])
 
-  const proposedBy =
-    proposal &&
-    tor?.account.governingTokenOwner.toBase58()
+  const proposedBy = proposal && tor?.account.governingTokenOwner.toBase58()
 
   const { fmtUrlWithCluster } = useQueryContext()
   const showTokenBalance = proposal
@@ -110,6 +121,78 @@ const Proposal = () => {
       governance.account.config.baseVotingTime +
       governance.account.config.votingCoolOffTime
 
+  function filterOutUndecidedVotes(voteRecords: VoterDisplayData[]) {
+    return voteRecords.filter(
+      (records) => records.voteType !== ProposalVoteType.Undecided,
+    )
+  }
+
+  async function handleExportCsv() {
+    try {
+      const voters = filterOutUndecidedVotes(voteRecords)
+
+      const voteTypeText = (type: ProposalVoteType, isMulti: boolean) => {
+        switch (type) {
+          case ProposalVoteType.No:
+            return 'No'
+          case ProposalVoteType.Yes:
+            if (isMulti) {
+              return 'Voted'
+            } else {
+              return 'Yes'
+            }
+        }
+      }
+
+      const formatNumber = (value: BN, decimals: number) => {
+        const num = new BigNumber(value.toString()).shiftedBy(-decimals)
+
+        if (typeof Intl === 'undefined' || typeof navigator === 'undefined') {
+          return num.toFormat()
+        }
+
+        const formatter = new Intl.NumberFormat(navigator.language, {
+          minimumFractionDigits: decimals,
+        })
+        return formatter.format(num.toNumber())
+      }
+
+      // Prepare data for CSV
+      const csvData = [
+        ['Proposal Name', proposal?.account.name],
+        ['Proposal Address', proposal?.pubkey.toString()],
+        ['Total Voters', voters.length],
+        [], // Empty row for separation
+        ['Voter Address', 'Vote Type', 'Governance Power (in %)', 'Votes Cast'],
+        ...voters.map((record) => [
+          record.key,
+          voteTypeText(record.voteType, isMulti),
+          formatPercentage(record.votePercentage),
+          formatNumber(record.votesCast, record.decimals),
+        ]),
+      ]
+
+      // Convert to CSV string
+      const csvString = stringify(csvData)
+
+      // Create and download file
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8' })
+      saveAs(
+        blob,
+        `proposal-voters-${proposal?.account.name.replace(/\s+/g, '_')}.csv`,
+      )
+    } catch (error) {
+      console.error('Error exporting CSV:', error)
+    }
+  }
+
+  const showExportCsvButton = useMemo(() => {
+    return (
+      proposal?.account.state !== ProposalState.Voting &&
+      filterOutUndecidedVotes(voteRecords)?.length > 0
+    )
+  }, [proposal, voteRecords])
+
   return (
     <div className="grid grid-cols-12 gap-4 overflow-y-auto">
       <div className="bg-bkg-2 rounded-lg p-4 md:p-6 col-span-12 md:col-span-7 lg:col-span-8 space-y-3">
@@ -118,9 +201,14 @@ const Proposal = () => {
             <div className="flex flex-items justify-between">
               <PreviousRouteBtn />
               <div className="flex items-center">
+                {showExportCsvButton && (
+                  <button onClick={handleExportCsv}>
+                    <FolderDownloadIcon className="flex-shrink-0 h-4 ml-2 mt-0.5 text-primary-light w-4" />
+                  </button>
+                )}
                 <a
                   href={`https://${getRealmExplorerHost(
-                    realmInfo
+                    realmInfo,
                   )}/account/${proposal.pubkey.toBase58()}${
                     connection.rpcEndpoint.includes('devnet')
                       ? '?cluster=devnet'
@@ -144,8 +232,7 @@ const Proposal = () => {
               </div>
               {proposedBy && (
                 <p className="text-[10px]">
-                  Proposed by:{' '}
-                  {tor?.account.governingTokenOwner.toBase58()}
+                  Proposed by: {tor?.account.governingTokenOwner.toBase58()}
                 </p>
               )}
             </div>
@@ -294,7 +381,7 @@ const Proposal = () => {
                 <div className="flex justify-end mt-4">
                   <Link
                     href={fmtUrlWithCluster(
-                      `/dao/${symbol}/proposal/${proposal.pubkey}/explore`
+                      `/dao/${symbol}/proposal/${proposal.pubkey}/explore`,
                     )}
                     passHref
                   >

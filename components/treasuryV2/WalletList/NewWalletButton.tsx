@@ -41,7 +41,7 @@ export default function NewWalletButton() {
     (councilGovPower?.gtn(0) ||
       (realm &&
         communityGovPower?.gt(
-          realm.account.config.minCommunityTokensToCreateGovernance
+          realm.account.config.minCommunityTokensToCreateGovernance,
         )))
 
   const addNewAssetTooltip = !connected

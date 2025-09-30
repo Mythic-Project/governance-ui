@@ -47,7 +47,7 @@ const AdminTokenWithdrawTokenFees = ({
   const programSelectorHook = useProgramSelector()
   const { mangoClient, mangoGroup } = UseMangoV4(
     programSelectorHook.program?.val,
-    programSelectorHook.program?.group
+    programSelectorHook.program?.group,
   )
   const { assetAccounts } = useGovernanceAssets()
   const { connection } = useConnection()
@@ -55,7 +55,7 @@ const AdminTokenWithdrawTokenFees = ({
     (x) =>
       x.type === AccountType.SOL &&
       mangoGroup?.admin &&
-      x.extensions.transferAddress?.equals(mangoGroup.admin)
+      x.extensions.transferAddress?.equals(mangoGroup.admin),
   )
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [tokens, setTokens] = useState<NamePkVal[]>([])
@@ -93,7 +93,7 @@ const AdminTokenWithdrawTokenFees = ({
           TOKEN_PROGRAM_ID,
           bank.mint,
           form.governedAccount.extensions.transferAddress!,
-          true
+          true,
         )
 
         const depositAccountInfo = await connection.getAccountInfo(ataAddress)
@@ -106,8 +106,8 @@ const AdminTokenWithdrawTokenFees = ({
               bank.mint,
               ataAddress,
               form.governedAccount.extensions.transferAddress!,
-              wallet.publicKey
-            )
+              wallet.publicKey,
+            ),
           )
         }
 
@@ -133,9 +133,9 @@ const AdminTokenWithdrawTokenFees = ({
                 ataAddress,
                 form.governedAccount.extensions.transferAddress!,
                 form.governedAccount.extensions.transferAddress!,
-                []
-              )
-            )
+                [],
+              ),
+            ),
           )
         }
       }
@@ -159,7 +159,7 @@ const AdminTokenWithdrawTokenFees = ({
         (x) => ({
           name: x[0].name,
           value: x[0].mint,
-        })
+        }),
       )
       setTokens(currentTokens)
     }
@@ -171,7 +171,7 @@ const AdminTokenWithdrawTokenFees = ({
   useEffect(() => {
     handleSetInstructions(
       { governedAccount: form.governedAccount?.governance, getInstruction },
-      index
+      index,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
   }, [form])
