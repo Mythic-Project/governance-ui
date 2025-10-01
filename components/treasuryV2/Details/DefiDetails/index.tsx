@@ -18,7 +18,7 @@ export default function DefiDetails(props: Props) {
   const { plans, positions: unfilteredPositions } = useDefi()
 
   const positions = unfilteredPositions.filter(
-    (position) => position.walletAddress === props.wallet.address
+    (position) => position.walletAddress === props.wallet.address,
   )
 
   const plansGroupedByType = plans.reduce((acc, plan) => {
@@ -29,7 +29,7 @@ export default function DefiDetails(props: Props) {
 
   const { totalDepositedUsd, averageApr, totalEarnings } = aggregateStats(
     plans,
-    positions
+    positions,
   )
 
   return (
@@ -74,7 +74,7 @@ export default function DefiDetails(props: Props) {
                   />
                 </div>
               )
-            }
+            },
           )}
         </section>
       </StickyScrolledContainer>

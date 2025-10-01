@@ -83,11 +83,12 @@ const LockTokensAccount: React.FC<{
   )
   const [isOwnerOfDeposits, setIsOwnerOfDeposits] = useState(true)
 
-  const mint = 
-    config?.account.communityTokenConfig.voterWeightAddin?.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] ?
-      deposits[0].mint.account :
-      defaultMint
-  
+  const mint =
+    config?.account.communityTokenConfig.voterWeightAddin?.toBase58() ===
+      CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0]
+      ? deposits[0].mint.account
+      : defaultMint
+
   const { data: tokenOwnerRecord } =
     useTokenOwnerRecordByPubkeyQuery(tokenOwnerRecordPk)
   const tokenOwnerRecordWalletPk =

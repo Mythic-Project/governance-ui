@@ -152,7 +152,7 @@ const SendTokens = () => {
       newTxDollars[idx] = undefined
     } else {
       const priceData = await fetchJupiterPrice(mint)
-      const price = priceData.result?.price ?? 0
+      const price = priceData.result?.usdPrice ?? 0
 
       const totalPrice = newVal * price
       const totalPriceFormatted =

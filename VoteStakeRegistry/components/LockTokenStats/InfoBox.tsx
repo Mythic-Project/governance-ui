@@ -33,7 +33,7 @@ const InfoBox = ({
     async () =>
       realm
         ? await fetchJupiterPrice(realm.account.communityMint).then((x) =>
-            x.found ? x.result.price : 0,
+            x.found ? x.result.usdPrice : 0,
           )
         : undefined,
     [realm],

@@ -4,9 +4,7 @@ import { createContext } from 'react';
 import useTreasuryInfo from '@hooks/useTreasuryInfo';
 import { Status } from '@hub/types/Result';
 
-import {
-  useSavePlans,
-} from './plans/save';
+import { useSavePlans } from './plans/save';
 
 export type DefiType = 'Staking' | 'Lending';
 
@@ -98,9 +96,11 @@ interface Props {
 export function DefiProvider(props: Props) {
   const data = useTreasuryInfo();
   const loadedData = data._tag === Status.Ok ? data.data : null;
-  const { plans: savePlans, positions: savePositions, indicatorTokens } = useSavePlans(
-    loadedData?.wallets,
-  );
+  const {
+    plans: savePlans,
+    positions: savePositions,
+    indicatorTokens,
+  } = useSavePlans(loadedData?.wallets);
 
   return (
     <context.Provider

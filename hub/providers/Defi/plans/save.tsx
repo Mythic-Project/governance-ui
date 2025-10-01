@@ -18,7 +18,11 @@ import {
   TransactionMessage,
   VersionedTransaction,
 } from '@solana/web3.js';
-import { InputReserveType, parseReserve, SolendActionCore } from '@solendprotocol/solend-sdk';
+import {
+  InputReserveType,
+  parseReserve,
+  SolendActionCore,
+} from '@solendprotocol/solend-sdk';
 import {
   InstructionWithSigners,
   LendingInstruction,
@@ -80,7 +84,10 @@ const ELIGIBLE_RESERVES = [
   USDT_RESERVE_ADDRESS,
 ];
 
-export function useFetchReserveInfo(reserveAddresses: string[], config?: Config) {
+export function useFetchReserveInfo(
+  reserveAddresses: string[],
+  config?: Config,
+) {
   const queryFunction = queryClient.fetchQuery<
     {
       address: string;
@@ -115,7 +122,9 @@ export function useFetchReserveInfo(reserveAddresses: string[], config?: Config)
       };
 
       return data.results.map((reserve) => {
-        const reserveConfig = config.reserves.find((r) => r.address === reserve.reserve.address);
+        const reserveConfig = config.reserves.find(
+          (r) => r.address === reserve.reserve.address,
+        );
         if (!reserveConfig) throw new Error('Reserve config not found');
         return {
           address: reserve.reserve.address,
@@ -140,14 +149,14 @@ export function useFetchReserveInfo(reserveAddresses: string[], config?: Config)
 
 export type ReserveConfig = {
   liquidityToken: {
-  coingeckoID: string;
-  decimals: number;
-  logo: string;
-  mint: string;
-  name: string;
-  symbol: string;
-  volume24h: string;
-  },
+    coingeckoID: string;
+    decimals: number;
+    logo: string;
+    mint: string;
+    name: string;
+    symbol: string;
+    volume24h: string;
+  };
   pythOracle: string;
   switchboardOracle: string;
   extraOracle: string;
@@ -157,7 +166,7 @@ export type ReserveConfig = {
   liquidityAddress: string;
   liquidityFeeReceiverAddress: string;
   mintAddress: string;
-}
+};
 
 export type Config = {
   name: string;
@@ -171,7 +180,7 @@ export type Config = {
   owner: string;
   reserves: ReserveConfig[];
   lookupTableAddress: string;
-}
+};
 
 export function useFetchConfig() {
   return useQuery({
@@ -203,7 +212,9 @@ export function useFetchEarnings(
 ) {
   const atas =
     wallets?.flatMap((wallet) => {
-      const reserveConfig = config?.reserves.find((r) => reserveAddresses.includes(r.address));
+      const reserveConfig = config?.reserves.find((r) =>
+        reserveAddresses.includes(r.address),
+      );
       if (!reserveConfig) return [];
       return reserveAddresses.map((reserve) => {
         return getAssociatedTokenAddressSync(
@@ -296,9 +307,11 @@ export const useSavePlans = (
   const { data: configs } = useFetchConfig();
   const mainPoolConfig = configs?.find((c) => c.isPrimary);
   // Indicator tokens are collateral tokens or other tokens of this nature that represent a position in Defi. They are excluded from
-// beind displayed in the wallet to avoid confusion and clutter.
+  // beind displayed in the wallet to avoid confusion and clutter.
   const indicatorTokens = [
-    ...mainPoolConfig?.reserves.map((reserve) => reserve.collateralMintAddress) ?? [],
+    ...(mainPoolConfig?.reserves.map(
+      (reserve) => reserve.collateralMintAddress,
+    ) ?? []),
   ];
   const { getGovernedAccounts } = useGovernanceAssetsStore();
   const wallet = useWalletOnePointOh();
@@ -321,9 +334,13 @@ export const useSavePlans = (
     realmsWalletAddress: string,
   ) {
     if (!mainPoolConfig) throw new Error('Config not found');
-    const reserve = mainPoolConfig.reserves.find((r) => r.address === reserveAddress);
+    const reserve = mainPoolConfig.reserves.find(
+      (r) => r.address === reserveAddress,
+    );
     if (!reserve) throw new Error('Reserve not found');
-    const reserveInfo = reservesInfo.data?.find((r) => r.address === reserveAddress);
+    const reserveInfo = reservesInfo.data?.find(
+      (r) => r.address === reserveAddress,
+    );
     if (!reserveInfo) throw new Error('Reserve info not found');
     if (!wallet?.publicKey) throw new Error('Wallet not connected');
     const amountBase = new BigNumber(amount)
@@ -499,7 +516,7 @@ export const useSavePlans = (
             const liquidityAmount = account?.count?.times(
               reserve.cTokenExchangeRate,
             );
-            const price = tokenPrices?.[reserve.mintAddress]?.price;
+            const price = tokenPrices?.[reserve.mintAddress]?.usdPrice;
 
             return account
               ? {
@@ -530,7 +547,7 @@ export const useSavePlans = (
     plans:
       reservesInfo.data?.map((reserve) => {
         const info = tokenPriceService.getTokenInfo(reserve.mintAddress);
-        const price = tokenPrices?.[reserve.mintAddress]?.price;
+        const price = tokenPrices?.[reserve.mintAddress]?.usdPrice;
 
         return {
           id: reserve.address,

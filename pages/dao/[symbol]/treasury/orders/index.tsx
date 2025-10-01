@@ -141,7 +141,7 @@ export default function Orders() {
     const getPrice = async (buyToken: TokenInfo) => {
       const resp = await getJupiterPricesByMintStrings([buyToken.address])
 
-      setPrice(resp[buyToken.address].price.toString())
+      setPrice(resp[buyToken.address].usdPrice.toString())
     }
     if (buyToken?.address) {
       getPrice(buyToken)

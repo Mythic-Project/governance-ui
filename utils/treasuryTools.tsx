@@ -84,11 +84,11 @@ const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes in milliseconds
 export const getTreasuryAccountItemInfoV2Async = async (
   account: AssetAccount,
 ) => {
-  const cacheKey = `tokenAccountInfoItem_${account.pubkey.toString()}`
+  const cacheKey = `tokenAccountInfoItem_${account.pubkey.toString()}_v1`
 
   // Check cache first
   const cachedData = localStorage.getItem(cacheKey)
-  const cacheTTL = localStorage.getItem('tokenAccountInfoItem_ttl')
+  const cacheTTL = localStorage.getItem('tokenAccountInfoItem_ttl_v1')
 
   // If we have valid cached data, return it
   if (cachedData && cacheTTL && Date.now() < Number(cacheTTL)) {
@@ -173,7 +173,7 @@ export const getTreasuryAccountItemInfoV2Async = async (
     // Store in cache with TTL
     localStorage.setItem(cacheKey, JSON.stringify(result))
     localStorage.setItem(
-      `tokenAccountInfoItem_ttl`,
+      `tokenAccountInfoItem_ttl_v1`,
       String(Date.now() + CACHE_TTL_MS),
     )
   } catch (e) {

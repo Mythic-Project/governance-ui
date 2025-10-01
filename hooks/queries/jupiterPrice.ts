@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useQuery } from '@tanstack/react-query'
 import queryClient from './queryClient'
 
-const URL = 'https://lite-api.jup.ag/price/v2'
+const URL = 'https://lite-api.jup.ag/price/v3'
 
 /* example query
 # Unit price of 1 JUP & 1 SOL based on the Derived Price in USDC
@@ -42,7 +42,7 @@ curl -X 'GET' 'https://api.jup.ag/price/v2?ids=So1111111111111111111111111111111
 type Price = {
   id: string // pubkey,
   // price is in USD
-  price: number
+  usdPrice: number
   // removed in v2 API
   // mintSymbol: string
   // vsToken: string // pubkey,
@@ -100,7 +100,7 @@ export const fetchJupiterPrice = async (mint: PublicKey) =>
  * */
 export const getJupiterPriceSync = (mint: PublicKey) =>
   ((queryClient.getQueryData(jupiterPriceQueryKeys.byMint(mint)) as any)?.result
-    ?.price as number) ?? 0
+    ?.usdPrice as number) ?? 0
 
 export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
   const enabled = mints.length > 0
@@ -124,16 +124,6 @@ export const useJupiterPricesByMintsQuery = (mints: PublicKey[]) => {
         {} as Response['data'],
       )
 
-      //override chai price if its broken
-      const chaiMint = '3jsFX1tx2Z8ewmamiwSU851GzyzM2DJMq7KWW5DM8Py3'
-      const chaiData = data[chaiMint]
-
-      if (chaiData?.price && (chaiData.price > 1.3 || chaiData.price < 0.9)) {
-        data[chaiMint] = {
-          ...chaiData,
-          price: 1,
-        }
-      }
       return data
     },
     onSuccess: (data) => {
@@ -159,16 +149,6 @@ export const getJupiterPricesByMintStrings = async (mints: string[]) => {
     const response = (await x.json()) as Response
     const data = response.data
 
-    //override chai price if its broken
-    const chaiMint = '3jsFX1tx2Z8ewmamiwSU851GzyzM2DJMq7KWW5DM8Py3'
-    const chaiData = data[chaiMint]
-
-    if (chaiData?.price && (chaiData.price > 1.3 || chaiData.price < 0.9)) {
-      data[chaiMint] = {
-        ...chaiData,
-        price: 1,
-      }
-    }
     return data
   } catch (error) {
     console.error('Error fetching Jupiter prices:', error)

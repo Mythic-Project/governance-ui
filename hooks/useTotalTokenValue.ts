@@ -13,7 +13,7 @@ const useTotalTokenValue = ({
   const { result: tokenPrice } = useAsync(
     async () =>
       await fetchJupiterPrice(new PublicKey(mintAddress)).then((x) =>
-        x.found ? x.result.price : 0,
+        x.found ? x.result.usdPrice : 0,
       ),
     [mintAddress],
   )

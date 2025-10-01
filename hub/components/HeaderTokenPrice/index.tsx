@@ -20,7 +20,7 @@ function useTokenPrice(symbol: string, mint: PublicKey) {
     fetch(`https://price.jup.ag/v3/price?ids=${mintAddress}`)
       .then((resp) => resp.json())
       .then((result) => {
-        const price = result.data[mintAddress].price || 0;
+        const price = result.data[mintAddress].usdPrice || 0;
         return {
           direction: 'up',
           percentChange: 0,

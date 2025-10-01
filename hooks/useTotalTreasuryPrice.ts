@@ -47,7 +47,7 @@ export function useTotalTreasuryPrice() {
               : 0,
           ),
         ).toNumber() *
-        (prices?.[x.extensions.mint!.publicKey.toBase58()]?.price ?? 0)
+        (prices?.[x.extensions.mint!.publicKey.toBase58()]?.usdPrice ?? 0)
       )
     })
     .reduce((acc, val) => acc + val, 0)
@@ -55,7 +55,7 @@ export function useTotalTreasuryPrice() {
   const stakeAccountsTotalPrice = assetAccounts
     .filter((x) => x.extensions.stake)
     .map((x) => {
-      return x.extensions.stake!.amount * (prices?.[WSOL_MINT]?.price ?? 0)
+      return x.extensions.stake!.amount * (prices?.[WSOL_MINT]?.usdPrice ?? 0)
     })
     .reduce((acc, val) => acc + val, 0)
 

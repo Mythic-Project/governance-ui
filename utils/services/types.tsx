@@ -1,9 +1,6 @@
 export type Price = {
   id: string
-  mintSymbol: string
-  price: number
-  vsToken: string
-  vsTokenSymbol: string
+  usdPrice: number
 }
 
 export type TokenInfo = {
