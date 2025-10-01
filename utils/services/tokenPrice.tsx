@@ -14,6 +14,7 @@ const tokenListUrl = 'https://lite-api.jup.ag/tokens/v2/tag?query=verified'
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
 const PRICE_STORAGE_KEY = 'tokenPrices-v2'
 const PRICE_CACHE_TTL_MS = 1000 * 60 * 5 // 5 minutes TTL
+const MISS_TTL_MS = 30 * 1000 // retry misses quickly
 
 const TOKENLIST_CACHE_NAME = 'tokenlist-v3' // Cache Storage bucket
 
@@ -23,7 +24,41 @@ type MintLike = string | { toBase58: () => string }
 const asMintStr = (m: MintLike) =>
   typeof m === 'string' ? m.trim() : m.toBase58()
 
-// helpers to read and write the token list via Cache Storage API
+const isValidPriceNumber = (v: unknown): v is number =>
+  typeof v === 'number' && isFinite(v) && v > 0 && v < 1e12
+
+// normalize several possible shapes that getJupiterPricesByMintStrings might return
+function normalizePriceResponse(resp: any): Record<string, number> {
+  if (!resp) return {}
+  // object keyed by mint
+  if (typeof resp === 'object' && !Array.isArray(resp)) {
+    const out: Record<string, number> = {}
+    for (const [k, v] of Object.entries(resp)) {
+      const maybe =
+        (v as any)?.usdPrice ??
+        (v as any)?.price ??
+        (v as any)?.data?.usdPrice ??
+        (v as any)?.data?.price
+      if (isValidPriceNumber(maybe)) out[k] = Number(maybe)
+    }
+    return out
+  }
+  // array of entries
+  if (Array.isArray(resp)) {
+    const out: Record<string, number> = {}
+    for (const item of resp) {
+      const id = item?.id ?? item?.mint ?? item?.address
+      const maybe = item?.usdPrice ?? item?.price
+      if (typeof id === 'string' && isValidPriceNumber(maybe)) {
+        out[id] = Number(maybe)
+      }
+    }
+    return out
+  }
+  return {}
+}
+
+// helpers for token list cache
 async function readTokenListFromCache(): Promise<TokenInfo[] | null> {
   if (!('caches' in window)) return null
   const cache = await caches.open(TOKENLIST_CACHE_NAME)
@@ -62,8 +97,13 @@ class TokenPriceService {
       if (!cached) return
       const parsed: { prices: Record<string, Price>; ttl: string } =
         JSON.parse(cached)
-      if (Date.now() < Number(parsed.ttl)) {
-        Object.assign(this._tokenPriceToUSDlist, parsed.prices)
+      if (Date.now() < Number(parsed.ttl) && parsed.prices) {
+        // do not hydrate zeros, treat as misses
+        for (const [k, v] of Object.entries(parsed.prices)) {
+          if (isValidPriceNumber(v.usdPrice)) {
+            this._tokenPriceToUSDlist[k] = v
+          }
+        }
       }
     } catch {
       // ignore
@@ -90,7 +130,7 @@ class TokenPriceService {
     }
   }
 
-  // simplified storage, TTL stays in localStorage, big JSON goes to Cache Storage
+  // token list with Cache Storage and TTL in localStorage
   async fetchSolanaTokenListV2(): Promise<TokenInfo[]> {
     const storage = useLocalStorage()
     const ttl = storage.getItem('tokenListTTL')
@@ -106,10 +146,8 @@ class TokenPriceService {
           this._tokenList = cached
           return cached
         }
-        // TTL ok but cache missing, fall through to network
       }
 
-      // fetch from network then cache it
       const res = await fetch(tokenListUrl, { cache: 'no-store' })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const tokens = (await res.clone().json()) as TokenInfo[]
@@ -119,13 +157,11 @@ class TokenPriceService {
         tokenList = tokens.map((t) =>
           overrides[t.address] ? mergeDeepRight(t, overrides[t.address]!) : t,
         )
-
         storage.setItem('tokenListTTL', String(Date.now() + CACHE_TTL_MS))
         this._tokenList = tokenList
         return tokenList
       }
 
-      // network returned empty, try cache as fallback
       const fallback = await readTokenListFromCache()
       if (fallback) {
         this._tokenList = fallback
@@ -157,45 +193,40 @@ class TokenPriceService {
     this._warmFromLocalStorage()
     const storage = useLocalStorage()
 
-    const cachedPricesData = storage.getItem(PRICE_STORAGE_KEY)
-    const cachedPrices: { prices: Record<string, Price>; ttl: string } =
-      cachedPricesData
-        ? JSON.parse(cachedPricesData)
-        : {
-            prices: {},
-            ttl: '0',
-          }
+    const cachedData = storage.getItem(PRICE_STORAGE_KEY)
+    const cached: { prices: Record<string, Price>; ttl: string } = cachedData
+      ? JSON.parse(cachedData)
+      : { prices: {}, ttl: '0' }
 
-    // ensure token list is available, not strictly required for cache, kept for parity
     await this.fetchSolanaTokenListV2()
 
-    // normalize all mints to strings and include WSOL as string
     const wsol = asMintStr(WSOL_MINT as unknown as MintLike)
     const normalized = Array.from(
       new Set(mintAddresses.map(asMintStr).concat(wsol)),
     )
 
     for (const mintChunk of chunks(normalized, 100)) {
-      // skip ones already in memory
       const toProcess = mintChunk.filter(
         (mint) => !this._tokenPriceToUSDlist[mint],
       )
       if (!toProcess.length) continue
 
-      // pull from localStorage if TTL valid
       const now = Date.now()
       const toFetch = toProcess.filter((mint) => {
-        const hit = now < Number(cachedPrices.ttl) && cachedPrices.prices[mint]
-        if (hit) {
-          this._tokenPriceToUSDlist[mint] = cachedPrices.prices[mint]
+        const hit = now < Number(cached.ttl) && cached.prices[mint]
+        if (hit && isValidPriceNumber(cached.prices[mint].usdPrice)) {
+          this._tokenPriceToUSDlist[mint] = cached.prices[mint]
           return false
+        }
+        // purge zero or invalid entries so they do not linger
+        if (hit && !isValidPriceNumber(cached.prices[mint].usdPrice)) {
+          delete cached.prices[mint]
         }
         return true
       })
 
       if (!toFetch.length) continue
 
-      // avoid duplicate concurrent fetches
       const uniqueToFetch = toFetch.filter((m) => {
         if (this._inFlight.has(m)) return false
         this._inFlight.add(m)
@@ -204,44 +235,51 @@ class TokenPriceService {
       if (!uniqueToFetch.length) continue
 
       try {
-        const response = await getJupiterPricesByMintStrings(uniqueToFetch)
-        if (response) {
-          const priceToUsd: Price[] = Object.entries(response).map(
-            ([address, data]: any) => ({
-              id: address,
-              usdPrice: data.usdPrice,
-            }),
-          )
+        const raw = await getJupiterPricesByMintStrings(uniqueToFetch)
+        const parsed = normalizePriceResponse(raw)
 
-          priceToUsd.forEach((priceData) => {
-            this._tokenPriceToUSDlist[priceData.id] = priceData
-            cachedPrices.prices[priceData.id] = priceData
-          })
+        let wroteAny = false
 
-          cachedPrices.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
-          storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cachedPrices))
+        for (const id of uniqueToFetch) {
+          const val = parsed[id]
+          if (isValidPriceNumber(val)) {
+            const priceData: Price = { id, usdPrice: val }
+            this._tokenPriceToUSDlist[id] = priceData
+            cached.prices[id] = priceData
+            wroteAny = true
+          }
+          // do not write zero or invalid values to cache
         }
+
+        // set TTL, success keeps normal TTL, partial or complete miss shortens TTL so we retry soon
+        const missing = uniqueToFetch.filter(
+          (m) => !isValidPriceNumber(parsed[m]),
+        )
+        if (missing.length && !wroteAny) {
+          cached.ttl = String(Date.now() + MISS_TTL_MS)
+        } else {
+          cached.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
+        }
+
+        storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cached))
       } catch (e) {
         console.error(e)
-        notify({
-          type: 'error',
-          message: 'unable to fetch token prices',
-        })
+        notify({ type: 'error', message: 'unable to fetch token prices' })
       } finally {
         uniqueToFetch.forEach((m) => this._inFlight.delete(m))
       }
     }
 
-    // ensure USDC is present at 1
+    // ensure USDC is present at 1, this is a safe constant
     const USDC_MINT_BASE = asMintStr(USDC_MINT as unknown as MintLike)
     if (!this._tokenPriceToUSDlist[USDC_MINT_BASE]) {
-      const usdcPrice: Price = {
-        id: USDC_MINT_BASE,
-        usdPrice: 1,
-      }
+      const usdcPrice: Price = { id: USDC_MINT_BASE, usdPrice: 1 }
       this._tokenPriceToUSDlist[USDC_MINT_BASE] = usdcPrice
-      cachedPrices.prices[USDC_MINT_BASE] = usdcPrice
-      storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cachedPrices))
+      cached.prices[USDC_MINT_BASE] = usdcPrice
+      if (!cached.ttl || Number(cached.ttl) < Date.now()) {
+        cached.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
+      }
+      storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cached))
     }
   }
 
@@ -251,69 +289,62 @@ class TokenPriceService {
       if (!addr) return null
       const storage = useLocalStorage()
 
-      // warm then check memory
       this._warmFromLocalStorage()
-      if (this._tokenPriceToUSDlist[addr]) {
-        return this._tokenPriceToUSDlist[addr].usdPrice
-      }
+
+      const mem = this._tokenPriceToUSDlist[addr]
+      if (mem && isValidPriceNumber(mem.usdPrice)) return mem.usdPrice
 
       const cachedData = storage.getItem(PRICE_STORAGE_KEY)
-      const cachedPrices: { prices: Record<string, Price>; ttl: string } =
-        cachedData
-          ? JSON.parse(cachedData)
-          : {
-              prices: {},
-              ttl: '0',
-            }
+      const cached: { prices: Record<string, Price>; ttl: string } = cachedData
+        ? JSON.parse(cachedData)
+        : { prices: {}, ttl: '0' }
 
-      if (Date.now() < Number(cachedPrices.ttl) && cachedPrices.prices[addr]) {
-        const p = cachedPrices.prices[addr]
-        this._tokenPriceToUSDlist[addr] = p
-        return p.usdPrice
+      if (Date.now() < Number(cached.ttl)) {
+        const p = cached.prices[addr]
+        if (p && isValidPriceNumber(p.usdPrice)) {
+          this._tokenPriceToUSDlist[addr] = p
+          return p.usdPrice
+        }
+        // purge zero or invalid from cache
+        if (p && !isValidPriceNumber(p.usdPrice)) {
+          delete cached.prices[addr]
+          storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cached))
+        }
       }
 
-      const response = await getJupiterPricesByMintStrings([addr])
+      // fallback to network
+      const raw = await getJupiterPricesByMintStrings([addr])
+      const parsed = normalizePriceResponse(raw)
+      const val = parsed[addr]
 
-      if (!response || !response[addr]) {
-        // cache a zero price guard to avoid refetch storms
-        cachedPrices.prices[addr] = { id: addr, usdPrice: 0 }
-        cachedPrices.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
-        storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cachedPrices))
-        return null
+      if (isValidPriceNumber(val)) {
+        const priceData: Price = { id: addr, usdPrice: val }
+        this._tokenPriceToUSDlist[addr] = priceData
+        cached.prices[addr] = priceData
+        cached.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
+        storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cached))
+        void this.getTokenInfoAsync(addr)
+        return priceData.usdPrice
       }
 
-      // optional info fetch, currently unused
-      void this.getTokenInfoAsync(addr)
-
-      const priceData: Price = {
-        id: addr,
-        usdPrice: response[addr].usdPrice,
-      }
-
-      this._tokenPriceToUSDlist[addr] = priceData
-      cachedPrices.prices[addr] = priceData
-      cachedPrices.ttl = String(Date.now() + PRICE_CACHE_TTL_MS)
-      storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cachedPrices))
-
-      return priceData.usdPrice
+      // no valid price, do not write zero as truth, write short lived miss guard only if you want
+      cached.ttl = String(Date.now() + MISS_TTL_MS)
+      storage.setItem(PRICE_STORAGE_KEY, JSON.stringify(cached))
+      return null
     } catch (e) {
       console.error('Error fetching token price:', e)
       return null
     }
   }
 
-  /**
-   * Can be used but not recommended
-   */
   getUSDTokenPrice(mintAddress: string): number {
-    return mintAddress
-      ? this._tokenPriceToUSDlist[mintAddress]?.usdPrice || 0
-      : 0
+    // only return positive values, zero means unknown
+    const p = mintAddress
+      ? this._tokenPriceToUSDlist[mintAddress]?.usdPrice
+      : undefined
+    return isValidPriceNumber(p) ? p : 0
   }
 
-  /**
-   * For decimals use on chain tryGetMint
-   */
   getTokenInfo(mintAddress: string): TokenInfoJupiter | undefined {
     const tokenListRecord = this._tokenList?.find(
       (x) => x.address === mintAddress,
@@ -321,7 +352,6 @@ class TokenPriceService {
     return tokenListRecord
   }
 
-  // async lookup for tokens that are not on the strict list, currently returns undefined
   async getTokenInfoAsync(
     mintAddress: string,
   ): Promise<TokenInfoJupiter | undefined> {
@@ -336,15 +366,9 @@ class TokenPriceService {
     )
     if (tokenListRecord) return tokenListRecord
 
-    // logo not found so we return no data
     return undefined
-
-    // if you decide to re enable remote metadata, wrap it in try catch here
   }
 
-  /**
-   * For decimals use on chain tryGetMint
-   */
   getTokenInfoFromCoingeckoId(
     coingeckoId: string,
   ): TokenInfoJupiter | undefined {
@@ -355,7 +379,7 @@ class TokenPriceService {
   }
 }
 
-// keep a true singleton across HMR
+// sticky singleton across HMR
 declare global {
   // eslint-disable-next-line no-var
   var __tokenPriceService: TokenPriceService | undefined

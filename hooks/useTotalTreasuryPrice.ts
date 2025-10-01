@@ -7,6 +7,8 @@ import { PublicKey } from '@metaplex-foundation/js'
 import { WSOL_MINT } from '@components/instructions/tools'
 import { AccountType } from '@utils/uiTypes/assets'
 import { useMangoAccountsTreasury } from './useMangoAccountsTreasury'
+import tokenPriceService from '@utils/services/tokenPrice'
+import { useEffect } from 'react'
 
 export function useTotalTreasuryPrice() {
   const {
@@ -22,13 +24,13 @@ export function useTotalTreasuryPrice() {
     .filter((x) => typeof x.extensions.mint !== 'undefined')
     .map((x) => x.extensions.mint!.publicKey)
 
-  const { data: prices } = useJupiterPricesByMintsQuery([
-    ...mintsToFetch,
-    new PublicKey(WSOL_MINT),
-  ])
-
-  const { mangoAccountsValue, isFetching } =
-    useMangoAccountsTreasury(assetAccounts)
+  useEffect(() => {
+    tokenPriceService.fetchTokenPrices([
+      ...mintsToFetch.map((x) => x.toBase58()),
+      WSOL_MINT,
+    ])
+  }, [mintsToFetch])
+  const prices = tokenPriceService._tokenPriceToUSDlist
 
   const totalTokensPrice = [
     ...governedTokenAccountsWithoutNfts,
@@ -61,14 +63,11 @@ export function useTotalTreasuryPrice() {
 
   const totalPrice = totalTokensPrice + stakeAccountsTotalPrice
 
-  const totalPriceFormatted = (
-    governedTokenAccountsWithoutNfts.length
-      ? new BigNumber(totalPrice)
-      : new BigNumber(0)
-  ).plus(mangoAccountsValue)
+  const totalPriceFormatted = governedTokenAccountsWithoutNfts.length
+    ? new BigNumber(totalPrice)
+    : new BigNumber(0)
 
   return {
-    isFetching,
     totalPriceFormatted,
   }
 }

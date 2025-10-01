@@ -66,9 +66,9 @@ export const convertAccountToAsset = async (
         ),
         price: account.extensions.mint
           ? new BigNumber(
-              (await tokenPriceService.fetchTokenPrice(
-                account.extensions.mint.publicKey.toString(),
-              )) ?? 0,
+              tokenPriceService._tokenPriceToUSDlist[
+                account.extensions.mint.publicKey.toString()
+              ]?.usdPrice || 0,
             )
           : undefined,
         raw: account,
@@ -91,9 +91,9 @@ export const convertAccountToAsset = async (
         name: info.accountName || info.info?.name || info.name || info.symbol,
         price: account.extensions.mint
           ? new BigNumber(
-              (await tokenPriceService.fetchTokenPrice(
-                account.extensions.mint.publicKey.toString(),
-              )) ?? 0,
+              tokenPriceService._tokenPriceToUSDlist[
+                account.extensions.mint.publicKey.toString()
+              ]?.usdPrice || 0,
             )
           : undefined,
         raw: account,

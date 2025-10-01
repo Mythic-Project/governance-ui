@@ -21,10 +21,10 @@ const PlansList = ({
   wallet?: Wallet
 }) => {
   const [selectedDepositPlan, setSelectedDepositPlan] = useState<Plan | null>(
-    null
+    null,
   )
   const [selectedWithdrawPlan, setSelectedWithdrawPlan] = useState<Plan | null>(
-    null
+    null,
   )
 
   return (
@@ -51,19 +51,19 @@ const PlansList = ({
         const filteredPositions = positions.filter((p) => p.planId === plan.id)
         const planTotalBalance = filteredPositions.reduce(
           (acc, position) => acc.plus(position.amount),
-          new BigNumber(0)
+          new BigNumber(0),
         )
         const planTotalBalanceUsd = filteredPositions.reduce(
           (acc, position) => acc.plus(position.amount.times(plan.price ?? 0)),
-          new BigNumber(0)
+          new BigNumber(0),
         )
         return (
           <div
             className={cx(
               'flex items-center w-full p-3 border rounded-lg text-fgd-1 border-fgd-4 justify-between',
-              detailsView ? undefined : 'group/plan'
+              detailsView ? undefined : 'group/plan',
             )}
-            key={plan.name}
+            key={plan.id}
           >
             <div className="flex flex-col gap-2 w-[100px]">
               <div className="text-sm font-bold flex items-center gap-1">
@@ -110,7 +110,7 @@ const PlansList = ({
               <div
                 className={cx(
                   'flex flex-col gap-2 justify-between',
-                  wallet ? 'group-hover/plan:hidden' : ''
+                  wallet ? 'group-hover/plan:hidden' : '',
                 )}
               >
                 <div className="text-sm text-right text-green">{plan.apr}%</div>
@@ -123,7 +123,7 @@ const PlansList = ({
               <div
                 className={cx(
                   'text-sm gap-1 items-center justify-end',
-                  wallet ? 'group-hover/plan:flex hidden' : 'hidden'
+                  wallet ? 'group-hover/plan:flex hidden' : 'hidden',
                 )}
               >
                 <Button onClick={() => setSelectedDepositPlan(plan)}>

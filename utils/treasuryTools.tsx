@@ -97,7 +97,7 @@ export const getTreasuryAccountItemInfoV2Async = async (
 
   // If no cache or expired, fetch fresh data
   // this is safe because we are using a browser local storage
-  await tokenPriceService.fetchSolanaTokenListV2()
+  //await tokenPriceService.fetchSolanaTokenListV2()
 
   const mintAddress =
     account.type === AccountType.SOL
