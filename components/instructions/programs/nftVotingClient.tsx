@@ -3,7 +3,7 @@ import { NftVoterClient } from '@utils/uiTypes/NftVoterClient'
 import { AccountMetaData, getRealm } from '@solana/spl-governance'
 import { Connection, Keypair } from '@solana/web3.js'
 import { fmtTokenAmount } from '@utils/formatting'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { DEFAULT_NFT_VOTER_PLUGIN } from '@tools/constants'
 import EmptyWallet from '@utils/Mango/listingTools'
 

@@ -1,6 +1,6 @@
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { AccountMetaData } from '@solana/spl-governance'
-import { tryGetMint } from '../../../utils/tokens'
+import tryGetMint from '../../../utils/tokens'
 import tokenPriceService from '@utils/services/tokenPrice'
 import {
   decodeTransferCheckedInstruction,

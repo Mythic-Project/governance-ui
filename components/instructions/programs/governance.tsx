@@ -33,7 +33,7 @@ import {
   getHoursFromTimestamp,
 } from '@tools/sdk/units'
 import { dryRunInstruction } from 'actions/dryRunInstruction'
-import { tryGetMint } from '../../../utils/tokens'
+import tryGetMint from '../../../utils/tokens'
 import { fetchProgramVersion } from '@hooks/queries/useProgramVersionQuery'
 import { fetchTokenAccountByPubkey } from '@hooks/queries/tokenAccount'
 

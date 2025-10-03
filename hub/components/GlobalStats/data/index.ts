@@ -19,7 +19,7 @@ import { getRealmConfigAccountOrDefault } from '@tools/governance/configs';
 import group from '@utils/group';
 import { pause } from '@utils/pause';
 import tokenPriceService from '@utils/services/tokenPrice';
-import { tryGetMint } from '@utils/tokens';
+import tryGetMint from '@utils/tokens';
 import { getAllSplGovernanceProgramIds } from 'pages/api/tools/realms';
 
 import { getGovernances } from './getGovernances';

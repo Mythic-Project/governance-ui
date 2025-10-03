@@ -7,11 +7,11 @@ import {
 } from '@solana/spl-governance'
 import { Connection, PublicKey } from '@solana/web3.js'
 import tokenPriceService from '@utils/services/tokenPrice'
-import {
+import tryGetMint, {
   TokenAccount,
   TokenProgramAccount,
   getOwnedTokenAccounts,
-  tryGetMint,
+
 } from '@utils/tokens'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getAllSplGovernanceProgramIds } from './tools/realms'

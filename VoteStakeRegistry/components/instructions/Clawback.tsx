@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import {
   ClawbackForm,
   UiInstruction,

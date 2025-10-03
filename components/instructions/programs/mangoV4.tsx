@@ -31,7 +31,7 @@ import {
 import { tryParseKey } from '@tools/validators/pubkey'
 import Loading from '@components/Loading'
 import { getClient, getGroupForClient } from '@utils/mangoV4Tools'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { formatNumber } from '@utils/formatNumber'
 // import { snakeCase } from 'snake-case'
 // import { sha256 } from 'js-sha256'

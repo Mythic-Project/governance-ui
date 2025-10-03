@@ -3,7 +3,11 @@
     "sourceMap": true,
     "baseUrl": ".",
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -15,23 +19,52 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "@components/*": ["components/*"],
-      "@constants/*": ["constants/*"],
-      "@hooks/*": ["hooks/*"],
-      "@hub/*": ["hub/*"],
-      "@verify-wallet/*": ["verify-wallet/*"],
-      "@tools/*": ["tools/*"],
-      "@models/*": ["models/*"],
-      "@utils/*": ["utils/*"]
+      "@components/*": [
+        "components/*"
+      ],
+      "@constants/*": [
+        "constants/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@hub/*": [
+        "hub/*"
+      ],
+      "@verify-wallet/*": [
+        "verify-wallet/*"
+      ],
+      "@tools/*": [
+        "tools/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
     },
     "incremental": true,
     "isolatedModules": true
   },
-  "exclude": ["node_modules/**/*", ".next", "out", "docs"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],
+  "exclude": [
+    "node_modules/**/*",
+    ".next",
+    "out",
+    "docs"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js"
+  ],
   "ts-node": {
-    "require": ["tsconfig-paths/register"],
+    "require": [
+      "tsconfig-paths/register"
+    ],
     "compilerOptions": {
       "module": "commonjs"
     }

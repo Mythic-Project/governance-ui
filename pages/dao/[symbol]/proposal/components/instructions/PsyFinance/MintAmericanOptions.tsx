@@ -21,7 +21,7 @@ import {
 } from '@solana/spl-token'
 import { BN } from 'bn.js'
 import BigNumber from 'bignumber.js'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { NewProposalContext } from '../../../new'
 import GovernedAccountSelect from '../../GovernedAccountSelect'
 import {
