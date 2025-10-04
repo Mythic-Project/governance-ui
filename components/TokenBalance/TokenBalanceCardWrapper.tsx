@@ -205,7 +205,7 @@ export const GovernanceTokenSwap = () => {
     tokenInfo = { symbol: 'SFM' }
   }
 
-  return communityMint && tokenInfo ? (
+  return communityMint ? (
     <div className="flex items-center justify-end py-2">
       <SecondaryButton
         className="relative -bottom-[18px] -right-[15px] rounded-none border-0"
