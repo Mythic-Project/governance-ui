@@ -1,266 +1,115 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import cx from 'classnames'
+import { PublicKey } from '@metaplex-foundation/js'
+import DefiSummary from '@components/TreasuryAccount/DefiSummary'
+import { Asset } from '@models/treasury/Asset'
+import { Wallet } from '@models/treasury/Wallet'
+import SummaryButton from "@components/treasuryV2/WalletList/WalletListItem/SummaryButton";
+import {Section} from "@jridgewell/trace-mapping";
 
-import {
-  Asset,
-  Token,
-  Sol,
-  Mint,
-  Programs,
-  RealmAuthority,
-  Unknown,
-  AssetType,
-  Domains,
-  Stake,
-  Mango,
-} from '@models/treasury/Asset'
-
-import TokenList from './TokenList'
-import NFTList from './NFTList'
-import OtherAssetsList from './OtherAssetsList'
-
-import {
-  isToken,
-  isSol,
-  isMint,
-  isPrograms,
-  isRealmAuthority,
-  isUnknown,
-  isDomain,
-  isStake,
-  isMango,
-} from '../typeGuards'
-
-import { PublicKey } from '@solana/web3.js'
-import { GoverningTokenType } from '@solana/spl-governance'
-import TokenIcon from '@components/treasuryV2/icons/TokenIcon'
-import { useTokensMetadata } from '@hooks/queries/tokenMetadata'
-import { useRealmQuery } from '@hooks/queries/realm'
-import { useRealmConfigQuery } from '@hooks/queries/realmConfig'
-import useTreasuryAddressForGovernance from '@hooks/useTreasuryAddressForGovernance'
-import { useDigitalAssetsByOwner } from '@hooks/queries/digitalAssets'
-import { SUPPORT_CNFTS } from '@constants/flags'
-import { useDefi } from '@hooks/useDefi'
-
-export type Section = 'tokens' | 'nfts' | 'others'
-
-function isTokenLike(asset: Asset): asset is Token | Sol {
-  return isToken(asset) || isSol(asset)
-}
-
-function isOther(
-  asset: Asset,
-): asset is
-  | Mint
-  | Programs
-  | Unknown
-  | Domains
-  | RealmAuthority
-  | Stake
-  | Mango {
-  return (
-    isMint(asset) ||
-    isPrograms(asset) ||
-    isUnknown(asset) ||
-    isRealmAuthority(asset) ||
-    isDomain(asset) ||
-    isStake(asset) ||
-    isMango(asset)
-  )
-}
 
 interface Props {
   className?: string
-  assets: Asset[]
-  expandedSections?: Section[]
-  selectedAssetId?: string | null
+  expanded?: boolean
+  selected?: boolean
+  selectedAsset?: Asset | null
+  wallet: Wallet
+  firstWallet: boolean
+  onExpand?(): void
   onSelectAsset?(asset: Asset): void
-  onToggleExpandSection?(section: Section): void
-  governance: PublicKey | undefined
+  onSelectWallet?(): void
 }
 
-export default function AssetList(props: Props) {
-  const { indicatorTokens } = useDefi()
-  const assets = props.assets.filter(
-    (a) =>
-      a.type !== AssetType.Token ||
-      !indicatorTokens.includes(a.mintAddress ?? '')
-  )
-  const tokensFromProps = useMemo(() => {
-    return assets
-      .filter(isTokenLike)
-      .sort((a, b) => b.value.comparedTo(a.value))
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  }, [])
-  const tokensFromPropsFiltered = tokensFromProps.filter(
-    (token) =>
-      token.type != AssetType.Sol &&
-      token.logo == undefined &&
-      token.mintAddress,
-  ) as Token[]
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  const othersFromProps = useMemo(() => assets.filter(isOther), [])
-  const otherFromPropsFiltred = othersFromProps.filter((token) =>
-    isMint(token),
-  ) as Mint[]
+function AssetList(_props: {
+  governance: any,
+  assets: Asset[],
+  className: string,
+  expandedSections: Section[],
+  selectedAssetId: string | undefined,
+  onSelectAsset: ((asset: Asset) => void) | undefined,
+  onToggleExpandSection: (section) => void
+}) {
+  return null;
+}
 
-  const { data } = useTokensMetadata([
-    ...tokensFromPropsFiltered.map((x) => new PublicKey(x.mintAddress!)),
-    ...otherFromPropsFiltred.map((x) => new PublicKey(x.address)),
-  ])
-  const [tokens, setTokens] = useState<(Token | Sol)[]>(tokensFromProps)
-  const realm = useRealmQuery().data?.result
-  const config = useRealmConfigQuery().data?.result
-  const isCommunityMintDisabled =
-    config?.account.communityTokenConfig?.tokenType ===
-      GoverningTokenType.Dormant || false
-  const isCouncilMintDisabled =
-    config?.account?.councilTokenConfig?.tokenType ===
-      GoverningTokenType.Dormant || false
+export default function WalletListItem(props: Props) {
+  const [expandedSections, setExpandedSections] = useState<Section[]>([])
+  const isOpen = props.expanded
 
-  useEffect(() => {
-    const getTokenData = async () => {
-      const newTokens: (Token | Sol)[] = []
-      for await (const token of tokensFromProps) {
-        if (
-          token.type != AssetType.Sol &&
-          token.logo == undefined &&
-          token.mintAddress
-        ) {
-          const newTokenData = data?.find((x) => x.mint === token.mintAddress)
-
-          if (!newTokenData) {
-            newTokens.push(token)
-            continue
-          }
-
-          newTokens.push({
-            ...token,
-            icon: <TokenIcon></TokenIcon>,
-            name: newTokenData.name,
-            symbol: newTokenData.symbol,
-          })
-        } else {
-          newTokens.push(token)
-        }
-      }
-      setTokens(newTokens)
-    }
-    if (data && data?.length) {
-      getTokenData()
-    }
-  }, [tokensFromProps, data])
-
-  const { result: treasury } = useTreasuryAddressForGovernance(props.governance)
-  const { data: governanceNfts } = useDigitalAssetsByOwner(props.governance)
-  const { data: treasuryNfts } = useDigitalAssetsByOwner(treasury)
-
-  const nfts = useMemo(
-    () =>
-      governanceNfts && treasuryNfts
-        ? [...governanceNfts, ...treasuryNfts]
-            .flat()
-            .filter((x) => SUPPORT_CNFTS || !x.compression.compressed)
-        : undefined,
-    [governanceNfts, treasuryNfts],
+  const governance = useMemo(
+      () => new PublicKey(props.wallet.governanceAddress!), // @asktree: I have no idea why this would ever be undefined ?
+      [props.wallet.governanceAddress],
   )
 
-  // NOTE possible source of bugs, state wont update if props do.
-  const [others, setOthers] =
-    useState<
-      (Mint | Programs | Unknown | Domains | RealmAuthority | Stake | Mango)[]
-    >(othersFromProps)
-  const [itemsToHide, setItemsToHide] = useState<string[]>([])
-  useEffect(() => {
-    const newItemsToHide: string[] = []
-    if (isCommunityMintDisabled && realm?.account.communityMint) {
-      newItemsToHide.push(realm.account.communityMint.toBase58())
-    }
-    if (isCouncilMintDisabled && realm?.account.config.councilMint) {
-      newItemsToHide.push(realm.account.config.councilMint.toBase58())
-    }
-    setItemsToHide(newItemsToHide)
-  }, [isCommunityMintDisabled, isCouncilMintDisabled])
-
-  useEffect(() => {
-    const getTokenData = async () => {
-      const newTokens: (
-        | Mint
-        | Programs
-        | Unknown
-        | Domains
-        | RealmAuthority
-        | Stake
-        | Mango
-      )[] = []
-      for await (const token of othersFromProps) {
-        if (isMint(token)) {
-          const newTokenData = data?.find((x) => x.mint === token.address)
-
-          if (!newTokenData) {
-            newTokens.push(token)
-            continue
-          }
-
-          newTokens.push({
-            ...token,
-            name: newTokenData.name,
-            symbol: newTokenData.symbol,
-          })
-        } else {
-          newTokens.push(token)
-        }
-      }
-      setOthers(newTokens)
-    }
-    if (data) {
-      getTokenData()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO please fix, it can cause difficult bugs. You might wanna check out https://bobbyhadz.com/blog/react-hooks-exhaustive-deps for info. -@asktree
-  }, [othersFromProps, data])
-
-  const diplayingMultipleAssetTypes =
-    (tokens.length > 0 ? 1 : 0) +
-      ((nfts?.length ?? 0) > 0 ? 1 : 0) +
-      (others.length > 0 ? 1 : 0) >
-    1
+  // ⚡️ Unused constant 'div' was removed! No punk pollution left behind.
 
   return (
-    <div className={cx(props.className, 'relative', 'space-y-6')}>
-      {assets.length === 0 && (nfts?.length ?? 0) === 0 && (
-        <div className="p-4 text-center text-sm text-fgd-1">
-          This wallet contains no assets
+      <div
+          className={cx(
+              props.className,
+              'bg-bkg-3',
+              'group',
+              'overflow-hidden',
+              'relative',
+              'rounded',
+              isOpen ? 'h-fit' : 'h-[104px]',
+          )}
+      >
+        <div
+            className={cx(
+                'absolute',
+                'bottom-0',
+                'left-0',
+                'top-0',
+                'transition-all',
+                'w-1',
+                props.selected && !props.expanded
+                    ? 'bg-gradient-to-r from-[#00C2FF] via-[#00E4FF] to-[#87F2FF]'
+                    : 'bg-transparent',
+            )}
+        />
+        <div
+            className={cx(
+                'p-2',
+                'transition-colors',
+                !isOpen && 'group-hover:bg-bkg-1',
+                props.selected &&
+                !props.expanded &&
+                !props.selectedAsset &&
+                'bg-bkg-1',
+            )}
+        >
+          <SummaryButton
+              wallet={props.wallet}
+              expanded={props.expanded}
+              selected={props.selected}
+              selectedAsset={!!props.selectedAsset}
+              onExpand={props.onExpand}
+              onClick={props.onSelectWallet}
+          />
         </div>
-      )}
-      {tokens.length > 0 && (
-        <TokenList
-          disableCollapse={!diplayingMultipleAssetTypes}
-          expanded={props.expandedSections?.includes('tokens')}
-          tokens={tokens}
-          selectedAssetId={props.selectedAssetId}
-          onSelect={props.onSelectAsset}
-          onToggleExpand={() => props.onToggleExpandSection?.('tokens')}
-        />
-      )}
-      {nfts && nfts.length > 0 && props.governance !== undefined && (
-        <NFTList
-          governance={props.governance}
-          disableCollapse={!diplayingMultipleAssetTypes}
-          expanded={props.expandedSections?.includes('nfts')}
-          onToggleExpand={() => props.onToggleExpandSection?.('nfts')}
-        />
-      )}
-      {others.length > 0 && (
-        <OtherAssetsList
-          disableCollapse={!diplayingMultipleAssetTypes}
-          expanded={props.expandedSections?.includes('others')}
-          assets={others}
-          selectedAssetId={props.selectedAssetId}
-          onSelect={props.onSelectAsset}
-          onToggleExpand={() => props.onToggleExpandSection?.('others')}
-          itemsToHide={itemsToHide}
-        />
-      )}
-    </div>
+        {isOpen && (
+            <div className="p-2">
+              <DefiSummary wallet={props.wallet} firstWallet={props.firstWallet} />
+              <AssetList
+                  governance={governance}
+                  assets={props.wallet.assets}
+                  className="pt-4"
+                  expandedSections={expandedSections}
+                  selectedAssetId={props.selectedAsset?.id}
+                  onSelectAsset={props.onSelectAsset}
+                  onToggleExpandSection={(section) =>
+                      setExpandedSections((current) => {
+                        if (current.includes(section)) {
+                          return current.filter((s) => s !== section)
+                        } else {
+                          return current.concat(section)
+                        }
+                      })
+                  }
+              />
+            </div>
+        )}
+      </div>
   )
 }

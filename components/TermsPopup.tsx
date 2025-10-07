@@ -23,7 +23,7 @@ const TermsPopupModal = () => {
         setOpenModal(false)
       }
     }
-  })
+  }, [])
 
   const acceptTerms = () => {
     localStorage.setItem('accept-terms', 'true')
@@ -31,9 +31,18 @@ const TermsPopupModal = () => {
   }
 
   const rejectTerms = () => {
-    localStorage.setItem('accept-terms', 'false')
+    localStorage.setItem('accept-terms', 'false');
+
+    // Redirige l'utilisateur vers Realms et gère la promesse proprement
     router.push('https://realms.today?terms=rejected')
-  }
+        .then(() => {
+          // TODO ORION : ici tu peux logger ou effectuer une action après le push
+          console.log('Redirection effectuée après rejet des terms.');
+        })
+        .catch(err => {
+          console.error('Erreur lors de la redirection:', err);
+        });
+  };
 
   return (
     <>

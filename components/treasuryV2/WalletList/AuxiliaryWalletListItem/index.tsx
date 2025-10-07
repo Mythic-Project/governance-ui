@@ -6,7 +6,7 @@ import { AuxiliaryWallet } from '@models/treasury/Wallet'
 import { formatNumber } from '@utils/formatNumber'
 
 import AssetsPreviewIconList from '../WalletListItem/AssetsPreviewIconList'
-import AssetList from '../WalletListItem/AssetList'
+import {WalletListItem as AssetList} from '../WalletListItem/AssetList'
 import SelectedWalletIcon from '../../icons/SelectedWalletIcon'
 import UnselectedWalletIcon from '../../icons/UnselectedWalletIcon'
 

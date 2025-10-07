@@ -1,19 +1,21 @@
-// PATH: src/utils/cnft.ts
 import { Connection, PublicKey } from '@solana/web3.js'
 import { ConcurrentMerkleTreeAccount } from '@solana/spl-account-compression'
 import { fetchDasAssetProofById } from '@hooks/queries/digitalAssets'
 import { getNetworkFromEndpoint } from '@utils/connection'
 import * as anchor from '@coral-xyz/anchor'
-import * as bs58 from 'bs58'
+// ⚡️ TS2339: Property 'decode' does not exist on type 'typeof bs58'.
+// Fix: Use the correct default import for bs58!
+import bs58 from 'bs58'
 
 /**
  * Decode a base58 string into a number array.
  */
-export function decode(stuff: string): number[] {
-  // bs58.decode returns Uint8Array
-  return Array.from(bs58.default(stuff))
-  // 👆 using bs58.default instead of bs58.decode avoids TS2339
+function decode(stuff: string): number[] {
+  // bs58 returns Uint8Array directly as the default import
+  return Array.from(bs58.decode(stuff))
 }
+
+export default decode
 
 /**
  * This is a helper function only for nft-voter-v2 used.
@@ -44,14 +46,14 @@ export async function getCnftParamAndProof(
       proofLength - (canopyHeight ? canopyHeight : 0),
   )
 
-  const creators = compressedNft.creators.map((creator) => ({
+  const creators = compressedNft.creators.map((creator: any) => ({
     address: new PublicKey(creator.address),
     verified: creator.verified,
     share: creator.share,
   }))
 
   const rawCollection = compressedNft.grouping.find(
-      (x) => x.group_key === 'collection',
+      (x: any) => x.group_key === 'collection',
   )
 
   const param = {

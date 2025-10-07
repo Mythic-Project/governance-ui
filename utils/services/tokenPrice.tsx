@@ -1,14 +1,15 @@
 import axios from 'axios'
-import { mergeDeepRight } from 'ramda'
+import {mergeDeepRight} from 'ramda'
 
-import { notify } from '@utils/notifications'
-import { WSOL_MINT } from '@components/instructions/tools'
+import {notify} from '@utils/notifications'
+import {WSOL_MINT} from '@components/instructions/tools'
 import overrides from 'public/realms/token-overrides.json'
-import { Price, TokenInfo } from './types'
-import { chunks } from '@utils/helpers'
-import { USDC_MINT } from '@blockworks-foundation/mango-v4'
-import { useLocalStorage } from '@hooks/useLocalStorage'
-import { getJupiterPricesByMintStrings } from '@hooks/queries/jupiterPrice'
+import {Price, TokenInfo} from './types'
+import {chunks} from '@utils/helpers'
+import {USDC_MINT} from '@blockworks-foundation/mango-v4'
+import {useLocalStorage} from '@hooks/useLocalStorage'
+import {getJupiterPricesByMintStrings} from '@hooks/queries/jupiterPrice'
+import {PublicKey} from "@solana/web3.js";
 
 const tokenListUrl = 'https://tokens.jup.ag/tokens?tags=verified,lst'
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
@@ -296,10 +297,9 @@ class TokenPriceService {
    * For decimals use on chain tryGetMint
    */
   getTokenInfo(mintAddress: string): TokenInfoJupiter | undefined {
-    const tokenListRecord = this._tokenList?.find(
-      (x) => x.address === mintAddress,
+    return this._tokenList?.find(
+        (x) => x.address === mintAddress,
     )
-    return tokenListRecord
   }
 
   // This async method is used to lookup additional tokens not on JUP's strict list
@@ -352,7 +352,7 @@ class TokenPriceService {
     //   return undefined
     // }
   }
-  catch(e) {
+  catch(e: any) {
     console.error(e)
     notify({
       type: 'error',
@@ -367,11 +367,14 @@ class TokenPriceService {
   getTokenInfoFromCoingeckoId(
     coingeckoId: string,
   ): TokenInfoJupiter | undefined {
-    const tokenListRecord = this._tokenList?.find(
-      (x) => x.extensions?.coingeckoId === coingeckoId,
+    return this._tokenList?.find(
+        (x) => x.extensions?.coingeckoId === coingeckoId,
     )
-    return tokenListRecord
   }
+
+  getTokenSymbol(_quoteMint: string) {
+        Symbol()
+    }
 }
 
 const tokenPriceService = new TokenPriceService()

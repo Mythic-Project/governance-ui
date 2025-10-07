@@ -60,7 +60,7 @@ const SymmetryEditBasket = ({
   const [addTokenModal, setAddTokenModal] = useState(false)
   const [supportedTokens, setSupportedTokens] = useState<any | null>(null)
   const [assetAccountsLoaded, setAssetAccountsLoaded] = useState(false)
-  const [govAccount, setGovAccount] = useState<any>(undefined)
+ //  const [govAccount, setGovAccount] = useState<any>(undefined)
 
   const handleSetForm = ({ propertyName, value }) => {
     setFormErrors({})
@@ -69,7 +69,7 @@ const SymmetryEditBasket = ({
 
   const handleSelectBasket = (address: string) => {
     const foundBasket = managedBaskets.filter(
-      (x) => x.basket.ownAddress.toBase58() === address,
+      (x: any) => x.basket.ownAddress.toBase58() === address,
     )[0]
     if (!foundBasket) return
     const formData = {
@@ -86,7 +86,7 @@ const SymmetryEditBasket = ({
       ),
       basketType: foundBasket.basket.data.activelyManaged.toNumber(),
       basketComposition: foundBasket.composition.currentComposition.map(
-        (comp) => {
+        (comp: any) => {
           return {
             name: comp.name,
             symbol: comp.symbol,
@@ -110,7 +110,8 @@ const SymmetryEditBasket = ({
   useEffect(() => {
     if (assetAccounts && assetAccounts.length > 0 && !assetAccountsLoaded)
       setAssetAccountsLoaded(true)
-  }, [assetAccounts])
+  }, [assetAccounts, assetAccountsLoaded])
+
 
   useEffect(() => {
     if (form.governedAccount) {
@@ -143,7 +144,7 @@ const SymmetryEditBasket = ({
         })
       }
     }
-  }, [form.governedAccount])
+  }, [assetAccounts, connection, form.governedAccount])
 
   useEffect(() => {
     handleSetInstructions(
@@ -212,7 +213,7 @@ const SymmetryEditBasket = ({
             placeholder="Select Basket"
             onChange={(e: string) => handleSelectBasket(e)}
           >
-            {managedBaskets.map((basket, i) => {
+            {managedBaskets.map((basket: any, i: any) => {
               return (
                 <Select.Option
                   key={i}
@@ -448,7 +449,7 @@ const SymmetryEditBasket = ({
                 open={addTokenModal}
                 onClose={() => setAddTokenModal(false)}
                 supportedTokens={supportedTokens}
-                onSelect={(token) => {
+                onSelect={(token: any) => {
                   if (
                     form.basketComposition.find(
                       (t) => t.token.toBase58() === token.tokenMint,

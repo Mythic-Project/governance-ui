@@ -23,14 +23,8 @@ import { ON_NFT_VOTER_V2 } from '@constants/flags'
 function filterAndMapVerifiedCollections(nfts: DasNftObject[]) {
   return nfts
     ?.filter((nft) => {
-      if (
-        nft.grouping &&
-        nft.grouping.find((x) => x.group_key === 'collection')
-      ) {
-        return true
-      } else {
-        return false
-      }
+      return !!(nft.grouping &&
+          nft.grouping.find((x) => x.group_key === 'collection'));
     })
     .filter((nft) => ON_NFT_VOTER_V2 || !nft.compression.compressed)
     .reduce((prev, curr) => {
@@ -82,7 +76,7 @@ export const useOwnerVerifiedCollections = (owner: PublicKey) => {
     )
 
     return verifiedCollections.filter((x) => x !== null)
-  }, [connection, ownedNfts, enabled])
+  }, [enabled, ownedNfts, network])
 }
 
 export default function NFTCollectionModal({

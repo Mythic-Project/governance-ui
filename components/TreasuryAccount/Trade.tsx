@@ -2,466 +2,471 @@ import * as yup from 'yup'
 import Input from '@components/inputs/Input'
 import useTotalTokenValue from '@hooks/useTotalTokenValue'
 import {
-  fmtTokenInfoWithMint,
-  getMintDecimalAmountFromNatural,
-  getMintNaturalAmountFromDecimalAsBN,
+    fmtTokenInfoWithMint,
+    getMintDecimalAmountFromNatural,
+    getMintNaturalAmountFromDecimalAsBN,
 } from '@tools/sdk/units'
 import tokenPriceService from '@utils/services/tokenPrice'
-import React, { useCallback, useState } from 'react'
-import useTreasuryAccountStore from 'stores/useTreasuryAccountStore'
+import React, { useCallback, useMemo, useState } from 'react'
 import AccountLabel from './BaseAccountHeader'
-import {
-  ArrowCircleDownIcon,
-  ArrowCircleUpIcon,
-  ExternalLinkIcon,
-} from '@heroicons/react/solid'
+import { ArrowCircleDownIcon, ArrowCircleUpIcon, ExternalLinkIcon } from '@heroicons/react/solid'
 import ProposalOptions from './ProposalOptions'
 import useRealm from '@hooks/useRealm'
 import Button from '@components/Button'
 import Tooltip from '@components/Tooltip'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
-import { BN, Program, web3 } from '@coral-xyz/anchor'
+import { AnchorProvider, BN, Program, web3, Wallet as AnchorWallet } from '@coral-xyz/anchor'
 import { getValidatedPublickKey } from '@utils/validations'
 import { validateInstruction } from '@utils/instructionTools'
-import {
-  getInstructionDataFromBase64,
-  serializeInstructionToBase64,
-} from '@solana/spl-governance'
+import { getInstructionDataFromBase64, serializeInstructionToBase64 } from '@solana/spl-governance'
 import { notify } from '@utils/notifications'
 import { useRouter } from 'next/router'
 import useCreateProposal from '@hooks/useCreateProposal'
 import useQueryContext from '@hooks/useQueryContext'
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  MintInfo,
-  Token,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, MintInfo, Token } from '@solana/spl-token'
 import { InstructionDataWithHoldUpTime } from 'actions/createProposal'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import { TokenAccount, TokenProgramAccount } from '@utils/tokens'
-import useWalletDeprecated from '@hooks/useWalletDeprecated'
 import TokenSelect from '@components/inputs/TokenSelect'
 import DateTimePicker from '@components/inputs/DateTimePicker'
-import {
-  Poseidon,
-  IDL as PoseidonIDL,
-} from '@utils/instructions/PsyFinance/PoseidonIdl'
+import { IDL as PoseidonIDL, Poseidon } from '@utils/instructions/PsyFinance/PoseidonIdl'
 import { deriveAllBoundedStrategyKeysV2 } from '@utils/instructions/PsyFinance/poseidon'
 import { TokenInfo } from '@utils/services/types'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
 import { useVoteByCouncilToggle } from '@hooks/useVoteByCouncilToggle'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
+import { Connection, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
+// Helper to wrap WalletContextState in an AnchorWallet
+function useAnchorWallet(): AnchorWallet | undefined {
+    const wallet = useWallet()
+    if (
+        wallet?.publicKey &&
+        wallet?.signTransaction &&
+        wallet?.signAllTransactions
+    ) {
+        return {
+            publicKey: wallet.publicKey,
+            signTransaction: wallet.signTransaction as <T extends Transaction | VersionedTransaction>(tx: T) => Promise<T>,
+            signAllTransactions: wallet.signAllTransactions as <T extends Transaction | VersionedTransaction>(txs: T[]) => Promise<T[]>,
+        } as AnchorWallet
+    }
+    return undefined
+}
+
+// -------------- FIX: AnchorProvider via useAnchorProvider -----------------
+export function useAnchorProvider(connection: Connection) {
+    const anchorWallet = useAnchorWallet()
+    return useMemo(
+        () =>
+            anchorWallet && connection
+                ? new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
+                : undefined,
+        [anchorWallet, connection]
+    )
+}
+
+// --- Types ---
 type TradeProps = { tokenAccount: AssetAccount }
 
-/* const SUPPORTED_TRADE_PLATFORMS = ['Raydium', 'Openbook']
- */
 type TradeForm = {
-  amount: number
-  limitPrice: number
-  poseidonProgramId: string
-  assetMint: string
-  reclaimDate: Date
-  reclaimAddress: string
-  description: string
-  title: string
+    amount: number
+    limitPrice: number
+    poseidonProgramId: string
+    assetMint: string
+    reclaimDate: Date
+    reclaimAddress: string
+    description: string
+    title: string
 }
 
 const formSchema = (
-  mintInfo: TokenProgramAccount<MintInfo>,
-  token: TokenProgramAccount<TokenAccount>,
+    mintInfo: TokenProgramAccount<MintInfo>,
+    token: TokenProgramAccount<TokenAccount>,
 ) => {
-  return (
-    yup
-      .object()
-      .shape({
-        title: yup.string(),
-        description: yup.string(),
-        amount: yup
-          .number()
-          .typeError('Amount is required')
-          .test(
-            'amount',
-            "Transfer amount must be less than the source account's available amount",
-            function (val: number) {
-              const mintValue = getMintNaturalAmountFromDecimalAsBN(
-                val,
-                mintInfo.account.decimals,
-              )
-              return token.account.amount.gte(mintValue)
-            },
-          )
-          .test(
-            'amount',
-            'Transfer amount must be greater than 0',
-            function (val: number) {
-              return val > 0
-            },
-          ),
-        limitPrice: yup
-          .number()
-          .typeError('limitPrice is required')
-          .test(
-            'limitPrice',
-            'limitPrice must be greater than 0',
-            function (val: number) {
-              return val > 0
-            },
-          ),
-        poseidonProgramId: yup
-          .string()
-          .test(
-            'poseidonProgramId',
-            'poseidonProgramId must be valid PublicKey',
-            function (poseidonProgramId: string) {
-              try {
-                getValidatedPublickKey(poseidonProgramId)
-              } catch (err) {
-                return false
-              }
-              return true
-            },
-          ),
-        assetMint: yup
-          .string()
-          .test(
-            'assetMint',
-            'assetMint must be valid PublicKey',
-            function (assetMint: string) {
-              try {
-                getValidatedPublickKey(assetMint)
-              } catch (err) {
-                return false
-              }
-              return true
-            },
-          ),
-        reclaimDate: yup.date().typeError('reclaimDate must be a valid date'),
-        reclaimAddress: yup
-          .string()
-          .test(
-            'reclaimAddress',
-            'reclaimAddress must be valid PublicKey',
-            function (reclaimAddress: string) {
-              try {
-                getValidatedPublickKey(reclaimAddress)
-              } catch (err) {
-                return false
-              }
-              return true
-            },
-          ),
-      })
-      // Check the Bound and Order Side are viable
-      .test('bound', 'Some check against other values', function (val) {
-        if (!val.bound) {
-          return true
-        }
-        return true
-      })
-  )
+    return (
+        yup
+            .object()
+            .shape({
+                title: yup.string(),
+                description: yup.string(),
+                amount: yup
+                    .number()
+                    .typeError('Amount is required')
+                    .test(
+                        'amount',
+                        "Transfer amount must be less than the source account's available amount",
+                        function (val: number) {
+                            const mintValue = getMintNaturalAmountFromDecimalAsBN(
+                                val,
+                                mintInfo.account.decimals,
+                            )
+                            return token.account.amount.gte(mintValue)
+                        },
+                    )
+                    .test(
+                        'amount',
+                        'Transfer amount must be greater than 0',
+                        function (val: number) {
+                            return val > 0
+                        },
+                    ),
+                limitPrice: yup
+                    .number()
+                    .typeError('limitPrice is required')
+                    .test(
+                        'limitPrice',
+                        'limitPrice must be greater than 0',
+                        function (val: number) {
+                            return val > 0
+                        },
+                    ),
+                poseidonProgramId: yup
+                    .string()
+                    .test(
+                        'poseidonProgramId',
+                        'poseidonProgramId must be valid PublicKey',
+                        function (poseidonProgramId: string) {
+                            try {
+                                getValidatedPublickKey(poseidonProgramId)
+                            } catch (err) {
+                                return false
+                            }
+                            return true
+                        },
+                    ),
+                assetMint: yup
+                    .string()
+                    .test(
+                        'assetMint',
+                        'assetMint must be valid PublicKey',
+                        function (assetMint: string) {
+                            try {
+                                getValidatedPublickKey(assetMint)
+                            } catch (err) {
+                                return false
+                            }
+                            return true
+                        },
+                    ),
+                reclaimDate: yup.date().typeError('reclaimDate must be a valid date'),
+                reclaimAddress: yup
+                    .string()
+                    .test(
+                        'reclaimAddress',
+                        'reclaimAddress must be valid PublicKey',
+                        function (reclaimAddress: string) {
+                            try {
+                                getValidatedPublickKey(reclaimAddress)
+                            } catch (err) {
+                                return false
+                            }
+                            return true
+                        },
+                    ),
+            })
+            .test('bound', 'Some check against other values', function (val) {
+                if (!val.bound) {
+                    return true
+                }
+                return true
+            })
+    )
 }
 
 const poseidonProgramId = new web3.PublicKey(
-  '8TJjyzq3iXc48MgV6TD5DumKKwfWKU14Jr9pwgnAbpzs',
+    '8TJjyzq3iXc48MgV6TD5DumKKwfWKU14Jr9pwgnAbpzs',
 )
 
+function p0(): void {
+    // TODO ORION: implement logic or remove if not needed
+}
+
 const Trade: React.FC<TradeProps> = ({ tokenAccount }) => {
-  const currentAccount = useTreasuryAccountStore((s) => s.currentAccount)
-  const router = useRouter()
-  const connection = useLegacyConnectionContext()
-  const { wallet, anchorProvider } = useWalletDeprecated()
-  const { handleCreateProposal } = useCreateProposal()
-  const { canUseTransferInstruction } = useGovernanceAssets()
-  const { symbol } = useRealm()
-  const { fmtUrlWithCluster } = useQueryContext()
-  const [form, setForm] = useState<TradeForm>({
-    amount: 0,
-    limitPrice: 0,
-    title: 'Diversify treasury with Poseidon',
-    description:
-      'A proposal to trade some asset for another using Poseidon. PLEASE EXPLAIN IN MORE DETAIL',
-    poseidonProgramId: poseidonProgramId.toString(),
-    assetMint: tokenAccount.extensions.mint!.publicKey.toString(),
-    // Default reclaim date of 10 days
-    reclaimDate: new Date(new Date().getTime() + 1_000 * 3600 * 24 * 10),
-    // The reclaim address must be the same account where the initial assets come from
-    reclaimAddress: tokenAccount.pubkey.toString(),
-  })
-  const [formErrors, setFormErrors] = useState({})
-  const [showOptions, setShowOptions] = useState(false)
-  const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } =
-    useVoteByCouncilToggle()
-  const [isLoading, setIsLoading] = useState(false)
-  const [destinationToken, setDestinationToken] = useState<TokenInfo>()
+    // --- FIX: Get the correct account structure ---
+    const x = useGovernanceAssets(p0)
+    // Find the correct account from assetAccounts that matches tokenAccount.pubkey
+    const currentAccount = x.assetAccounts.find(acc => acc.pubkey.equals(tokenAccount.pubkey))
+    const router = useRouter()
+    const connection = useConnection()
+    const anchorProvider = useAnchorProvider(connection.connection)
+    const wallet = useWallet()
+    const { handleCreateProposal } = useCreateProposal()
+    const { canUseTransferInstruction } = useGovernanceAssets(p0)
+    const { symbol } = useRealm()
+    const { fmtUrlWithCluster } = useQueryContext()
+    const [form, setForm] = useState<TradeForm>({
+        amount: 0,
+        limitPrice: 0,
+        title: 'Diversify treasury with Poseidon',
+        description:
+            'A proposal to trade some asset for another using Poseidon. PLEASE EXPLAIN IN MORE DETAIL',
+        poseidonProgramId: poseidonProgramId.toString(),
+        assetMint: tokenAccount.extensions.mint?.publicKey.toString() ?? '',
+        reclaimDate: new Date(new Date().getTime() + 1_000 * 3600 * 24 * 10),
+        reclaimAddress: tokenAccount.pubkey.toString(),
+    })
+    const [formErrors, setFormErrors] = useState({})
+    const [showOptions, setShowOptions] = useState(false)
+    const { voteByCouncil, shouldShowVoteByCouncilToggle, setVoteByCouncil } = useVoteByCouncilToggle()
+    const [isLoading, setIsLoading] = useState(false)
+    const [destinationToken, setDestinationToken] = useState<TokenInfo>()
 
-  if (!tokenAccount.extensions.mint || !tokenAccount.extensions.token) {
-    throw new Error('No mint information on the tokenAccount')
-  }
-  const mintAccount = tokenAccount.extensions.mint
-  const token = tokenAccount.extensions.token
-  const schema = formSchema(mintAccount, token)
-
-  const tokenInfo = tokenPriceService.getTokenInfo(
-    mintAccount.publicKey.toString(),
-  )
-  const inputTokenSym = tokenInfo?.symbol
-    ? tokenInfo?.symbol
-    : `${mintAccount.publicKey.toString().substring(0, 6)}...`
-
-  const totalValue = useTotalTokenValue({
-    amount: getMintDecimalAmountFromNatural(
-      mintAccount.account,
-      token.account.amount,
-    ).toNumber(),
-    mintAddress: mintAccount.publicKey.toString(),
-  })
-
-  const handleSetForm = ({ propertyName, value }) => {
-    setFormErrors({})
-    setForm({ ...form, [propertyName]: value })
-  }
-
-  const handlePropose = useCallback(async () => {
-    setIsLoading(true)
-    const isValid = await validateInstruction({ schema, form, setFormErrors })
-    if (!currentAccount || !currentAccount!.extensions!.token!.account.owner) {
-      throw new Error('currentAccount is null or undefined')
+    // Defensive: check for tokenAccount.extensions.mint and tokenAccount.extensions.token
+    if (!tokenAccount.extensions.mint || !tokenAccount.extensions.token) {
+        throw new Error('No mint or token information on the tokenAccount')
     }
-    if (!destinationToken || !destinationToken.decimals) {
-      throw new Error('destinationToken must have decimals')
-    }
-    if (wallet && wallet.publicKey && anchorProvider && isValid) {
-      const program = new Program<Poseidon>(
-        PoseidonIDL,
-        poseidonProgramId,
-        anchorProvider,
-      )
-      // The minimum expected output amount
-      const expectedOutput = form.amount * form.limitPrice
-      // convert amount to mintAmount
-      const inputAmount = getMintNaturalAmountFromDecimalAsBN(
-        form.amount,
-        mintAccount.account.decimals,
-      )
+    const mintAccount = tokenAccount.extensions.mint
+    const token = tokenAccount.extensions.token
+    const schema = formSchema(mintAccount, token)
 
-      const boundedPriceDenominator = getMintNaturalAmountFromDecimalAsBN(
-        expectedOutput,
-        destinationToken.decimals,
-      )
-      const reclaimDate = new BN(form.reclaimDate.getTime() / 1_000)
+    const tokenInfo = tokenPriceService.getTokenInfo(
+        mintAccount.publicKey.toString(),
+    )
+    const inputTokenSym = tokenInfo?.symbol
+        ? tokenInfo?.symbol
+        : `${mintAccount.publicKey.toString().substring(0, 6)}...`
 
-      // Derive the BoundedStrategyV2 PDA
-      const { collateralAccount, boundedStrategy: boundedStrategyKey } =
-        deriveAllBoundedStrategyKeysV2(
-          program,
-          new web3.PublicKey(form.assetMint),
-          {
-            boundPriceNumerator: inputAmount,
-            boundPriceDenominator: boundedPriceDenominator,
-            reclaimDate,
-          },
-        )
-
-      const proposalInstructions: InstructionDataWithHoldUpTime[] = []
-      const prerequisiteInstructions: web3.TransactionInstruction[] = []
-      // Check if an associated token account for the destination mint
-      // is required. If so, add the create associated token account ix
-      const aTADepositAddress = await Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        new web3.PublicKey(destinationToken.address),
-        currentAccount!.extensions!.token!.account.owner,
-        true,
-      )
-      const depositAccountInfo =
-        await connection.current.getAccountInfo(aTADepositAddress)
-      if (!depositAccountInfo) {
-        // generate the instruction for creating the ATA
-        const createAtaIx = Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          new web3.PublicKey(destinationToken.address),
-          aTADepositAddress,
-          currentAccount!.extensions!.token!.account.owner,
-          wallet.publicKey,
-        )
-        prerequisiteInstructions.push(createAtaIx)
-      }
-
-      // Implement the instruction
-      const instruction = await program.methods
-        .initBoundedStrategyV2(
-          inputAmount,
-          inputAmount,
-          boundedPriceDenominator,
-          reclaimDate,
-        )
-        .accounts({
-          payer: currentAccount!.extensions!.token!.account.owner,
-          collateralAccount,
-          mint: new web3.PublicKey(form.assetMint),
-          strategy: boundedStrategyKey,
-          reclaimAccount: tokenAccount.pubkey,
-          depositAccount: aTADepositAddress,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          systemProgram: web3.SystemProgram.programId,
-        })
-        .instruction()
-
-      const serializedIx = serializeInstructionToBase64(instruction)
-
-      const instructionData: InstructionDataWithHoldUpTime = {
-        data: getInstructionDataFromBase64(serializedIx),
-        holdUpTime:
-          currentAccount?.governance?.account?.config.minInstructionHoldUpTime,
-        prerequisiteInstructions,
-      }
-      proposalInstructions.push(instructionData)
-
-      try {
-        const proposalAddress = await handleCreateProposal({
-          title: form.title,
-          description: form.description,
-          governance: currentAccount.governance,
-          instructionsData: proposalInstructions,
-          voteByCouncil,
-          isDraft: false,
-        })
-        const url = fmtUrlWithCluster(
-          `/dao/${symbol}/proposal/${proposalAddress}`,
-        )
-
-        router.push(url)
-      } catch (ex) {
-        notify({ type: 'error', message: `${ex}` })
-      }
-    }
-
-    setIsLoading(false)
-  }, [
-    schema,
-    form,
-    setFormErrors,
-    connection,
-    currentAccount,
-    destinationToken,
-    symbol,
-    wallet,
-  ])
-
-  return (
-    <>
-      <div>
-        <h3 className="mb-4 flex items-center">Trade</h3>
-        <h6 className="mb-4 flex items-center">
-          <a
-            href="https://github.com/mithraiclabs/poseidon"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="flex items-center">
-              Poseidon{' '}
-              <ExternalLinkIcon className="flex-shrink-0 h-3.5 ml-1 text-primary-light w-3.5" />
-            </div>
-          </a>
-          &nbsp;is open sourced, yet unaudited. Do your own research.
-        </h6>
-        <AccountLabel
-          mintAddress={mintAccount.publicKey.toBase58()}
-          isNFT={false}
-          tokenInfo={tokenInfo}
-          amountFormatted={fmtTokenInfoWithMint(
+    const totalValue = useTotalTokenValue({
+        amount: getMintDecimalAmountFromNatural(
+            mintAccount.account,
             token.account.amount,
-            mintAccount,
-            tokenInfo,
-          )}
-          totalPrice={totalValue}
-        />
-        <div className="space-y-4 w-full pb-4">
-          <TokenSelect
-            label="Destination Token"
-            onSelect={(_destinationToken) =>
-              setDestinationToken(_destinationToken)
-            }
-          />
-          <Input
-            label={`Amount of ${inputTokenSym} to trade with`}
-            value={form.amount}
-            type="number"
-            onChange={(evt) =>
-              handleSetForm({
-                value: evt.target.value,
-                propertyName: 'amount',
-              })
-            }
-            error={formErrors['amount']}
-            noMaxWidth={true}
-          />
+        ).toNumber(),
+        mintAddress: mintAccount.publicKey.toString(),
+    })
 
-          <DateTimePicker
-            label={'Trade expiration'}
-            onChange={(value) => setForm((f) => ({ ...f, reclaimDate: value }))}
-            value={form.reclaimDate}
-            error={formErrors['reclaimDate']}
-            noMaxWidth={true}
-          />
-          <Input
-            label={`Limit Price (${destinationToken?.symbol} per ${inputTokenSym})`}
-            value={form.limitPrice}
-            type="number"
-            onChange={(evt) =>
-              handleSetForm({
-                value: evt.target.value,
-                propertyName: 'limitPrice',
-              })
-            }
-            error={formErrors['limitPrice']}
-            noMaxWidth={true}
-          />
-        </div>
+    const handleSetForm = ({ propertyName, value }) => {
+        setFormErrors({})
+        setForm({ ...form, [propertyName]: value })
+    }
 
-        <div
-          className={'flex items-center hover:cursor-pointer w-24'}
-          onClick={() => setShowOptions(!showOptions)}
-        >
-          {showOptions ? (
-            <ArrowCircleUpIcon className="h-4 w-4 mr-1 text-primary-light" />
-          ) : (
-            <ArrowCircleDownIcon className="h-4 w-4 mr-1 text-primary-light" />
-          )}
-          <small className="text-fgd-3">Options</small>
-        </div>
-        {showOptions && (
-          <ProposalOptions
-            handleSetForm={handleSetForm}
-            form={form}
-            shouldShowVoteByCouncilToggle={shouldShowVoteByCouncilToggle}
-            voteByCouncil={voteByCouncil}
-            setVoteByCouncil={setVoteByCouncil}
-          />
-        )}
-      </div>
-      <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mt-4">
-        <Button
-          disabled={!canUseTransferInstruction || isLoading}
-          className="ml-auto"
-          onClick={handlePropose}
-          isLoading={isLoading}
-        >
-          <Tooltip
-            content={
-              !canUseTransferInstruction
-                ? 'You need to have connected wallet with ability to create token transfer proposals'
-                : ''
+    const handlePropose = useCallback(async () => {
+        setIsLoading(true)
+        const isValid = await validateInstruction({ schema, form, setFormErrors })
+
+        // Defensive: Check for tokenAccount.extensions.token
+        if (!currentAccount || !tokenAccount.extensions.token?.account.owner) {
+            throw new Error('currentAccount is null or undefined or token owner missing')
+        }
+        if (!destinationToken || !destinationToken.decimals) {
+            throw new Error('destinationToken must have decimals')
+        }
+        if (wallet.publicKey && anchorProvider && isValid) {
+            const program = new Program<Poseidon>(
+                PoseidonIDL,
+                poseidonProgramId,
+                anchorProvider,
+            )
+
+            const expectedOutput = form.amount * form.limitPrice
+            const inputAmount = getMintNaturalAmountFromDecimalAsBN(
+                form.amount,
+                mintAccount.account.decimals,
+            )
+
+            const boundedPriceDenominator = getMintNaturalAmountFromDecimalAsBN(
+                expectedOutput,
+                destinationToken.decimals,
+            )
+            const reclaimDate = new BN(form.reclaimDate.getTime() / 1_000)
+
+            const { collateralAccount, boundedStrategy: boundedStrategyKey } =
+                deriveAllBoundedStrategyKeysV2(
+                    program,
+                    new web3.PublicKey(form.assetMint),
+                    {
+                        boundPriceNumerator: inputAmount,
+                        boundPriceDenominator: boundedPriceDenominator,
+                        reclaimDate,
+                    },
+                )
+
+            const proposalInstructions: InstructionDataWithHoldUpTime[] = []
+            const prerequisiteInstructions: web3.TransactionInstruction[] = []
+            // Use tokenAccount.extensions.token.account.owner for owner
+            const aTADepositAddress = await Token.getAssociatedTokenAddress(
+                ASSOCIATED_TOKEN_PROGRAM_ID,
+                TOKEN_2022_PROGRAM_ID,
+                new web3.PublicKey(destinationToken.address),
+                tokenAccount.extensions.token.account.owner,
+                true,
+            )
+            const depositAccountInfo =
+                await connection.connection.getAccountInfo(aTADepositAddress)
+            if (!depositAccountInfo) {
+                const createAtaIx = Token.createAssociatedTokenAccountInstruction(
+                    ASSOCIATED_TOKEN_PROGRAM_ID,
+                    TOKEN_2022_PROGRAM_ID,
+                    new PublicKey(destinationToken.address),
+                    aTADepositAddress,
+                    tokenAccount.extensions.token.account.owner,
+                    wallet.publicKey!
+                )
+                prerequisiteInstructions.push(createAtaIx)
             }
-          >
-            <div>Propose</div>
-          </Tooltip>
-        </Button>
-      </div>
-    </>
-  )
+
+            const instruction = await program.methods
+                .initBoundedStrategyV2(
+                    inputAmount,
+                    inputAmount,
+                    boundedPriceDenominator,
+                    reclaimDate,
+                )
+                .accounts({
+                    payer: tokenAccount.extensions.token.account.owner,
+                    collateralAccount,
+                    mint: new web3.PublicKey(form.assetMint),
+                    strategy: boundedStrategyKey,
+                    reclaimAccount: tokenAccount.pubkey,
+                    depositAccount: aTADepositAddress,
+                    tokenProgram: TOKEN_2022_PROGRAM_ID,
+                    systemProgram: web3.SystemProgram.programId,
+                })
+                .instruction()
+
+            const serializedIx = serializeInstructionToBase64(instruction)
+
+            const instructionData: InstructionDataWithHoldUpTime = {
+                data: getInstructionDataFromBase64(serializedIx),
+                holdUpTime:
+                currentAccount?.governance?.account?.config.minInstructionHoldUpTime,
+                prerequisiteInstructions,
+            }
+            proposalInstructions.push(instructionData)
+
+            try {
+                const proposalAddress = await handleCreateProposal({
+                    title: form.title,
+                    description: form.description,
+                    governance: currentAccount.governance,
+                    instructionsData: proposalInstructions,
+                    voteByCouncil,
+                    isDraft: false,
+                })
+                const url = fmtUrlWithCluster(
+                    `/dao/${symbol}/proposal/${proposalAddress}`,
+                )
+                await router.push(url)
+            } catch (ex) {
+                notify({ type: 'error', message: `${ex}` })
+            }
+        }
+
+        setIsLoading(false)
+    }, [schema, form, currentAccount, tokenAccount.extensions.token.account.owner, tokenAccount.pubkey, destinationToken, wallet.publicKey, anchorProvider, mintAccount.account.decimals, connection.connection, handleCreateProposal, voteByCouncil, fmtUrlWithCluster, symbol, router])
+
+    return (
+        <>
+            <div>
+                <h3 className="mb-4 flex items-center">Trade</h3>
+                <h6 className="mb-4 flex items-center">
+                    <a
+                        href="https://github.com/mithraiclabs/poseidon"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <div className="flex items-center">
+                            Poseidon{' '}
+                            <ExternalLinkIcon className="flex-shrink-0 h-3.5 ml-1 text-primary-light w-3.5" />
+                        </div>
+                    </a>
+                    &nbsp;is open sourced, yet unaudited. Do your own research.
+                </h6>
+                <AccountLabel
+                    mintAddress={mintAccount.publicKey.toBase58()}
+                    isNFT={false}
+                    tokenInfo={tokenInfo}
+                    amountFormatted={fmtTokenInfoWithMint(
+                        token.account.amount,
+                        mintAccount,
+                        tokenInfo,
+                    )}
+                    totalPrice={totalValue}
+                />
+                <div className="space-y-4 w-full pb-4">
+                    <TokenSelect
+                        label="Destination Token"
+                        onSelect={(_destinationToken) =>
+                            setDestinationToken(_destinationToken)
+                        }
+                    />
+                    <Input
+                        label={`Amount of ${inputTokenSym} to trade with`}
+                        value={form.amount}
+                        type="number"
+                        onChange={(evt) =>
+                            handleSetForm({
+                                value: evt.target.value,
+                                propertyName: 'amount',
+                            })
+                        }
+                        error={formErrors['amount']}
+                        noMaxWidth={true}
+                    />
+
+                    <DateTimePicker
+                        label={'Trade expiration'}
+                        onChange={(value) => setForm((f) => ({ ...f, reclaimDate: value }))}
+                        value={form.reclaimDate}
+                        error={formErrors['reclaimDate']}
+                        noMaxWidth={true}
+                    />
+                    <Input
+                        label={`Limit Price (${destinationToken?.symbol} per ${inputTokenSym})`}
+                        value={form.limitPrice}
+                        type="number"
+                        onChange={(evt) =>
+                            handleSetForm({
+                                value: evt.target.value,
+                                propertyName: 'limitPrice',
+                            })
+                        }
+                        error={formErrors['limitPrice']}
+                        noMaxWidth={true}
+                    />
+                </div>
+
+                <div
+                    className={'flex items-center hover:cursor-pointer w-24'}
+                    onClick={() => setShowOptions(!showOptions)}
+                >
+                    {showOptions ? (
+                        <ArrowCircleUpIcon className="h-4 w-4 mr-1 text-primary-light" />
+                    ) : (
+                        <ArrowCircleDownIcon className="h-4 w-4 mr-1 text-primary-light" />
+                    )}
+                    <small className="text-fgd-3">Options</small>
+                </div>
+                {showOptions && (
+                    <ProposalOptions
+                        handleSetForm={handleSetForm}
+                        form={form}
+                        shouldShowVoteByCouncilToggle={shouldShowVoteByCouncilToggle}
+                        voteByCouncil={voteByCouncil}
+                        setVoteByCouncil={setVoteByCouncil}
+                    />
+                )}
+            </div>
+            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mt-4">
+                <Button
+                    disabled={!canUseTransferInstruction || isLoading}
+                    className="ml-auto"
+                    onClick={handlePropose}
+                    isLoading={isLoading}
+                >
+                    <Tooltip
+                        content={
+                            !canUseTransferInstruction
+                                ? 'You need to have connected wallet with ability to create token transfer proposals'
+                                : ''
+                        }
+                    >
+                        <div>Propose</div>
+                    </Tooltip>
+                </Button>
+            </div>
+        </>
+    )
 }
 
 export default Trade
