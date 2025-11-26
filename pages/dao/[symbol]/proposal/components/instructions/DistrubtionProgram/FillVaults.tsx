@@ -1,3 +1,4 @@
+// pages/dao/[symbol]/proposal/components/instructions/DistrubtionProgram/FillVaults.tsx
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
 import { UiInstruction } from '@utils/uiTypes/proposalCreationTypes'
@@ -17,14 +18,14 @@ import {
   MangoMintsRedemptionClient,
 } from '@blockworks-foundation/mango-mints-redemption'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { useConnection } from '@solana/wallet-adapter-react'
 import EmptyWallet from '@utils/Mango/listingTools'
 import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { tryGetTokenAccount } from '@utils/tokens'
 import Button from '@components/Button'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
+
   Token,
   u64,
 } from '@solana/spl-token'
@@ -32,6 +33,7 @@ import Input from '@components/inputs/Input'
 import { parseMintNaturalAmountFromDecimal } from '@tools/sdk/units'
 import { validateInstruction } from '@utils/instructionTools'
 import useGovernanceNfts from '@components/treasuryV2/WalletList/WalletListItem/AssetList/useGovernanceNfts'
+import {TOKEN_2022_PROGRAM_ID} from "@solana/spl-token-new";
 
 export const SEASON_PREFIX = 134
 
@@ -57,16 +59,16 @@ type Transfer = {
 }
 
 const FillVaults = ({
-  index,
-  governance,
-}: {
+                      index,
+                      governance,
+                    }: {
   index: number
   governance: ProgramAccount<Governance> | null
 }) => {
   const wallet = useWalletOnePointOh()
+  const { connection } = useConnection()
   const { assetAccounts } = useGovernanceAssets()
   const solAccounts = assetAccounts.filter((x) => x.type === AccountType.SOL)
-  const connection = useLegacyConnectionContext()
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [form, setForm] = useState<FillVaultsForm>({
     governedAccount: null,
@@ -81,157 +83,129 @@ const FillVaults = ({
   const nfts = useGovernanceNfts(form.governedAccount?.governance.pubkey)
 
   const schema = useMemo(
-    () =>
-      yup.object().shape({
-        governedAccount: yup
-          .object()
-          .nullable()
-          .required('Program governed account is required'),
-      }),
-    [],
+      () =>
+          yup.object().shape({
+            governedAccount: yup
+                .object()
+                .nullable()
+                .required('Program governed account is required'),
+          }),
+      []
   )
 
   const getInstruction = useCallback(async () => {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
-    let serializedInstruction = ''
     const additionalSerializedInstructions: string[] = []
     const prerequisiteInstructions: TransactionInstruction[] = []
 
-    if (
-      isValid &&
-      form.governedAccount?.governance?.account &&
-      wallet?.publicKey &&
-      vaults
-    ) {
+    if (isValid && form.governedAccount?.governance?.account && wallet?.publicKey && vaults) {
       for (const t of transfers.filter((x) => x.amount)) {
-        const mintAmount = parseMintNaturalAmountFromDecimal(
-          t.amount,
-          t.decimals,
-        )
+        const mintAmount = parseMintNaturalAmountFromDecimal(t.amount, t.decimals)
         const transferIx = Token.createTransferInstruction(
-          TOKEN_PROGRAM_ID,
-          t.from,
-          t.to,
-          form.governedAccount.extensions.transferAddress!,
-          [],
-          new u64(mintAmount.toString()),
+            TOKEN_2022_PROGRAM_ID,
+            t.from,
+            t.to,
+            form.governedAccount.extensions.transferAddress!,
+            [],
+            new u64(mintAmount.toString())
         )
-        additionalSerializedInstructions.push(
-          serializeInstructionToBase64(transferIx!),
-        )
+        additionalSerializedInstructions.push(serializeInstructionToBase64(transferIx!))
       }
-      serializedInstruction = ''
-    }
-    const obj: UiInstruction = {
-      additionalSerializedInstructions,
-      prerequisiteInstructions,
-      serializedInstruction: serializedInstruction,
-      isValid,
-      governance: form.governedAccount?.governance,
     }
 
-    return obj
+    return {
+      additionalSerializedInstructions,
+      prerequisiteInstructions,
+      serializedInstruction: '',
+      isValid,
+      governance: form.governedAccount?.governance,
+    } as UiInstruction
   }, [form, schema, transfers, vaults, wallet?.publicKey])
-  const handleSelectDistribution = async (number: number) => {
-    const distribution = await client?.loadDistribution(
-      Number(`${SEASON_PREFIX}${number}`),
-    )
-    setDistribution(distribution)
-  }
-  const fetchVaults = async () => {
+
+  const handleSelectDistribution = useCallback(async (number: number) => {
+    if (!client) return
+    const dist = await client.loadDistribution(Number(`${SEASON_PREFIX}${number}`))
+    setDistribution(dist)
+  }, [client])
+
+  const fetchVaults = useCallback(async () => {
     if (!client || !distribution) return
     const v: any = {}
     for (let i = 0; i < distribution.metadata!.mints.length; i++) {
       const mint = distribution.metadata!.mints[i]
       const type = mint.properties.type
-      const vaultAddress = distribution.findVaultAddress(
-        new PublicKey(mint.address),
-      )
+      const vaultAddress = distribution.findVaultAddress(new PublicKey(mint.address))
       try {
-        const tokenAccount = await tryGetTokenAccount(
-          connection.current,
-          vaultAddress,
-        )
-
+        const tokenAccount = await tryGetTokenAccount(connection, vaultAddress)
         v[vaultAddress.toString()] = {
           publicKey: vaultAddress,
           amount: tokenAccount?.account.amount,
           mint: tokenAccount?.account.mint,
           mintIndex: i,
-          type: type,
+          type,
         }
       } catch {
         v[vaultAddress.toString()] = { amount: -1, mintIndex: i }
       }
     }
     setVaults(v)
-  }
+  }, [client, connection, distribution])
 
   useEffect(() => {
-    if (distribution) {
-      fetchVaults()
-    }
-  }, [distribution])
+    if (!distribution) return
+    fetchVaults().catch(console.error)
+  }, [distribution, fetchVaults])
+
   useEffect(() => {
-    const client = new MangoMintsRedemptionClient(
-      new AnchorProvider(
-        connection.current,
-        new EmptyWallet(Keypair.generate()),
-        { skipPreflight: true },
-      ),
+    const newClient = new MangoMintsRedemptionClient(
+        new AnchorProvider(connection, new EmptyWallet(Keypair.generate()), { skipPreflight: true })
     )
-    setClient(client)
-  }, [])
+    setClient(newClient)
+  }, [connection])
+
   useEffect(() => {
     if (vaults && form.governedAccount) {
       const trans = Object.values(vaults)
-        .filter((x) => x.mint)
-        .map((v) => {
-          const isToken = v.type.toLowerCase() === 'token'
-          const fromToken = assetAccounts.find(
-            (assetAccount) =>
-              assetAccount.isToken &&
-              assetAccount.extensions.mint?.publicKey.equals(v.mint) &&
-              assetAccount.extensions.token?.account.owner.equals(
-                form.governedAccount!.extensions.transferAddress!,
-              ),
-          )
-          const fromNft = nfts?.find((x) => x.id === v.mint.toBase58())
+          .filter((x) => x.mint)
+          .map((v) => {
+            const isToken = v.type.toLowerCase() === 'token'
+            const fromToken = assetAccounts.find(
+                (assetAccount) =>
+                    assetAccount.isToken &&
+                    assetAccount.extensions.mint?.publicKey.equals(v.mint) &&
+                    assetAccount.extensions.token?.account.owner.equals(
+                        form.governedAccount!.extensions.transferAddress!
+                    )
+            )
+            const fromNft = nfts?.find((x) => x.id === v.mint.toBase58())
 
-          if (!fromToken && !fromNft) {
-            return undefined
-          }
+            if (!fromToken && !fromNft) return undefined
 
-          return {
-            from: isToken
-              ? fromToken!.pubkey
-              : PublicKey.findProgramAddressSync(
-                  [
-                    new PublicKey(fromNft!.ownership.owner).toBuffer(),
-                    TOKEN_PROGRAM_ID.toBuffer(),
-                    new PublicKey(fromNft!.id).toBuffer(),
-                  ],
-                  ASSOCIATED_TOKEN_PROGRAM_ID,
-                )[0],
-            to: v.publicKey,
-            amount: '',
-            decimals: isToken
-              ? fromToken!.extensions.mint!.account.decimals
-              : 0,
-            mintIndex: v.mintIndex,
-          }
-        })
+            return {
+              from: isToken
+                  ? fromToken!.pubkey
+                  : PublicKey.findProgramAddressSync(
+                      [
+                        new PublicKey(fromNft!.ownership.owner).toBuffer(),
+                        TOKEN_2022_PROGRAM_ID.toBuffer(),
+                        new PublicKey(fromNft!.id).toBuffer(),
+                      ],
+                      ASSOCIATED_TOKEN_PROGRAM_ID
+                  )[0],
+              to: v.publicKey,
+              amount: '',
+              decimals: isToken ? fromToken!.extensions.mint!.account.decimals : 0,
+              mintIndex: v.mintIndex,
+            }
+          })
       setTransfers(trans.filter((x) => x) as Transfer[])
     } else {
       setTransfers([])
     }
-  }, [vaults])
+  }, [vaults, assetAccounts, form.governedAccount, nfts])
 
   useEffect(() => {
-    handleSetInstructions(
-      { governedAccount: form.governedAccount?.governance, getInstruction },
-      index,
-    )
+    handleSetInstructions({ governedAccount: form.governedAccount?.governance, getInstruction }, index)
   }, [form, getInstruction, handleSetInstructions, index, vaults])
 
   const inputs: InstructionInput[] = [
@@ -241,7 +215,7 @@ const FillVaults = ({
       name: 'governedAccount',
       type: InstructionInputType.GOVERNED_ACCOUNT,
       shouldBeGoverned: shouldBeGoverned as any,
-      governance: governance,
+      governance,
       options: solAccounts,
     },
     {
@@ -249,11 +223,9 @@ const FillVaults = ({
       initialValue: form.season,
       type: InstructionInputType.INPUT,
       additionalComponent: (
-        <div>
-          <Button onClick={() => handleSelectDistribution(form.season)}>
-            Load
-          </Button>
-        </div>
+          <div>
+            <Button onClick={() => handleSelectDistribution(form.season)}>Load</Button>
+          </div>
       ),
       inputType: 'number',
       name: 'season',
@@ -261,68 +233,42 @@ const FillVaults = ({
   ]
 
   return (
-    <>
-      {form && (
-        <>
-          <InstructionForm
+      <>
+        <InstructionForm
             outerForm={form}
             setForm={setForm}
             inputs={inputs}
             setFormErrors={setFormErrors}
             formErrors={formErrors}
-          ></InstructionForm>
-          {distribution && vaults && (
+        />
+        {distribution && vaults && (
             <div className="border-t border-th-bkg-2 px-6 py-3">
-              <span className="mr-4 mb-3 flex flex-col whitespace-nowrap text-th-fgd-3">
-                Vaults to fill
-              </span>
+          <span className="mr-4 mb-3 flex flex-col whitespace-nowrap text-th-fgd-3">
+            Vaults to fill
+          </span>
               <span className="flex flex-col font-mono text-th-fgd-2">
-                <div>
-                  {transfers
-                    ? transfers.map((t, idx) => {
-                        return (
-                          <div
-                            key={t.to.toBase58()}
-                            className="flex justify-between"
-                          >
-                            <p>{t.to.toBase58()}</p>{' '}
-                            <p>
-                              {
-                                distribution.metadata!.mints[t.mintIndex]
-                                  .properties?.name
-                              }
-                            </p>{' '}
-                            <span>
-                              <Input
-                                value={t.amount}
-                                onChange={(e) => {
-                                  const newTrans = transfers.map(
-                                    (x, innerIdex) => {
-                                      if (innerIdex === idx) {
-                                        return {
-                                          ...x,
-                                          amount: e.target.value,
-                                        }
-                                      }
-                                      return x
-                                    },
-                                  )
-                                  setTransfers(newTrans)
-                                }}
-                                type="text"
-                              ></Input>
-                            </span>
-                          </div>
+            {transfers.map((t, idx) => (
+                <div key={t.to.toBase58()} className="flex justify-between">
+                  <p>{t.to.toBase58()}</p>
+                  <p>{distribution.metadata!.mints[t.mintIndex].properties?.name}</p>
+                  <span>
+                  <Input
+                      value={t.amount}
+                      onChange={(e) => {
+                        const newTrans = transfers.map((x, innerIdex) =>
+                            innerIdex === idx ? { ...x, amount: e.target.value } : x
                         )
-                      })
-                    : 'Loading...'}
+                        setTransfers(newTrans)
+                      }}
+                      type="text"
+                  />
+                </span>
                 </div>
-              </span>
+            ))}
+          </span>
             </div>
-          )}
-        </>
-      )}
-    </>
+        )}
+      </>
   )
 }
 

@@ -1,10 +1,7 @@
-import { useContext, useEffect, useState } from 'react'
+// PATH: ./pages/dao/[symbol]/proposal/components/instructions/Identity/AddKeyToDID.tsx
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import * as yup from 'yup'
-import {
-  Governance,
-  ProgramAccount,
-  serializeInstructionToBase64,
-} from '@solana/spl-governance'
+import { Governance, ProgramAccount, serializeInstructionToBase64 } from '@solana/spl-governance'
 import { validateInstruction } from '@utils/instructionTools'
 import { UiInstruction } from '@utils/uiTypes/proposalCreationTypes'
 
@@ -26,106 +23,84 @@ import {
   SchemaComponents,
 } from '@utils/instructions/Identity/util'
 import { useRealmQuery } from '@hooks/queries/realm'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { useConnection } from '@solana/wallet-adapter-react'
 
 interface AddKeyToDIDForm {
   governedAccount: AssetAccount | undefined
-  did: string // manual entry for now - replace with dropdown once did-registry is introduced
-  key: string // manual entry
-  alias: string // manual entry
+  did: string
+  key: string
+  alias: string
 }
 
 const AddKeyToDID = ({
-  index,
-  governance,
-}: {
+                       index,
+                       governance,
+                     }: {
   index: number
   governance: ProgramAccount<Governance> | null
 }) => {
   const realm = useRealmQuery().data?.result
   const { assetAccounts } = useGovernanceAssets()
-  const connection = useLegacyConnectionContext()
-  const shouldBeGoverned = index !== 0 && governance
+  const { connection: rawConnection } = useConnection()
   const [form, setForm] = useState<AddKeyToDIDForm>()
-  const [formErrors, setFormErrors] = useState({})
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const { handleSetInstructions } = useContext(NewProposalContext)
+  const shouldBeGoverned = index !== 0 && governance
 
-  async function getInstruction(): Promise<UiInstruction> {
+  const schema = useMemo(() => yup.object().shape(SchemaComponents), [])
+
+  const getInstruction = useCallback(async (): Promise<UiInstruction> => {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
+    let serializedInstructions: string[] = ['']
 
-    // getInstruction must return something, even if it is an invalid instruction
-    let serializedInstructions = ['']
-
-    if (
-      isValid &&
-      form!.governedAccount?.governance?.pubkey &&
-      connection?.current
-    ) {
-      const service = DidSolService.build(DidSolIdentifier.parse(form!.did), {
-        connection: connection.current,
-        wallet: governedAccountToWallet(form!.governedAccount),
+    if (isValid && form?.governedAccount?.governance?.pubkey && rawConnection) {
+      const service = DidSolService.build(DidSolIdentifier.parse(form.did), {
+        connection: rawConnection,
+        wallet: governedAccountToWallet(form.governedAccount),
       })
 
       const addKeyIxs = await service
-        .addVerificationMethod({
-          flags: [BitwiseVerificationMethodFlag.CapabilityInvocation],
-          fragment: form!.alias,
-          keyData: new PublicKey(form!.key).toBuffer(),
-          // TODO support eth keys too
-          methodType: VerificationMethodType.Ed25519VerificationKey2018,
-        })
-        // Adds a DID resize instruction if needed
-        // The resize instruction performs a SOL transfer, so needs to be from
-        // an account with no data, otherwise the Solana runtime will reject it.
-        // this is why we use the governed account here as opposed to the governance
-        // itself.
-        .withAutomaticAlloc(form!.governedAccount.pubkey)
-        .instructions()
+          .addVerificationMethod({
+            flags: [BitwiseVerificationMethodFlag.CapabilityInvocation],
+            fragment: form.alias,
+            keyData: new PublicKey(form.key).toBuffer(),
+            methodType: VerificationMethodType.Ed25519VerificationKey2018,
+          })
+          .withAutomaticAlloc(form.governedAccount.pubkey)
+          .instructions()
 
       serializedInstructions = addKeyIxs.map(serializeInstructionToBase64)
     }
 
-    // Realms appears to put additionalSerializedInstructions first, so reverse the order of the instructions
-    // to ensure the resize function comes first.
-    const [serializedInstruction, ...additionalSerializedInstructions] =
-      serializedInstructions.reverse()
+    const [serializedInstruction, ...additionalSerializedInstructions] = serializedInstructions.reverse()
 
     return {
       serializedInstruction,
       additionalSerializedInstructions,
       isValid,
-      governance: form!.governedAccount?.governance,
+      governance: form?.governedAccount?.governance,
     }
-  }
+  }, [form, rawConnection, setFormErrors, schema])
+
   useEffect(() => {
-    handleSetInstructions(
-      { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index,
-    )
-  }, [form])
-  const schema = yup.object().shape(SchemaComponents)
+    handleSetInstructions({ governedAccount: form?.governedAccount?.governance, getInstruction }, index)
+  }, [form, getInstruction, handleSetInstructions, index])
+
   const inputs: InstructionInput[] = [
-    governanceInstructionInput(
-      realm,
-      governance || undefined,
-      assetAccounts,
-      shouldBeGoverned,
-    ),
+    governanceInstructionInput(realm, governance || undefined, assetAccounts, shouldBeGoverned),
     instructionInputs.did,
     instructionInputs.key,
     instructionInputs.alias,
   ]
 
   return (
-    <>
       <InstructionForm
-        outerForm={form}
-        setForm={setForm}
-        inputs={inputs}
-        setFormErrors={setFormErrors}
-        formErrors={formErrors}
-      ></InstructionForm>
-    </>
+          outerForm={form}
+          setForm={setForm}
+          inputs={inputs}
+          setFormErrors={setFormErrors}
+          formErrors={formErrors}
+      />
   )
 }
 

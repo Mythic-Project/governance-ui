@@ -9,7 +9,7 @@ import {
 import { SIMULATION_WALLET } from '@tools/constants'
 import { DAYS_PER_MONTH, SECS_PER_DAY } from '@utils/dateTools'
 import { chunks } from '@utils/helpers'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import {
   getRegistrarPDA,
   getVoterPDA,

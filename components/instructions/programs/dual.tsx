@@ -6,7 +6,7 @@ import {
 import { AIRDROP_PK } from '@dual-finance/airdrop'
 import { BN, BorshInstructionCoder, Idl } from '@coral-xyz/anchor'
 import { AccountMetaData } from '@solana/spl-governance'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { getMintDecimalAmountFromNatural } from '@tools/sdk/units'
 import { GSO_PK } from '@dual-finance/gso'
 import gsoIdl from '@dual-finance/gso/lib/gso.json'

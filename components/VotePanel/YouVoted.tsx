@@ -1,61 +1,44 @@
 import {
+  getVoteRecordAddress,
   GovernanceAccountType,
+  ProposalState,
+  RpcContext,
   VoteKind,
   VoteType,
-  getVoteRecordAddress,
   withFinalizeVote,
 } from '@solana/spl-governance'
-import { TransactionInstruction } from '@solana/web3.js'
-import { useState } from 'react'
-import { relinquishVote } from '../../actions/relinquishVote'
+import {TransactionInstruction} from '@solana/web3.js'
+import {useState} from 'react'
+import {relinquishVote} from '../../actions/relinquishVote'
 import useRealm from '../../hooks/useRealm'
-import { ProposalState } from '@solana/spl-governance'
-import { RpcContext } from '@solana/spl-governance'
-import {
-  ThumbUpIcon,
-  ThumbDownIcon,
-  BanIcon,
-  MinusCircleIcon,
-} from '@heroicons/react/solid'
+import {BanIcon, MinusCircleIcon, ThumbDownIcon, ThumbUpIcon,} from '@heroicons/react/solid'
 import Button from '../Button'
-import { getProgramVersionForRealm } from '@models/registry/api'
+import {getProgramVersionForRealm} from '@models/registry/api'
 import Tooltip from '@components/Tooltip'
-import {
-  useVoterTokenRecord,
-  useIsVoting,
-  useIsInCoolOffTime,
-  useUserVetoTokenRecord,
-  useVotingPop,
-} from './hooks'
+import {useIsInCoolOffTime, useIsVoting, useUserVetoTokenRecord, useVoterTokenRecord, useVotingPop,} from './hooks'
 import assertUnreachable from '@utils/typescript/assertUnreachable'
-import { useHasVoteTimeExpired } from '@hooks/useHasVoteTimeExpired'
-import { useMaxVoteRecord } from '@hooks/useMaxVoteRecord'
+import {useHasVoteTimeExpired} from '@hooks/useHasVoteTimeExpired'
+import {useMaxVoteRecord} from '@hooks/useMaxVoteRecord'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
-import { useRealmQuery } from '@hooks/queries/realm'
-import {
-  proposalQueryKeys,
-  useRouteProposalQuery,
-} from '@hooks/queries/proposal'
-import { useProposalGovernanceQuery } from '@hooks/useProposal'
-import {
-  fetchVoteRecordByPubkey,
-  useProposalVoteRecordQuery,
-} from '@hooks/queries/voteRecord'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import {useRealmQuery} from '@hooks/queries/realm'
+import {proposalQueryKeys, useRouteProposalQuery,} from '@hooks/queries/proposal'
+import {useProposalGovernanceQuery} from '@hooks/useProposal'
+import {fetchVoteRecordByPubkey, useProposalVoteRecordQuery,} from '@hooks/queries/voteRecord'
 import queryClient from '@hooks/queries/queryClient'
-import { CheckmarkFilled } from '@carbon/icons-react'
-import { useVotingClientForGoverningTokenMint } from '@hooks/useVotingClients'
-import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
-import { useAsync } from 'react-async-hook'
-import { useBatchedVoteDelegators } from './useDelegators'
-import { useSelectedDelegatorStore } from 'stores/useSelectedDelegatorStore'
+import {CheckmarkFilled} from '@carbon/icons-react'
+import {useVotingClientForGoverningTokenMint} from '@hooks/useVotingClients'
+import {useRealmVoterWeightPlugins} from '@hooks/useRealmVoterWeightPlugins'
+import {useAsync} from 'react-async-hook'
+import {useBatchedVoteDelegators} from './useDelegators'
+import {useSelectedDelegatorStore} from 'stores/useSelectedDelegatorStore'
+import {useConnection} from "@solana/wallet-adapter-react";
 
 export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
   const proposal = useRouteProposalQuery().data?.result
   const realm = useRealmQuery().data?.result
   const { realmInfo } = useRealm()
   const wallet = useWalletOnePointOh()
-  const connection = useLegacyConnectionContext()
+  const connection = useConnection()
   const connected = !!wallet?.connected
 
   const governance = useProposalGovernanceQuery().data?.result
@@ -109,8 +92,8 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
       proposal!.owner,
       getProgramVersionForRealm(realmInfo!),
       wallet!,
-      connection.current,
-      connection.endpoint,
+      connection["ConnectionContextState"],
+      connection["endpoint"],
     )
 
     try {
@@ -120,9 +103,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
       //we want to finalize only if someone try to withdraw after voting time ended
       //but its before finalize state
       if (
-        proposal !== undefined &&
-        proposal?.account.state === ProposalState.Voting &&
-        hasVoteTimeExpired &&
+        proposal?.account.state === ProposalState.Voting && hasVoteTimeExpired &&
         !isInCoolOffTime
       ) {
         await withFinalizeVote(
@@ -147,8 +128,8 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
         instructions,
         votingClient,
       )
-      queryClient.invalidateQueries({
-        queryKey: proposalQueryKeys.all(connection.endpoint),
+      await queryClient.invalidateQueries({
+        queryKey: proposalQueryKeys.all(connection["endpoint"]),
       })
     } catch (ex) {
       console.error("Can't relinquish vote", ex)
@@ -199,11 +180,10 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
             proposal.pubkey,
             delegator.pubkey,
           )
-          const voteRecord = await fetchVoteRecordByPubkey(
-            connection.current,
-            pda,
+          return await fetchVoteRecordByPubkey(
+              connection["current"],
+              pda,
           )
-          return voteRecord
         }),
       )
 
@@ -212,14 +192,7 @@ export const YouVoted = ({ quorum }: { quorum: 'electoral' | 'veto' }) => {
         .includes(false)
       return allVoted ? delegatorisVoteList[0].result : null
     }
-  }, [
-    communityDelegators?.length,
-    connection.current,
-    councilDelegators?.length,
-    hasVotingPower,
-    proposal?.pubkey,
-    votingPop,
-  ])
+  }, [communityDelegators, connection, councilDelegators, hasVotingPower, proposal, votingPop])
 
   const getDelegatorVoteForQuorum = () => {
     if (

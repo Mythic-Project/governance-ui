@@ -1,7 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getMintDecimalAmountFromNatural } from '@tools/sdk/units'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { WSOL_MINT } from '../tools'
 import BufferLayout from 'buffer-layout'
 import { AccountMetaData } from '@solana/spl-governance'

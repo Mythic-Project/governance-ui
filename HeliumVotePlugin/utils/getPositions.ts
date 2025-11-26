@@ -8,7 +8,7 @@ import {
   init,
   delegatedPositionKey,
 } from '@helium/helium-sub-daos-sdk'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { calcPositionVotingPower } from './calcPositionVotingPower'
 import { HeliumVsrClient } from '../sdk/client'
 import {

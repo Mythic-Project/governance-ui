@@ -40,7 +40,7 @@ type Errors = {
   [K in keyof Form]?: string
 }
 
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string: any) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
@@ -92,7 +92,7 @@ const RevokeGoverningTokens: FC<{
   const { data: mintInfo } = useMintInfoByPubkeyQuery(selectedMint)
   const governance = useGovernanceForGovernedAddress(selectedMint)
   const revokeTokenAuthority =
-    mintInfo?.result?.mintAuthority ?? governance?.pubkey
+      mintInfo?.result?.mintAuthority ?? governance?.pubkey
 
   const getInstruction = useCallback(async (): Promise<UiInstruction> => {
     const errors: Errors = {}
@@ -163,6 +163,7 @@ const RevokeGoverningTokens: FC<{
     programVersion,
     realm,
     selectedMint,
+    revokeTokenAuthority, // ✅ added
   ])
 
   // erase errors on dirtying
@@ -195,27 +196,25 @@ const RevokeGoverningTokens: FC<{
 
   // Add the debounced resolve function
   const resolveDomainDebounced = useMemo(
-    () =>
-      debounce(async (domain: string) => {
-        try {
-          console.log('Attempting to resolve domain:', domain)
-          const resolved = await resolveDomain(connection, domain)
-          console.log('Domain resolved to:', resolved?.toBase58() || 'null')
-
-          if (resolved) {
-            setForm((prevForm) => ({
-              ...prevForm,
-              memberKey: resolved.toBase58(),
-            }))
-          }
-        } catch (error) {
-          console.error('Error resolving domain:', error)
-        } finally {
-          setIsResolvingDomain(false)
-        }
-      }, 500),
-    [connection],
+      () =>
+          debounce(async (domain: string) => {
+            try {
+              const resolved = await resolveDomain(connection, domain)
+              if (resolved) {
+                setForm((prevForm) => ({
+                  ...prevForm,
+                  memberKey: resolved.toBase58(),
+                }))
+              }
+            } catch (error) {
+              console.error('Error resolving domain:', error)
+            } finally {
+              setIsResolvingDomain(false)
+            }
+          }, 500),
+      [connection],
   )
+
 
   const updateMembershipType = (x: 'council' | 'community' | undefined) => {
     setForm((p) => ({ ...p, membershipPopulation: x }))
@@ -238,7 +237,7 @@ const RevokeGoverningTokens: FC<{
           label="Membership Token"
           disabled={Object.keys(membershipTypes).length === 0}
           value={selectedMembershipType}
-          onChange={(x) => updateMembershipType(x)}
+          onChange={(x: any) => updateMembershipType(x)}
         >
           {Object.keys(membershipTypes).map((x) => (
             <Select.Option key={x} value={x}>
@@ -259,8 +258,9 @@ const RevokeGoverningTokens: FC<{
 
             if (value.includes('.')) {
               setIsResolvingDomain(true)
-              resolveDomainDebounced(value)
+              resolveDomainDebounced?.(value)
             }
+
           }}
           error={formErrors.memberKey}
         />

@@ -1,3 +1,4 @@
+// tools/sdk/units.ts
 import { BN, ProgramAccount } from '@coral-xyz/anchor'
 import { MintInfo } from '@solana/spl-token'
 import { TokenInfoJupiter } from '@utils/services/tokenPrice'
@@ -28,13 +29,6 @@ export function getTimestampFromHours(hours: number) {
 
 export function fmtBnMintDecimals(amount: BN, decimals: number) {
   return new BigNumber(amount.toString()).shiftedBy(-decimals).toFormat()
-}
-
-export function fmtBnMintDecimalsUndelimited(amount: BN, decimals: number) {
-  return new BigNumber(amount.toString())
-    .shiftedBy(-decimals)
-    .toFormat()
-    .replaceAll(',', '')
 }
 
 export function fmtBNAmount(amount: BN | number | string) {
@@ -73,7 +67,7 @@ function getBigNumberAmount(amount: BN | number) {
 }
 
 // Parses input string in decimals to mint amount (natural units)
-// If the input is already a number then converts it to mint natural amount
+// If the input is already a number of then converts it to mint natural amount
 export function parseMintNaturalAmountFromDecimal(
   decimalAmount: string | number,
   mintDecimals: number,
@@ -145,49 +139,32 @@ export function getMintSupplyAsDecimal(mint: MintInfo) {
     .toNumber()
 }
 
-// Calculates percentage (provided as 0-100) of mint supply as BigNumber amount
-/** @deprecated why? why would you use a BigNumber for the range 0-100 */
-function getMintSupplyPercentageAsBigNumber(
-  mint: MintInfo,
-  percentage: number,
-) {
-  return new BigNumber(
-    mint.supply.mul(new BN(percentage)).toString(),
-  ).shiftedBy(-(mint.decimals + 2))
-}
-
 // Calculates percentage (provided as 0-100) of mint supply as decimal amount
-export function getMintSupplyPercentageAsDecimal(
-  mint: MintInfo,
-  percentage: number,
-) {
-  return getMintSupplyPercentageAsBigNumber(mint, percentage).toNumber()
+export function getMintSupplyPercentage(
+    mint: MintInfo,
+    percentage: number,
+): number {
+  return (mint.supply.toNumber() * percentage) / 100
 }
 
-// Formats percentage value showing it in human readable form
+
+// Formats percentage value showing it in human-readable form
+/** @deprecated unused for now, may be used later */
 export function fmtPercentage(percentage: number) {
-  if (percentage === 0 || percentage === Infinity) {
-    return '0%'
-  }
-
-  if (percentage < 0.01) {
-    return '<0.01%'
-  }
-
-  if (percentage > 100) {
-    return '>100%'
-  }
-
+  if (percentage === 0 || percentage === Infinity) return '0%'
+  if (percentage < 0.01) return '<0.01%'
+  if (percentage > 100) return '>100%'
   return `${+percentage.toFixed(2)}%`
 }
 
-// Calculates mint supply fraction for the given natural amount as decimal amount
+/** @deprecated unused for now, may be used later */
 export function getMintSupplyFractionAsDecimalPercentage(
-  mint: MintInfo,
-  naturalAmount: BN | number,
+    mint: MintInfo,
+    naturalAmount: BN | number,
 ) {
   return getBigNumberAmount(naturalAmount)
-    .multipliedBy(100)
-    .dividedBy(new BigNumber(mint.supply.toString()))
-    .toNumber()
+      .multipliedBy(100)
+      .dividedBy(new BigNumber(mint.supply.toString()))
+      .toNumber()
 }
+

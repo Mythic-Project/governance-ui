@@ -1,4 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+// PATH: ./pages/dao/[symbol]/proposal/components/instructions/Identity/AddServiceToDID.tsx
+
+import { useCallback, useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import {
   Governance,
@@ -20,89 +22,85 @@ import {
   SchemaComponents,
 } from '@utils/instructions/Identity/util'
 import { useRealmQuery } from '@hooks/queries/realm'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { useConnection } from '@solana/wallet-adapter-react'
+
 
 interface AddServiceToDIDForm {
   governedAccount: AssetAccount | undefined
-  did: string // manual entry for now - replace with dropdown once did-registry is introduced
-  alias: string // manual entry
-  serviceEndpoint: string // manual entry
-  serviceType: string // manual entry
+  did: string
+  alias: string
+  serviceEndpoint: string
+  serviceType: string
 }
 
 const AddServiceToDID = ({
-  index,
-  governance,
-}: {
+                           index,
+                           governance,
+                         }: {
   index: number
   governance: ProgramAccount<Governance> | null
 }) => {
   const realm = useRealmQuery().data?.result
   const { assetAccounts } = useGovernanceAssets()
-  const connection = useLegacyConnectionContext()
+  const { connection } = useConnection()
   const shouldBeGoverned = index !== 0 && governance
   const [form, setForm] = useState<AddServiceToDIDForm>()
   const [formErrors, setFormErrors] = useState({})
   const { handleSetInstructions } = useContext(NewProposalContext)
 
-  async function getInstruction(): Promise<UiInstruction> {
-    const isValid = await validateInstruction({ schema, form, setFormErrors })
+  // ✅ Déclare le schema avant son usage
+  const schema = yup.object().shape(SchemaComponents)
 
-    // getInstruction must return something, even if it is an invalid instruction
+  const getInstruction = useCallback(async (): Promise<UiInstruction> => {
+    const isValid = await validateInstruction({ schema, form, setFormErrors })
     let serializedInstructions = ['']
 
     if (
-      isValid &&
-      form!.governedAccount?.governance?.pubkey &&
-      connection?.current
+        isValid &&
+        form?.governedAccount?.governance?.pubkey &&
+        connection
     ) {
-      const service = DidSolService.build(DidSolIdentifier.parse(form!.did), {
-        connection: connection.current,
-        wallet: governedAccountToWallet(form!.governedAccount),
+      const service = DidSolService.build(DidSolIdentifier.parse(form.did), {
+        connection,
+        wallet: governedAccountToWallet(form.governedAccount),
       })
 
       const addServiceIxs = await service
-        .addService({
-          fragment: form!.alias,
-          serviceEndpoint: form!.serviceEndpoint,
-          serviceType: form!.serviceType,
-        })
-        // Adds a DID resize instruction if needed
-        // The resize instruction performs a SOL transfer, so needs to be from
-        // an account with no data, otherwise the Solana runtime will reject it.
-        // this is why we use the governed account here as opposed to the governance
-        // itself.
-        .withAutomaticAlloc(form!.governedAccount.pubkey)
-        .instructions()
+          .addService({
+            fragment: form.alias,
+            serviceEndpoint: form.serviceEndpoint,
+            serviceType: form.serviceType,
+          })
+          .withAutomaticAlloc(form.governedAccount.pubkey)
+          .instructions()
 
       serializedInstructions = addServiceIxs.map(serializeInstructionToBase64)
     }
 
-    // Realms appears to put additionalSerializedInstructions first, so reverse the order of the instructions
-    // to ensure the resize function comes first.
     const [serializedInstruction, ...additionalSerializedInstructions] =
-      serializedInstructions.reverse()
+        serializedInstructions.reverse()
 
     return {
       serializedInstruction,
       additionalSerializedInstructions,
       isValid,
-      governance: form!.governedAccount?.governance,
+      governance: form?.governedAccount?.governance,
     }
-  }
+  }, [form, connection, schema, setFormErrors])
+
   useEffect(() => {
     handleSetInstructions(
-      { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index,
+        { governedAccount: form?.governedAccount?.governance, getInstruction },
+        index,
     )
-  }, [form])
-  const schema = yup.object().shape(SchemaComponents)
+  }, [form, handleSetInstructions, index, getInstruction])
+
   const inputs: InstructionInput[] = [
     governanceInstructionInput(
-      realm,
-      governance || undefined,
-      assetAccounts,
-      shouldBeGoverned,
+        realm,
+        governance || undefined,
+        assetAccounts,
+        shouldBeGoverned,
     ),
     instructionInputs.did,
     instructionInputs.serviceEndpoint,
@@ -111,15 +109,15 @@ const AddServiceToDID = ({
   ]
 
   return (
-    <>
-      <InstructionForm
-        outerForm={form}
-        setForm={setForm}
-        inputs={inputs}
-        setFormErrors={setFormErrors}
-        formErrors={formErrors}
-      ></InstructionForm>
-    </>
+      <>
+        <InstructionForm
+            outerForm={form}
+            setForm={setForm}
+            inputs={inputs}
+            setFormErrors={setFormErrors}
+            formErrors={formErrors}
+        />
+      </>
   )
 }
 

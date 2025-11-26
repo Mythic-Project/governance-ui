@@ -8,7 +8,7 @@ import { AccountMetaData } from '@solana/spl-governance'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { fmtMintAmount } from '@tools/sdk/units'
 import tokenPriceService from '@utils/services/tokenPrice'
-import { tryGetMint, getInverseScaledFactor } from '@utils/tokens'
+import tryGetMint, { getInverseScaledFactor } from '@utils/tokens'
 import { tryGetRegistrar, tryGetVoter } from 'VoteStakeRegistry/sdk/api'
 import { VsrClient } from 'VoteStakeRegistry/sdk/client'
 import {

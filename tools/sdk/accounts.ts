@@ -1,3 +1,4 @@
+// tools/sdk/accounts.ts
 import { ProgramAccount } from '@solana/spl-governance'
 import { arrayToRecord } from '@tools/core/script'
 

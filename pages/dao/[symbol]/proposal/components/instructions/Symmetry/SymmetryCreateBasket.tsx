@@ -56,11 +56,11 @@ const SymmetryCreateBasket = ({
     setForm({ ...form, [propertyName]: value })
   }
 
-  useEffect(() => {
-    BasketsSDK.init(connection).then((sdk) => {
-      setSupportedTokens(sdk.getTokenListData())
-    })
-  }, [])
+    useEffect(() => {
+        BasketsSDK.init(connection).then((sdk) => {
+            setSupportedTokens(sdk.getTokenListData())
+        })
+    }, [connection])
 
   useEffect(() => {
     handleSetInstructions(
@@ -325,7 +325,7 @@ const SymmetryCreateBasket = ({
             open={addTokenModal}
             onClose={() => setAddTokenModal(false)}
             supportedTokens={supportedTokens}
-            onSelect={(token) => {
+            onSelect={(token: any) => {
               if (
                 form.basketComposition.find(
                   (t) => t.token.toBase58() === token.tokenMint,

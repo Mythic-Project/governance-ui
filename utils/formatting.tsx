@@ -97,3 +97,6 @@ export const fmtDecimalToBN = (
   
   return new BN(wholeNumber)
 }
+
+export class tryGetNumber {
+}

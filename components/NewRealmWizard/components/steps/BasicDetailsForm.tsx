@@ -37,24 +37,14 @@ export interface BasicDetails {
   programId?: string
 }
 
-export default function BasicDetailsForm({
-  type,
-  formData,
-  currentStep,
-  totalSteps,
-  onSubmit,
-  onPrevClick,
-}: {
-  // TODO type me
+const BasicDetailsForm: React.FC<{
   type: any
   formData: BasicDetails
   currentStep: any
   totalSteps: any
-  // eslint-disable-next-line @typescript-eslint/ban-types
   onSubmit: Function
-  // eslint-disable-next-line @typescript-eslint/ban-types
   onPrevClick: Function
-}) {
+}> = ({ type, formData, currentStep, totalSteps, onSubmit, onPrevClick }) => {
   const schema = yup.object(BasicDetailsSchema).required()
   const {
     setValue,

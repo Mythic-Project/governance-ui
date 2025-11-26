@@ -1,7 +1,8 @@
-import type { EndpointTypes } from '@models/types'
+
 import { Connection } from '@solana/web3.js'
 import type { EndpointInfo } from '../@types/types'
 import { DEVNET_RPC, MAINNET_RPC } from '@constants/endpoints'
+import {useConnection} from "@solana/wallet-adapter-react";
 
 export const BACKUP_CONNECTIONS = [
   new Connection(`https://rpc.mngo.cloud/rlmk0lo5odee/`, 'recent'),
@@ -41,8 +42,8 @@ export function getConnectionContext(cluster: string): ConnectionContext {
 
 /**
  * Given ConnectionContext, find the network.
- * @param connectionContext
  * @returns EndpointType
+ * @param endpoint
  */
 export function getNetworkFromEndpoint(endpoint: string) {
   const network = ENDPOINTS.find((e) => e.url === endpoint)
@@ -51,4 +52,12 @@ export function getNetworkFromEndpoint(endpoint: string) {
     throw new Error(`Network not found for endpoint: ${endpoint}`)
   }
   return network?.name
+}
+// Add these exports at the end of the file
+export type EndpointTypes = 'mainnet' | 'devnet' | 'testnet' | 'localnet';
+
+export interface ConnectionContext {
+  current: ReturnType<typeof useConnection>['connection'];
+  endpoint: string;
+  cluster: EndpointTypes;
 }

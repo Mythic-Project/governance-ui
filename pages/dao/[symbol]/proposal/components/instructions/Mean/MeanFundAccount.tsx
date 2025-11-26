@@ -1,162 +1,152 @@
-import { PaymentStreamingAccount } from '@mean-dao/payment-streaming'
-import { Governance, ProgramAccount } from '@solana/spl-governance'
-import React, { useContext, useEffect, useState } from 'react'
-
 import Input from '@components/inputs/Input'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
+import { PaymentStreamingAccount } from '@mean-dao/payment-streaming'
+import { Governance, ProgramAccount } from '@solana/spl-governance'
 import { getMintMinAmountAsDecimal } from '@tools/sdk/units'
 import { precision } from '@utils/formatting'
 import getMeanFundAccountInstruction from '@utils/instructions/Mean/getMeanFundAccountInstruction'
 import { MeanFundAccount } from '@utils/uiTypes/proposalCreationTypes'
 import { getMeanFundAccountSchema } from '@utils/validations'
-
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { NewProposalContext } from '../../../new'
 import GovernedAccountSelect from '../../GovernedAccountSelect'
-
 import SelectStreamingAccount from './SelectStreamingAccount'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { useConnection } from '@solana/wallet-adapter-react'
+import type { ConnectionContext, EndpointTypes } from '@utils/connection'
 
-interface Props {
-  index: number
-  governance: ProgramAccount<Governance> | null
+const { connection } = useConnection()
+
+const cluster: EndpointTypes = (process.env.NEXT_PUBLIC_CLUSTER as EndpointTypes) || 'devnet'
+
+const connectionCtx: ConnectionContext = {
+    current: connection,
+    endpoint: connection.rpcEndpoint ?? '',
+    cluster,
 }
 
-const MeanFundAccountComponent = ({ index, governance }: Props) => {
-  // form
+interface Props {
+    index: number
+    governance: ProgramAccount<Governance> | null
+}
 
-  const [form, setForm] = useState<MeanFundAccount>({
-    governedTokenAccount: undefined,
-    mintInfo: undefined,
-    amount: undefined,
-    paymentStreamingAccount: undefined,
-  })
+const MeanFundAccountComponent = ({ index, governance }: Props) => {// ✅ replace deprecated hook
 
-  const [formErrors, setFormErrors] = useState({})
-
-  const handleSetForm = ({ propertyName, value }, restForm = {}) => {
-    setFormErrors({})
-    setForm({ ...form, [propertyName]: value, ...restForm })
-  }
-
-  // governedTokenAccount
-
-  const shouldBeGoverned = !!(index !== 0 && governance)
-  const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
-
-  // instruction
-
-  const schema = getMeanFundAccountSchema({ form })
-  const { handleSetInstructions } = useContext(NewProposalContext)
-
-  const connection = useLegacyConnectionContext()
-  const getInstruction = () =>
-    getMeanFundAccountInstruction({
-      connection,
-      form,
-      setFormErrors,
-      schema,
+    const [form, setForm] = useState<MeanFundAccount>({
+        governedTokenAccount: undefined,
+        mintInfo: undefined,
+        amount: undefined,
+        paymentStreamingAccount: undefined,
     })
+    const [formErrors, setFormErrors] = useState({})
 
-  useEffect(() => {
-    handleSetInstructions(
-      {
-        governedAccount: form.governedTokenAccount?.governance,
-        getInstruction,
-      },
-      index,
-    )
-  }, [form])
+    const handleSetForm = ({ propertyName, value }, restForm = {}) => {
+        setFormErrors({})
+        setForm({ ...form, [propertyName]: value, ...restForm })
+    }
 
-  // mint info
-  const mintMinAmount = form.mintInfo
-    ? getMintMinAmountAsDecimal(form.mintInfo)
-    : 1
-  const currentPrecision = precision(mintMinAmount)
+    const shouldBeGoverned = index !== 0 && !!governance
+    const { governedTokenAccountsWithoutNfts } = useGovernanceAssets()
 
-  useEffect(() => {
-    setForm({
-      ...form,
-      mintInfo: form.governedTokenAccount?.extensions.mint?.account,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.governedTokenAccount])
+    const schema = getMeanFundAccountSchema({ form })
+    const { handleSetInstructions } = useContext(NewProposalContext)
 
-  // amount
+    const getInstruction = useCallback(() => {
+        return getMeanFundAccountInstruction({
+            connection: connectionCtx,
+            form,
+            setFormErrors,
+            schema,
+        })
+    }, [form, schema])
 
-  const validateAmountOnBlur = () => {
-    const value = form.amount
-
-    handleSetForm({
-      value: parseFloat(
-        Math.max(
-          mintMinAmount,
-          Math.min(Number.MAX_SAFE_INTEGER, value ?? 0),
-        ).toFixed(currentPrecision),
-      ),
-      propertyName: 'amount',
-    })
-  }
-
-  const setAmount = (event) => {
-    const value = event.target.value
-    handleSetForm({
-      value,
-      propertyName: 'amount',
-    })
-  }
-
-  // paymentStreamingAccount
-
-  const formPaymentStreamingAccount = form.paymentStreamingAccount as
-    | PaymentStreamingAccount
-    | undefined
-
-  return (
-    <React.Fragment>
-      <SelectStreamingAccount
-        label="Select streaming account destination"
-        onChange={(paymentStreamingAccount) => {
-          handleSetForm(
+    // ✅ fix useEffect dependencies
+    useEffect(() => {
+        handleSetInstructions(
             {
-              value: paymentStreamingAccount,
-              propertyName: 'paymentStreamingAccount',
+                governedAccount: form.governedTokenAccount?.governance,
+                getInstruction,
             },
-            { governedTokenAccount: undefined },
-          )
-        }}
-        value={formPaymentStreamingAccount}
-        error={formErrors['paymentStreamingAccount']}
-      />
-      <GovernedAccountSelect
-        label="Select source of funds"
-        governedAccounts={governedTokenAccountsWithoutNfts.filter(
-          (a) =>
-            a.extensions.mint?.publicKey.toBase58() ===
-            formPaymentStreamingAccount?.mint.toString(),
-        )}
-        onChange={(value) => {
-          handleSetForm({ value, propertyName: 'governedTokenAccount' })
-        }}
-        value={form.governedTokenAccount}
-        error={formErrors['governedTokenAccount']}
-        shouldBeGoverned={shouldBeGoverned}
-        governance={governance}
-        type="token"
-      />
-      <Input
-        min={mintMinAmount}
-        max={Number.MAX_SAFE_INTEGER}
-        label="Amount"
-        value={form.amount}
-        type="number"
-        onChange={setAmount}
-        step={mintMinAmount}
-        error={formErrors['amount']}
-        onBlur={validateAmountOnBlur}
-        inputMode="decimal"
-      />
-    </React.Fragment>
-  )
+            index,
+        )
+    }, [getInstruction, handleSetInstructions, index, form.governedTokenAccount?.governance])
+
+    // mint info
+    const mintMinAmount = form.mintInfo
+        ? getMintMinAmountAsDecimal(form.mintInfo)
+        : 1
+    const currentPrecision = precision(mintMinAmount)
+
+    useEffect(() => {
+        setForm((prev) => ({
+            ...prev,
+            mintInfo: prev.governedTokenAccount?.extensions.mint?.account,
+        }))
+    }, [form.governedTokenAccount])
+
+    const validateAmountOnBlur = () => {
+        const value = form.amount
+        handleSetForm({
+            value: parseFloat(
+                Math.max(mintMinAmount, Math.min(Number.MAX_SAFE_INTEGER, value ?? 0)).toFixed(
+                    currentPrecision,
+                ),
+            ),
+            propertyName: 'amount',
+        })
+    }
+
+    const setAmount = (event: any) => {
+        const value = event.target.value
+        handleSetForm({
+            value,
+            propertyName: 'amount',
+        })
+    }
+
+    const formPaymentStreamingAccount = form.paymentStreamingAccount as
+        | PaymentStreamingAccount
+        | undefined
+
+    return (
+        <>
+            <SelectStreamingAccount
+                label="Select streaming account destination"
+                onChange={(paymentStreamingAccount) => {
+                    handleSetForm(
+                        { value: paymentStreamingAccount, propertyName: 'paymentStreamingAccount' },
+                        { governedTokenAccount: undefined },
+                    )
+                }}
+                value={formPaymentStreamingAccount}
+                error={formErrors['paymentStreamingAccount']}
+            />
+            <GovernedAccountSelect
+                label="Select source of funds"
+                governedAccounts={governedTokenAccountsWithoutNfts.filter(
+                    (a) =>
+                        a.extensions.mint?.publicKey.toBase58() === formPaymentStreamingAccount?.mint.toString(),
+                )}
+                onChange={(value) => handleSetForm({ value, propertyName: 'governedTokenAccount' })}
+                value={form.governedTokenAccount}
+                error={formErrors['governedTokenAccount']}
+                shouldBeGoverned={shouldBeGoverned}
+                governance={governance}
+                type="token"
+            />
+            <Input
+                min={mintMinAmount}
+                max={Number.MAX_SAFE_INTEGER}
+                label="Amount"
+                value={form.amount}
+                type="number"
+                onChange={setAmount}
+                step={mintMinAmount}
+                error={formErrors['amount']}
+                onBlur={validateAmountOnBlur}
+                inputMode="decimal"
+            />
+        </>
+    )
 }
 
 export default MeanFundAccountComponent

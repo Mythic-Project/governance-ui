@@ -2,7 +2,6 @@ import { serializeInstructionToBase64 } from '@solana/spl-governance'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
-  TOKEN_PROGRAM_ID,
   u64,
 } from '@solana/spl-token'
 import { createMintToInstruction } from '@solana/spl-token-new'
@@ -32,8 +31,6 @@ import { findMetadataPda } from '@metaplex-foundation/js'
 import { lidoStake } from '@utils/lidoStake'
 import {
   createTransferCheckedInstruction,
-  createTransferInstruction,
-  getAssociatedTokenAddress,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token-new'
@@ -105,11 +102,11 @@ export async function getTransferInstruction({
           mintPK, // mint
           destinationAccount, // owner
           true,
-          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+          isToken2022 ? TOKEN_2022_PROGRAM_ID :   TOKEN_2022_PROGRAM_ID,
         )
       : destinationAccount
     const ataAccountData = await connection.current.getAccountInfo(ataAddress)
-    const isAtaExist = ataAccountData?.owner.equals(TOKEN_PROGRAM_ID) 
+    const isAtaExist = ataAccountData?.owner.equals(  TOKEN_2022_PROGRAM_ID)
       || ataAccountData?.owner.equals(TOKEN_2022_PROGRAM_ID)  
 
     if (!receiverAccount) {
@@ -126,7 +123,7 @@ export async function getTransferInstruction({
       prerequisiteInstructions.push(
         Token.createAssociatedTokenAccountInstruction(
           ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+          isToken2022 ? TOKEN_2022_PROGRAM_ID :   TOKEN_2022_PROGRAM_ID, // always TOKEN_PROGRAM_ID
           mintPK, // mint
           ataAddress, // ata
           destinationAccount, // owner of token account
@@ -144,10 +141,10 @@ export async function getTransferInstruction({
           mintAmount,
           currentAccount!.extensions.mint!.account.decimals!,
           [],
-          isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+          isToken2022 ? TOKEN_2022_PROGRAM_ID :   TOKEN_2022_PROGRAM_ID,
         )
       : Token.createTransferInstruction(
-          TOKEN_PROGRAM_ID,
+            TOKEN_2022_PROGRAM_ID,
           sourceAccount!,
           ataAddress,
           currentAccount!.extensions!.token!.account.owner,
@@ -226,11 +223,11 @@ export async function getBatchTransferInstruction({
             mintPK, // mint
             destinationAccount, // owner
             true,
-            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+            isToken2022 ? TOKEN_2022_PROGRAM_ID :   TOKEN_2022_PROGRAM_ID,
           )
         : destinationAccount
       const ataAccountData = await connection.current.getAccountInfo(ataAddress)
-      const isAtaExist = ataAccountData?.owner.equals(TOKEN_PROGRAM_ID) 
+      const isAtaExist = ataAccountData?.owner.equals(TOKEN_2022_PROGRAM_ID)
         || ataAccountData?.owner.equals(TOKEN_2022_PROGRAM_ID)  
 
       if (!receiverAccount) {
@@ -249,7 +246,7 @@ export async function getBatchTransferInstruction({
         prerequisiteInstructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+            isToken2022 ? TOKEN_2022_PROGRAM_ID: TOKEN_2022_PROGRAM_ID, // always TOKEN_PROGRAM_ID
             mintPK, // mint
             ataAddress, // ata
             destinationAccount, // owner of token account
@@ -267,10 +264,10 @@ export async function getBatchTransferInstruction({
             mintAmount,
             currentAccount!.extensions.mint!.account.decimals!,
             [],
-            isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+            isToken2022 ? TOKEN_2022_PROGRAM_ID :   TOKEN_2022_PROGRAM_ID,
           )
         : Token.createTransferInstruction(
-            TOKEN_PROGRAM_ID,
+              TOKEN_2022_PROGRAM_ID,
             sourceAccount!,
             ataAddress,
             currentAccount!.extensions!.token!.account.owner,
@@ -447,7 +444,7 @@ export async function getMintInstruction({
       prerequisiteInstructions.push(
         Token.createAssociatedTokenAccountInstruction(
           ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-          TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+            TOKEN_2022_PROGRAM_ID, // always TOKEN_PROGRAM_ID
           mintPK, // mint
           receiverAddress, // ata
           destinationAccount, // owner of token account
@@ -460,7 +457,7 @@ export async function getMintInstruction({
       receiverAddress,
       form.mintAccount.extensions.mint!.account.mintAuthority!,
       BigInt(mintAmount.toString()),
-      undefined, TOKEN_PROGRAM_ID
+      undefined,   TOKEN_2022_PROGRAM_ID
     )
     serializedInstruction = serializeInstructionToBase64(transferIx)
   }
@@ -513,7 +510,7 @@ export async function getConvertToMsolInstruction({
       const mSolToken = new Token(
         connection.current,
         mSolMint,
-        TOKEN_PROGRAM_ID,
+          TOKEN_2022_PROGRAM_ID,
         null as unknown as Keypair,
       )
 
@@ -533,7 +530,7 @@ export async function getConvertToMsolInstruction({
         prerequisiteInstructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID,
-            TOKEN_PROGRAM_ID,
+              TOKEN_2022_PROGRAM_ID,
             mSolMint,
             destinationAccount,
             originAccount,
@@ -605,7 +602,7 @@ export async function getConvertToStSolInstruction({
       const stSolToken = new Token(
         connection.current,
         config.stSolMint,
-        TOKEN_PROGRAM_ID,
+          TOKEN_2022_PROGRAM_ID,
         null as unknown as Keypair,
       )
 
@@ -625,7 +622,7 @@ export async function getConvertToStSolInstruction({
         prerequisiteInstructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID,
-            TOKEN_PROGRAM_ID,
+              TOKEN_2022_PROGRAM_ID,
             config.stSolMint,
             associatedStSolAccount,
             originAccount,
@@ -800,7 +797,7 @@ export async function getUpdateTokenMetadataInstruction({
   let serializedInstruction = ''
   const prerequisiteInstructions: TransactionInstruction[] = []
   if (isValid && programId && form.mintAccount?.pubkey && mintAuthority) {
-    const metadataPDA = await findMetadataPda(form.mintAccount?.pubkey)
+    const metadataPDA = findMetadataPda(form.mintAccount?.pubkey)
 
     const tokenMetadata = {
       name: form.name,

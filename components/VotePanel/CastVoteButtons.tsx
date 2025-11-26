@@ -69,7 +69,7 @@ export const CastVoteButtons = () => {
             connection.connection,
             pda,
           )
-          return !!voteRecord.found
+          return voteRecord.found
         }),
       )
 
@@ -78,14 +78,7 @@ export const CastVoteButtons = () => {
       setVote(voted ? 'yes' : 'no')
       return voted
     }
-  }, [
-    communityDelegators?.length,
-    connection.connection,
-    councilDelegators?.length,
-    hasVotingPower,
-    proposal?.pubkey,
-    votingPop,
-  ])
+  }, [communityDelegators, connection.connection, councilDelegators, hasVotingPower, proposal, votingPop])
 
   const handleVote = async (vote: 'yes' | 'no') => {
     setVote(vote)
