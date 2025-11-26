@@ -146,15 +146,17 @@ const SendNft = ({
           const fromOwner = tryParseKey(fromOwnerString)
           // should be impossible, but stuff isn't typed
           if (fromOwner === null) throw new Error()
-
+          
           const transferIx = await createIx_transferNft(
             connection,
             fromOwner,
             toOwner,
-            nftMint,
+            nft,
             fromOwner,
             nativeTreasury,
           )
+
+          if (!transferIx) throw new Error('failed to create transfer instruction');
 
           return {
             serializedInstruction: serializeInstructionToBase64(transferIx),
