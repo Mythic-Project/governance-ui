@@ -151,10 +151,13 @@ const SendNft = ({
             connection,
             fromOwner,
             toOwner,
-            nftMint,
+            nft,
             fromOwner,
             nativeTreasury,
           )
+
+          if (!transferIx)
+            throw new Error('failed to create transfer instruction')
 
           return {
             serializedInstruction: serializeInstructionToBase64(transferIx),
