@@ -93,6 +93,7 @@ export type DasNftObject = {
     verified: boolean
   }[]
   id: string
+  interface?: string
 }
 
 /*** Here is an example item from the DAS Api, since it's not typed and the docs dont give the full schema.

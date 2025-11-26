@@ -160,7 +160,7 @@ const SendNft = ({
             serializedInstruction: serializeInstructionToBase64(transferIx),
             isValid: true,
             prerequisiteInstructions:
-              destinationAtaQueried === null
+              destinationAtaQueried === null && nft.interface !== 'MplCoreAsset'
                 ? [
                     Token.createAssociatedTokenAccountInstruction(
                       ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
