@@ -49,7 +49,7 @@ const useMetaplexDeposit = () => {
           connection.current,
           wallet.publicKey,
           toOwner,
-          nftId,
+          nft,
           wallet.publicKey,
           wallet.publicKey,
         )
