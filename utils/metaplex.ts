@@ -1,5 +1,6 @@
 import { fetchNFTbyMint } from '@hooks/queries/nft'
 import { Metaplex } from '@metaplex-foundation/js'
+import { TokenStandard } from '@metaplex-foundation/mpl-token-metadata'
 import { Connection, PublicKey } from '@solana/web3.js'
 
 export const createIx_transferNft = async (
@@ -21,27 +22,48 @@ export const createIx_transferNft = async (
   //metaplex.identity = () => ({ publicKey: fromOwner } as any) // you need to do this to set payer and authority. I love OOP!!
   // except the payer might not be the same person. great!
 
-  const nft = await fetchNFTbyMint(connection, mint)
-  if (!nft.result) throw 'failed to fetch nft'
+  try {
+    const nft = await fetchNFTbyMint(connection, mint)
+    if (!nft.result) throw 'failed to fetch nft'
 
-  const tokenStandard = nft.result.tokenStandard
-  const ruleSet = nft.result.programmableConfig?.ruleSet
+    const tokenStandard = nft.result.tokenStandard
+    const ruleSet = nft.result.programmableConfig?.ruleSet
 
-  const ix = metaplex
-    .nfts()
-    .builders()
-    .transfer({
-      nftOrSft: {
-        address: mint,
-        tokenStandard,
-      },
-      authorizationDetails: ruleSet ? { rules: ruleSet } : undefined,
-      toOwner,
-      fromOwner,
-    })
-    .getInstructions()[0]
+    const ix = metaplex
+      .nfts()
+      .builders()
+      .transfer({
+        nftOrSft: {
+          address: mint,
+          tokenStandard,
+        },
+        authorizationDetails: ruleSet ? { rules: ruleSet } : undefined,
+        toOwner,
+        fromOwner,
+      })
+      .getInstructions()[0]
 
-  ix.keys[9].pubkey = authority
-  ix.keys[10].pubkey = payer
-  return ix
+    ix.keys[9].pubkey = authority
+    ix.keys[10].pubkey = payer
+    return ix
+  } catch {
+    const ix = metaplex
+      .nfts()
+      .builders()
+      .transfer({
+        nftOrSft: {
+          address: mint,
+          tokenStandard: TokenStandard.NonFungible,
+        },
+        authorizationDetails: undefined,
+        toOwner,
+        fromOwner,
+      })
+      .getInstructions()[0]
+    
+    ix.keys[9].pubkey = authority
+    ix.keys[10].pubkey = payer
+    
+    return ix
+  }
 }
