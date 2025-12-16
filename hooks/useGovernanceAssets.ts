@@ -40,7 +40,7 @@ export type InstructionType = {
   packageId: PackageEnum
 }
 
-export default function useGovernanceAssets() {
+export default function useGovernanceAssets(p0: (s: any) => any) {
   const realm = useRealmQuery().data?.result
   const config = useRealmConfigQuery().data?.result
   const { communityWeight, councilWeight } = useRealmVoterWeights()

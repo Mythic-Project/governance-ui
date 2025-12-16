@@ -29,7 +29,7 @@ const SymmetryWithdraw = ({
 }) => {
   const { connection } = useConnection()
   const { assetAccounts } = useGovernanceAssets()
-  const [basketsSdk, setBasketSdk] = useState<BasketsSDK | undefined>(undefined)
+  const [, setBasketSdk] = useState<BasketsSDK | undefined>(undefined)
   const [form, setForm] = useState<SymmetryWithdrawForm>({
     governedAccount: undefined,
     basketAddress: undefined,
@@ -41,24 +41,16 @@ const SymmetryWithdraw = ({
   const [managedBaskets, setManagedBaskets] = useState<any>(undefined)
   const shouldBeGoverned = !!(index !== 0 && governance)
   const [assetAccountsLoaded, setAssetAccountsLoaded] = useState(false)
-  const [selectedBasket, setSelectedBasket] = useState<any>(undefined)
+  const [selectedBasket] = useState<any>(undefined)
 
   const handleSetForm = ({ propertyName, value }) => {
     setFormErrors({})
     setForm({ ...form, [propertyName]: value })
   }
-
-  const handleSelectBasket = (basket: any) => {
-    handleSetForm({
-      propertyName: 'basketAddress',
-      value: basket.basket.ownAddress,
-    })
-  }
-
   useEffect(() => {
     if (assetAccounts && assetAccounts.length > 0 && !assetAccountsLoaded)
       setAssetAccountsLoaded(true)
-  }, [assetAccounts])
+  }, [assetAccounts, assetAccountsLoaded])
 
   useEffect(() => {
     if (form.governedAccount) {
@@ -87,7 +79,7 @@ const SymmetryWithdraw = ({
         })
       })
     }
-  }, [form.governedAccount])
+  }, [assetAccounts, connection, form.governedAccount])
 
   useEffect(() => {
     handleSetInstructions(
@@ -142,14 +134,14 @@ const SymmetryWithdraw = ({
             subtitle="Select a basket managed by the DAO"
             value={form.basketAddress?.toBase58()}
             placeholder="Select Basket"
-            onChange={(e) => {
+            onChange={(e: any) => {
               handleSetForm({
                 propertyName: 'basketAddress',
                 value: new PublicKey(e),
               })
             }}
           >
-            {managedBaskets.map((basket, i) => {
+            {managedBaskets.map((basket: any, i: any) => {
               return (
                 <Select.Option
                   key={i}
@@ -227,7 +219,7 @@ const SymmetryWithdraw = ({
             subtitle="You can withdraw basket tokens directly, or rebalance them and receive USDC"
             value={form.withdrawType}
             placeholder="Withdrawal Type"
-            onChange={(e) => {
+            onChange={(e: any) => {
               handleSetForm({ propertyName: 'withdrawType', value: e })
             }}
             componentLabel={

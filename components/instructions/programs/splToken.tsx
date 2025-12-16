@@ -1,6 +1,6 @@
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { AccountMetaData, SYSTEM_PROGRAM_ID } from '@solana/spl-governance'
-import { tryGetMint, tryGetTokenAccount } from '../../../utils/tokens'
+import tryGetMint, { tryGetTokenAccount } from '../../../utils/tokens'
 import BN from 'bn.js'
 import { getMintDecimalAmountFromNatural } from '@tools/sdk/units'
 import tokenPriceService from '@utils/services/tokenPrice'

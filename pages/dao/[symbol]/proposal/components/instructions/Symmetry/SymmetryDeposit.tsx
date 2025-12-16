@@ -29,7 +29,6 @@ const SymmetryDeposit = ({
 }) => {
   const { connection } = useConnection()
   const { assetAccounts } = useGovernanceAssets()
-  const [basketsSdk, setBasketSdk] = useState<BasketsSDK | undefined>(undefined)
   const [form, setForm] = useState<SymmetryDepositForm>({
     governedAccount: undefined,
     basketAddress: undefined,
@@ -40,7 +39,7 @@ const SymmetryDeposit = ({
   const { handleSetInstructions } = useContext(NewProposalContext)
   const [managedBaskets, setManagedBaskets] = useState<any>(undefined)
   const shouldBeGoverned = !!(index !== 0 && governance)
-  const [assetAccountsLoaded, setAssetAccountsLoaded] = useState(false)
+  const [assetAccountsLoaded] = useState(false)
 
   const handleSetForm = ({ propertyName, value }) => {
     setFormErrors({})
@@ -48,38 +47,34 @@ const SymmetryDeposit = ({
   }
 
   useEffect(() => {
-    if (assetAccounts && assetAccounts.length > 0 && !assetAccountsLoaded)
-      setAssetAccountsLoaded(true)
-  }, [assetAccounts])
+    if (!form.governedAccount) return
 
-  useEffect(() => {
-    if (form.governedAccount) {
+    const fetchBaskets = async () => {
       const basketsOwnerAccounts: FilterOption[] = [
         {
           filterType: 'manager',
-          filterPubkey: form.governedAccount.pubkey,
+          filterPubkey: form.governedAccount!.pubkey,
         },
       ]
-      BasketsSDK.init(connection).then((sdk) => {
-        setBasketSdk(sdk)
-        sdk.findBaskets(basketsOwnerAccounts).then((baskets) => {
-          sdk.getCurrentCompositions(baskets).then((compositions) => {
-            const basketAccounts: any[] = []
-            baskets.map((basket, i) => {
-              basketAccounts.push({
-                governedAccount: assetAccounts.filter(
-                  (x) => x.pubkey.toBase58() === basket.data.manager.toBase58(),
-                )[0],
-                basket: basket,
-                composition: compositions[i],
-              })
-            })
-            setManagedBaskets(basketAccounts)
-          })
-        })
-      })
+      const sdk = await BasketsSDK.init(connection)
+      const baskets = await sdk.findBaskets(basketsOwnerAccounts)
+      const compositions = await sdk.getCurrentCompositions(baskets)
+
+      const basketAccounts = baskets.map((basket, i) => ({
+        governedAccount: assetAccounts.find(
+            (x) => x.pubkey.toBase58() === basket.data.manager.toBase58(),
+        ),
+        basket,
+        composition: compositions[i],
+      }))
+
+      setManagedBaskets(basketAccounts)
     }
-  }, [form.governedAccount])
+
+    fetchBaskets().catch((err) => console.error('Failed to fetch baskets:', err))
+  }, [form.governedAccount, connection, assetAccounts])
+
+
 
   useEffect(() => {
     handleSetInstructions(
@@ -133,14 +128,14 @@ const SymmetryDeposit = ({
             subtitle="Select a basket managed by the DAO"
             value={form.basketAddress?.toBase58()}
             placeholder="Select Basket"
-            onChange={(e) => {
+            onChange={(e: any) => {
               handleSetForm({
                 propertyName: 'basketAddress',
                 value: new PublicKey(e),
               })
             }}
           >
-            {managedBaskets.map((basket, i) => {
+            {managedBaskets.map((basket: any, i: any) => {
               return (
                 <Select.Option
                   key={i}

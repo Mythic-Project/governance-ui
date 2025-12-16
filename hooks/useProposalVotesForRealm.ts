@@ -8,7 +8,7 @@ import {
 import { MintInfo } from '@solana/spl-token'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { calculatePct, fmtTokenAmount } from '@utils/formatting'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { useEffect, useMemo, useState } from 'react'
 
 type ProposalVotesInfoType = {

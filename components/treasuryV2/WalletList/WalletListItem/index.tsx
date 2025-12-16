@@ -4,8 +4,9 @@ import { PublicKey } from '@metaplex-foundation/js'
 import DefiSummary from '@components/TreasuryAccount/DefiSummary'
 import { Asset } from '@models/treasury/Asset'
 import { Wallet } from '@models/treasury/Wallet'
-import AssetList, { Section } from './AssetList'
+
 import SummaryButton from './SummaryButton'
+import {Section} from "@jridgewell/trace-mapping";
 
 interface Props {
   className?: string
@@ -17,6 +18,18 @@ interface Props {
   onExpand?(): void
   onSelectAsset?(asset: Asset): void
   onSelectWallet?(): void
+}
+
+function AssetList(_props: {
+  governance: any,
+  assets: Asset[],
+  className: string,
+  expandedSections: Section[],
+  selectedAssetId: string | undefined,
+  onSelectAsset: ((asset: Asset) => void) | undefined,
+  onToggleExpandSection: (section: any) => void
+}) {
+  return null;
 }
 
 export default function WalletListItem(props: Props) {

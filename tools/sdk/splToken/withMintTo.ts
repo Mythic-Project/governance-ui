@@ -1,23 +1,29 @@
-import { Token, u64 } from '@solana/spl-token'
+import { Token, TOKEN_PROGRAM_ID, u64 } from '@solana/spl-token'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token-new'
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 
-import { TOKEN_PROGRAM_ID } from '@utils/tokens'
-
+/**
+ * Adds a MintTo instruction to a transaction.
+ * Supports both legacy SPL Token and Token-2022 program.
+ */
 export const withMintTo = async (
-  instructions: TransactionInstruction[],
-  mintPk: PublicKey,
-  destinationPk: PublicKey,
-  mintAuthorityPk: PublicKey,
-  amount: number | u64,
+    instructions: TransactionInstruction[],
+    mintPk: PublicKey,
+    destinationPk: PublicKey,
+    mintAuthorityPk: PublicKey,
+    amount: number | u64,
+    useToken2022 = false,
 ) => {
-  instructions.push(
-    Token.createMintToInstruction(
-      TOKEN_PROGRAM_ID,
-      mintPk,
-      destinationPk,
-      mintAuthorityPk,
-      [],
-      amount,
-    ),
-  )
+    const programId = useToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+
+    instructions.push(
+        Token.createMintToInstruction(
+            programId,
+            mintPk,
+            destinationPk,
+            mintAuthorityPk,
+            [],
+            amount,
+        ),
+    )
 }

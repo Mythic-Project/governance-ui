@@ -1,21 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { UiInstruction } from 'utils/uiTypes/proposalCreationTypes'
-import { NewProposalContext } from '../../new'
-import {
-  Governance,
-  serializeInstructionToBase64,
-} from '@solana/spl-governance'
-import { ProgramAccount } from '@solana/spl-governance'
+import React, {useCallback, useContext, useEffect, useState} from 'react'
+import {UiInstruction} from 'utils/uiTypes/proposalCreationTypes'
+import {NewProposalContext} from '../../new'
+import {Governance, ProgramAccount, serializeInstructionToBase64,} from '@solana/spl-governance'
 import useGovernanceAssets from 'hooks/useGovernanceAssets'
 import GovernedAccountSelect from '../GovernedAccountSelect'
-import { validateInstruction } from 'utils/instructionTools'
-import { AccountType, AssetAccount } from '@utils/uiTypes/assets'
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {validateInstruction} from 'utils/instructionTools'
+import {AccountType, AssetAccount} from '@utils/uiTypes/assets'
+import {Token, TOKEN_PROGRAM_ID} from '@solana/spl-token'
 import Switch from '@components/Switch'
 import Input from '@components/inputs/Input'
-import { validatePubkey } from '@utils/formValidation'
+import {validatePubkey} from '@utils/formValidation'
 import * as yup from 'yup'
-import { PublicKey } from '@solana/web3.js'
+import {PublicKey} from '@solana/web3.js'
 import useWalletOnePointOh from '@hooks/useWalletOnePointOh'
 
 type Form = {
@@ -46,10 +42,11 @@ const SetMintAuthority = ({
   const [formErrors, setFormErrors] = useState({})
 
   const { handleSetInstructions } = useContext(NewProposalContext)
-  const handleSetForm = ({ propertyName, value }) => {
+  const handleSetForm = useCallback(({ propertyName, value }: { propertyName: keyof Form; value: any }) => {
     setFormErrors({})
-    setForm({ ...form, [propertyName]: value })
-  }
+    setForm((prevForm) => ({ ...prevForm, [propertyName]: value }))
+  }, [])
+
 
   async function getInstruction(): Promise<UiInstruction> {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
@@ -70,12 +67,11 @@ const SetMintAuthority = ({
 
       serializedInstruction = serializeInstructionToBase64(ix)
     }
-    const obj: UiInstruction = {
+    return {
       serializedInstruction: serializedInstruction,
       isValid,
       governance: form.governedAccount?.governance,
     }
-    return obj
   }
 
   useEffect(() => {
@@ -96,7 +92,7 @@ const SetMintAuthority = ({
           console.log(val)
           if (val) {
             try {
-              await validatePubkey(form.mintAuthority)
+              validatePubkey(form.mintAuthority)
               return true
             } catch (e) {
               return this.createError({
@@ -122,7 +118,7 @@ const SetMintAuthority = ({
       value: '',
       propertyName: 'mintAuthority',
     })
-  }, [form.setAuthorityToNone])
+  }, [form.setAuthorityToNone, handleSetForm])
   return (
     <>
       <GovernedAccountSelect

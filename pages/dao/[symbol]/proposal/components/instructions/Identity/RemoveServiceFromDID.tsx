@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useCallback } from 'react'
 import * as yup from 'yup'
 import {
   Governance,
@@ -8,7 +8,6 @@ import {
 import { validateInstruction } from '@utils/instructionTools'
 import { UiInstruction } from '@utils/uiTypes/proposalCreationTypes'
 
-import { NewProposalContext } from '../../../new'
 import InstructionForm, { InstructionInput } from '../FormCreator'
 import { AssetAccount } from '@utils/uiTypes/assets'
 import useGovernanceAssets from '@hooks/useGovernanceAssets'
@@ -20,100 +19,95 @@ import {
   SchemaComponents,
 } from '@utils/instructions/Identity/util'
 import { useRealmQuery } from '@hooks/queries/realm'
-import useLegacyConnectionContext from '@hooks/useLegacyConnectionContext'
+import { NewProposalContext } from '@components/../context/NewProposalContext'
+import {useConnection} from "@solana/wallet-adapter-react";
 
+
+export const { handleSetInstructions } = useContext(NewProposalContext)
 interface RemoveServiceFromDIDForm {
   governedAccount: AssetAccount | undefined
-  did: string // manual entry for now - replace with dropdown once did-registry is introduced
-  alias: string // manual entry
+  did: string
+  alias: string
 }
 
 const RemoveServiceFromDID = ({
-  index,
-  governance,
-}: {
+                                index,
+                                governance,
+                              }: {
   index: number
   governance: ProgramAccount<Governance> | null
 }) => {
   const realm = useRealmQuery().data?.result
   const { assetAccounts } = useGovernanceAssets()
-  const connection = useLegacyConnectionContext()
+  const { connection } = useConnection()
   const shouldBeGoverned = index !== 0 && governance
+
   const [form, setForm] = useState<RemoveServiceFromDIDForm>()
   const [formErrors, setFormErrors] = useState({})
-  const { handleSetInstructions } = useContext(NewProposalContext)
 
-  async function getInstruction(): Promise<UiInstruction> {
-    const isValid = await validateInstruction({ schema, form, setFormErrors })
-
-    // getInstruction must return something, even if it is an invalid instruction
-    let serializedInstructions = ['']
-
-    if (
-      isValid &&
-      form!.governedAccount?.governance?.account &&
-      connection?.current
-    ) {
-      const service = DidSolService.build(DidSolIdentifier.parse(form!.did), {
-        connection: connection.current,
-        wallet: governedAccountToWallet(form!.governedAccount),
-      })
-
-      const removeServiceIxs = await service
-        .removeService(form!.alias)
-        .withAutomaticAlloc(form!.governedAccount.governance.pubkey)
-        .instructions()
-
-      serializedInstructions = removeServiceIxs.map(
-        serializeInstructionToBase64,
-      )
-    }
-
-    // Realms appears to put additionalSerializedInstructions first, so reverse the order of the instructions
-    // to ensure the resize function comes first.
-    const [serializedInstruction, ...additionalSerializedInstructions] =
-      serializedInstructions.reverse()
-
-    return {
-      serializedInstruction,
-      additionalSerializedInstructions,
-      isValid,
-      governance: form!.governedAccount?.governance,
-    }
+  const context = useContext(
+      NewProposalContext
+  ) as {
+    handleSetInstructions: (instruction: any, index: number) => void
   }
-  useEffect(() => {
-    handleSetInstructions(
-      { governedAccount: form?.governedAccount?.governance, getInstruction },
-      index,
-    )
-  }, [form])
+
   const schema = yup.object().shape({
     governedAccount: SchemaComponents.governedAccount,
     did: SchemaComponents.did,
     alias: SchemaComponents.alias,
   })
+
+  const getInstruction = useCallback(async (): Promise<UiInstruction> => {
+    const isValid = await validateInstruction({ schema, form, setFormErrors })
+
+    let serializedInstructions = ['']
+
+    if (isValid && form?.governedAccount?.governance?.account && connection) {
+      const service = DidSolService.build(DidSolIdentifier.parse(form.did), {
+        connection,
+        wallet: governedAccountToWallet(form.governedAccount),
+      })
+
+      const removeServiceIxs = await service
+          .removeService(form.alias)
+          .withAutomaticAlloc(form.governedAccount.governance.pubkey)
+          .instructions()
+
+      serializedInstructions = removeServiceIxs.map(serializeInstructionToBase64)
+    }
+
+    const [serializedInstruction, ...additionalSerializedInstructions] =
+        serializedInstructions.reverse()
+
+    return {
+      serializedInstruction,
+      additionalSerializedInstructions,
+      isValid,
+      governance: form?.governedAccount?.governance,
+    }
+  }, [form, connection, schema])
+
+  useEffect(() => {
+    context.handleSetInstructions(
+        { governedAccount: form?.governedAccount?.governance, getInstruction },
+        index
+    )
+  }, [form, getInstruction, context.handleSetInstructions, index, context])
+
   const inputs: InstructionInput[] = [
-    governanceInstructionInput(
-      realm,
-      governance || undefined,
-      assetAccounts,
-      shouldBeGoverned,
-    ),
+    governanceInstructionInput(realm, governance || undefined, assetAccounts, shouldBeGoverned),
     instructionInputs.did,
     instructionInputs.alias,
   ]
 
   return (
-    <>
-      <InstructionForm
-        outerForm={form}
-        setForm={setForm}
-        inputs={inputs}
-        setFormErrors={setFormErrors}
-        formErrors={formErrors}
-      ></InstructionForm>
-    </>
-  )
+      <><RemoveServiceFromDID index={0} governance={null}/><InstructionForm
+          outerForm={form}
+          setForm={setForm}
+          inputs={inputs}
+          setFormErrors={setFormErrors}
+          formErrors={formErrors}/></>
+)
 }
 
 export default RemoveServiceFromDID

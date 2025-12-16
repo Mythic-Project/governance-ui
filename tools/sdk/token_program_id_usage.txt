@@ -1,0 +1,12 @@
+./splToken/withCreateMint.ts:    TOKEN_PROGRAM_ID,
+./splToken/withCreateMint.ts: * @param useToken2022     If true, will use TOKEN_2022_PROGRAM_ID instead of TOKEN_PROGRAM_ID
+./splToken/withCreateMint.ts:    const programId = useToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+./splToken/withCreateAssociatedTokenAccount.ts:  ASSOCIATED_TOKEN_PROGRAM_ID,
+./splToken/withCreateAssociatedTokenAccount.ts:  TOKEN_PROGRAM_ID,
+./splToken/withCreateAssociatedTokenAccount.ts:    ASSOCIATED_TOKEN_PROGRAM_ID,
+./splToken/withCreateAssociatedTokenAccount.ts:    TOKEN_PROGRAM_ID,
+./splToken/withCreateAssociatedTokenAccount.ts:      ASSOCIATED_TOKEN_PROGRAM_ID,
+./splToken/withCreateAssociatedTokenAccount.ts:      TOKEN_PROGRAM_ID,
+./splToken/withMintTo.ts:import {Token, TOKEN_PROGRAM_ID, u64} from '@solana/spl-token'
+./splToken/withMintTo.ts: * @param useToken2022     If true, will use TOKEN_2022_PROGRAM_ID instead of TOKEN_PROGRAM_ID
+./splToken/withMintTo.ts:  const programId = useToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID

@@ -91,7 +91,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
 
   useEffect(() => {
     setForm({ ...form, mangoAccount: undefined })
-  }, [programSelectorHook.program?.val.toBase58()])
+  }, [form])
 
   useEffect(() => {
     setFormErrors({})
@@ -106,7 +106,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
         )?.symbol || 'tokens'
       } ${proposalType === 'Withdraw' ? 'from' : 'to'} Mango`,
     })
-  }, [proposalType])
+  }, [account.extensions.mint, form, proposalType])
 
   const SOL_BUFFER = 0.02
 
@@ -199,7 +199,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
       form.mangoAccount,
     )
     setMaxWithdrawBalance(maxWithdrawForBank.toNumber())
-  }, [proposalType, mangoGroup, form])
+  }, [proposalType, mangoGroup, form, account.extensions.mint, getMaxWithdrawForBank])
 
   const handleCreateAccount = async () => {
     const isValid = await validateInstruction({ schema, form, setFormErrors })
@@ -411,7 +411,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
                   ? 'Please select...'
                   : form.mangoAccount?.name || 'Create new account'
               }
-              onChange={(value) =>
+              onChange={(value: any) =>
                 handleSetForm({
                   propertyName: 'mangoAccount',
                   value,
@@ -583,7 +583,7 @@ const MangoModal = ({ account }: { account: AssetAccount }) => {
                   ? 'Please select...'
                   : form.mangoAccount?.name || 'Create new account'
               }
-              onChange={(value) =>
+              onChange={(value: any) =>
                 handleSetForm({
                   propertyName: 'mangoAccount',
                   value,

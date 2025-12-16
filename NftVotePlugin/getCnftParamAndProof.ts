@@ -1,64 +1,61 @@
 import { Connection, PublicKey } from '@solana/web3.js'
 import { ConcurrentMerkleTreeAccount } from '@solana/spl-account-compression'
-import * as bs58 from 'bs58'
 import { fetchDasAssetProofById } from '@hooks/queries/digitalAssets'
 import { getNetworkFromEndpoint } from '@utils/connection'
 import * as anchor from '@coral-xyz/anchor'
+// ⚡️ TS2339: Property 'decode' does not exist on type 'typeof bs58'.
+// Fix: Use the correct default import for bs58!
+import bs58 from 'bs58'
 
-export function decode(stuff: string) {
-  return bufferToArray(bs58.decode(stuff))
+/**
+ * Decode a base58 string into a number array.
+ */
+function decode(stuff: string): number[] {
+  // bs58 returns Uint8Array directly as the default import
+  return Array.from(bs58.decode(stuff))
 }
 
-function bufferToArray(buffer: Buffer): number[] {
-  const nums: number[] = []
-  for (let i = 0; i < buffer.length; i++) {
-    nums.push(buffer[i])
-  }
-  return nums
-}
+export default decode
 
 /**
  * This is a helper function only for nft-voter-v2 used.
- * Given a cNFT, getCnftParamAndProof will to get its the metadata, leaf information and merkle proof.
- * All these data will be sent to the program to verify the ownership of the cNFT.
- * @param connection
- * @param compressedNft
- * @returns {param, additionalAccounts}
+ * Given a cNFT, getCnftParamAndProof will get its metadata, leaf information and merkle proof.
  */
 export async function getCnftParamAndProof(
-  connection: Connection,
-  compressedNft: any,
-) {
+    connection: Connection,
+    compressedNft: any,
+): Promise<{ param: any; additionalAccounts: any[] }> {
   const network = getNetworkFromEndpoint(connection.rpcEndpoint)
-  if (network === 'localnet') throw new Error()
+  if (network === 'localnet') throw new Error('Localnet not supported for this op')
+
   const { result: assetProof } = await fetchDasAssetProofById(
-    network,
-    new PublicKey(compressedNft.id),
+      network,
+      new PublicKey(compressedNft.id),
   )
+
   const treeAccount = await ConcurrentMerkleTreeAccount.fromAccountAddress(
-    connection,
-    new PublicKey(compressedNft.compression.tree),
+      connection,
+      new PublicKey(compressedNft.compression.tree),
   )
   const canopyHeight = treeAccount.getCanopyDepth()
   const root = decode(assetProof.root)
   const proofLength = assetProof.proof.length
 
   const reducedProofs = assetProof.proof.slice(
-    0,
-    proofLength - (canopyHeight ? canopyHeight : 0),
+      0,
+      proofLength - (canopyHeight ? canopyHeight : 0),
   )
 
-  const creators = compressedNft.creators.map((creator) => {
-    return {
-      address: new PublicKey(creator.address),
-      verified: creator.verified,
-      share: creator.share,
-    }
-  })
+  const creators = compressedNft.creators.map((creator: any) => ({
+    address: new PublicKey(creator.address),
+    verified: creator.verified,
+    share: creator.share,
+  }))
 
   const rawCollection = compressedNft.grouping.find(
-    (x) => x.group_key === 'collection',
+      (x: any) => x.group_key === 'collection',
   )
+
   const param = {
     name: compressedNft.content.metadata.name,
     symbol: compressedNft.content.metadata.symbol,
@@ -75,7 +72,7 @@ export async function getCnftParamAndProof(
     root,
     leafOwner: new PublicKey(compressedNft.ownership.owner),
     leafDelegate: new PublicKey(
-      compressedNft.ownership.delegate || compressedNft.ownership.owner,
+        compressedNft.ownership.delegate || compressedNft.ownership.owner,
     ),
     nonce: new anchor.BN(compressedNft.compression.leaf_id),
     index: compressedNft.compression.leaf_id,
@@ -84,5 +81,5 @@ export async function getCnftParamAndProof(
 
   const additionalAccounts = [compressedNft.compression.tree, ...reducedProofs]
 
-  return { param: param, additionalAccounts: additionalAccounts }
+  return { param, additionalAccounts }
 }

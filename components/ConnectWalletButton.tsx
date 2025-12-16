@@ -15,7 +15,7 @@ import Loading from './Loading'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import { DEFAULT_PROVIDER } from '../utils/wallet-adapters'
+import { DEFAULT_PROVIDER } from '@utils/wallet-adapters'
 import useViewAsWallet from '@hooks/useViewAsWallet'
 import { ProfileName } from '@components/Profile/ProfileName'
 import { usePlausible } from 'next-plausible'
@@ -25,7 +25,7 @@ const StyledWalletProviderLabel = styled.p`
   line-height: 1.5;
 `
 
-const ConnectWalletButton = (props) => {
+const ConnectWalletButton = (props: any) => {
   const { pathname, query, replace } = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const debugAdapter = useViewAsWallet()
@@ -73,11 +73,11 @@ const ConnectWalletButton = (props) => {
       console.warn('handleConnectDisconnect', e)
     }
     setIsLoading(false)
-  }, [connect, connected, disconnect])
+  }, [connect, connected, disconnect, plausible, wallet?.adapter?.name, wallet?.adapter?.publicKey])
 
   const currentCluster = query.cluster
 
-  function updateClusterParam(cluster) {
+  function updateClusterParam(cluster: any) {
     const newQuery = {
       ...query,
       cluster,
@@ -85,10 +85,12 @@ const ConnectWalletButton = (props) => {
     if (!cluster) {
       delete newQuery.cluster
     }
-    replace({ pathname, query: newQuery }, undefined, {
+    replace({pathname, query: newQuery}, undefined, {
       shallow: true,
+    }).then(_r => {
+      // TODO ORION
     })
-  }
+   }
 
   function handleToggleDevnet() {
     updateClusterParam(currentCluster !== 'devnet' ? 'devnet' : null)

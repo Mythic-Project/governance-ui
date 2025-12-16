@@ -1,7 +1,7 @@
 import { getProposalMaxVoteWeight } from '@models/voteWeights'
 import { Governance, Proposal, Realm } from '@solana/spl-governance'
 import { calculatePct, fmtTokenAmount } from '@utils/formatting'
-import { tryGetMint } from '@utils/tokens'
+import tryGetMint from '@utils/tokens'
 import { useEffect, useState } from 'react'
 import useLegacyConnectionContext from './useLegacyConnectionContext'
 
