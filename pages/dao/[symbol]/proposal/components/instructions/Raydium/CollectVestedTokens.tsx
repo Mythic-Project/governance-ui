@@ -83,9 +83,6 @@ const CollectVestedTokens = ({
       
       const poolInfo = await raydium.launchpad.getRpcPoolInfo({poolId})
 
-      if (!poolInfo.creator.equals(governedAccount.pubkey)) {
-        throw new Error('The DAO does not own the vesting tokens.')
-      }
       const baseVault = poolInfo.vaultA
       const walletAta = associatedAddress({mint: mintA,owner: governedAccount.pubkey})
 

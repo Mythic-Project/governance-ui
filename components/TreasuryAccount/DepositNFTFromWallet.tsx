@@ -54,6 +54,8 @@ const useMetaplexDeposit = () => {
           wallet.publicKey,
         )
 
+    console.log('deposit ix', ix.programId.toBase58(), ix.keys.map((k) => k.pubkey.toBase58()));
+
     await sendTransactionsV3({
       connection: connection.current,
       wallet,
