@@ -416,8 +416,12 @@ const getTokenAssetAccounts = async (
         accounts.push(account)
       }
     } else if (
-      [...Object.values(AUXILIARY_TOKEN_ACCOUNTS).flatMap((x) => x)].find((x) =>
-        x.accounts.includes(tokenAccount.publicKey.toBase58()),
+      [...Object.values(AUXILIARY_TOKEN_ACCOUNTS).flatMap((x) => x)].find(
+        (x) =>
+          x.accounts.includes(tokenAccount.publicKey.toBase58()) ||
+          // Empty accounts array means include all token accounts from this owner
+          (x.accounts.length === 0 &&
+            x.owner === tokenAccount.account.owner.toBase58()),
       )
     ) {
       const mint = mintAccounts.find(
@@ -425,13 +429,32 @@ const getTokenAssetAccounts = async (
       )
 
       if (mint && !isToken2022(tokenAccount.account)) {
-        const account = new AccountTypeAuxiliaryToken(
-          tokenAccount as TokenProgramAccount<TokenAccount>,
-          mint,
-        )
+        // Try to find a governance whose native treasury matches the token owner
+        // This allows using auxiliary accounts in proposals
+        const matchingGov = govNativeSolAddress.find(
+          (x) => x.nativeSolAddress.toBase58() === tokenAccount.account.owner.toBase58(),
+        )?.governanceAcc
 
-        if (account) {
-          accounts.push(account)
+        if (matchingGov) {
+          // Create a proper token account with governance
+          const account = getTokenAccountObj(
+            matchingGov,
+            tokenAccount,
+            mintAccounts,
+          )
+          if (account) {
+            accounts.push(account)
+          }
+        } else {
+          // Fallback to auxiliary token account (no governance)
+          const account = new AccountTypeAuxiliaryToken(
+            tokenAccount as TokenProgramAccount<TokenAccount>,
+            mint,
+          )
+
+          if (account) {
+            accounts.push(account)
+          }
         }
       }
     }
