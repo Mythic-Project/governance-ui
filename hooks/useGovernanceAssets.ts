@@ -878,6 +878,11 @@ export default function useGovernanceAssets() {
       isVisible: canUseAuthorityInstruction,
       packageId: PackageEnum.Distribution,
     },
+    [Instructions.ReimbursementWithdraw]: {
+      name: 'Mango V3 Reimbursement: Withdraw from Vaults',
+      isVisible: canUseAuthorityInstruction,
+      packageId: PackageEnum.Distribution,
+    },
   }
 
   const availablePackages: PackageType[] = Object.entries(packages)
