@@ -516,11 +516,24 @@ const MNGO_AUXILIARY_TOKEN_ACCOUNTS = [
     owner: 'FRYXAjyVnvXja8chgdq47qL3CKoyBjUg4ro7M7QQn1aD',
     accounts: ['24frxVoDzo7bAimBU6rDhB1McxWNvzX9qddPMSv9VACZ'],
   },
-  //
+  //v3 reimbursement - empty accounts array means include all token accounts from this owner
+  {
+    owner: 'D3SMRX2tBq5MYRuis3i4kbVt1fdQ5TkX1xfxhUpZ2pN3',
+    accounts: [],
+  },
+]
+
+// v3 reimbursement accounts - shared across Mango realms
+const MNGO_V3_REIMBURSEMENT_ACCOUNTS = [
+  {
+    owner: 'D3SMRX2tBq5MYRuis3i4kbVt1fdQ5TkX1xfxhUpZ2pN3',
+    accounts: [],
+  },
 ]
 
 export const AUXILIARY_TOKEN_ACCOUNTS = {
   Mango: MNGO_AUXILIARY_TOKEN_ACCOUNTS,
+  'Mango Developer Council v2': MNGO_V3_REIMBURSEMENT_ACCOUNTS,
 }
 
 export const HIDDEN_TREASURES = [...HIDDEN_MNGO_TREASURES]

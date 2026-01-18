@@ -1872,6 +1872,48 @@ const instructions = () => ({
       }
     },
   },
+  7395: {
+    name: 'Withdraw Insurance Fund',
+    accounts: [
+      { name: 'Group' },
+      { name: 'Admin' },
+      { name: 'Insurance Vault' },
+      { name: 'Destination' },
+      { name: 'Token Program' },
+    ],
+    getDataUI: async (
+      connection: Connection,
+      data: Uint8Array,
+      accounts: AccountMetaData[],
+    ) => {
+      const args = await getDataObjectFlattened<any>(connection, data)
+      const group = accounts[0].pubkey
+      const client = await getClient(connection)
+      const mangoGroup = await getGroupForClient(client, group)
+      const insuranceMint = mangoGroup.insuranceMint
+      const mintInfo = await tryGetMint(connection, insuranceMint)
+      const tokenInfo = tokenPriceService.getTokenInfo(insuranceMint.toBase58())
+
+      try {
+        return (
+          <div>
+            <div>
+              Amount:{' '}
+              {mintInfo?.account.decimals
+                ? formatNumber(
+                    toUiDecimals(args.amount, mintInfo?.account.decimals),
+                  )
+                : args.amount}{' '}
+              {tokenInfo?.symbol || 'tokens'}
+            </div>
+          </div>
+        )
+      } catch (e) {
+        console.log(e)
+        return <div>{JSON.stringify(data)}</div>
+      }
+    },
+  },
 })
 
 export const MANGO_V4_INSTRUCTIONS = {
