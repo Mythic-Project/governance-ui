@@ -158,6 +158,7 @@ import SquadsV4RemoveMember from './components/instructions/Squads/SquadsV4Remov
 import CollectPoolFees from './components/instructions/Raydium/CollectPoolFees'
 import CollectVestedTokens from './components/instructions/Raydium/CollectVestedTokens'
 import RelinquishDaoVote from './components/instructions/RelinquishDaoVote'
+import ReimbursementWithdraw from './components/instructions/ReimbursementProgram/WithdrawFromVaults'
 
 const TITLE_LENGTH_LIMIT = 130
 // the true length limit is either at the tx size level, and maybe also the total account size level (I can't remember)
@@ -639,7 +640,8 @@ const New = () => {
       [Instructions.SymmetryDeposit]: SymmetryDeposit,
       [Instructions.SymmetryWithdraw]: SymmetryWithdraw,
       [Instructions.CollectPoolFees]: CollectPoolFees ,
-      [Instructions.CollectVestedTokens]: CollectVestedTokens
+      [Instructions.CollectVestedTokens]: CollectVestedTokens,
+      [Instructions.ReimbursementWithdraw]: ReimbursementWithdraw
     }),
     [governance?.pubkey?.toBase58()],
   )

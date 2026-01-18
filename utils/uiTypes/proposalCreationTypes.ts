@@ -433,7 +433,8 @@ export enum Instructions {
   SymmetryWithdraw,
   TokenWithdrawFees,
   CollectPoolFees,
-  CollectVestedTokens
+  CollectVestedTokens,
+  ReimbursementWithdraw
 }
 
 export interface ComponentInstructionData {
