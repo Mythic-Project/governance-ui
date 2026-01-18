@@ -565,6 +565,11 @@ export default function useGovernanceAssets() {
       packageId: PackageEnum.MangoMarketV4,
       isVisible: canUseAnyInstruction,
     },
+    [Instructions.MangoV4WithdrawInsuranceFund]: {
+      name: 'Withdraw Insurance Fund',
+      packageId: PackageEnum.MangoMarketV4,
+      isVisible: canUseAnyInstruction,
+    },
     [Instructions.MangoV4OpenBookEditMarket]: {
       name: 'Edit Openbook Market',
       packageId: PackageEnum.MangoMarketV4,

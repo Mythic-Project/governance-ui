@@ -377,6 +377,7 @@ export enum Instructions {
   MangoV4TokenAddBank,
   MangoV4AdminWithdrawTokenFees,
   MangoV4WithdrawPerpFees,
+  MangoV4WithdrawInsuranceFund,
   MeanCreateAccount,
   MeanCreateStream,
   MeanFundAccount,
