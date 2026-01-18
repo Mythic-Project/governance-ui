@@ -503,3 +503,36 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/word-break#values */
 .shared-container {
   @apply rounded-xl border border-bkg-4 md:rounded-2xl;
 }
+
+/* V2 Banner shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.v2-banner {
+  background: linear-gradient(90deg, #7c3aed 0%, #6366f1 50%, #7c3aed 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.v2-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}

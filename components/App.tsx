@@ -40,6 +40,7 @@ import { useAsync } from 'react-async-hook'
 import { useVsrClient } from '../VoterWeightPlugins/useVsrClient'
 import { useRealmVoterWeightPlugins } from '@hooks/useRealmVoterWeightPlugins'
 import TermsPopupModal from './TermsPopup'
+import V2PromoModal from './V2PromoModal'
 import PlausibleProvider from 'next-plausible'
 
 const Notifications = dynamic(() => import('../components/Notification'), {
@@ -326,16 +327,31 @@ export function AppContents(props: Props) {
       <ErrorBoundary>
         <ThemeProvider defaultTheme="Dark">
           <GatewayProvider>
-            <div className="relative color-white z-10 text-center w-full py-2">
-              Faster. Sharper. More. Yours.{' '}
-              <a
-                href="https://v2.realms.today"
-                rel="noreferrer"
-                target="_blank"
-                className="underline"
-              >
-                Try Realms v2
-              </a>
+            <div className="v2-banner relative z-10 text-center w-full py-3">
+              <div className="relative z-10 flex items-center justify-center gap-2 text-white font-medium">
+                <span className="text-white/90">Faster. Sharper. More. Yours.</span>
+                <a
+                  href="https://v2.realms.today"
+                  rel="noreferrer"
+                  target="_blank"
+                  className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full text-white font-semibold transition-all duration-200"
+                >
+                  Try Realms v2
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </a>
+              </div>
             </div>
             <Telemetry></Telemetry>
             <NavBar />
@@ -346,6 +362,7 @@ export function AppContents(props: Props) {
               <DefiProvider>{props.children}</DefiProvider>
             </PageBodyContainer>
             <TermsPopupModal />
+            <V2PromoModal />
           </GatewayProvider>
         </ThemeProvider>
       </ErrorBoundary>
