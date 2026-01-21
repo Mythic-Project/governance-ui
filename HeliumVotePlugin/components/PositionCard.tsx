@@ -508,7 +508,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                             disabled={isSubmitting}
                             isLoading={isFlipping}
                           >
-                            Start Unlock
+                            Extend
                           </Button>
                         ) : (
                           <Button
