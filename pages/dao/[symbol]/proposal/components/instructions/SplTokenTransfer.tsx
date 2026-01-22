@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Input from '@components/inputs/Input'
+import { LinkButton } from '@components/Button'
 import useRealm from '@hooks/useRealm'
-import { getMintMinAmountAsDecimal } from '@tools/sdk/units'
+import { getMintDecimalAmount, getMintMinAmountAsDecimal } from '@tools/sdk/units'
 import { PublicKey } from '@solana/web3.js'
 import { precision } from '@utils/formatting'
 import {
@@ -70,6 +71,17 @@ const SplTokenTransfer = ({
     const value = event.target.value
     handleSetForm({
       value: value,
+      propertyName: 'amount',
+    })
+  }
+  const setMaxAmount = () => {
+    const mintAccount = form.governedTokenAccount?.extensions?.mint?.account
+    const amount = form.governedTokenAccount?.extensions?.amount
+    if (!mintAccount || !amount) return
+
+    const maxAmount = getMintDecimalAmount(mintAccount, amount).toNumber()
+    handleSetForm({
+      value: maxAmount,
       propertyName: 'amount',
     })
   }
@@ -192,16 +204,28 @@ const SplTokenTransfer = ({
           <div className="text-xs">{destinationAccountName}</div>
         </div>
       )}
-      <Input
-        min={mintMinAmount}
-        label="Amount"
-        value={form.amount}
-        type="number"
-        onChange={setAmount}
-        step={mintMinAmount}
-        error={formErrors['amount']}
-        onBlur={validateAmountOnBlur}
-      />
+      <div>
+        <div className="flex mb-1.5 text-sm">
+          <span>Amount</span>
+          <div className="ml-auto flex items-center text-xs">
+            <LinkButton
+              onClick={setMaxAmount}
+              className="font-bold text-primary-light"
+            >
+              Max
+            </LinkButton>
+          </div>
+        </div>
+        <Input
+          min={mintMinAmount}
+          value={form.amount}
+          type="number"
+          onChange={setAmount}
+          step={mintMinAmount}
+          error={formErrors['amount']}
+          onBlur={validateAmountOnBlur}
+        />
+      </div>
     </>
   )
 }
