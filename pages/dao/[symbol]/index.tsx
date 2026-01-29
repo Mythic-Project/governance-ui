@@ -69,6 +69,9 @@ const NFTSCompactWrapper = dynamic(
 )
 const ProposalCard = dynamic(() => import('components/ProposalCard'))
 const RealmHeader = dynamic(() => import('components/RealmHeader'))
+const MangoDistributionBanner = dynamic(
+  () => import('@components/MangoDistributionBanner'),
+)
 const DepositLabel = dynamic(
   () => import('@components/TreasuryAccount/DepositLabel'),
 )
@@ -421,6 +424,7 @@ const REALM = () => {
               className={`bg-bkg-2 col-span-12 md:col-span-7 md:order-first lg:col-span-8 order-last rounded-lg`}
             >
               <RealmHeader />
+              <MangoDistributionBanner realmPk={realmInfo?.realmId?.toBase58()} />
               <div className="p-4 md:p-6 ">
                 <div>
                   {realmInfo?.bannerImage || realmData?.bannerImage ? (
