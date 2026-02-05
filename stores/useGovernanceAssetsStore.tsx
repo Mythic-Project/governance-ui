@@ -806,7 +806,7 @@ const loadGovernedTokenAccounts = async (
 
   const tokenAccountsInfo = (
     await Promise.all(
-      // Load infos in batch, cannot load 9999 accounts within one request
+      // Load infos in batch, cannot load 9999 accounts within one request.
       group(tokenAccountOwners, 100).map((group) =>
         getTokenAccountsInfo(connection, group, TOKEN_PROGRAM_ID),
       ),
