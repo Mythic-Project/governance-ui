@@ -178,15 +178,15 @@ const LockTokensModal = ({
     realm,
   )
 
-  const isCustomBioPlugin = client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK && deposits[0] !== undefined
-  
-  const depositMint = isCustomBioPlugin ?
-    deposits[0].mint.publicKey
+  const isCustomBioPlugin =
+    client?.program.programId.toBase58() === CUSTOM_BIO_VSR_PLUGIN_PK &&
+    deposits[0] !== undefined
+
+  const depositMint = isCustomBioPlugin
+    ? deposits[0].mint.publicKey
     : realm?.account.communityMint
 
-  const mint = isCustomBioPlugin ?
-    deposits[0].mint.account
-    : defaultMint
+  const mint = isCustomBioPlugin ? deposits[0].mint.account : defaultMint
 
   const depositRecord = deposits.find(
     (x) =>
@@ -340,13 +340,14 @@ const LockTokensModal = ({
     queryClient.invalidateQueries(
       tokenAccountQueryKeys.byOwner(connection.rpcEndpoint, wallet!.publicKey!),
     )
-    queryClient.invalidateQueries(
-      ['get-custom-vsr-token-account', {
-        realm: realm?.pubkey.toBase58(), 
-        mint: realm?.account.communityMint.toBase58(), 
-        pubkey: wallet?.publicKey?.toBase58()
-      }]
-    )
+    queryClient.invalidateQueries([
+      'get-custom-vsr-token-account',
+      {
+        realm: realm?.pubkey.toBase58(),
+        mint: realm?.account.communityMint.toBase58(),
+        pubkey: wallet?.publicKey?.toBase58(),
+      },
+    ])
     onClose()
   }
 
@@ -446,10 +447,7 @@ const LockTokensModal = ({
             <div className="mb-4">
               {depositToUnlock && (
                 <div className="mb-4">
-                  <InlineNotification
-                    desc="To initiate the unlock process you need to convert all, or part of your constant lockup to a cliff lockup with a duration greater than or equal to the constant lockup duration."
-                    type="info"
-                  />
+                  <InlineNotification desc="" type="info" />
                 </div>
               )}
               {hasMoreTokensInWallet && !depositToUnlock && (
@@ -610,7 +608,7 @@ const LockTokensModal = ({
             {depositToUnlock ? (
               <h2>
                 This will convert {new BigNumber(amount!).toFormat()}{' '}
-                {tokenName} into a cliff type lockup that unlocks in{' '}
+                {tokenName} into a constant type with{' '}
                 {getFormattedStringFromDays(lockupPeriodDays, true)}
               </h2>
             ) : (
@@ -665,7 +663,7 @@ const LockTokensModal = ({
               Number(lockupPeriodDays) === 0
             }
           >
-            {depositToUnlock ? 'Start unlock' : 'Lock Tokens'}
+            {depositToUnlock ? 'Extend' : 'Lock Tokens'}
           </Button>
         )
       case 1:
@@ -684,7 +682,7 @@ const LockTokensModal = ({
             onClick={handleNextStep}
             disabled={!amount || !maxAmount}
           >
-            {depositToUnlock ? 'Start unlock' : 'Lock Tokens'}
+            {depositToUnlock ? 'Extend' : 'Lock Tokens'}
           </Button>
         )
     }
@@ -693,7 +691,7 @@ const LockTokensModal = ({
     <Modal onClose={onClose} isOpen={isOpen}>
       {currentStep !== 1 ? (
         <h2 className="mb-4 flex flex-row items-center">
-          {isTitleVisible && (depositToUnlock ? 'Start Unlock' : 'Lock Tokens')}
+          {isTitleVisible && (depositToUnlock ? 'Extend' : 'Lock Tokens')}
         </h2>
       ) : null}
       {showLockupTypeInfo ? (
